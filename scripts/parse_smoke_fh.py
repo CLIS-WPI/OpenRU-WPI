@@ -402,7 +402,6 @@ def main() -> int:
     )
 
     hard_fail = False
-    soft_fail = False
 
     if not rows:
         print("FAIL: no ProtO-RU KPI rows parsed")
@@ -465,8 +464,6 @@ def main() -> int:
 
     if hard_fail:
         return 1
-    if soft_fail:
-        return 2
     return 0
 
 

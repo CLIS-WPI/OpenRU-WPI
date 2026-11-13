@@ -66,13 +66,17 @@ compare-plmn:
 
 smoke: smoke-fh
 
+# PROTORU_PROFILE=emulator (M0) | null (M1+). Default emulator for backward compat.
+PROTORU_PROFILE ?= emulator
+PROTORU_YML := $(if $(filter null,$(PROTORU_PROFILE)),$(ROOT)/profiles/baseline/protoru-null.yml,$(ROOT)/profiles/baseline/protoru.yml)
+
 smoke-fh: preflight
 	@mkdir -p $(REPORTS)
 	@rm -f $(REPORTS)/caps-protoru.md $(REPORTS)/caps-du.md
-	@echo "[smoke-fh] DU(no_core)+ProtO-RU emulator, $(SMOKE_SECS)s, GPU1 $(OPENRU_GPU_UUID)"
+	@echo "[smoke-fh] DU(no_core)+ProtO-RU $(PROTORU_PROFILE), $(SMOKE_SECS)s, GPU $(OPENRU_GPU_UUID)"
 	@$(COMPOSE) --profile fh --profile core --profile full down --remove-orphans >/dev/null 2>&1 || true
 	@DU_CONFIG_PATH=$(ROOT)/profiles/baseline/du-fh.yml \
-	  PROTORU_CONFIG_PATH=$(ROOT)/profiles/baseline/protoru.yml \
+	  PROTORU_CONFIG_PATH=$(PROTORU_YML) \
 	  $(COMPOSE) --profile fh up -d du protoru
 	@sleep 4
 	@cid_ru=$$($(COMPOSE) --profile fh ps -q protoru); \
@@ -115,7 +119,6 @@ smoke-fh: preflight
 	    --hist-out $(REPORTS)/smoke-fh-late-hist.csv; \
 	  rc=$$?; \
 	  $(COMPOSE) --profile fh down --remove-orphans >/dev/null 2>&1; \
-	  if [ $$rc -eq 2 ]; then echo "[smoke-fh] SOFT-FAIL (lates measured; see OPEN_QUESTIONS)"; exit 2; fi; \
 	  if [ $$rc -ne 0 ]; then echo "[smoke-fh] FAIL rc=$$rc"; exit $$rc; fi; \
 	  echo "[smoke-fh] PASS"
 

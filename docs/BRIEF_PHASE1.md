@@ -70,7 +70,7 @@ Compose topology (`docker/compose.yml`):
 
 - Network `fh` (bridge) carries OFH between `du` and `protoru`; network `core` carries N2/N3 between `du` and `core`. For Phase 1 the fronthaul runs over AF\_PACKET on the bridge; DPDK is optional and off by default.
 - `protoru` gets `deploy.resources.reservations.devices` for **GPU 1 only** (UUID above), `cap_add: [SYS_NICE, IPC_LOCK]`, `ulimits.rtprio: 99`, and `cpuset` pinning to a fixed core range (prefer NUMA node 1). Record which cores. Never attach a GPU to `du` or `core`.
-- Config files for DU and ProtO-RU start from ProtO-RU's `proto-ru/conf-files/` TDD n78, 30 kHz SCS, 2x2, 40 MHz pair, with the delay-profile adjustment from `INTEGRATION_NOTES.md` applied. Keep these as the `baseline` profile; every later milestone adds a new profile, never edits `baseline`.
+- Config files for DU and ProtO-RU start from ProtO-RU's `proto-ru/conf-files/` TDD n78, 30 kHz SCS, 2x2 pair, with the delay-profile adjustment from `INTEGRATION_NOTES.md` applied. `baseline` is 20 MHz 2x2 (frozen, M0 reference). `b40` (40 MHz 2x2) and `b100` (100 MHz 2x2) are added in M1 with their own CPU golden and late-ratio baseline. M2's acceptance gate uses `b40`; `b100` is reported. `b20` is removed as a duplicate. Every later milestone adds a new profile, never edits `baseline`.
 - A `make smoke` target runs `du` and `protoru` for 60 s with ProtO-RU in its stock emulator mode and checks the DU log for a steady slot indication and zero late-packet counters.
 
 Also in this milestone: PTP is not required (same host), but write `docs/TIME_SYNC.md` describing how the two-host PTP setup from ProtO-RU's `TIME_SYNC.md` will be reproduced in the hardware week.
@@ -83,14 +83,14 @@ Goal: drive ProtO-RU from recorded fronthaul traffic instead of a live DU, and c
 
 Tasks:
 
-1. Capture. Run the Milestone 0 stack with the DU in its test mode (OCUDU `ru_emulator` flow) for 10 s per profile and record the OFH traffic on the `fh` bridge with `tcpdump` into `testdata/pcap/<profile>.pcapng`. Profiles: `baseline` (2x2, 40 MHz, DDDSU), `b20` (2x2, 20 MHz), and later `4t4r`. Also record the DU's C-plane and U-plane packet counters for the same window.
+1. Capture. Run the Milestone 0 stack with the DU in its test mode (OCUDU `ru_emulator` flow) for 10 s per profile and record the OFH traffic on the `fh` bridge with `tcpdump` into `testdata/pcap/<profile>.pcapng`. Profiles: `baseline` (2x2, 20 MHz, DDDSU), `b40` (2x2, 40 MHz), `b100` (2x2, 100 MHz), and later `4t4r`. Also record the DU's C-plane and U-plane packet counters for the same window.
 2. Null radio backend. Add a radio backend to the ProtO-RU fork (`lib/radio/null/`) that implements the same interface as the UHD backend: it accepts transmit buffers with timestamps, writes them to a binary IQ file (`.cf32`, one file per antenna port, with a sidecar `.json` of sample rate, start timestamp and port count), and feeds receive buffers from an input file or zeros. Select it by config: `radio: {backend: null, tx_dump: ..., rx_feed: ...}`.
 3. Replay driver (`tools/fh_replay`). A C++ or Python tool that reads a pcapng, rewrites MACs/VLAN to match the ProtO-RU config, and sends the packets onto the `fh` bridge with the original inter-packet timing, scaled by a factor (1.0 = real time; 0 = as fast as possible for throughput tests). Use `scapy` or `libpcap`; DPDK is not needed.
 4. Golden set. With the stock CPU low-PHY, run `fh_replay` for each profile and store the IQ dumps as `testdata/golden/<profile>/port<n>.cf32`, with a `SHA256SUMS` file and the exact fork commit in `MANIFEST.json`. Golden files are large; store them with Git LFS or a `make fetch-golden` script from an S3/WPI share, not in plain git.
 5. Comparison tool (`tools/iq_compare`). Computes, per port and per slot, max absolute error, EVM-style RMS error in dB relative to the golden signal, and the first sample index where the two differ. Exit code non-zero above a configurable threshold.
 6. Timing probes. Add `OPENRU_TRACE` instrumentation (lightweight, off by default) that timestamps: U-plane packet arrival, decompression done, iFFT done, buffer handed to radio. Emit as a CSV per slot. This is the compute-time view only and must be labeled so.
 
-Done when: for `baseline` and `b20`, two consecutive replays of the CPU path produce IQ identical to the golden (`iq_compare` reports 0 differing samples), and the CI job `replay-golden` does this on every push in under 10 minutes on the H100 host.
+Done when: for `baseline`, `b40`, and `b100`, two consecutive replays of the CPU path produce IQ identical to the golden (`iq_compare` reports 0 differing samples), and the CI job `replay-golden` does this on every push in under 10 minutes on the H100 host.
 
 ## Milestone 2: CUDA low-PHY port with bit-exact validation
 
@@ -111,7 +111,7 @@ Engineering constraints:
 - Use Nsight Systems on the replay run to measure, per slot: H2D copy, kernel time, D2H copy, and end-to-end time from U-plane arrival to buffer handed to the radio backend. Report p50/p99 for `baseline` and `4t4r` profiles. These are compute-time figures `[MEASURED]` on H100; state explicitly that the fronthaul delay profile (T2a/Ta3) is still `[UNVERIFIED]` until the hardware week.
 - Any overlap of copy and compute is done with streams and events, never by spinning a CPU thread.
 
-Done when: `cuda` backend produces 0 differing samples versus golden on `baseline` and `b20`; p99 end-to-end compute time per slot on H100 is reported and is below one 30 kHz slot (500 microseconds) for `baseline`; the 60 s live `make smoke` still passes with `low_phy.backend: cuda`.
+Done when: `cuda` backend produces 0 differing samples versus golden on `baseline` and `b40` (M2 gate; `b100` reported); p99 end-to-end compute time per slot on H100 is reported and is below one 30 kHz slot (500 microseconds) for `b40`; the 60 s live `make smoke` still passes with `low_phy.backend: cuda`.
 
 ## Milestone 3: 4T4R support
 
@@ -161,8 +161,8 @@ Done when: the M-plane API is documented with examples; the three energy states 
 | Milestone | CI job | Pass condition | Report |
 | --- | --- | --- | --- |
 | M0 Docker | `smoke` | `make smoke` 60 s run, GPU visible, zero late packets | `docs/reports/M0.md` with host and image versions |
-| M1 Harness | `replay-golden` | CPU replay = golden, 0 differing samples, baseline and b20, under 10 min | M1.md with capture method and golden manifest |
-| M2 CUDA | `replay-cuda` | CUDA = golden, 0 differing samples; p99 compute per slot under 500 us on baseline | M2.md with Nsight figures p50/p99, labeled compute-only |
+| M1 Harness | `replay-golden` | CPU replay = golden, 0 differing samples, baseline/b40/b100, under 10 min | M1.md with capture method and golden manifest |
+| M2 CUDA | `replay-cuda` | CUDA = golden, 0 differing samples; p99 compute per slot under 500 us on b40 | M2.md with Nsight figures p50/p99, labeled compute-only |
 | M3 4T4R | `replay-4t4r` | both backends = golden on 4t4r; 60 s live run with no late packets | M3.md with scaling 2 vs 4 ports and list of changed code paths |
 | M4 Virtual E2E | `e2e-virt` | UE registered; iperf3 DL/UL 30 s on cpu and cuda, 2x2 and 4x4 | M4.md with SNR, channel, timing parameters, throughput, RTT |
 | M5 M-plane | `mplane` | API examples pass; energy-state transitions measured; rf\_mute zeros within one slot; one closed-loop scenario | M5.md with state timings and NVML power |
@@ -184,7 +184,7 @@ openru-sw/
   src/mpd/               M-plane daemon (BSD-3, independent code)
   tools/{fh_replay,iq_compare,channel}/
   testdata/pcap/         small captures in git; golden via LFS or fetch script
-  profiles/{baseline,b20,4t4r,virt}/   DU + RU + core config per profile
+  profiles/{baseline,b40,b100,4t4r,virt}/   DU + RU + core config per profile
   docs/                  reports/, OPEN_QUESTIONS.md, VIRT_RADIO.md, 4T4R.md, TIME_SYNC.md
   Makefile               smoke, replay-golden, replay-cuda, replay-4t4r, e2e-virt, mplane, fetch-golden
 ```
