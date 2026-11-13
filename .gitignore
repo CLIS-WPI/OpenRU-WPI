@@ -5,9 +5,15 @@ build/
 __pycache__/
 *.pyc
 .env
+docker/lab.env
 *.cf32
 testdata/golden/
 docs/reports/smoke-*.log
+docs/reports/smoke-*-run.log.bak
 docs/reports/smoke-gpu.txt
 docs/reports/build-*.log
+# Keep KPI JSON / late histograms from baseline runs.
+!docs/reports/smoke-fh-*-kpi.json
+!docs/reports/smoke-fh-*-late-hist.csv
 .DS_Store
+

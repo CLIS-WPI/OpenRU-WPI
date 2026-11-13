@@ -1,10 +1,10 @@
-# OpenRU Phase 1 — GPU1-only. No privileged on du/protoru.
+# OpenRU Phase 1 — GPU pin and cpusets come from docker/lab.env (no host defaults).
 name: openru
 
-x-gpu1: &gpu1
+x-gpu: &gpu
   driver: nvidia
   device_ids:
-    - ${OPENRU_GPU_UUID:-GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058}
+    - ${OPENRU_GPU_UUID:?Set OPENRU_GPU_UUID in docker/lab.env}
   capabilities: [gpu]
 
 services:
@@ -42,6 +42,7 @@ services:
         UHD_VERSION: ${UHD_VERSION:-4.7.0.0}
         DPDK_VERSION: ${DPDK_VERSION:-24.11.2}
         CUDA_RUNTIME_IMAGE: ${CUDA_RUNTIME_IMAGE:-nvidia/cuda:12.6.0-runtime-ubuntu24.04}
+        MARCH: ${MARCH:-x86-64-v3}
     profiles: ["build"]
     command: ["true"]
 
@@ -52,16 +53,13 @@ services:
     ulimits:
       rtprio: 99
       memlock: -1
-    cpuset: ${DU_CPUSET:-48-55}
+    cpuset: ${DU_CPUSET:?Set DU_CPUSET in docker/lab.env}
     volumes:
       - du-logs:/tmp
     configs:
       - source: du_config
         target: /opt/du.yml
-    # IMPORTANT: only attach the network(s) needed for the active profile.
-    # If both fh and core are attached, Docker may assign core as eth0 and OFH
-    # (configured for eth0) silently binds the wrong NIC. smoke-fh → fh only;
-    # smoke-core → core only (see networks below + Makefile env).
+    # Only attach networks needed for the active profile (OFH binds eth0).
     networks:
       fh:
         ipv4_address: 10.54.1.10
@@ -71,27 +69,27 @@ services:
 
   protoru:
     image: openru/protoru:${OPENRU_TAG:-m0}
-    # Never privileged — breaks GPU1 pin.
+    # Never privileged — breaks GPU device pin.
     entrypoint: ["/bin/bash", "-lc"]
     cap_add: [NET_RAW, NET_ADMIN, SYS_NICE, IPC_LOCK]
     ulimits:
       rtprio: 99
       memlock: -1
-    cpuset: ${PROTORU_CPUSET:-32-47}
+    cpuset: ${PROTORU_CPUSET:?Set PROTORU_CPUSET in docker/lab.env}
     gpus:
       - driver: nvidia
         device_ids:
-          - ${OPENRU_GPU_UUID:-GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058}
+          - ${OPENRU_GPU_UUID:?Set OPENRU_GPU_UUID in docker/lab.env}
         capabilities: [gpu]
     environment:
-      NVIDIA_VISIBLE_DEVICES: ${OPENRU_GPU_UUID:-GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058}
+      NVIDIA_VISIBLE_DEVICES: ${OPENRU_GPU_UUID:?Set OPENRU_GPU_UUID in docker/lab.env}
       NVIDIA_DRIVER_CAPABILITIES: compute,utility
       CUDA_DEVICE_ORDER: PCI_BUS_ID
     deploy:
       resources:
         reservations:
           devices:
-            - *gpu1
+            - *gpu
     volumes:
       - protoru-logs:/tmp
       - ../docs/reports:/reports

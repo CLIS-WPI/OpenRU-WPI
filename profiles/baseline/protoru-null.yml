@@ -1,0 +1,49 @@
+# baseline ProtO-RU — null radio (M1). Runs low-PHY; dumps TX IQ to .cf32.
+# Emulator mode (no sdr:) stays M0-only and cannot produce golden IQ.
+
+log:
+  filename: /tmp/proto-ru.log
+  level: info
+
+ru_emu:
+  timing_cpus: [32]
+  cells:
+    - network_interface: eth0
+      ru_mac_addr: 02:00:00:00:00:20
+      du_mac_addr: 02:00:00:00:00:10
+      enable_promiscuous: true
+
+      bandwidth: 20
+      common_scs: 30
+      dl_arfcn: 628032
+      band: 78
+
+      dl_port_id: [0, 1]
+      ul_port_id: [0, 1]
+      prach_port_id: [4, 5]
+      prach_format: short
+
+      compr_method_dl: bfp
+      compr_bitwidth_dl: 9
+      compr_method_ul: bfp
+      compr_bitwidth_ul: 9
+      compr_method_prach: bfp
+      compr_bitwidth_prach: 9
+      is_ul_static_compr_hdr: true
+      is_dl_static_compr_hdr: true
+      iq_scaling: 1.0
+
+      t2a_max_cp_dl: 2435
+      t2a_min_cp_dl: 2235
+      t2a_max_cp_ul: 2435
+      t2a_min_cp_ul: 2235
+      t2a_max_up: 2215
+      t2a_min_up: 2015
+      ta3_max_up: 1200
+      ta3_min_up: 800
+
+      ofh_cpus: [33, 34]
+      sdr:
+        device_driver: null
+        device_args: "tx_dump=/tmp/iq_dump,rx_feed="
+        srate_MHz: 23.04

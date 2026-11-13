@@ -7,7 +7,7 @@ log:
   level: info
 
 ru_emu:
-  # Host CPUs inside PROTORU_CPUSET (32-47).
+  # Host CPUs inside PROTORU_CPUSET (lab.env; this host: 32-47 on NUMA1).
   timing_cpus: [32]
   cells:
     - network_interface: eth0

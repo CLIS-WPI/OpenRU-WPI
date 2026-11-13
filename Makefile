@@ -1,21 +1,34 @@
-# OpenRU software — Phase 1 (GPU1 lane)
+# OpenRU — Phase 1
 ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 include $(ROOT)/docker/versions.env
+# lab.env is required for runtime GPU/cpuset; preflight enforces it.
+-include $(ROOT)/docker/lab.env
 export
 
-COMPOSE := docker compose --env-file $(ROOT)/docker/versions.env -f $(ROOT)/docker/compose.yml
+COMPOSE := docker compose --env-file $(ROOT)/docker/versions.env \
+	$(if $(wildcard $(ROOT)/docker/lab.env),--env-file $(ROOT)/docker/lab.env,) \
+	-f $(ROOT)/docker/compose.yml
 COMPOSE_CORE := $(COMPOSE) -f $(ROOT)/docker/compose.core.yml
 SMOKE_SECS ?= 60
 REPORTS := $(ROOT)/docs/reports
 
+CAPTURE_SECS ?= 10
+PROFILE ?= baseline
+# Prefer lab.env MARCH; else versions.env MARCH_DEFAULT; else x86-64-v3.
+ifeq ($(origin MARCH),undefined)
+  MARCH := $(if $(MARCH_DEFAULT),$(MARCH_DEFAULT),x86-64-v3)
+endif
+
+
 .PHONY: help preflight gpu-check build build-core build-protoru down logs \
-        smoke smoke-fh smoke-core fetch-golden compare-plmn
+        smoke smoke-fh smoke-core fetch-golden compare-plmn capture
 
 help:
-	@echo "OpenRU targets (GPU1 only: $(OPENRU_GPU_UUID))"
+	@echo "OpenRU targets (GPU: $$(test -f $(ROOT)/docker/lab.env && echo set || echo 'lab.env MISSING'))"
 	@echo "  make smoke-fh     M0 gate: DU(no_core)+ProtO-RU emulator, $(SMOKE_SECS)s"
 	@echo "  make smoke-core   NG Setup only (required before M4)"
 	@echo "  make smoke        alias for smoke-fh"
+	@echo "  make capture      M1: OFH pcap capture ($(CAPTURE_SECS)s, PROFILE=$(PROFILE))"
 
 preflight:
 	@$(ROOT)/scripts/gpu1_preflight.sh
@@ -97,7 +110,9 @@ smoke-fh: preflight
 	  python3 $(ROOT)/scripts/parse_smoke_fh.py \
 	    --du-log $(REPORTS)/smoke-fh-du.log \
 	    --ru-log $(REPORTS)/smoke-fh-ru.log \
-	    --secs $(SMOKE_SECS); \
+	    --secs $(SMOKE_SECS) \
+	    --json-out $(REPORTS)/smoke-fh-kpi.json \
+	    --hist-out $(REPORTS)/smoke-fh-late-hist.csv; \
 	  rc=$$?; \
 	  $(COMPOSE) --profile fh down --remove-orphans >/dev/null 2>&1; \
 	  if [ $$rc -eq 2 ]; then echo "[smoke-fh] SOFT-FAIL (lates measured; see OPEN_QUESTIONS)"; exit 2; fi; \
@@ -136,6 +151,9 @@ smoke-core: preflight
 	  $(COMPOSE_CORE) --profile core down --remove-orphans >/dev/null 2>&1; \
 	  if [ $$ok -ne 1 ]; then echo "[smoke-core] FAIL: no NG Setup Response"; tail -40 $(REPORTS)/smoke-core-du.log; exit 1; fi; \
 	  echo "[smoke-core] PASS"
+
+capture: preflight
+	@CAPTURE_SECS=$(CAPTURE_SECS) PROFILE=$(PROFILE) $(ROOT)/scripts/capture_ofh.sh
 
 fetch-golden:
 	@echo "Golden IQ fetch not configured yet (Milestone 1)."

@@ -1,4 +1,4 @@
 [submodule "external/proto-ru"]
 	path = external/proto-ru
-	url = https://github.com/NUS-CIR/ProtO-RU.git
-	branch = proto-ru
+	url = https://github.com/CLIS-WPI/ProtO-RU.git
+	branch = openru/main

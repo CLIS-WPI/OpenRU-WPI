@@ -6,23 +6,37 @@ Defaults from the Phase 1 brief; update when a human decides.
 - [ ] Golden storage: Git LFS on GitHub (default) or a WPI file share?
 - [ ] Hardware week: USRP N310 and Quectel RM520N-GL available? 10 GbE NIC with PTP timestamping?
 - [ ] Upstreaming: discuss with ProtO-RU maintainers after Milestone 2 (default) or wait for Milestone 3?
-- [ ] Repository name: `openru-sw` (default) or keep everything in `CLIS-WPI/OpenRU`?
+- [ ] Repository: keep [CLIS-WPI/OpenRU-WPI](https://github.com/CLIS-WPI/OpenRU-WPI) (current) vs rename?
 
-## Lab constraints recorded
+## Lab constraints
 
-- OpenRU Phase 1 on this host is pinned to **GPU 1** only (`GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058`). GPU 0 is reserved for other workloads.
-- Host OS is Ubuntu 22.04.5; container builds use Ubuntu 24.04.
-- Host kernel is **not** PREEMPT_RT (`6.8.0-138-generic`).
-- ROHC is **skipped, not needed for Phase 1** (`rohc-lib.org` unreachable; OFH/low-PHY path does not require ROHC).
+- GPU pin and cpusets: `docker/lab.env` (see `lab.env.example`). Not in git.
+- Host OS Ubuntu 22.04.5; containers Ubuntu 24.04; kernel **not** PREEMPT_RT.
+- ROHC **skipped, not needed for Phase 1**.
+- ProtO-RU fork: [CLIS-WPI/ProtO-RU](https://github.com/CLIS-WPI/ProtO-RU) `openru/main` @ `45dbc958`.
 
-## Proposed smoke-fh late-packet threshold (needs human OK)
+## Late-packet threshold — APPROVED (ratio, Phase 1 only)
 
-`make smoke-fh` on this non-RT host measured **late=10, drop=0 over 60 s** (**rate ≈ 0.17 late/s**) with emulator-mode ProtO-RU and GPU1. [MEASURED]
+Hard fail if, after warm-up:
 
-Proposal (do not treat as pass until agreed):
+- `drop > 0`, or
+- `late / (rx_total + tx_total) > 1e-5`
 
-- **Hard fail:** any `RX_ERR_DROP` > 0, or late_rate > **2.0 /s** over the 60 s window, or late_sum > **120** per 60 s.
-- **Soft / report-only (M0 on non-RT):** late_sum ≤ **120** and drop = 0 → record `[MEASURED]` counts/rate in `docs/reports/M0.md`, exit code 2 from `parse_smoke_fh.py` / `make smoke-fh`.
-- **Hard pass (zero late):** only on a PREEMPT_RT host or after timing/cpuset tuning brings late_sum to 0.
+Always report the **ratio** and the absolute late/drop/packet counts.  
+Prior 60 s soft-fail counts imply ≈ **6.3e-6** \[DERIVED\] (`10 / (595586+996076)`).
 
-Until a threshold is agreed, M0 fronthaul is **soft-fail with evidence**, not a silent green.
+**CPU baseline (confirmed 600 s, NUMA1 pin, warm-up=57 s)** \[MEASURED\]:
+
+- late=28, rx+tx=13 359 426, drop=0 → **ratio = 2.096e-6**
+- Full-window (incl. warm-up): late=56, ratio=3.802e-6
+- Artifacts: `docs/reports/smoke-fh-10m-kpi.json`, histogram CSV, `M0.md`
+
+From **M2 on**, every CUDA run uses the same method; M2 requires CUDA late **ratio ≤ 2.096e-6** (this baseline). A regression blocks M2.
+
+## CPU topology (this host) — pinning decision
+
+See `docs/reports/cpu-topology.md`.
+
+- SMT **off** (`Thread(s) per core: 1`); `thread_siblings_list` is a singleton — **32–63 are not SMT siblings of 0–31** (SMT re-pin clause does not apply).
+- GPU0 and GPU1 PCI are both on **NUMA0**. Optional NUMA0 OFH pin (`16-27`/`28-31`) raised 600 s late ratio **~4.9e-6 → ~6.6e-5** \[MEASURED\] (`smoke-fh-10m-numa0-*`). **Kept NUMA1** `PROTORU=32-47`, `DU=48-55` for the Phase 1 CPU baseline.
+- Recorded in `docker/lab.env.example` with this reasoning.

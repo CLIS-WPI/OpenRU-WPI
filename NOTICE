@@ -1,0 +1,28 @@
+OpenRU
+Copyright (C) 2026 CLIS-WPI contributors
+
+This product includes software derived from:
+
+  ProtO-RU
+  Copyright (C) National University of Singapore (NUS-CIR)
+  https://github.com/NUS-CIR/ProtO-RU
+  Branch/commit used as the Phase 1 base: proto-ru @ 45dbc958
+  License: AGPLv3
+
+  OCUDU (Open Celluar Unified DU)
+  https://docs.ocudu.org/
+  Upstream project on which ProtO-RU is based (OCUDU 26.04 lineage)
+  License: AGPLv3 / as stated in upstream sources
+
+ProtO-RU citation (use when citing the upstream stack):
+
+  National University of Singapore, Centre for Intelligent Sensing —
+  ProtO-RU: Protocol-oriented Open Radio Unit software
+  (https://github.com/NUS-CIR/ProtO-RU).
+
+OpenRU-specific code that is not derived from ProtO-RU/OCUDU (for example
+`src/mpd/` and some tools) may be offered under BSD-3-Clause when kept in
+separate directories; anything linked into or derived from ProtO-RU remains
+AGPLv3.
+
+See LICENSE for the full AGPLv3 text.

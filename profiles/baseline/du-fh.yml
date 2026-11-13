@@ -71,6 +71,10 @@ expert_phy:
 metrics:
   autostart_stdout_metrics: true
   enable_log: true
+  enable_verbose: true
+  layers:
+    enable_ru: true
+    enable_sched: true
 
 log:
   filename: /tmp/gnb.log
