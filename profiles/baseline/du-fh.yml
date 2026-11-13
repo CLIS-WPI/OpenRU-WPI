@@ -1,0 +1,77 @@
+# DU for smoke-fh: Open Fronthaul only, no AMF (cu_cp.amf.no_core: true).
+
+cu_cp:
+  amf:
+    no_core: true
+    # Still declare the TA the cell uses so the CU-CP identity is consistent.
+    supported_tracking_areas:
+      - tac: 7
+        plmn_list:
+          - plmn: "00101"
+            tai_slice_support_list:
+              - sst: 1
+
+ru_ofh:
+  ru_bandwidth_MHz: 20
+  t1a_max_cp_dl: 2435
+  t1a_min_cp_dl: 2250
+  t1a_max_cp_ul: 2435
+  t1a_min_cp_ul: 2250
+  t1a_max_up: 2215
+  t1a_min_up: 2050
+  ta4_max: 1480
+  ta4_min: 800
+  is_prach_cp_enabled: true
+  ignore_ecpri_payload_size: true
+  compr_method_ul: bfp
+  compr_bitwidth_ul: 9
+  compr_method_dl: bfp
+  compr_bitwidth_dl: 9
+  compr_method_prach: bfp
+  compr_bitwidth_prach: 9
+  enable_ul_static_compr_hdr: true
+  enable_dl_static_compr_hdr: true
+  iq_scaling: 16
+  cells:
+    - network_interface: eth0
+      ru_mac_addr: 02:00:00:00:00:20
+      du_mac_addr: 02:00:00:00:00:10
+      # Untagged on docker bridge; must match ProtO-RU.
+      dl_port_id: [0, 1]
+      ul_port_id: [0, 1]
+      prach_port_id: [4, 5]
+
+cell_cfg:
+  dl_arfcn: 628032
+  band: 78
+  channel_bandwidth_MHz: 20
+  common_scs: 30
+  plmn: "00101"
+  tac: 7
+  pci: 1
+  nof_antennas_dl: 2
+  nof_antennas_ul: 2
+  prach:
+    prach_config_index: 159
+    prach_root_sequence_index: 1
+    zero_correlation_zone: 0
+    prach_frequency_start: 0
+  tdd_ul_dl_cfg:
+    dl_ul_tx_period: 5
+    nof_dl_slots: 3
+    nof_dl_symbols: 10
+    nof_ul_slots: 1
+    nof_ul_symbols: 2
+
+expert_phy:
+  allow_request_on_empty_uplink_slot: true
+  max_proc_delay: 10
+  pusch_dec_max_iterations: 15
+
+metrics:
+  autostart_stdout_metrics: true
+  enable_log: true
+
+log:
+  filename: /tmp/gnb.log
+  all_level: info

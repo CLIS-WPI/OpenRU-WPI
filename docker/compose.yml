@@ -1,0 +1,133 @@
+# OpenRU Phase 1 — GPU1-only. No privileged on du/protoru.
+name: openru
+
+x-gpu1: &gpu1
+  driver: nvidia
+  device_ids:
+    - ${OPENRU_GPU_UUID:-GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058}
+  capabilities: [gpu]
+
+services:
+  core:
+    image: openru/core:${OPENRU_TAG:-m0}
+    build:
+      context: ../external/proto-ru/docker/open5gs
+      dockerfile: Dockerfile
+      target: open5gs
+      args:
+        OS_VERSION: "22.04"
+        OPEN5GS_VERSION: ${OPEN5GS_VERSION:-v2.7.6}
+    env_file:
+      - ../external/proto-ru/docker/open5gs/open5gs.env
+    privileged: true
+    command: 5gc -c open5gs-5gc.yml
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z 127.0.0.20 7777"]
+      interval: 3s
+      timeout: 1s
+      retries: 60
+    networks:
+      core:
+        ipv4_address: 10.53.1.2
+    profiles: ["core", "full"]
+
+  ocudu:
+    image: openru/protoru:${OPENRU_TAG:-m0}
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.protoru
+      target: runtime
+      args:
+        OS_VERSION: ${OS_VERSION:-24.04}
+        UHD_VERSION: ${UHD_VERSION:-4.7.0.0}
+        DPDK_VERSION: ${DPDK_VERSION:-24.11.2}
+        CUDA_RUNTIME_IMAGE: ${CUDA_RUNTIME_IMAGE:-nvidia/cuda:12.6.0-runtime-ubuntu24.04}
+    profiles: ["build"]
+    command: ["true"]
+
+  du:
+    image: openru/protoru:${OPENRU_TAG:-m0}
+    entrypoint: ["/usr/local/bin/gnb"]
+    cap_add: [NET_RAW, NET_ADMIN, SYS_NICE, IPC_LOCK]
+    ulimits:
+      rtprio: 99
+      memlock: -1
+    cpuset: ${DU_CPUSET:-48-55}
+    volumes:
+      - du-logs:/tmp
+    configs:
+      - source: du_config
+        target: /opt/du.yml
+    # IMPORTANT: only attach the network(s) needed for the active profile.
+    # If both fh and core are attached, Docker may assign core as eth0 and OFH
+    # (configured for eth0) silently binds the wrong NIC. smoke-fh → fh only;
+    # smoke-core → core only (see networks below + Makefile env).
+    networks:
+      fh:
+        ipv4_address: 10.54.1.10
+        mac_address: "02:00:00:00:00:10"
+    command: ["-c", "/opt/du.yml"]
+    profiles: ["fh"]
+
+  protoru:
+    image: openru/protoru:${OPENRU_TAG:-m0}
+    # Never privileged — breaks GPU1 pin.
+    entrypoint: ["/bin/bash", "-lc"]
+    cap_add: [NET_RAW, NET_ADMIN, SYS_NICE, IPC_LOCK]
+    ulimits:
+      rtprio: 99
+      memlock: -1
+    cpuset: ${PROTORU_CPUSET:-32-47}
+    gpus:
+      - driver: nvidia
+        device_ids:
+          - ${OPENRU_GPU_UUID:-GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058}
+        capabilities: [gpu]
+    environment:
+      NVIDIA_VISIBLE_DEVICES: ${OPENRU_GPU_UUID:-GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058}
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+      CUDA_DEVICE_ORDER: PCI_BUS_ID
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - *gpu1
+    volumes:
+      - protoru-logs:/tmp
+      - ../docs/reports:/reports
+    configs:
+      - source: protoru_config
+        target: /opt/protoru.yml
+    depends_on:
+      - du
+    networks:
+      fh:
+        ipv4_address: 10.54.1.20
+        mac_address: "02:00:00:00:00:20"
+    command:
+      - "nvidia-smi -L && exec ru_emulator -c /opt/protoru.yml"
+    profiles: ["fh", "full"]
+
+configs:
+  du_config:
+    file: ${DU_CONFIG_PATH:-../profiles/baseline/du-fh.yml}
+  protoru_config:
+    file: ${PROTORU_CONFIG_PATH:-../profiles/baseline/protoru.yml}
+
+volumes:
+  du-logs:
+  protoru-logs:
+
+networks:
+  fh:
+    name: openru_fh
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.54.1.0/24
+  core:
+    name: openru_core
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.53.1.0/24

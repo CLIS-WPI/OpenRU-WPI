@@ -1,0 +1,13 @@
+build/
+*.o
+*.a
+*.so
+__pycache__/
+*.pyc
+.env
+*.cf32
+testdata/golden/
+docs/reports/smoke-*.log
+docs/reports/smoke-gpu.txt
+docs/reports/build-*.log
+.DS_Store

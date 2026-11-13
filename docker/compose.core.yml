@@ -1,0 +1,8 @@
+# smoke-core overlay: DU speaks N2 on the core network only (no fh NIC).
+# Use: docker compose -f docker/compose.yml -f docker/compose.core.yml --profile core ...
+services:
+  du:
+    profiles: ["core"]
+    networks: !override
+      core:
+        ipv4_address: 10.53.1.6

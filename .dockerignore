@@ -1,0 +1,11 @@
+.git
+**/build/
+docs/reports/*.log
+**/*.cf32
+testdata/golden/
+**/__pycache__/
+**/.git/modules/
+external/proto-ru/.git
+external/proto-ru/build
+**/*.o
+**/*.a

@@ -1,0 +1,2 @@
+# Default compose DU config points at du-fh.yml (see docker/compose.yml).
+# Use profiles/baseline/du-fh.yml for smoke-fh and du-core.yml for smoke-core.
