@@ -28,6 +28,9 @@ output against the CPU reference (`iq_compression_bfp_impl`, `iq_compression_bfp
 | `tests/test_lowphy.cpp` | Standalone kernel correctness and timing harness. |
 | `tests/test_pipeline.cpp` | Device-resident pipeline vs CPU comparison harness. |
 | `tests/test_cpu_baseline.cpp` | Fair CPU baseline (FFTW / AVX-512) and cores-needed. |
+| `include/lowphy_precoding.h` | Category-B precoding / UL combining CUDA API. |
+| `kernels/precoding.cu` | Per-PRB layers→ports (DL) and Wᴴ combine (UL). |
+| `tests/test_scaling.cpp` | Port scaling study harness + CSV writer. |
 | `CMakeLists.txt` | Standalone build against a prepared OCUDU build tree. |
 
 ## BFP compression

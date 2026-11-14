@@ -21,7 +21,8 @@ find_package(CUDAToolkit REQUIRED)
 add_library(lowphy_cuda STATIC
   kernels/bfp_kernels.cu
   kernels/ofdm_cufft.cu
-  kernels/pipeline.cu)
+  kernels/pipeline.cu
+  kernels/precoding.cu)
 target_include_directories(lowphy_cuda PUBLIC include)
 target_compile_options(lowphy_cuda PRIVATE
   $<$<COMPILE_LANGUAGE:CUDA>:-O3>)
@@ -45,7 +46,8 @@ set(OCUDU_INCLUDE_DIRS
   "${PROTO_RU}/external"
   "${PROTO_RU}/external/fmt/include"
   "${PROTO_RU}/lib/ofh/compression"
-  "${PROTO_RU}/lib/phy/lower/modulation")
+  "${PROTO_RU}/lib/phy/lower/modulation"
+  "${PROTO_RU}/lib/phy/generic_functions/precoding")
 
 add_executable(test_lowphy
   tests/test_lowphy.cpp
@@ -100,6 +102,26 @@ target_compile_definitions(test_cpu_baseline PRIVATE BUILD_TYPE_RELEASE NDEBUG)
 target_compile_options(test_cpu_baseline PRIVATE -O3 -march=x86-64-v4)
 
 target_link_libraries(test_cpu_baseline PRIVATE
+  "-Wl,--start-group"
+  ${OCUDU_FAIR_LIBRARIES}
+  "-Wl,--end-group"
+  "${FFTW3F_ROOT}/lib/libfftw3f.so"
+  "/home/tanglab/miniconda3/lib/libyaml-cpp.so"
+  pthread
+  dl
+  m)
+
+list(APPEND OCUDU_FAIR_LIBRARIES
+  "${OCUDU_FAIR_BUILD}/lib/phy/generic_functions/precoding/libocudu_channel_precoder.a")
+
+add_executable(test_scaling
+  tests/test_scaling.cpp)
+target_include_directories(test_scaling PRIVATE include ${OCUDU_INCLUDE_DIRS} "${FFTW3F_ROOT}/include")
+target_compile_definitions(test_scaling PRIVATE BUILD_TYPE_RELEASE NDEBUG)
+target_compile_options(test_scaling PRIVATE -O3 -march=x86-64-v4)
+
+target_link_libraries(test_scaling PRIVATE
+  lowphy_cuda
   "-Wl,--start-group"
   ${OCUDU_FAIR_LIBRARIES}
   "-Wl,--end-group"
