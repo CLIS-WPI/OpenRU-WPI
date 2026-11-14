@@ -4,7 +4,7 @@ Environment:
 
 - GPU: NVIDIA H100 NVL, compute capability 9.0 ([MEASURED])
 - CUDA: 12.5, cuFFT from the same toolkit
-- Reference: OCUDU `external/proto-ru` at `8937cab`, Release build, generic DFT
+- Reference: OCUDU `external/proto-ru` at `8937cab`, Release build, generic DFT. Still valid through `790b899`: no changes in `lib/ofh/compression`, `lib/phy/lower/modulation`, `generic_functions`, or `phy/support` between those commits.
 - Host buffers: pinned memory, 3 warm-up iterations, 30 measured iterations
 - Command: `CUDA_VISIBLE_DEVICES=GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058 ./build/test_lowphy --iters 30`
 - Measurement lock: `/tmp/openru-measure.lock` was absent immediately before the build and before the GPU run.
