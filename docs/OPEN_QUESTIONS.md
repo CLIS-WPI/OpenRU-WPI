@@ -51,3 +51,13 @@ See `docs/reports/cpu-topology.md`.
 - SMT **off** (`Thread(s) per core: 1`); `thread_siblings_list` is a singleton — **32–63 are not SMT siblings of 0–31** (SMT re-pin clause does not apply).
 - GPU0 and GPU1 PCI are both on **NUMA0**. Optional NUMA0 OFH pin (`16-27`/`28-31`) raised 600 s late ratio **~4.9e-6 → ~6.6e-5** \[MEASURED\] (`smoke-fh-10m-numa0-*`). **Kept NUMA1** `PROTORU=32-47`, `DU=48-55` for the Phase 1 CPU baseline.
 - Recorded in `docker/lab.env.example` with this reasoning.
+
+## Upstream candidate: OCUDU PRG-view precoding path [MEASURED]
+
+`lib/phy/support/resource_grid_mapper_impl.cpp:245-263` calls the precoder through
+per-PRG views (`precoding.get_prg_coefficients`, `re_buffer_reader_view` /
+`re_buffer_writer_view`, `apply_precoding`) with 1-PRB PRGs. At 2x2 / 2 layers
+(100 MHz, 30 kHz) that production path measures **0.511 ms** per slot vs **0.120 ms**
+for a plain AVX-512 Cat-B strip on the same core — **~4x slower**. Upstream candidate:
+hoist/cache the PRG weights and widen the inner kernel beyond 12 REs. [MEASURED]
+Artifacts: `src/cuda/standalone/RESULTS_SCALING.md` (PR #4), `scaling_results.csv`.
