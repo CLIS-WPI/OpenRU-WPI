@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (C) 2026 Software Radio Systems Limited
 // SPDX-License-Identifier: BSD-3-Clause-Open-MPI
 
-#include "lowphy_cuda.h"
+#include "ofdm_radix2_reference.h"
 
 namespace {
 
@@ -72,7 +72,7 @@ __device__ __forceinline__ unsigned bit_reverse(unsigned value, unsigned logn)
   return __brev(value) >> (32 - logn);
 }
 
-__global__ void ofdm_modulate_kernel(lowphy_ofdm_mod_params params)
+__global__ void ofdm_modulate_kernel(lowphy_radix2_mod_params params)
 {
   extern __shared__ __align__(16) unsigned char smem_raw[];
   lowphy_cf32* s = reinterpret_cast<lowphy_cf32*>(smem_raw);
@@ -135,7 +135,7 @@ __global__ void ofdm_modulate_kernel(lowphy_ofdm_mod_params params)
   }
 }
 
-__global__ void ofdm_demodulate_kernel(lowphy_ofdm_demod_params params)
+__global__ void ofdm_demodulate_kernel(lowphy_radix2_demod_params params)
 {
   extern __shared__ __align__(16) unsigned char smem_raw[];
   lowphy_cf32* s = reinterpret_cast<lowphy_cf32*>(smem_raw);
@@ -190,13 +190,13 @@ __global__ void ofdm_demodulate_kernel(lowphy_ofdm_demod_params params)
 
 } // namespace
 
-void lowphy_ofdm_modulate(const lowphy_ofdm_mod_params& params, cudaStream_t stream)
+void lowphy_radix2_modulate(const lowphy_radix2_mod_params& params, cudaStream_t stream)
 {
   dim3 grid_dim(params.nof_ports, params.nof_symbols_per_slot);
   ofdm_modulate_kernel<<<grid_dim, THREADS_PER_BLOCK, params.dft_size * sizeof(lowphy_cf32), stream>>>(params);
 }
 
-void lowphy_ofdm_demodulate(const lowphy_ofdm_demod_params& params, cudaStream_t stream)
+void lowphy_radix2_demodulate(const lowphy_radix2_demod_params& params, cudaStream_t stream)
 {
   dim3 grid_dim(params.nof_ports, params.nof_symbols_per_slot);
   ofdm_demodulate_kernel<<<grid_dim, THREADS_PER_BLOCK, params.dft_size * sizeof(lowphy_cf32), stream>>>(params);

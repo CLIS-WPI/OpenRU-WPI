@@ -20,7 +20,9 @@ output against the CPU reference (`iq_compression_bfp_impl`, `iq_compression_bfp
 |---|---|
 | `include/lowphy_cuda.h` | Public C++ interface, parameter structs and launch declarations. |
 | `kernels/bfp_kernels.cu` | BFP compress/decompress kernels. |
-| `kernels/ofdm_kernels.cu` | OFDM modulate/demodulate kernels. |
+| `kernels/ofdm_cufft.cu` | cuFFT-backed OFDM plan and pre/FFT/post stages. |
+| `tests/ofdm_radix2_reference.cu` | Test-only radix-2 FFT reference (power-of-two sizes). |
+| `tests/ofdm_radix2_reference.h` | Test-only radix-2 reference interface. |
 | `tests/test_lowphy.cpp` | Correctness and timing harness. |
 | `CMakeLists.txt` | Standalone build against a prepared OCUDU build tree. |
 
@@ -52,6 +54,8 @@ The packing layout is `1 + ceil(24 * width / 8)` bytes per PRB.
 - Decompression computes each sample's bit offset, reads at most two 32-bit words, and
   reconstructs `float = int16 * 2^exponent / 32767`, then rounds to `bf16` with the same
   integer trick as `ocudu::to_bf16`.
+- The decompressor bounds-checks the packed byte range so an unaligned PRB at the end of
+  the buffer cannot read past it.
 
 `__float2int_rn` is used for quantization so the GPU rounds identically to the SSE/AVX
 round-to-nearest-even conversion used by the CPU SIMD path. The compressed stream is a
@@ -65,54 +69,78 @@ width and every profile tested.
 - Grid layout is `[port][symbol][subcarrier]`, with `cbf16_t` elements in the resource
   grid. Subcarriers are DC-centred: subcarrier 0 maps to DFT bin `N - bw/2`, subcarrier
   `bw/2` maps to DC and subcarrier `bw - 1` maps to bin `bw/2 - 1`.
-- The modulator uses an unnormalised inverse DFT (twiddle sign `+1`), multiplies the
-  result by `phase(symbol) * scale`, and copies the cyclic prefix from the tail of the
-  body.
-- The demodulator uses an unnormalised direct DFT (twiddle sign `-1`), multiplies by
-  `phase(symbol) * scale`, and writes the DC-centred bins back to the grid.
+- The modulator uses an unnormalised inverse DFT, multiplies the result by
+  `phase(symbol) * scale`, and copies the cyclic prefix from the tail of the body.
+- The demodulator uses an unnormalised direct DFT, multiplies by `phase(symbol) * scale`,
+  and writes the DC-centred bins back to the grid.
 - `phase(symbol)` is the TS 38.211 Section 5.4 compensation coefficient. For the
   modulator it is built with `is_tx = true`, for the demodulator with `is_tx = false`.
+- The DFT size is derived from the sampling rate exactly as the lower PHY does:
+  `ocudu::sampling_rate::from_Hz(srate).get_dft_size(scs)`. The three test profiles are
+  23.04 MHz / 51 PRB / DFT 768, 46.08 MHz / 106 PRB / DFT 1536 and
+  122.88 MHz / 273 PRB / DFT 4096.
 
 ### Kernel design
 
-- One thread block per `(port, symbol)`.
-- The DFT input is written directly in bit-reversed order into shared memory, so the
-  iterative radix-2 decimation-in-time stages can run without a separate permutation.
+- `lowphy_ofdm_plan` owns one `cufftPlanMany` per `(dft_size, nof_ports)` and one per
+  direction, plus the complex input/output scratch buffers.
+- The plan batches all ports and all 14 symbols of a slot into a single C2C transform
+  (`batch = nof_ports * 14`, contiguous `istride = ostride = 1`, `idist = odist = N`).
+- Modulation and demodulation are each split into three stages on the same stream:
+  1. A pre kernel maps the resource grid into the cuFFT input (modulation) or copies the
+     CP-stripped time samples into the cuFFT input (demodulation).
+  2. `cufftExecC2C` runs the unnormalised inverse or direct transform for the whole slot.
+  3. A post kernel applies phase compensation and scaling, converts to `ci16` and
+     inserts the CP (modulation), or maps the bins back into the `cf32` grid
+     (demodulation).
 - Complex multiplies use `__fmaf_rn`/`__fmul_rn` with the same operand order as
-  `ocudu_simd_cf_prod`, so the twiddle and phase products round like the CPU AVX-512 path.
-- The twiddle table is generated on the host with
-  `std::polar(1.0f, sign * 2 * pi * k / N)` for `k` in `[0, N/2)`.
-- Guard subcarriers are explicitly zeroed. The cyclic prefix is copied from
-  `body[N - cp_len + n]`.
-- Modulation writes `ci16_t` with saturation. Demodulation writes `cf32` so the harness
-  can measure the numerical error before the production `cbf16` quantization step.
+  `ocudu_simd_cf_prod`.
+- Guard subcarriers are explicitly zeroed in both directions. The cyclic prefix is
+  inserted from `body[N - cp_len + n]`.
+- One pre launch, one cuFFT execution and one post launch cover the whole slot; the
+  harness times them separately.
+- `tests/ofdm_radix2_reference.cu` keeps the original radix-2 DIT kernel as a
+  test-only cross-check. It is compiled into the test executable, not into the library,
+  and only runs for power-of-two DFT sizes (4096 in this configuration). It is not part
+  of the production path.
+
+### Acceptance criteria
+
+Per profile and port count, over the two slots of the subframe:
+
+- Modulation: `max |gpu - cpu| <= 1` ci16 LSB, and
+  `10 log10(sum |gpu-cpu|^2 / sum |cpu|^2) <= -60 dB`.
+- Demodulation: the same measurements on the unquantised `cf32` grid, with the error
+  expressed in ci16 LSB (`|gpu - cpu| * 32767`). A sample counts as differing when its
+  error is at least 0.5 LSB.
 
 ### Numerical result
 
 - BFP: zero differing bytes and zero differing `bf16` values against both CPU
   implementations, for widths 8, 9, 10, 12 and 16.
-- Modulation: identical `ci16` output except for a small number of samples that differ by
-  exactly 1 LSB (at most 28 of 30,720 samples for 20 MHz / 2 ports and 644 of 245,760
-  samples for 100 MHz / 4 ports, per slot). The difference comes from the CPU radix-2
-  base cases using direct DFT evaluation while the GPU uses radix-2 butterflies; both are
-  mathematically identical and the observed deviation is one quantization step.
-- Demodulation: maximum relative error `4.4e-7`, maximum absolute error `3.4e-7`,
-  sampled on the unquantized `cf32` grid.
+- Modulation: at most 1 LSB difference on a small fraction of samples; error power
+  between `-102` and `-105` dB relative to the signal for every profile and port count.
+- Demodulation: maximum error between `0.0066` and `0.0209` LSB; zero samples differ by
+  0.5 LSB or more; error power between `-129` and `-130` dB.
+- The radix-2 test-only reference also matches the CPU within 1 LSB on the 4096 profile,
+  which confirms the cuFFT result is not an artefact of a shared mapping bug.
 
 ## Timing methodology
 
-The harness allocates pinned host buffers, warms each kernel three times, then runs 30
-iterations per configuration on an NVIDIA H100 NVL (compute capability 9.0). CUDA events
-time the host-to-device copy, the kernel and the device-to-host copy separately. The
-reported kernel times are compute-only and exclude copies. The harness pins the GPU with
-`CUDA_VISIBLE_DEVICES`; it never touches the other device on the host.
+The harness allocates pinned host buffers, warms each configuration three times, then
+runs 30 iterations per configuration on an NVIDIA H100 NVL (compute capability 9.0).
+CUDA events time host-to-device, pre kernel, cuFFT, post kernel and device-to-host
+separately. The reported OFDM compute time is `pre + cuFFT + post` and excludes copies.
+The harness pins the GPU with `CUDA_VISIBLE_DEVICES`; it never touches the other device
+on the host. Before each build and GPU run the harness operator confirms that
+`/tmp/openru-measure.lock` is absent.
 
 ## Limitations
 
 - The demodulator is intentionally `cf32`; production integration must add the same
   `bf16` quantization used by the resource-grid writer.
-- The modulator uses a per-symbol block launch. A production integration would batch
-  all symbols of a slot, or all slots of a subframe, into a single launch.
-- The FFT is a straightforward radix-2 kernel. It is not the fastest possible GPU FFT;
-  it is chosen because its floating-point operation order is the closest match to the
-  CPU reference and it keeps the bit-exactness argument simple.
+- The plan is created per `(dft_size, nof_ports)` and per direction; a production
+  integration should cache it in the lower-PHY processor and reuse it across slots.
+- cuFFT is a closed-source library. The numerical comparison above is the evidence that
+  its single-precision transform matches the OCUDU generic DFT within the acceptance
+  bounds; the radix-2 reference remains available for independent spot checks.

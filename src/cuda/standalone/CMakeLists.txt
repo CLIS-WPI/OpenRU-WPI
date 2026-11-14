@@ -18,11 +18,11 @@ find_package(CUDAToolkit REQUIRED)
 
 add_library(lowphy_cuda STATIC
   kernels/bfp_kernels.cu
-  kernels/ofdm_kernels.cu)
+  kernels/ofdm_cufft.cu)
 target_include_directories(lowphy_cuda PUBLIC include)
 target_compile_options(lowphy_cuda PRIVATE
   $<$<COMPILE_LANGUAGE:CUDA>:-O3>)
-target_link_libraries(lowphy_cuda PUBLIC CUDA::cudart)
+target_link_libraries(lowphy_cuda PUBLIC CUDA::cudart CUDA::cufft)
 
 set(OCUDU_LIBRARIES
   "${OCUDU_BUILD}/lib/phy/lower/modulation/libocudu_lower_phy_modulation.a"
@@ -44,7 +44,9 @@ set(OCUDU_INCLUDE_DIRS
   "${PROTO_RU}/lib/ofh/compression"
   "${PROTO_RU}/lib/phy/lower/modulation")
 
-add_executable(test_lowphy tests/test_lowphy.cpp)
+add_executable(test_lowphy
+  tests/test_lowphy.cpp
+  tests/ofdm_radix2_reference.cu)
 target_include_directories(test_lowphy PRIVATE include ${OCUDU_INCLUDE_DIRS})
 target_compile_definitions(test_lowphy PRIVATE BUILD_TYPE_RELEASE NDEBUG)
 target_compile_options(test_lowphy PRIVATE -O3 -march=native)

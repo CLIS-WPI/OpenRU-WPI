@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: BSD-3-Clause-Open-MPI
 
 #include "lowphy_cuda.h"
+#include "ofdm_radix2_reference.h"
 
 #include "iq_compression_bfp_avx2.h"
 #include "iq_compression_bfp_impl.h"
@@ -16,6 +17,7 @@
 #include "ocudu/phy/lower/modulation/modulation_factories.h"
 #include "ocudu/phy/lower/modulation/ofdm_demodulator.h"
 #include "ocudu/phy/lower/modulation/ofdm_modulator.h"
+#include "ocudu/phy/lower/sampling_rate.h"
 #include "ocudu/phy/support/resource_grid.h"
 #include "ocudu/phy/support/resource_grid_reader.h"
 #include "ocudu/phy/support/resource_grid_writer.h"
@@ -56,7 +58,7 @@ constexpr float    GRID_SCALE           = 1.0f / 128.0f;
 struct profile {
   const char* name;
   unsigned    bw_rb;
-  unsigned    dft_size;
+  unsigned    srate_Hz;
 };
 
 struct capture_writer : public ocudu::resource_grid_writer {
@@ -193,6 +195,89 @@ timing measure(Launch       launch,
   return {h2d / iterations, kernel / iterations, d2h / iterations};
 }
 
+struct ofdm_timing {
+  double h2d_ms;
+  double pre_ms;
+  double fft_ms;
+  double post_ms;
+  double d2h_ms;
+};
+
+template <typename Pre, typename Fft, typename Post>
+ofdm_timing measure_ofdm(Pre          pre,
+                         Fft          fft,
+                         Post         post,
+                         void*        device_input,
+                         const void*  host_input,
+                         size_t       input_bytes,
+                         void*        device_output,
+                         void*        host_output,
+                         size_t       output_bytes,
+                         unsigned     iterations,
+                         cudaStream_t stream)
+{
+  constexpr unsigned WARMUP = 3;
+
+  for (unsigned i = 0; i != WARMUP; ++i) {
+    CUDA_CHECK(cudaMemcpyAsync(device_input, host_input, input_bytes, cudaMemcpyHostToDevice, stream));
+    pre();
+    fft();
+    post();
+    CUDA_CHECK(cudaMemcpyAsync(host_output, device_output, output_bytes, cudaMemcpyDeviceToHost, stream));
+  }
+  CUDA_CHECK(cudaStreamSynchronize(stream));
+
+  cudaEvent_t events[6];
+  for (cudaEvent_t& event : events) {
+    CUDA_CHECK(cudaEventCreate(&event));
+  }
+
+  double h2d  = 0.0;
+  double pre_ms  = 0.0;
+  double fft_ms  = 0.0;
+  double post_ms = 0.0;
+  double d2h  = 0.0;
+
+  for (unsigned i = 0; i != iterations; ++i) {
+    CUDA_CHECK(cudaEventRecord(events[0], stream));
+    CUDA_CHECK(cudaMemcpyAsync(device_input, host_input, input_bytes, cudaMemcpyHostToDevice, stream));
+    CUDA_CHECK(cudaEventRecord(events[1], stream));
+
+    pre();
+    CUDA_CHECK(cudaEventRecord(events[2], stream));
+
+    fft();
+    CUDA_CHECK(cudaEventRecord(events[3], stream));
+
+    post();
+    CUDA_CHECK(cudaEventRecord(events[4], stream));
+
+    CUDA_CHECK(cudaMemcpyAsync(host_output, device_output, output_bytes, cudaMemcpyDeviceToHost, stream));
+    CUDA_CHECK(cudaEventRecord(events[5], stream));
+    CUDA_CHECK(cudaEventSynchronize(events[5]));
+
+    float elapsed = 0.0f;
+    CUDA_CHECK(cudaEventElapsedTime(&elapsed, events[0], events[1]));
+    h2d += elapsed;
+    CUDA_CHECK(cudaEventElapsedTime(&elapsed, events[1], events[2]));
+    pre_ms += elapsed;
+    CUDA_CHECK(cudaEventElapsedTime(&elapsed, events[2], events[3]));
+    fft_ms += elapsed;
+    CUDA_CHECK(cudaEventElapsedTime(&elapsed, events[3], events[4]));
+    post_ms += elapsed;
+    CUDA_CHECK(cudaEventElapsedTime(&elapsed, events[4], events[5]));
+    d2h += elapsed;
+  }
+
+  for (cudaEvent_t event : events) {
+    CUDA_CHECK(cudaEventDestroy(event));
+  }
+
+  CUDA_CHECK(cudaGetLastError());
+
+  return {h2d / iterations, pre_ms / iterations, fft_ms / iterations, post_ms / iterations, d2h / iterations};
+}
+
 struct bfp_result {
   size_t compress_mismatches;
   int    compress_max_diff;
@@ -203,22 +288,31 @@ struct bfp_result {
 
 struct ofdm_result {
   size_t mod_mismatches;
-  int    mod_max_diff;
-  double demod_max_abs;
-  double demod_max_rel;
-  size_t demod_exact;
-  size_t demod_total;
+  int    mod_max_lsb;
+  double mod_error_db;
+  double demod_max_lsb;
+  size_t demod_mismatches;
+  double demod_error_db;
+  bool   pass;
+};
+
+struct radix2_result {
+  std::string profile_name;
+  unsigned    dft_size;
+  unsigned    ports;
+  int         max_lsb;
 };
 
 struct timing_case {
   std::string profile_name;
+  unsigned    dft_size;
   unsigned    ports;
   timing      bfp9_compress;
   timing      bfp9_decompress;
   timing      bfp16_compress;
   timing      bfp16_decompress;
-  timing      mod;
-  timing      demod;
+  ofdm_timing mod;
+  ofdm_timing demod;
 };
 
 void fill_random_grid(std::vector<ocudu::cbf16_t>& grid, float scale, uint32_t seed)
@@ -236,6 +330,17 @@ std::vector<ocudu::cf_t> convert_ci16_to_cf(const std::vector<ocudu::ci16_t>& in
   std::vector<ocudu::cf_t> output(input.size());
   ocudu::ocuduvec::convert(ocudu::span<ocudu::cf_t>(output), ocudu::span<const ocudu::ci16_t>(input), 32767.0f);
   return output;
+}
+
+double power_ratio_db(double error_energy, double signal_energy)
+{
+  if (error_energy == 0.0) {
+    return -INFINITY;
+  }
+  if (signal_energy == 0.0) {
+    return 0.0;
+  }
+  return 10.0 * std::log10(error_energy / signal_energy);
 }
 
 } // namespace
@@ -261,9 +366,9 @@ int main(int argc, char** argv)
   std::printf("Device: %s (compute capability %d.%d)\n\n", device_prop.name, device_prop.major, device_prop.minor);
 
   const std::vector<profile> profiles = {
-      {"20 MHz", 51, 1024},
-      {"40 MHz", 106, 2048},
-      {"100 MHz", 273, 4096},
+      {"20 MHz", 51, 23040000u},
+      {"40 MHz", 106, 46080000u},
+      {"100 MHz", 273, 122880000u},
   };
 
   const std::vector<unsigned> port_counts = {2, 4};
@@ -278,19 +383,47 @@ int main(int argc, char** argv)
   }
 
   std::vector<ofdm_result> ofdm_results;
-  std::vector<std::string> ofdm_profile_names;
-  std::vector<unsigned>    ofdm_port_counts;
-  std::vector<timing_case> timing_results;
+  std::vector<std::string>  ofdm_profile_names;
+  std::vector<unsigned>     ofdm_dft_sizes;
+  std::vector<unsigned>     ofdm_port_counts;
+  std::vector<radix2_result> radix2_results;
+  std::vector<timing_case>  timing_results;
+  bool                      all_pass = true;
 
   for (const profile& profile : profiles) {
-    const ocudu::subcarrier_spacing scs              = ocudu::subcarrier_spacing::kHz30;
-    const ocudu::cyclic_prefix      cp               = ocudu::cyclic_prefix::NORMAL;
-    const unsigned                  numerology       = ocudu::to_numerology_value(scs);
-    const unsigned                  nof_slots_sf     = ocudu::get_nof_slots_per_subframe(scs);
-    const unsigned                  nof_symbols_sf   = nof_slots_sf * NOF_SYMBOLS_PER_SLOT;
-    const unsigned                  rg_size          = profile.bw_rb * ocudu::NOF_SUBCARRIERS_PER_RB;
-    const unsigned                  nof_prbs         = profile.bw_rb;
-    const double                    sampling_rate_Hz = ocudu::to_sampling_rate_Hz(scs, profile.dft_size);
+    const ocudu::subcarrier_spacing scs        = ocudu::subcarrier_spacing::kHz30;
+    const ocudu::cyclic_prefix      cp         = ocudu::cyclic_prefix::NORMAL;
+    const unsigned                  numerology = ocudu::to_numerology_value(scs);
+    const unsigned                  nof_slots_sf   = ocudu::get_nof_slots_per_subframe(scs);
+    const unsigned                  nof_symbols_sf = nof_slots_sf * NOF_SYMBOLS_PER_SLOT;
+    const ocudu::sampling_rate      srate         = ocudu::sampling_rate::from_Hz(profile.srate_Hz);
+
+    if (!srate.is_valid(scs)) {
+      std::fprintf(stderr,
+                   "Unsupported sampling rate %u Hz for SCS %u kHz in profile %s.\n",
+                   profile.srate_Hz,
+                   ocudu::scs_to_khz(scs),
+                   profile.name);
+      return 1;
+    }
+
+    const unsigned dft_size         = srate.get_dft_size(scs);
+    const double   sampling_rate_Hz = static_cast<double>(srate.to_Hz());
+    const unsigned rg_size          = profile.bw_rb * ocudu::NOF_SUBCARRIERS_PER_RB;
+    const unsigned nof_prbs         = profile.bw_rb;
+    const bool     power_of_two     = (dft_size & (dft_size - 1)) == 0;
+
+    std::printf("Profile %s: srate %.2f MHz, SCS %u kHz, DFT %u, BW %u PRB\n",
+                profile.name,
+                srate.to_MHz(),
+                ocudu::scs_to_khz(scs),
+                dft_size,
+                profile.bw_rb);
+
+    if (dft_size <= rg_size) {
+      std::fprintf(stderr, "Invalid DFT size %u for resource grid size %u.\n", dft_size, rg_size);
+      return 1;
+    }
 
     std::vector<unsigned> cp_len(nof_symbols_sf);
     std::vector<unsigned> symbol_start(nof_symbols_sf);
@@ -298,11 +431,11 @@ int main(int argc, char** argv)
     for (unsigned symbol = 0; symbol != nof_symbols_sf; ++symbol) {
       cp_len[symbol]       = cp.get_length(symbol, scs).to_samples(sampling_rate_Hz);
       symbol_start[symbol] = sample_offset;
-      sample_offset += cp_len[symbol] + profile.dft_size;
+      sample_offset += cp_len[symbol] + dft_size;
     }
 
-    ocudu::phase_compensation_lut mod_phase(scs, cp, profile.dft_size, CENTER_FREQ_HZ, true);
-    ocudu::phase_compensation_lut demod_phase(scs, cp, profile.dft_size, CENTER_FREQ_HZ, false);
+    ocudu::phase_compensation_lut mod_phase(scs, cp, dft_size, CENTER_FREQ_HZ, true);
+    ocudu::phase_compensation_lut demod_phase(scs, cp, dft_size, CENTER_FREQ_HZ, false);
 
     std::vector<lowphy_cf32> phase_mod(nof_symbols_sf);
     std::vector<lowphy_cf32> phase_demod(nof_symbols_sf);
@@ -313,15 +446,21 @@ int main(int argc, char** argv)
       phase_demod[symbol]     = {coefficient.real(), coefficient.imag()};
     }
 
-    std::vector<lowphy_cf32> twiddles_mod(profile.dft_size / 2);
-    std::vector<lowphy_cf32> twiddles_demod(profile.dft_size / 2);
-    const float              two_pi = 2.0F * static_cast<float>(M_PI);
-    for (unsigned k = 0; k != profile.dft_size / 2; ++k) {
-      ocudu::cf_t coefficient =
-          std::polar(1.0F, two_pi * static_cast<float>(k) / static_cast<float>(profile.dft_size));
-      twiddles_mod[k] = {coefficient.real(), coefficient.imag()};
-      coefficient     = std::polar(1.0F, -two_pi * static_cast<float>(k) / static_cast<float>(profile.dft_size));
-      twiddles_demod[k] = {coefficient.real(), coefficient.imag()};
+    std::vector<lowphy_cf32> twiddles_mod;
+    lowphy_cf32*             device_twiddles_mod = nullptr;
+    if (power_of_two) {
+      twiddles_mod.resize(dft_size / 2);
+      const float two_pi = 2.0F * static_cast<float>(M_PI);
+      for (unsigned k = 0; k != dft_size / 2; ++k) {
+        ocudu::cf_t coefficient =
+            std::polar(1.0F, two_pi * static_cast<float>(k) / static_cast<float>(dft_size));
+        twiddles_mod[k] = {coefficient.real(), coefficient.imag()};
+      }
+      CUDA_CHECK(cudaMalloc(&device_twiddles_mod, twiddles_mod.size() * sizeof(lowphy_cf32)));
+      CUDA_CHECK(cudaMemcpy(device_twiddles_mod,
+                            twiddles_mod.data(),
+                            twiddles_mod.size() * sizeof(lowphy_cf32),
+                            cudaMemcpyHostToDevice));
     }
 
     const float mod_scale = 1.0F;
@@ -331,8 +470,8 @@ int main(int argc, char** argv)
     const size_t grid_elements = static_cast<size_t>(4) * NOF_SYMBOLS_PER_SLOT * rg_size;
     std::vector<ocudu::cbf16_t> grid_bfp(grid_elements);
     std::vector<ocudu::cbf16_t> grid_ofdm(grid_elements);
-    fill_random_grid(grid_bfp, 1.0f, 0x1234u + profile.dft_size);
-    fill_random_grid(grid_ofdm, GRID_SCALE, 0x5678u + profile.dft_size);
+    fill_random_grid(grid_bfp, 1.0f, 0x1234u + dft_size);
+    fill_random_grid(grid_ofdm, GRID_SCALE, 0x5678u + dft_size);
 
     const size_t grid_bytes = grid_elements * sizeof(ocudu::cbf16_t);
 
@@ -353,17 +492,6 @@ int main(int argc, char** argv)
     CUDA_CHECK(cudaMemcpy(
         device_symbol_start, symbol_start.data(), nof_symbols_sf * sizeof(unsigned), cudaMemcpyHostToDevice));
 
-    lowphy_cf32* device_twiddles_mod   = nullptr;
-    lowphy_cf32* device_twiddles_demod = nullptr;
-    CUDA_CHECK(cudaMalloc(&device_twiddles_mod, twiddles_mod.size() * sizeof(lowphy_cf32)));
-    CUDA_CHECK(cudaMalloc(&device_twiddles_demod, twiddles_demod.size() * sizeof(lowphy_cf32)));
-    CUDA_CHECK(cudaMemcpy(
-        device_twiddles_mod, twiddles_mod.data(), twiddles_mod.size() * sizeof(lowphy_cf32), cudaMemcpyHostToDevice));
-    CUDA_CHECK(cudaMemcpy(device_twiddles_demod,
-                          twiddles_demod.data(),
-                          twiddles_demod.size() * sizeof(lowphy_cf32),
-                          cudaMemcpyHostToDevice));
-
     lowphy_cf32* device_phase_mod   = nullptr;
     lowphy_cf32* device_phase_demod = nullptr;
     CUDA_CHECK(cudaMalloc(&device_phase_mod, nof_symbols_sf * sizeof(lowphy_cf32)));
@@ -380,6 +508,7 @@ int main(int argc, char** argv)
       ofdm_result current_ofdm = {};
       timing_case current_timing;
       current_timing.profile_name = profile.name;
+      current_timing.dft_size     = dft_size;
       current_timing.ports        = ports;
 
       const size_t current_grid_bytes = static_cast<size_t>(ports) * NOF_SYMBOLS_PER_SLOT * rg_size * sizeof(ocudu::cbf16_t);
@@ -562,7 +691,7 @@ int main(int argc, char** argv)
       ocudu::ofdm_modulator_configuration modulator_config = {
           .numerology     = numerology,
           .bw_rb          = profile.bw_rb,
-          .dft_size       = profile.dft_size,
+          .dft_size       = dft_size,
           .cp             = cp,
           .scale          = mod_scale,
           .center_freq_Hz = CENTER_FREQ_HZ,
@@ -570,7 +699,7 @@ int main(int argc, char** argv)
       ocudu::ofdm_demodulator_configuration demodulator_config = {
           .numerology                = numerology,
           .bw_rb                     = profile.bw_rb,
-          .dft_size                  = profile.dft_size,
+          .dft_size                  = dft_size,
           .cp                        = cp,
           .nof_samples_window_offset = 0,
           .scale                     = demod_scale,
@@ -585,6 +714,17 @@ int main(int argc, char** argv)
         max_slot_samples = std::max(max_slot_samples, slot_modulator->get_slot_size(slot));
       }
 
+      lowphy_ofdm_plan* mod_plan = lowphy_ofdm_plan_create(dft_size, ports, NOF_SYMBOLS_PER_SLOT, true);
+      lowphy_ofdm_plan* demod_plan = lowphy_ofdm_plan_create(dft_size, ports, NOF_SYMBOLS_PER_SLOT, false);
+      if ((mod_plan == nullptr) || (demod_plan == nullptr)) {
+        std::fprintf(stderr,
+                     "cuFFT plan creation failed for %s (%u ports, DFT %u).\n",
+                     profile.name,
+                     ports,
+                     dft_size);
+        return 1;
+      }
+
       int16_t*     device_mod_output   = nullptr;
       int16_t*     device_demod_input  = nullptr;
       lowphy_cf32* device_demod_output = nullptr;
@@ -597,6 +737,15 @@ int main(int argc, char** argv)
                                 sizeof(lowphy_cf32)));
 
       std::vector<ocudu::ci16_t> timing_ci16(static_cast<size_t>(ports) * slot_modulator->get_slot_size(0));
+
+      size_t mod_mismatches       = 0;
+      int    mod_max_lsb          = 0;
+      double mod_signal_energy    = 0.0;
+      double mod_error_energy     = 0.0;
+      double demod_max_lsb        = 0.0;
+      size_t demod_mismatches     = 0;
+      double demod_signal_energy  = 0.0;
+      double demod_error_energy   = 0.0;
 
       for (unsigned slot_index = 0; slot_index != nof_slots_sf; ++slot_index) {
         const unsigned slot_start   = symbol_start[slot_index * NOF_SYMBOLS_PER_SLOT];
@@ -619,41 +768,42 @@ int main(int argc, char** argv)
 
         CUDA_CHECK(cudaMemcpy(device_grid, grid_ofdm.data(), current_grid_bytes, cudaMemcpyHostToDevice));
 
-        lowphy_ofdm_mod_params mod_params     = {};
-        mod_params.grid                       = device_grid;
-        mod_params.out                        = device_mod_output;
-        mod_params.nof_ports                  = ports;
-        mod_params.nof_symbols_per_slot       = NOF_SYMBOLS_PER_SLOT;
-        mod_params.dft_size                   = profile.dft_size;
-        mod_params.bw_rb                      = profile.bw_rb;
-        mod_params.slot_index                 = slot_index;
-        mod_params.nof_symbols_per_sf         = nof_symbols_sf;
-        mod_params.cp_len                     = device_cp_len;
-        mod_params.symbol_start               = device_symbol_start;
-        mod_params.slot_start                 = slot_start;
-        mod_params.slot_samples               = slot_samples;
-        mod_params.phase                      = device_phase_mod;
-        mod_params.scale                      = mod_scale;
-        mod_params.port_empty                 = device_port_empty;
-        mod_params.twiddles                   = device_twiddles_mod;
-        mod_params.logn                       = static_cast<unsigned>(std::log2(profile.dft_size));
+        lowphy_ofdm_mod_params mod_params = {};
+        mod_params.plan                   = mod_plan;
+        mod_params.grid                   = device_grid;
+        mod_params.out                    = device_mod_output;
+        mod_params.port_empty             = device_port_empty;
+        mod_params.phase                  = device_phase_mod;
+        mod_params.cp_len                 = device_cp_len;
+        mod_params.symbol_start           = device_symbol_start;
+        mod_params.nof_ports              = ports;
+        mod_params.nof_symbols_per_slot   = NOF_SYMBOLS_PER_SLOT;
+        mod_params.dft_size               = dft_size;
+        mod_params.bw_rb                  = profile.bw_rb;
+        mod_params.slot_index             = slot_index;
+        mod_params.slot_start             = slot_start;
+        mod_params.slot_samples           = slot_samples;
+        mod_params.scale                  = mod_scale;
 
-        lowphy_ofdm_modulate(mod_params, stream);
+        lowphy_ofdm_mod_pre(mod_params, stream);
+        lowphy_ofdm_mod_fft(mod_params, stream);
+        lowphy_ofdm_mod_post(mod_params, stream);
+
         CUDA_CHECK(cudaMemcpy(gpu_mod_output.data(),
                               device_mod_output,
                               gpu_mod_output.size() * sizeof(int16_t),
                               cudaMemcpyDeviceToHost));
         CUDA_CHECK(cudaStreamSynchronize(stream));
 
-        const int16_t* cpu_ci16_bits  = reinterpret_cast<const int16_t*>(cpu_ci16.data());
-        size_t         mod_mismatches = 0;
-        int            mod_max_diff   = 0;
+        const int16_t* cpu_ci16_bits = reinterpret_cast<const int16_t*>(cpu_ci16.data());
         for (size_t i = 0; i != gpu_mod_output.size(); ++i) {
           int diff = std::abs(static_cast<int>(gpu_mod_output[i]) - static_cast<int>(cpu_ci16_bits[i]));
           if (diff != 0) {
             ++mod_mismatches;
-            mod_max_diff = std::max(mod_max_diff, diff);
+            mod_max_lsb = std::max(mod_max_lsb, diff);
           }
+          mod_signal_energy += static_cast<double>(cpu_ci16_bits[i]) * static_cast<double>(cpu_ci16_bits[i]);
+          mod_error_energy += static_cast<double>(diff) * static_cast<double>(diff);
         }
 
         std::vector<ocudu::cf_t> cpu_demod_input = convert_ci16_to_cf(cpu_ci16);
@@ -674,26 +824,26 @@ int main(int argc, char** argv)
                               cudaMemcpyHostToDevice));
 
         lowphy_ofdm_demod_params demod_params = {};
+        demod_params.plan                     = demod_plan;
         demod_params.in                       = device_demod_input;
         demod_params.grid                     = device_demod_output;
-        demod_params.nof_ports                = ports;
-        demod_params.nof_symbols_per_slot     = NOF_SYMBOLS_PER_SLOT;
-        demod_params.dft_size                 = profile.dft_size;
-        demod_params.bw_rb                    = profile.bw_rb;
-        demod_params.slot_index               = slot_index;
-        demod_params.nof_symbols_per_sf       = nof_symbols_sf;
+        demod_params.phase                    = device_phase_demod;
+        demod_params.window_phase             = nullptr;
         demod_params.cp_len                   = device_cp_len;
         demod_params.symbol_start             = device_symbol_start;
+        demod_params.nof_ports                = ports;
+        demod_params.nof_symbols_per_slot     = NOF_SYMBOLS_PER_SLOT;
+        demod_params.dft_size                 = dft_size;
+        demod_params.bw_rb                    = profile.bw_rb;
+        demod_params.slot_index               = slot_index;
         demod_params.slot_start               = slot_start;
         demod_params.slot_samples             = slot_samples;
         demod_params.window_offset            = 0;
-        demod_params.phase                    = device_phase_demod;
-        demod_params.window_phase             = nullptr;
         demod_params.scale                    = demod_scale;
-        demod_params.twiddles                 = device_twiddles_demod;
-        demod_params.logn                     = static_cast<unsigned>(std::log2(profile.dft_size));
 
-        lowphy_ofdm_demodulate(demod_params, stream);
+        lowphy_ofdm_demod_pre(demod_params, stream);
+        lowphy_ofdm_demod_fft(demod_params, stream);
+        lowphy_ofdm_demod_post(demod_params, stream);
 
         std::vector<lowphy_cf32> gpu_demod_grid(static_cast<size_t>(ports) * NOF_SYMBOLS_PER_SLOT * rg_size);
         CUDA_CHECK(cudaMemcpy(gpu_demod_grid.data(),
@@ -702,38 +852,71 @@ int main(int argc, char** argv)
                               cudaMemcpyDeviceToHost));
         CUDA_CHECK(cudaStreamSynchronize(stream));
 
-        double demod_max_abs = 0.0;
-        double demod_max_mag = 0.0;
-        size_t demod_exact   = 0;
         for (size_t i = 0; i != gpu_demod_grid.size(); ++i) {
           double diff_re = static_cast<double>(cpu_demod_grid[i].real()) - gpu_demod_grid[i].re;
           double diff_im = static_cast<double>(cpu_demod_grid[i].imag()) - gpu_demod_grid[i].im;
           double diff    = std::sqrt(diff_re * diff_re + diff_im * diff_im);
-          double mag     = std::hypot(static_cast<double>(cpu_demod_grid[i].real()),
-                                  static_cast<double>(cpu_demod_grid[i].imag()));
-          demod_max_abs  = std::max(demod_max_abs, diff);
-          demod_max_mag  = std::max(demod_max_mag, mag);
+          double sig     = static_cast<double>(cpu_demod_grid[i].real()) * static_cast<double>(cpu_demod_grid[i].real()) +
+                       static_cast<double>(cpu_demod_grid[i].imag()) * static_cast<double>(cpu_demod_grid[i].imag());
 
-          if (std::memcmp(&cpu_demod_grid[i], &gpu_demod_grid[i], sizeof(float) * 2) == 0) {
-            ++demod_exact;
+          double diff_lsb = diff * 32767.0;
+          demod_max_lsb   = std::max(demod_max_lsb, diff_lsb);
+          if (diff_lsb >= 0.5) {
+            ++demod_mismatches;
           }
+          demod_signal_energy += sig;
+          demod_error_energy += diff * diff;
         }
+      }
 
-        current_ofdm.mod_mismatches = std::max(current_ofdm.mod_mismatches, mod_mismatches);
-        current_ofdm.mod_max_diff   = std::max(current_ofdm.mod_max_diff, mod_max_diff);
-        current_ofdm.demod_max_abs  = std::max(current_ofdm.demod_max_abs, demod_max_abs);
-        current_ofdm.demod_max_rel  = std::max(current_ofdm.demod_max_rel,
-                                              (demod_max_mag != 0.0) ? (demod_max_abs / demod_max_mag) : 0.0);
-        current_ofdm.demod_exact    = std::max(current_ofdm.demod_exact, demod_exact);
-        current_ofdm.demod_total    = std::max(current_ofdm.demod_total, gpu_demod_grid.size());
+      if (power_of_two) {
+        const unsigned ref_samples = slot_modulator->get_slot_size(0);
+        int16_t*       device_ref_output = nullptr;
+        CUDA_CHECK(cudaMalloc(&device_ref_output, static_cast<size_t>(ports) * ref_samples * 2 * sizeof(int16_t)));
+
+        lowphy_radix2_mod_params ref_params = {};
+        ref_params.grid                   = device_grid;
+        ref_params.out                    = device_ref_output;
+        ref_params.nof_ports              = ports;
+        ref_params.nof_symbols_per_slot   = NOF_SYMBOLS_PER_SLOT;
+        ref_params.dft_size               = dft_size;
+        ref_params.bw_rb                  = profile.bw_rb;
+        ref_params.slot_index             = 0;
+        ref_params.nof_symbols_per_sf     = nof_symbols_sf;
+        ref_params.cp_len                 = device_cp_len;
+        ref_params.symbol_start           = device_symbol_start;
+        ref_params.slot_start             = symbol_start[0];
+        ref_params.slot_samples           = ref_samples;
+        ref_params.phase                  = device_phase_mod;
+        ref_params.scale                  = mod_scale;
+        ref_params.port_empty             = device_port_empty;
+        ref_params.twiddles               = device_twiddles_mod;
+        ref_params.logn                   = static_cast<unsigned>(std::log2(dft_size));
+
+        lowphy_radix2_modulate(ref_params, stream);
+
+        std::vector<int16_t> ref_out(static_cast<size_t>(ports) * ref_samples * 2);
+        CUDA_CHECK(cudaMemcpy(ref_out.data(),
+                              device_ref_output,
+                              ref_out.size() * sizeof(int16_t),
+                              cudaMemcpyDeviceToHost));
+        CUDA_CHECK(cudaStreamSynchronize(stream));
+
+        const int16_t* cpu_bits = reinterpret_cast<const int16_t*>(timing_ci16.data());
+        int            max_lsb  = 0;
+        for (size_t i = 0; i != ref_out.size(); ++i) {
+          max_lsb = std::max(max_lsb, std::abs(static_cast<int>(ref_out[i]) - static_cast<int>(cpu_bits[i])));
+        }
+        radix2_results.push_back({profile.name, dft_size, ports, max_lsb});
+        CUDA_CHECK(cudaFree(device_ref_output));
       }
 
       const unsigned timing_slot_samples = slot_modulator->get_slot_size(0);
 
-      void* host_grid          = nullptr;
-      void* host_mod_output    = nullptr;
-      void* host_demod_input   = nullptr;
-      void* host_demod_output  = nullptr;
+      void* host_grid         = nullptr;
+      void* host_mod_output   = nullptr;
+      void* host_demod_input  = nullptr;
+      void* host_demod_output = nullptr;
       CUDA_CHECK(cudaHostAlloc(&host_grid, current_grid_bytes, cudaHostAllocDefault));
       CUDA_CHECK(cudaHostAlloc(&host_mod_output,
                                static_cast<size_t>(ports) * timing_slot_samples * 2 * sizeof(int16_t),
@@ -751,26 +934,26 @@ int main(int argc, char** argv)
                   static_cast<size_t>(ports) * timing_slot_samples * 2 * sizeof(int16_t));
 
       lowphy_ofdm_mod_params mod_params = {};
+      mod_params.plan                   = mod_plan;
       mod_params.grid                   = device_grid;
       mod_params.out                    = device_mod_output;
-      mod_params.nof_ports              = ports;
-      mod_params.nof_symbols_per_slot   = NOF_SYMBOLS_PER_SLOT;
-      mod_params.dft_size               = profile.dft_size;
-      mod_params.bw_rb                  = profile.bw_rb;
-      mod_params.slot_index             = 0;
-      mod_params.nof_symbols_per_sf     = nof_symbols_sf;
+      mod_params.port_empty             = device_port_empty;
+      mod_params.phase                  = device_phase_mod;
       mod_params.cp_len                 = device_cp_len;
       mod_params.symbol_start           = device_symbol_start;
+      mod_params.nof_ports              = ports;
+      mod_params.nof_symbols_per_slot   = NOF_SYMBOLS_PER_SLOT;
+      mod_params.dft_size               = dft_size;
+      mod_params.bw_rb                  = profile.bw_rb;
+      mod_params.slot_index             = 0;
       mod_params.slot_start             = symbol_start[0];
       mod_params.slot_samples           = timing_slot_samples;
-      mod_params.phase                  = device_phase_mod;
       mod_params.scale                  = mod_scale;
-      mod_params.port_empty             = device_port_empty;
-      mod_params.twiddles               = device_twiddles_mod;
-      mod_params.logn                   = static_cast<unsigned>(std::log2(profile.dft_size));
 
-      current_timing.mod = measure(
-          [&]() { lowphy_ofdm_modulate(mod_params, stream); },
+      current_timing.mod = measure_ofdm(
+          [&]() { lowphy_ofdm_mod_pre(mod_params, stream); },
+          [&]() { lowphy_ofdm_mod_fft(mod_params, stream); },
+          [&]() { lowphy_ofdm_mod_post(mod_params, stream); },
           device_grid,
           host_grid,
           current_grid_bytes,
@@ -781,27 +964,27 @@ int main(int argc, char** argv)
           stream);
 
       lowphy_ofdm_demod_params demod_params = {};
+      demod_params.plan                     = demod_plan;
       demod_params.in                       = device_demod_input;
       demod_params.grid                     = device_demod_output;
-      demod_params.nof_ports                = ports;
-      demod_params.nof_symbols_per_slot     = NOF_SYMBOLS_PER_SLOT;
-      demod_params.dft_size                 = profile.dft_size;
-      demod_params.bw_rb                    = profile.bw_rb;
-      demod_params.slot_index               = 0;
-      demod_params.nof_symbols_per_sf       = nof_symbols_sf;
+      demod_params.phase                    = device_phase_demod;
+      demod_params.window_phase             = nullptr;
       demod_params.cp_len                   = device_cp_len;
       demod_params.symbol_start             = device_symbol_start;
+      demod_params.nof_ports                = ports;
+      demod_params.nof_symbols_per_slot     = NOF_SYMBOLS_PER_SLOT;
+      demod_params.dft_size                 = dft_size;
+      demod_params.bw_rb                    = profile.bw_rb;
+      demod_params.slot_index               = 0;
       demod_params.slot_start               = symbol_start[0];
       demod_params.slot_samples             = timing_slot_samples;
       demod_params.window_offset            = 0;
-      demod_params.phase                    = device_phase_demod;
-      demod_params.window_phase             = nullptr;
       demod_params.scale                    = demod_scale;
-      demod_params.twiddles                 = device_twiddles_demod;
-      demod_params.logn                     = static_cast<unsigned>(std::log2(profile.dft_size));
 
-      current_timing.demod = measure(
-          [&]() { lowphy_ofdm_demodulate(demod_params, stream); },
+      current_timing.demod = measure_ofdm(
+          [&]() { lowphy_ofdm_demod_pre(demod_params, stream); },
+          [&]() { lowphy_ofdm_demod_fft(demod_params, stream); },
+          [&]() { lowphy_ofdm_demod_post(demod_params, stream); },
           device_demod_input,
           host_demod_input,
           static_cast<size_t>(ports) * timing_slot_samples * 2 * sizeof(int16_t),
@@ -816,10 +999,24 @@ int main(int argc, char** argv)
       CUDA_CHECK(cudaFreeHost(host_demod_input));
       CUDA_CHECK(cudaFreeHost(host_demod_output));
 
+      current_ofdm.mod_mismatches  = mod_mismatches;
+      current_ofdm.mod_max_lsb     = mod_max_lsb;
+      current_ofdm.mod_error_db    = power_ratio_db(mod_error_energy, mod_signal_energy);
+      current_ofdm.demod_max_lsb   = demod_max_lsb;
+      current_ofdm.demod_mismatches = demod_mismatches;
+      current_ofdm.demod_error_db  = power_ratio_db(demod_error_energy, demod_signal_energy);
+      current_ofdm.pass            = (mod_max_lsb <= 1) && (current_ofdm.mod_error_db <= -60.0) &&
+                          (demod_max_lsb <= 1.0) && (current_ofdm.demod_error_db <= -60.0);
+      all_pass = all_pass && current_ofdm.pass;
+
       ofdm_profile_names.push_back(profile.name);
+      ofdm_dft_sizes.push_back(dft_size);
       ofdm_port_counts.push_back(ports);
       ofdm_results.push_back(current_ofdm);
       timing_results.push_back(current_timing);
+
+      lowphy_ofdm_plan_destroy(mod_plan);
+      lowphy_ofdm_plan_destroy(demod_plan);
 
       CUDA_CHECK(cudaFree(device_mod_output));
       CUDA_CHECK(cudaFree(device_demod_input));
@@ -831,13 +1028,14 @@ int main(int argc, char** argv)
     CUDA_CHECK(cudaFree(device_port_empty));
     CUDA_CHECK(cudaFree(device_cp_len));
     CUDA_CHECK(cudaFree(device_symbol_start));
-    CUDA_CHECK(cudaFree(device_twiddles_mod));
-    CUDA_CHECK(cudaFree(device_twiddles_demod));
     CUDA_CHECK(cudaFree(device_phase_mod));
     CUDA_CHECK(cudaFree(device_phase_demod));
+    if (device_twiddles_mod != nullptr) {
+      CUDA_CHECK(cudaFree(device_twiddles_mod));
+    }
   }
 
-  std::printf("## BFP correctness\n\n");
+  std::printf("\n## BFP correctness\n\n");
   std::printf("| Width | Max compress byte mismatch | Max decompress bf16 mismatch | Max AVX2 compress mismatch | Max AVX2 decompress mismatch |\n");
   std::printf("|---:|---:|---:|---:|---:|\n");
   for (size_t i = 0; i != data_widths.size(); ++i) {
@@ -850,19 +1048,33 @@ int main(int argc, char** argv)
                 result.avx2_decompress_mismatches);
   }
 
-  std::printf("\n## OFDM correctness\n\n");
-  std::printf("| Profile | Ports | Mod ci16 mismatches | Mod max abs diff (LSB) | Demod max abs error | Demod max relative error | Demod exact |\n");
-  std::printf("|---|---:|---:|---:|---:|---:|---:|\n");
+  std::printf("\n## OFDM correctness (cuFFT, one launch per stage per slot)\n\n");
+  std::printf("| Profile | DFT | Ports | Mod diff | Mod max LSB | Mod error | Demod max LSB | Demod diff | Demod error | Pass |\n");
+  std::printf("|---|---:|---:|---:|---:|---:|---:|---:|---:|:---:|\n");
   for (size_t i = 0; i != ofdm_results.size(); ++i) {
     const ofdm_result& result = ofdm_results[i];
-    std::printf("| %s | %u | %zu | %d | %.3e | %.3e | %.2f%% |\n",
+    std::printf("| %s | %u | %u | %zu | %d | %.2f dB | %.4f | %zu | %.2f dB | %s |\n",
                 ofdm_profile_names[i].c_str(),
+                ofdm_dft_sizes[i],
                 ofdm_port_counts[i],
                 result.mod_mismatches,
-                result.mod_max_diff,
-                result.demod_max_abs,
-                result.demod_max_rel,
-                100.0 * static_cast<double>(result.demod_exact) / static_cast<double>(result.demod_total));
+                result.mod_max_lsb,
+                result.mod_error_db,
+                result.demod_max_lsb,
+                result.demod_mismatches,
+                result.demod_error_db,
+                result.pass ? "PASS" : "FAIL");
+  }
+
+  std::printf("\n## Radix-2 test-only reference (power-of-two DFT sizes)\n\n");
+  if (radix2_results.empty()) {
+    std::printf("_No power-of-two DFT size in this run._\n");
+  } else {
+    std::printf("| Profile | DFT | Ports | Mod max LSB |\n");
+    std::printf("|---|---:|---:|---:|\n");
+    for (const radix2_result& result : radix2_results) {
+      std::printf("| %s | %u | %u | %d |\n", result.profile_name.c_str(), result.dft_size, result.ports, result.max_lsb);
+    }
   }
 
   std::printf("\n## Timing (ms per slot, all ports; kernel is compute-only)\n\n");
@@ -894,19 +1106,27 @@ int main(int argc, char** argv)
                 result.bfp16_decompress.d2h_ms);
   }
 
-  std::printf("\n| Profile | Ports | Mod H2D | Mod kernel | Mod D2H | Demod H2D | Demod kernel | Demod D2H |\n");
-  std::printf("|---|---:|---:|---:|---:|---:|---:|---:|\n");
+  std::printf("\n| Profile | DFT | Ports | Mod H2D | Mod pre | Mod cuFFT | Mod post | Mod D2H | Mod compute | Demod H2D | Demod pre | Demod cuFFT | Demod post | Demod D2H | Demod compute |\n");
+  std::printf("|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|\n");
   for (const timing_case& result : timing_results) {
-    std::printf("| %s | %u | %.4f | %.4f | %.4f | %.4f | %.4f | %.4f |\n",
+    std::printf("| %s | %u | %u | %.4f | %.4f | %.4f | %.4f | %.4f | %.4f | %.4f | %.4f | %.4f | %.4f | %.4f | %.4f |\n",
                 result.profile_name.c_str(),
+                result.dft_size,
                 result.ports,
                 result.mod.h2d_ms,
-                result.mod.kernel_ms,
+                result.mod.pre_ms,
+                result.mod.fft_ms,
+                result.mod.post_ms,
                 result.mod.d2h_ms,
+                result.mod.pre_ms + result.mod.fft_ms + result.mod.post_ms,
                 result.demod.h2d_ms,
-                result.demod.kernel_ms,
-                result.demod.d2h_ms);
+                result.demod.pre_ms,
+                result.demod.fft_ms,
+                result.demod.post_ms,
+                result.demod.d2h_ms,
+                result.demod.pre_ms + result.demod.fft_ms + result.demod.post_ms);
   }
 
-  return 0;
+  std::printf("\nOverall: %s\n", all_pass ? "PASS" : "FAIL");
+  return all_pass ? 0 : 1;
 }
