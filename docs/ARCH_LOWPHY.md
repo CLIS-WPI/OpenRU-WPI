@@ -829,9 +829,17 @@ not a performance claim.
 - Gateway buffers are dense `ci16_t` in `sample -> channel` order
   (`include/ocudu/gateways/baseband/buffer/baseband_gateway_buffer_dynamic.h:15-26`).
 - `cbf16_t` is 4 bytes (two BF16 words), `ci16_t` is 4 bytes, `cf_t` is
-  8 bytes (`include/ocudu/adt/complex.h:22-44`). A slot at 100 MHz, 30 kHz
-  SCS is roughly 32768 samples per port per ms; a 4T4R grid is
-  `14 symbols * 12 * nof_prb * 4 ports * 4 bytes`.
+  8 bytes (`include/ocudu/adt/complex.h:22-44`). A 100 MHz carrier at 30 kHz
+  SCS runs at 122.88 Msps with a 4096-point FFT: 122,880 samples per port
+  per millisecond, or 61,440 per 0.5 ms slot. A 4T4R grid at 273 PRB is
+  `14 symbols * 12 * 273 * 4 ports * 4 bytes` = 733,824 bytes (~0.73 MB) per
+  slot; the matching `ci16_t` baseband is 245,760 bytes per port per slot
+  (~0.98 MB for 4 ports).
+- Soft radios (null/zmq) force a **slot**-sized baseband RX buffer while UHD
+  uses **single_packet** (`apps/examples/ofh/ru_emulator_sdr.cpp:152-154`).
+  The GPU path will therefore see a different buffer size and pull cadence
+  on replay/offline runs than on UHD; do not size staging from null-radio
+  runs alone.
 - The CPU path is per symbol/port and uses a shared scratch buffer sized
   `2 * dft_size` (`pdxch_baseband_modulator.h:63`,
   `lib/phy/lower/processors/uplink/uplink_processor_impl.cpp:33-37`). A GPU
@@ -921,6 +929,12 @@ The writer thread:
 - `apps/examples/ofh/ru_emulator_sdr.cpp:152` and `:170-171` classify
   `device_driver == "zmq" || "null"` as "soft radio": no hardware PPS clock,
   free-running time.
+- Soft radios also force `baseband_rx_buffer_size_policy::slot`, whereas UHD
+  uses `single_packet` (`apps/examples/ofh/ru_emulator_sdr.cpp:152-154`).
+  The null radio hands the lower PHY one slot-sized buffer per `receive()`
+  call; UHD hands it radio-native single packets. Timing or buffer-cadence
+  numbers measured with the null radio are therefore **not representative of
+  UHD hardware**.
 - The rest of the SDR RU stack is unchanged: the null backend presents the
   same `baseband_gateway` transmitter/receiver interface as a real radio, so
   `ru_sdr_impl`, the lower PHY, the OFH sector and the uplink responder all
