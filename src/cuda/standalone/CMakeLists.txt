@@ -18,7 +18,8 @@ find_package(CUDAToolkit REQUIRED)
 
 add_library(lowphy_cuda STATIC
   kernels/bfp_kernels.cu
-  kernels/ofdm_cufft.cu)
+  kernels/ofdm_cufft.cu
+  kernels/pipeline.cu)
 target_include_directories(lowphy_cuda PUBLIC include)
 target_compile_options(lowphy_cuda PRIVATE
   $<$<COMPILE_LANGUAGE:CUDA>:-O3>)
@@ -52,6 +53,22 @@ target_compile_definitions(test_lowphy PRIVATE BUILD_TYPE_RELEASE NDEBUG)
 target_compile_options(test_lowphy PRIVATE -O3 -march=native)
 
 target_link_libraries(test_lowphy PRIVATE
+  lowphy_cuda
+  "-Wl,--start-group"
+  ${OCUDU_LIBRARIES}
+  "-Wl,--end-group"
+  "/home/tanglab/miniconda3/lib/libyaml-cpp.so"
+  pthread
+  dl
+  m)
+
+add_executable(test_pipeline
+  tests/test_pipeline.cpp)
+target_include_directories(test_pipeline PRIVATE include ${OCUDU_INCLUDE_DIRS})
+target_compile_definitions(test_pipeline PRIVATE BUILD_TYPE_RELEASE NDEBUG)
+target_compile_options(test_pipeline PRIVATE -O3 -march=native)
+
+target_link_libraries(test_pipeline PRIVATE
   lowphy_cuda
   "-Wl,--start-group"
   ${OCUDU_LIBRARIES}

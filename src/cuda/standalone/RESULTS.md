@@ -116,3 +116,71 @@ is `pre + cuFFT + post`.
 - The two BFP correctness columns for AVX2 compare the AVX2 CPU implementation against
   the generic CPU implementation, not the GPU against AVX2; the GPU match column already
   covers the generic path byte-for-byte.
+
+---
+
+# Device-resident pipeline (Task 3)
+
+Environment:
+
+- GPU: NVIDIA H100 NVL, compute capability 9.0 ([MEASURED])
+- Host CPU: AMD EPYC 9354 32-Core Processor; CPU path pinned to core 8 (NUMA0, in 0–15)
+- CUDA: 12.5; OCUDU Release at `8937cab`, AVX2 BFP width 9
+- Host buffers: preallocated then `cudaHostRegister`; two CUDA streams, double-buffered by slot
+- Command: `CUDA_VISIBLE_DEVICES=GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058 ./build/test_pipeline --sustained 4000 --latency-iters 200 --cpu-core 8`
+- Measurement lock: `/tmp/openru-measure.lock` held for the full run; cores 32–63 unused
+- Label: **compute-only** (no fronthaul, no radio)
+
+DL chain (device-resident): compressed U-plane H2D once → BFP decompress → grid → OFDM
+pre → cuFFT → post → ci16 D2H once. UL is the reverse with cf32→cbf16 before BFP compress.
+
+## Pipeline correctness vs standalone kernels
+
+Byte-identical match of the device-resident chain against the same standalone kernel
+sequence (no intermediate host round-trips).
+
+| Profile | DFT | Ports | DL mismatches | UL mismatches | Pass |
+|---|---:|---:|---:|---:|:---:|
+| 20 MHz | 768 | 2 | 0 | 0 | PASS |
+| 20 MHz | 768 | 4 | 0 | 0 | PASS |
+| 40 MHz | 1536 | 2 | 0 | 0 | PASS |
+| 40 MHz | 1536 | 4 | 0 | 0 | PASS |
+| 100 MHz | 4096 | 2 | 0 | 0 | PASS |
+| 100 MHz | 4096 | 4 | 0 | 0 | PASS |
+
+## GPU vs CPU per-slot latency (ms) [MEASURED] compute-only
+
+Wall time from H2D start to D2H done (GPU) vs OCUDU CPU chain on one pinned core (BFP
+AVX2 decompress + OFDM modulate; UL reverse). 200 iterations after warm-up.
+
+| Profile | Ports | Dir | GPU p50 | GPU p99 | GPU max | CPU p50 | CPU p99 | CPU max | Speedup (p50) |
+|---|---:|---|---:|---:|---:|---:|---:|---:|---:|
+| 20 MHz | 2 | DL | 0.0316 | 0.0469 | 0.0470 | 0.0593 | 0.1836 | 0.1913 | 1.88x |
+| 20 MHz | 2 | UL | 0.0333 | 0.0426 | 0.0481 | 0.0711 | 0.0784 | 0.0790 | 2.14x |
+| 20 MHz | 4 | DL | 0.0343 | 0.0499 | 0.0500 | 0.1189 | 0.1257 | 0.1287 | 3.47x |
+| 20 MHz | 4 | UL | 0.0345 | 0.0518 | 0.0521 | 0.1495 | 0.1598 | 0.1608 | 4.33x |
+| 40 MHz | 2 | DL | 0.0344 | 0.0499 | 0.0502 | 0.1367 | 0.1477 | 0.1516 | 3.97x |
+| 40 MHz | 2 | UL | 0.0422 | 0.0580 | 0.0581 | 0.1533 | 0.1663 | 0.1667 | 3.64x |
+| 40 MHz | 4 | DL | 0.0456 | 0.0548 | 0.0548 | 0.2737 | 0.2855 | 0.2923 | 6.00x |
+| 40 MHz | 4 | UL | 0.0527 | 0.0596 | 0.0596 | 0.3102 | 0.3229 | 0.3267 | 5.88x |
+| 100 MHz | 2 | DL | 0.0559 | 0.0634 | 0.0647 | 0.4107 | 0.4295 | 0.4548 | 7.35x |
+| 100 MHz | 2 | UL | 0.0580 | 0.0701 | 0.0702 | 0.4383 | 0.4531 | 0.4570 | 7.56x |
+| 100 MHz | 4 | DL | 0.0676 | 0.0813 | 0.0874 | 0.8275 | 0.8403 | 0.8582 | 12.24x |
+| 100 MHz | 4 | UL | 0.0752 | 0.0893 | 0.0894 | 0.8808 | 0.8973 | 0.8975 | 11.71x |
+
+## GPU sustained throughput (4000 slots, 2 streams, double-buffered) [MEASURED]
+
+| Profile | Ports | Dir | Wall ms/slot | Event p50 | Event p99 | Event max |
+|---|---:|---|---:|---:|---:|---:|
+| 20 MHz | 2 | DL | 0.0201 | 0.0358 | 0.0510 | 0.0646 |
+| 20 MHz | 2 | UL | 0.0195 | 0.0361 | 0.0457 | 0.0544 |
+| 20 MHz | 4 | DL | 0.0208 | 0.0391 | 0.0542 | 0.0654 |
+| 20 MHz | 4 | UL | 0.0223 | 0.0407 | 0.0523 | 0.0597 |
+| 40 MHz | 2 | DL | 0.0218 | 0.0403 | 0.0507 | 0.0644 |
+| 40 MHz | 2 | UL | 0.0234 | 0.0437 | 0.0528 | 0.0631 |
+| 40 MHz | 4 | DL | 0.0269 | 0.0513 | 0.0607 | 0.0763 |
+| 40 MHz | 4 | UL | 0.0274 | 0.0512 | 0.0612 | 0.0756 |
+| 100 MHz | 2 | DL | 0.0290 | 0.0545 | 0.0679 | 0.0693 |
+| 100 MHz | 2 | UL | 0.0326 | 0.0624 | 0.0707 | 0.0897 |
+| 100 MHz | 4 | DL | 0.0377 | 0.0727 | 0.0798 | 0.0948 |
+| 100 MHz | 4 | UL | 0.0413 | 0.0807 | 0.0862 | 0.0979 |

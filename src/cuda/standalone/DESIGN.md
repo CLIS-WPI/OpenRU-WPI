@@ -19,11 +19,14 @@ output against the CPU reference (`iq_compression_bfp_impl`, `iq_compression_bfp
 | File | Contents |
 |---|---|
 | `include/lowphy_cuda.h` | Public C++ interface, parameter structs and launch declarations. |
+| `include/lowphy_pipeline.h` | Device-resident DL/UL pipeline (one H2D, on-device chain, one D2H). |
 | `kernels/bfp_kernels.cu` | BFP compress/decompress kernels. |
 | `kernels/ofdm_cufft.cu` | cuFFT-backed OFDM plan and pre/FFT/post stages. |
+| `kernels/pipeline.cu` | Double-buffered pipeline orchestration and cf32→cbf16 convert. |
 | `tests/ofdm_radix2_reference.cu` | Test-only radix-2 FFT reference (power-of-two sizes). |
 | `tests/ofdm_radix2_reference.h` | Test-only radix-2 reference interface. |
-| `tests/test_lowphy.cpp` | Correctness and timing harness. |
+| `tests/test_lowphy.cpp` | Standalone kernel correctness and timing harness. |
+| `tests/test_pipeline.cpp` | Device-resident pipeline vs CPU comparison harness. |
 | `CMakeLists.txt` | Standalone build against a prepared OCUDU build tree. |
 
 ## BFP compression
@@ -134,6 +137,19 @@ separately. The reported OFDM compute time is `pre + cuFFT + post` and excludes 
 The harness pins the GPU with `CUDA_VISIBLE_DEVICES`; it never touches the other device
 on the host. Before each build and GPU run the harness operator confirms that
 `/tmp/openru-measure.lock` is absent.
+
+## Device-resident pipeline
+
+`lowphy_pipeline` keeps one slot on the GPU between a single H2D and a single D2H:
+
+- DL: compressed U-plane → BFP decompress → OFDM pre/cuFFT/post → ci16 time samples.
+- UL: ci16 → OFDM pre/cuFFT/post → cf32→cbf16 → BFP compress → compressed payloads.
+
+Two CUDA streams and a pair of device working sets provide double-buffering by slot.
+Host buffers are preallocated (as ProtO-RU would provide) and pinned with
+`cudaHostRegister`. `test_pipeline` checks byte-identical agreement with the standalone
+kernel sequence, measures per-slot GPU latency and 4000-slot sustained throughput with
+overlap, and times the OCUDU AVX2/Release CPU path on one core in 0–15.
 
 ## Limitations
 
