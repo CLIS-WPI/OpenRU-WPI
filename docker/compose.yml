@@ -45,6 +45,7 @@ services:
         MARCH: ${MARCH:-x86-64-v3}
         NUM_JOBS: ${NUM_JOBS:-32}
         OCUDU_BUILD_TARGETS: ${OCUDU_BUILD_TARGETS:-ocu odu odu_split_8 odu_split_7_2 gnb gnb_split_8 gnb_split_7_2 ru_emulator}
+        EXTRA_CMAKE_ARGS: ${EXTRA_CMAKE_ARGS:--DOPENRU_CUDA=OFF}
     profiles: ["build"]
     command: ["true"]
 
