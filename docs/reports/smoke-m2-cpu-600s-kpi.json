@@ -1,0 +1,262 @@
+{
+  "secs": 600.0,
+  "warmup_s": 0,
+  "warmup_note": "lates not start-clustered; warm-up=0",
+  "late_frac_limit": 1e-05,
+  "full": {
+    "label": "FULL WINDOW (incl. warm-up)",
+    "kpi_rows": 607,
+    "dl_u_plane_pkts": 4112806,
+    "dl_c_plane_pkts": 311118,
+    "ul_c_plane_pkts_at_ru": 1092708,
+    "dl_rx_total": 5516632,
+    "ul_tx_total": 9205124,
+    "late_dl_u_at_ru": 544,
+    "late_dl_c_at_ru": 33,
+    "late_ul_c_at_ru": 86,
+    "late_dl_sum_at_ru": 663,
+    "drop_at_ru": 0,
+    "late_per_M_dl": 120.18202410456234,
+    "late_frac_dl": 0.00012018202410456235,
+    "all_pkts": 14721756,
+    "late_per_M_all": 45.03538844143321,
+    "late_frac_all": 4.503538844143321e-05
+  },
+  "gate": {
+    "label": "GATE WINDOW (after warm-up=0s)",
+    "kpi_rows": 607,
+    "dl_u_plane_pkts": 4112806,
+    "dl_c_plane_pkts": 311118,
+    "ul_c_plane_pkts_at_ru": 1092708,
+    "dl_rx_total": 5516632,
+    "ul_tx_total": 9205124,
+    "late_dl_u_at_ru": 544,
+    "late_dl_c_at_ru": 33,
+    "late_ul_c_at_ru": 86,
+    "late_dl_sum_at_ru": 663,
+    "drop_at_ru": 0,
+    "late_per_M_dl": 120.18202410456234,
+    "late_frac_dl": 0.00012018202410456235,
+    "all_pkts": 14721756,
+    "late_per_M_all": 45.03538844143321,
+    "late_frac_all": 4.503538844143321e-05
+  },
+  "du_ofh": {
+    "ofh_metric_samples": 615,
+    "ul_rx_total": 9295746,
+    "ul_rx_late": 294,
+    "ul_past_seq_drops": 898,
+    "nof_late_dl_rgs": 0,
+    "nof_late_ul_req": 0,
+    "nof_late_cp_dl": 0,
+    "nof_late_up_dl": 0,
+    "nof_late_cp_ul": 0
+  },
+  "hist_nonzero": [
+    {
+      "rel_s": 0,
+      "late_up": 82,
+      "late_c": 8,
+      "late_c_u": 18,
+      "late_sum": 108
+    },
+    {
+      "rel_s": 2,
+      "late_up": 8,
+      "late_c": 2,
+      "late_c_u": 4,
+      "late_sum": 14
+    },
+    {
+      "rel_s": 14,
+      "late_up": 0,
+      "late_c": 0,
+      "late_c_u": 2,
+      "late_sum": 2
+    },
+    {
+      "rel_s": 31,
+      "late_up": 132,
+      "late_c": 10,
+      "late_c_u": 10,
+      "late_sum": 152
+    },
+    {
+      "rel_s": 166,
+      "late_up": 0,
+      "late_c": 0,
+      "late_c_u": 4,
+      "late_sum": 4
+    },
+    {
+      "rel_s": 186,
+      "late_up": 16,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 16
+    },
+    {
+      "rel_s": 187,
+      "late_up": 6,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 6
+    },
+    {
+      "rel_s": 188,
+      "late_up": 11,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 11
+    },
+    {
+      "rel_s": 201,
+      "late_up": 0,
+      "late_c": 0,
+      "late_c_u": 2,
+      "late_sum": 2
+    },
+    {
+      "rel_s": 226,
+      "late_up": 16,
+      "late_c": 0,
+      "late_c_u": 4,
+      "late_sum": 20
+    },
+    {
+      "rel_s": 263,
+      "late_up": 1,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 1
+    },
+    {
+      "rel_s": 264,
+      "late_up": 11,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 11
+    },
+    {
+      "rel_s": 265,
+      "late_up": 15,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 15
+    },
+    {
+      "rel_s": 266,
+      "late_up": 13,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 13
+    },
+    {
+      "rel_s": 267,
+      "late_up": 1,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 1
+    },
+    {
+      "rel_s": 268,
+      "late_up": 26,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 26
+    },
+    {
+      "rel_s": 269,
+      "late_up": 15,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 15
+    },
+    {
+      "rel_s": 270,
+      "late_up": 2,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 2
+    },
+    {
+      "rel_s": 271,
+      "late_up": 20,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 20
+    },
+    {
+      "rel_s": 274,
+      "late_up": 121,
+      "late_c": 9,
+      "late_c_u": 32,
+      "late_sum": 162
+    },
+    {
+      "rel_s": 277,
+      "late_up": 8,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 8
+    },
+    {
+      "rel_s": 278,
+      "late_up": 6,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 6
+    },
+    {
+      "rel_s": 279,
+      "late_up": 12,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 12
+    },
+    {
+      "rel_s": 280,
+      "late_up": 20,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 20
+    },
+    {
+      "rel_s": 281,
+      "late_up": 2,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 2
+    },
+    {
+      "rel_s": 282,
+      "late_up": 0,
+      "late_c": 0,
+      "late_c_u": 4,
+      "late_sum": 4
+    },
+    {
+      "rel_s": 396,
+      "late_up": 0,
+      "late_c": 2,
+      "late_c_u": 0,
+      "late_sum": 2
+    },
+    {
+      "rel_s": 418,
+      "late_up": 0,
+      "late_c": 2,
+      "late_c_u": 0,
+      "late_sum": 2
+    },
+    {
+      "rel_s": 552,
+      "late_up": 0,
+      "late_c": 0,
+      "late_c_u": 6,
+      "late_sum": 6
+    }
+  ],
+  "slot_ok": true,
+  "slot_msg": "555 MAC reports, nof_slots>0, windows advance (SFN-wrap safe)"
+}
