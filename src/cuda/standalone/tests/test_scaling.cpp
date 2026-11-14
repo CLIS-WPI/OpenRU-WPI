@@ -8,6 +8,7 @@
 #include "lowphy_pipeline.h"
 #include "lowphy_precoding.h"
 
+#include "cpu_catb_precoding.h"
 #include "phase_compensation_lut.h"
 
 #include "ocudu/adt/bf16.h"
@@ -120,105 +121,6 @@ void fill_weights(std::vector<ocudu::cf_t>& w, unsigned nof_prbs, unsigned nof_p
 }
 
 
-/// Category-B precoding. Ports ≤ 4: OCUDU `channel_precoder` (avx512).
-/// Ports > 4: labeled reference matching OCUDU generic math
-/// (`channel_precoder_generic.cpp:9-30`); OCUDU caps ports at
-/// `precoding_constants::MAX_NOF_PORTS` (`precoding_constants.h:24`).
-void cpu_precode_catb(std::vector<ocudu::cbf16_t>&       out_ports,
-                      const std::vector<ocudu::cbf16_t>& in_layers,
-                      const std::vector<ocudu::cf_t>&    weights,
-                      unsigned                           nof_layers,
-                      unsigned                           nof_ports,
-                      unsigned                           nof_prbs,
-                      ocudu::channel_precoder*           ocudu_precoder)
-{
-  const unsigned nof_subc = nof_prbs * 12u;
-  out_ports.assign(static_cast<size_t>(nof_ports) * NOF_SYMBOLS_PER_SLOT * nof_subc, ocudu::cbf16_t(0.0f, 0.0f));
-
-  const bool use_ocudu = (ocudu_precoder != nullptr) &&
-                         (nof_ports <= ocudu::precoding_constants::MAX_NOF_PORTS) &&
-                         (nof_layers <= ocudu::precoding_constants::MAX_NOF_LAYERS);
-
-  if (use_ocudu) {
-    ocudu::dynamic_re_buffer<ocudu::cf_t>    in_buf(nof_layers, 12);
-    ocudu::dynamic_re_buffer<ocudu::cbf16_t> out_buf(nof_ports, 12);
-    in_buf.resize(nof_layers, 12);
-    out_buf.resize(nof_ports, 12);
-    for (unsigned symbol = 0; symbol != NOF_SYMBOLS_PER_SLOT; ++symbol) {
-      for (unsigned prb = 0; prb != nof_prbs; ++prb) {
-        ocudu::precoding_weight_matrix mat(nof_layers, nof_ports);
-        for (unsigned port = 0; port != nof_ports; ++port) {
-          for (unsigned layer = 0; layer != nof_layers; ++layer) {
-            mat.set_coefficient(weights[(static_cast<size_t>(prb) * nof_ports + port) * nof_layers + layer],
-                                layer,
-                                port);
-          }
-        }
-        for (unsigned layer = 0; layer != nof_layers; ++layer) {
-          auto slice = in_buf.get_slice(layer);
-          for (unsigned k = 0; k != 12; ++k) {
-            slice[k] = ocudu::to_cf(
-                in_layers[(static_cast<size_t>(layer) * NOF_SYMBOLS_PER_SLOT + symbol) * nof_subc + prb * 12 + k]);
-          }
-        }
-        ocudu_precoder->apply_precoding(out_buf, in_buf, mat);
-        for (unsigned port = 0; port != nof_ports; ++port) {
-          auto slice = out_buf.get_slice(port);
-          for (unsigned k = 0; k != 12; ++k) {
-            out_ports[(static_cast<size_t>(port) * NOF_SYMBOLS_PER_SLOT + symbol) * nof_subc + prb * 12 + k] = slice[k];
-          }
-        }
-      }
-    }
-    return;
-  }
-
-  // Labeled reference (OCUDU-generic math, unbounded ports).
-  for (unsigned symbol = 0; symbol != NOF_SYMBOLS_PER_SLOT; ++symbol) {
-    for (unsigned port = 0; port != nof_ports; ++port) {
-      for (unsigned re = 0; re != nof_subc; ++re) {
-        const unsigned prb = re / 12u;
-        ocudu::cf_t    sum = ocudu::cf_t(0.0f, 0.0f);
-        for (unsigned layer = 0; layer != nof_layers; ++layer) {
-          const ocudu::cf_t in = ocudu::to_cf(
-              in_layers[(static_cast<size_t>(layer) * NOF_SYMBOLS_PER_SLOT + symbol) * nof_subc + re]);
-          const ocudu::cf_t w =
-              weights[(static_cast<size_t>(prb) * nof_ports + port) * nof_layers + layer];
-          sum += in * w;
-        }
-        out_ports[(static_cast<size_t>(port) * NOF_SYMBOLS_PER_SLOT + symbol) * nof_subc + re] = ocudu::cbf16_t(sum);
-      }
-    }
-  }
-}
-
-void cpu_combine_catb(std::vector<ocudu::cbf16_t>&     out_layers,
-                      const std::vector<ocudu::cf_t>&  in_ports,
-                      const std::vector<ocudu::cf_t>&  weights,
-                      unsigned                         nof_layers,
-                      unsigned                         nof_ports,
-                      unsigned                         nof_prbs)
-{
-  const unsigned nof_subc = nof_prbs * 12u;
-  out_layers.assign(static_cast<size_t>(nof_layers) * NOF_SYMBOLS_PER_SLOT * nof_subc, ocudu::cbf16_t(0.0f, 0.0f));
-  for (unsigned symbol = 0; symbol != NOF_SYMBOLS_PER_SLOT; ++symbol) {
-    for (unsigned layer = 0; layer != nof_layers; ++layer) {
-      for (unsigned re = 0; re != nof_subc; ++re) {
-        const unsigned prb = re / 12u;
-        ocudu::cf_t    sum = ocudu::cf_t(0.0f, 0.0f);
-        for (unsigned port = 0; port != nof_ports; ++port) {
-          const ocudu::cf_t y =
-              in_ports[(static_cast<size_t>(port) * NOF_SYMBOLS_PER_SLOT + symbol) * nof_subc + re];
-          const ocudu::cf_t w =
-              weights[(static_cast<size_t>(prb) * nof_ports + port) * nof_layers + layer];
-          sum += y * std::conj(w);
-        }
-        out_layers[(static_cast<size_t>(layer) * NOF_SYMBOLS_PER_SLOT + symbol) * nof_subc + re] = ocudu::cbf16_t(sum);
-      }
-    }
-  }
-}
-
 struct capture_writer : public ocudu::resource_grid_writer {
   unsigned                  nof_ports, nof_symbols, nof_subc;
   std::vector<ocudu::cf_t>& output;
@@ -266,15 +168,26 @@ struct capture_writer : public ocudu::resource_grid_writer {
   ocudu::span<ocudu::cbf16_t> get_view(unsigned, unsigned) override { return {}; }
 };
 
+/// Pass gate (also used when a few REs trip the mismatch counter):
+/// quantity = max |gpu−cpu| over complex floats after bf16→float (hypot of Re/Im);
+/// threshold = 1e-3 absolute. The mismatch counter uses a tighter 1e-5 tripwire for
+/// diagnostics only; rows with 1–3 mismatches still PASS if max |err| ≤ 1e-3.
+constexpr double PASS_MAX_ABS_ERR = 1e-3;
+constexpr double MISMATCH_TRIPWIRE = 1e-5;
+
 struct row_result {
   unsigned ports = 0, layers = 0;
   latency_stats gpu_dl, gpu_ul, cpu_dl, cpu_ul;
+  latency_stats gpu_precode, cpu_precode, ocudu_prg_precode;
+  double   precode_flops      = 0;
+  double   precode_max_err    = 0;
+  double   combine_max_err    = 0;
   size_t   precode_mismatches = 0;
   size_t   combine_mismatches = 0;
-  int      precode_max_lsb    = 0;
-  int      combine_max_lsb    = 0;
+  size_t   opt_vs_ref_mismatches = 0;
+  double   opt_vs_ref_max_err = 0;
   bool     pass               = false;
-  const char* cpu_precode_impl = "";
+  const char* cpu_precode_impl = "AVX-512 Cat-B (OCUDU apply_precoding_port math; all port counts)";
   bool     stopped_early       = false;
   std::string stop_reason;
 };
@@ -366,12 +279,21 @@ int main(int argc, char** argv)
 
   std::printf("# Scaling study: 100 MHz, 30 kHz SCS, Cat-B precoding [MEASURED] H100 compute-only\n");
   std::printf("Device: %s; CPU core %u; FFTW + AVX-512 BFP; slot=%.1f ms\n", prop.name, cpu_core, SLOT_MS);
-  std::printf("OCUDU precoder: %s (MAX_NOF_PORTS=%u in precoding_constants.h:24; "
-              "apply_precoding in channel_precoder_impl.cpp:9-51; "
-              "generic math channel_precoder_generic.cpp:9-30)\n",
-              ocudu_precoder ? "avx512 available for ports<=4" : "unavailable",
-              ocudu::precoding_constants::MAX_NOF_PORTS);
-  std::printf("GPU precoding: custom CUDA kernel (Cat-B per-PRB); Jetson not claimed\n\n");
+  std::printf("Production OCUDU call site: resource_grid_mapper_impl.cpp:245-263\n"
+              "  (pre-stored get_prg_coefficients + apply_precoding on RE views).\n"
+              "Timed CPU path: AVX-512 strip over REs with per-PRB weights — same kernel math as\n"
+              "  channel_precoder_avx512.cpp:221-269 (apply_precoding_port), for ALL port counts.\n"
+              "  (Calling OCUDU apply_precoding once per Cat-B PRB of 12 REs cannot amortize AVX;\n"
+              "   that pattern is still exercised for fidelity and reported as ocudu_prg_p50.)\n"
+              "Scalar reference (channel_precoder_generic.cpp:9-30) is correctness-only.\n"
+              "Pass tolerance: max |gpu-cpu| after bf16→float ≤ %.0e (mismatch tripwire %.0e is diagnostic).\n"
+              "GPU precoding: custom CUDA Cat-B kernel; Jetson not claimed\n\n",
+              PASS_MAX_ABS_ERR,
+              MISMATCH_TRIPWIRE);
+  if (!ocudu_precoder) {
+    std::fprintf(stderr, "OCUDU avx512 channel_precoder unavailable\n");
+    return 1;
+  }
 
   const std::vector<unsigned> port_counts  = {2, 4, 8, 16, 32, 64};
   const std::vector<unsigned> layer_counts = {2, 4};
@@ -395,8 +317,7 @@ int main(int argc, char** argv)
       row_result row;
       row.ports  = ports;
       row.layers = layers;
-      row.cpu_precode_impl =
-          (ports <= ocudu::precoding_constants::MAX_NOF_PORTS) ? "OCUDU avx512" : "reference (OCUDU-generic math)";
+      row.precode_flops = cpu_catb::flop_count_precode(ports, layers, nof_prbs);
 
       const size_t layer_grid_elems = static_cast<size_t>(layers) * NOF_SYMBOLS_PER_SLOT * rg_size;
       const size_t port_grid_elems  = static_cast<size_t>(ports) * NOF_SYMBOLS_PER_SLOT * rg_size;
@@ -422,6 +343,10 @@ int main(int argc, char** argv)
       fill_random_grid(layer_grid, GRID_SCALE, 0x1000u + ports * 16 + layers);
       std::vector<ocudu::cf_t> weights;
       fill_weights(weights, nof_prbs, ports, layers, 0x2000u + ports);
+      cpu_catb::WeightBank weight_bank;
+      weight_bank.build(weights, nof_prbs, ports, layers);
+      std::vector<ocudu::cf_t> layer_grid_cf;
+      cpu_catb::layers_cbf16_to_cf(layer_grid_cf, layer_grid, layers, rg_size);
 
       auto compressor = ocudu::ofh::create_iq_compressor(ocudu::ofh::compression_type::BFP, logger, 1.0f, "avx512");
       auto decompressor =
@@ -454,28 +379,106 @@ int main(int argc, char** argv)
       }
       CUDA_CHECK(cudaMemcpy(d_weights, weights_cf.data(), weights_elems * sizeof(lowphy_cf32), cudaMemcpyHostToDevice));
 
-      lowphy_catb_precode(d_layer_cbf16, d_weights, d_port_cbf16, layers, ports, NOF_SYMBOLS_PER_SLOT, nof_prbs, stream);
-      std::vector<ocudu::cbf16_t> gpu_ported(port_grid_elems);
-      CUDA_CHECK(cudaMemcpyAsync(gpu_ported.data(), d_port_cbf16, port_grid_elems * sizeof(ocudu::cbf16_t),
-                                 cudaMemcpyDeviceToHost, stream));
-      CUDA_CHECK(cudaStreamSynchronize(stream));
+      // Stage-only GPU precoding timing (weights+input already on device).
+      for (unsigned i = 0; i != WARMUP; ++i) {
+        lowphy_catb_precode(
+            d_layer_cbf16, d_weights, d_port_cbf16, layers, ports, NOF_SYMBOLS_PER_SLOT, nof_prbs, stream);
+        CUDA_CHECK(cudaStreamSynchronize(stream));
+      }
+      cudaEvent_t pev0, pev1;
+      CUDA_CHECK(cudaEventCreate(&pev0));
+      CUDA_CHECK(cudaEventCreate(&pev1));
+      std::vector<double> gpu_pre_ms;
+      for (unsigned i = 0; i != latency_iters; ++i) {
+        CUDA_CHECK(cudaEventRecord(pev0, stream));
+        lowphy_catb_precode(
+            d_layer_cbf16, d_weights, d_port_cbf16, layers, ports, NOF_SYMBOLS_PER_SLOT, nof_prbs, stream);
+        CUDA_CHECK(cudaEventRecord(pev1, stream));
+        CUDA_CHECK(cudaEventSynchronize(pev1));
+        float ms = 0;
+        CUDA_CHECK(cudaEventElapsedTime(&ms, pev0, pev1));
+        gpu_pre_ms.push_back(ms);
+      }
+      row.gpu_precode = compute_stats(gpu_pre_ms);
+      CUDA_CHECK(cudaEventDestroy(pev0));
+      CUDA_CHECK(cudaEventDestroy(pev1));
 
-      // Correctness vs reference in float domain (bf16 bit-diff is misleading across exponents).
-      // Pass if max |gpu-cpu| <= 2^-6 (~bf16 eps) after to_float.
-      std::vector<ocudu::cbf16_t> cpu_ported;
-      cpu_precode_catb(cpu_ported, layer_grid, weights, layers, ports, nof_prbs, nullptr);
-      double precode_max_err = 0.0;
+      std::vector<ocudu::cbf16_t> gpu_ported(port_grid_elems);
+      CUDA_CHECK(cudaMemcpy(gpu_ported.data(), d_port_cbf16, port_grid_elems * sizeof(ocudu::cbf16_t),
+                            cudaMemcpyDeviceToHost));
+
+      // Optimized CPU path vs scalar reference (correctness of the harness itself).
+      std::vector<ocudu::cbf16_t> cpu_opt;
+      std::vector<ocudu::cbf16_t> cpu_ref;
+      cpu_catb::precode_optimized(cpu_opt, layer_grid_cf, weight_bank, ocudu_precoder.get());
+      cpu_catb::precode_reference(cpu_ref, layer_grid_cf, weight_bank);
+      for (size_t i = 0; i != port_grid_elems; ++i) {
+        const ocudu::cf_t o = ocudu::to_cf(cpu_opt[i]);
+        const ocudu::cf_t r = ocudu::to_cf(cpu_ref[i]);
+        const double err =
+            std::hypot(static_cast<double>(o.real() - r.real()), static_cast<double>(o.imag() - r.imag()));
+        if (err > MISMATCH_TRIPWIRE) {
+          ++row.opt_vs_ref_mismatches;
+        }
+        row.opt_vs_ref_max_err = std::max(row.opt_vs_ref_max_err, err);
+      }
+
+      // GPU vs optimized CPU in float domain.
       for (size_t i = 0; i != port_grid_elems; ++i) {
         const ocudu::cf_t g = ocudu::to_cf(gpu_ported[i]);
-        const ocudu::cf_t c = ocudu::to_cf(cpu_ported[i]);
-        const double err = std::hypot(static_cast<double>(g.real() - c.real()),
-                                      static_cast<double>(g.imag() - c.imag()));
-        if (err > 1e-5) {
+        const ocudu::cf_t c = ocudu::to_cf(cpu_opt[i]);
+        const double err =
+            std::hypot(static_cast<double>(g.real() - c.real()), static_cast<double>(g.imag() - c.imag()));
+        if (err > MISMATCH_TRIPWIRE) {
           ++row.precode_mismatches;
         }
-        precode_max_err = std::max(precode_max_err, err);
+        row.precode_max_err = std::max(row.precode_max_err, err);
       }
-      row.precode_max_lsb = static_cast<int>(std::ceil(precode_max_err * 32767.0)); // report as ci16-LSB scale
+
+      // Stage-only CPU precoding timing (cf conversion done once above; weights pre-built).
+      {
+        std::vector<ocudu::cbf16_t> timed_out;
+        for (unsigned i = 0; i != WARMUP; ++i) {
+          cpu_catb::precode_optimized(timed_out, layer_grid_cf, weight_bank, ocudu_precoder.get());
+        }
+        std::vector<double> cpu_pre_ms;
+        for (unsigned i = 0; i != latency_iters; ++i) {
+          auto t0 = std::chrono::steady_clock::now();
+          cpu_catb::precode_optimized(timed_out, layer_grid_cf, weight_bank, ocudu_precoder.get());
+          auto t1 = std::chrono::steady_clock::now();
+          cpu_pre_ms.push_back(std::chrono::duration<double, std::milli>(t1 - t0).count());
+        }
+        row.cpu_precode = compute_stats(cpu_pre_ms);
+
+        // OCUDU PRG-view path (production call pattern) — fidelity + overhead contrast.
+        for (unsigned i = 0; i != WARMUP; ++i) {
+          cpu_catb::precode_ocudu_prg_views(timed_out, layer_grid_cf, weight_bank, ocudu_precoder.get());
+        }
+        std::vector<double> ocudu_pre_ms;
+        for (unsigned i = 0; i != latency_iters; ++i) {
+          auto t0 = std::chrono::steady_clock::now();
+          cpu_catb::precode_ocudu_prg_views(timed_out, layer_grid_cf, weight_bank, ocudu_precoder.get());
+          auto t1 = std::chrono::steady_clock::now();
+          ocudu_pre_ms.push_back(std::chrono::duration<double, std::milli>(t1 - t0).count());
+        }
+        row.ocudu_prg_precode = compute_stats(ocudu_pre_ms);
+
+        const double gflops =
+            (row.precode_flops / 1e9) / std::max(row.cpu_precode.p50 / 1e3, 1e-12);
+        std::printf("  precode stage ports=%u layers=%u  FLOPs=%.3e  "
+                    "CPU_AVX p50=%.4f ms (%.1f GFLOP/s)  OCUDU_PRG p50=%.4f ms  GPU p50=%.4f ms  "
+                    "opt_vs_ref_mis=%zu  gpu_vs_cpu_mis=%zu max|err|=%.3e\n",
+                    ports,
+                    layers,
+                    row.precode_flops,
+                    row.cpu_precode.p50,
+                    gflops,
+                    row.ocudu_prg_precode.p50,
+                    row.gpu_precode.p50,
+                    row.opt_vs_ref_mismatches,
+                    row.precode_mismatches,
+                    row.precode_max_err);
+      }
 
       // ---- GPU DL full chain timing: H2D layers_comp -> decompress -> precode -> OFDM -> D2H ----
       // Reuse pipeline buffers manually for flexibility with layers != ports.
@@ -611,35 +614,45 @@ int main(int argc, char** argv)
       }
       row.gpu_ul = compute_stats(gpu_ul_ms);
 
-      // Combine correctness: run combine on CPU from GPU demod cf32 dump once.
+      // Combine correctness: optimized AVX-512 vs scalar ref, and GPU vs optimized.
       {
         std::vector<ocudu::cf_t> port_cf(port_grid_elems);
         CUDA_CHECK(cudaMemcpy(port_cf.data(), d_port_cf32, port_grid_elems * sizeof(lowphy_cf32), cudaMemcpyDeviceToHost));
-        // Reinterpret lowphy_cf32 as cf_t (same layout).
-        std::vector<ocudu::cbf16_t> cpu_combined;
-        cpu_combine_catb(cpu_combined, port_cf, weights, layers, ports, nof_prbs);
+        std::vector<ocudu::cbf16_t> cpu_combined_opt;
+        std::vector<ocudu::cbf16_t> cpu_combined_ref;
+        cpu_catb::combine_optimized(cpu_combined_opt, port_cf, weight_bank);
+        cpu_catb::combine_reference(cpu_combined_ref, port_cf, weight_bank);
+        for (size_t i = 0; i != layer_grid_elems; ++i) {
+          const ocudu::cf_t o = ocudu::to_cf(cpu_combined_opt[i]);
+          const ocudu::cf_t r = ocudu::to_cf(cpu_combined_ref[i]);
+          const double err =
+              std::hypot(static_cast<double>(o.real() - r.real()), static_cast<double>(o.imag() - r.imag()));
+          if (err > MISMATCH_TRIPWIRE) {
+            ++row.opt_vs_ref_mismatches;
+          }
+          row.opt_vs_ref_max_err = std::max(row.opt_vs_ref_max_err, err);
+        }
         std::vector<ocudu::cbf16_t> gpu_combined(layer_grid_elems);
         lowphy_catb_combine(
             d_port_cf32, d_weights, d_layer_cbf16, layers, ports, NOF_SYMBOLS_PER_SLOT, nof_prbs, stream);
         CUDA_CHECK(cudaMemcpy(gpu_combined.data(), d_layer_cbf16, layer_grid_elems * sizeof(ocudu::cbf16_t),
                               cudaMemcpyDeviceToHost));
         CUDA_CHECK(cudaStreamSynchronize(stream));
-        double combine_max_err = 0.0;
         for (size_t i = 0; i != layer_grid_elems; ++i) {
           const ocudu::cf_t g = ocudu::to_cf(gpu_combined[i]);
-          const ocudu::cf_t c = ocudu::to_cf(cpu_combined[i]);
-          const double err = std::hypot(static_cast<double>(g.real() - c.real()),
-                                        static_cast<double>(g.imag() - c.imag()));
-          if (err > 1e-5) {
+          const ocudu::cf_t c = ocudu::to_cf(cpu_combined_opt[i]);
+          const double err =
+              std::hypot(static_cast<double>(g.real() - c.real()), static_cast<double>(g.imag() - c.imag()));
+          if (err > MISMATCH_TRIPWIRE) {
             ++row.combine_mismatches;
           }
-          combine_max_err = std::max(combine_max_err, err);
+          row.combine_max_err = std::max(row.combine_max_err, err);
         }
-        row.combine_max_lsb = static_cast<int>(std::ceil(combine_max_err * 32767.0));
       }
 
-      // ---- CPU DL/UL timing (FFTW + AVX-512 BFP + precoder) ----
+      // ---- CPU DL/UL timing (FFTW + AVX-512 BFP + production-style precoder) ----
       std::vector<ocudu::cbf16_t> dec_layers(layer_grid_elems);
+      std::vector<ocudu::cf_t>    dec_layers_cf(layer_grid_elems);
       std::vector<ocudu::cbf16_t> precoded;
       std::vector<ocudu::cf_t>    slot_cf(slot_samples);
       std::vector<ocudu::ci16_t>  out_ci16(static_cast<size_t>(ports) * slot_samples);
@@ -656,7 +669,8 @@ int main(int argc, char** argv)
                                      params);
           }
         }
-        cpu_precode_catb(precoded, dec_layers, weights, layers, ports, nof_prbs, ocudu_precoder.get());
+        cpu_catb::layers_cbf16_to_cf(dec_layers_cf, dec_layers, layers, rg_size);
+        cpu_catb::precode_optimized(precoded, dec_layers_cf, weight_bank, ocudu_precoder.get());
         for (unsigned port = 0; port != ports; ++port) {
           for (unsigned symbol = 0; symbol != NOF_SYMBOLS_PER_SLOT; ++symbol) {
             auto view = timed_grid->get_writer().get_view(port, symbol);
@@ -697,7 +711,7 @@ int main(int argc, char** argv)
           slot_demodulator->demodulate(
               writer, ocudu::span<const ocudu::cf_t>(demod_in.data() + port * slot_samples, slot_samples), port, slot_index);
         }
-        cpu_combine_catb(combined, demod_grid, weights, layers, ports, nof_prbs);
+        cpu_catb::combine_optimized(combined, demod_grid, weight_bank);
         for (unsigned layer = 0; layer != layers; ++layer) {
           for (unsigned symbol = 0; symbol != NOF_SYMBOLS_PER_SLOT; ++symbol) {
             size_t go = (static_cast<size_t>(layer) * NOF_SYMBOLS_PER_SLOT + symbol) * rg_size;
@@ -720,13 +734,13 @@ int main(int argc, char** argv)
       }
       row.cpu_ul = compute_stats(cpu_ul_ms);
 
-      // ~1 bf16 ULP at unit scale is ~0.0078; allow 1e-3 absolute after to_float.
-      row.pass = (row.precode_max_lsb <= static_cast<int>(std::ceil(1e-3 * 32767.0))) &&
-                 (row.combine_max_lsb <= static_cast<int>(std::ceil(1e-3 * 32767.0)));
+      // Pass: max |err| ≤ PASS_MAX_ABS_ERR (1e-3). Mismatch counts at 1e-5 are diagnostic.
+      row.pass = (row.precode_max_err <= PASS_MAX_ABS_ERR) && (row.combine_max_err <= PASS_MAX_ABS_ERR) &&
+                 (row.opt_vs_ref_max_err <= PASS_MAX_ABS_ERR);
       results.push_back(row);
 
       std::printf("ports=%u layers=%u  GPU DL p50/p99=%.4f/%.4f  UL=%.4f/%.4f  "
-                  "CPU DL=%.4f/%.4f UL=%.4f/%.4f  precode_mis=%zu(maxLSB=%d) combine_mis=%zu(maxLSB=%d) [%s]  impl=%s\n",
+                  "CPU DL=%.4f/%.4f UL=%.4f/%.4f  precode_mis=%zu(max|e|=%.3e) combine_mis=%zu(max|e|=%.3e) [%s]\n",
                   ports,
                   layers,
                   row.gpu_dl.p50,
@@ -738,11 +752,10 @@ int main(int argc, char** argv)
                   row.cpu_ul.p50,
                   row.cpu_ul.p99,
                   row.precode_mismatches,
-                  row.precode_max_lsb,
+                  row.precode_max_err,
                   row.combine_mismatches,
-                  row.combine_max_lsb,
-                  row.pass ? "PASS" : "FAIL",
-                  row.cpu_precode_impl);
+                  row.combine_max_err,
+                  row.pass ? "PASS" : "FAIL");
 
       // Cleanup this config
       lowphy_ofdm_plan_destroy(mod_plan);
@@ -801,9 +814,10 @@ int main(int argc, char** argv)
   std::ofstream csv(csv_path);
   csv << "ports,layers,gpu_dl_p50_ms,gpu_dl_p99_ms,gpu_dl_max_ms,gpu_ul_p50_ms,gpu_ul_p99_ms,gpu_ul_max_ms,"
          "cpu_dl_p50_ms,cpu_dl_p99_ms,cpu_dl_max_ms,cpu_ul_p50_ms,cpu_ul_p99_ms,cpu_ul_max_ms,"
+         "gpu_precode_p50_ms,cpu_precode_p50_ms,ocudu_prg_precode_p50_ms,precode_flops,"
          "gpu_dl_p99_p50,gpu_ul_p99_p50,cpu_dl_p99_p50,cpu_ul_p99_p50,"
          "cores_needed_dl_ul,gpu_frac_slot_dl,gpu_frac_slot_ul,cpu_precode_impl,precode_mismatches,"
-         "combine_mismatches,pass\n";
+         "combine_mismatches,precode_max_err,combine_max_err,opt_vs_ref_max_err,pass\n";
 
   for (const auto& r : results) {
     if (r.stopped_early) {
@@ -842,10 +856,12 @@ int main(int argc, char** argv)
                 r.pass ? "PASS" : "FAIL");
     csv << r.ports << ',' << r.layers << ',' << r.gpu_dl.p50 << ',' << r.gpu_dl.p99 << ',' << r.gpu_dl.maxv << ','
         << r.gpu_ul.p50 << ',' << r.gpu_ul.p99 << ',' << r.gpu_ul.maxv << ',' << r.cpu_dl.p50 << ',' << r.cpu_dl.p99
-        << ',' << r.cpu_dl.maxv << ',' << r.cpu_ul.p50 << ',' << r.cpu_ul.p99 << ',' << r.cpu_ul.maxv << ',' << gdl_r
-        << ',' << gul_r << ',' << cdl_r << ',' << cul_r << ',' << cores << ',' << frac_dl << ',' << frac_ul << ','
-        << '"' << r.cpu_precode_impl << '"' << ',' << r.precode_mismatches << ',' << r.combine_mismatches << ','
-        << (r.pass ? 1 : 0) << '\n';
+        << ',' << r.cpu_dl.maxv << ',' << r.cpu_ul.p50 << ',' << r.cpu_ul.p99 << ',' << r.cpu_ul.maxv << ','
+        << r.gpu_precode.p50 << ',' << r.cpu_precode.p50 << ',' << r.ocudu_prg_precode.p50 << ',' << r.precode_flops
+        << ',' << gdl_r << ',' << gul_r << ',' << cdl_r << ',' << cul_r << ',' << cores << ',' << frac_dl << ','
+        << frac_ul << ',' << '"' << r.cpu_precode_impl << '"' << ',' << r.precode_mismatches << ','
+        << r.combine_mismatches << ',' << r.precode_max_err << ',' << r.combine_max_err << ','
+        << r.opt_vs_ref_max_err << ',' << (r.pass ? 1 : 0) << '\n';
   }
   csv.close();
 
