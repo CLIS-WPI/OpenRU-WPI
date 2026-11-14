@@ -18,7 +18,7 @@ Defaults from the Phase 1 brief; update when a human decides.
 
 ## M1 closure decisions — OPEN
 
-- [ ] **Regenerate the goldens with the N=100 Δ gate?** The stored goldens predate `dump_start_stable_slots=100` (`first_du` 65.18 / 189.13 / 165.11); restart-2’s −1052 is at DU_end **68.0**, so the pre-gate baseline golden starts *before* the outlier. Gated captures start at ≈70.2 / 194.1 / 170.1 and exclude it. Until regeneration, the strict full-range `iq_compare` will fail a gated DUT against a pre-gate golden. **Default:** regenerate all three profiles before M2 `replay-cuda`; do **not** retune the gate to −1052’s timing. Alternative: `dump_start_stable_slots=0` for legacy replay only.
+- [x] **Regenerate the goldens with the N=100 Δ gate — DONE.** The null radio waits for N=100 stable slots **and the next SFN 0**, so `first_du=0.0` on every cold replay; the −1052 at DU_end **68.0** is in the preceding period and is excluded. Regenerated baseline/b40/b100 (baseline `baseline.pcapng` 10 s; b40/b100 `_3s`): 4000/2000/800 slots, two cold replays each, `max_abs=0` over the full window. The strict full-range `iq_compare` remains. The gate was **not** retuned to −1052.
 - [ ] **CI runner hosting:** register an ephemeral self-hosted runner (dedicated VM, unprivileged user, rootless Docker) for `replay-golden`, or keep the workflow `workflow_dispatch`-only/inert through M2? No runner is registered today (`total_count=0`). **Default:** keep inert; manual `make replay-golden` is the gate.
 - [ ] **Golden record license:** AGPL-3.0 (repo-consistent) or CC-BY-4.0 (data)? **Default:** AGPL-3.0.
 

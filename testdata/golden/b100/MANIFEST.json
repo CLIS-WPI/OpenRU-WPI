@@ -12,55 +12,62 @@
   "nof_slots": 800,
   "max_dump_slots_cap": 800,
   "first_du": {
-    "sfn": 165,
-    "slot": 11
+    "sfn": 0,
+    "slot": 0
   },
   "last_du": {
-    "sfn": 203,
-    "slot": 8
+    "sfn": 39,
+    "slot": 19
   },
   "last_du_from_meta": {
-    "sfn": 205,
-    "slot": 10
+    "sfn": 39,
+    "slot": 19
   },
-  "total_iq_bytes": 788423680,
-  "tx_index_entries": 758,
+  "total_iq_bytes": 786432000,
+  "tx_index_entries": 754,
   "files": {
     "port0.cf32": {
-      "sha256": "f5c6331b10b95812c0ec32561e98b7b03846788ccf1a01bb3d7113a83f8a8bbb",
-      "bytes": 394211840
+      "sha256": "e114a31b2b1b25eae25a13deae9eaa963fc30d77f1e1f4f083166cf5d550162c",
+      "bytes": 393216000
     },
     "port1.cf32": {
-      "sha256": "f5c6331b10b95812c0ec32561e98b7b03846788ccf1a01bb3d7113a83f8a8bbb",
-      "bytes": 394211840
+      "sha256": "e114a31b2b1b25eae25a13deae9eaa963fc30d77f1e1f4f083166cf5d550162c",
+      "bytes": 393216000
     },
     "iq_meta.json": {
-      "sha256": "0724b4d7b3c571a3beeb1f37fb9b18d6e0a4717c9dc76fc3f09ebc040afbbf3d",
-      "bytes": 867
+      "sha256": "209b145dd46e41fc858b798c85fc812b79e2c02af8f16e3de0cc67bcd99ab9f1",
+      "bytes": 1157
     },
     "tx_index.jsonl": {
-      "sha256": "6f7435ae00ff703d4fc70e3d4c8c8567f8c8fba14cf810019394f09e73d88ef7",
-      "bytes": 106551
+      "sha256": "378edd972d3099e94555ebed470e1ac8da96803477b9cca93257345a81cff400",
+      "bytes": 106545
     }
   },
   "SHA256": {
-    "port0.cf32": "f5c6331b10b95812c0ec32561e98b7b03846788ccf1a01bb3d7113a83f8a8bbb",
-    "port1.cf32": "f5c6331b10b95812c0ec32561e98b7b03846788ccf1a01bb3d7113a83f8a8bbb",
-    "iq_meta.json": "0724b4d7b3c571a3beeb1f37fb9b18d6e0a4717c9dc76fc3f09ebc040afbbf3d",
-    "tx_index.jsonl": "6f7435ae00ff703d4fc70e3d4c8c8567f8c8fba14cf810019394f09e73d88ef7"
+    "port0.cf32": "e114a31b2b1b25eae25a13deae9eaa963fc30d77f1e1f4f083166cf5d550162c",
+    "port1.cf32": "e114a31b2b1b25eae25a13deae9eaa963fc30d77f1e1f4f083166cf5d550162c",
+    "iq_meta.json": "209b145dd46e41fc858b798c85fc812b79e2c02af8f16e3de0cc67bcd99ab9f1",
+    "tx_index.jsonl": "378edd972d3099e94555ebed470e1ac8da96803477b9cca93257345a81cff400"
   },
   "pcap": "testdata/pcap/b100_3s.pcapng",
-  "pcap_source": "testdata/pcap/b100.pcapng (first 3.5s)",
-  "openru_sw_commit": "62e0da81165ddee99a62d4b94d065f5c158e23aa",
-  "proto_ru_commit": "790b899b0745ecc2b65633cf226ccce4b9e36a3d",
+  "pcap_source": "first 3.5 s",
+  "openru_sw_commit": "52c597b60b419c14c51b47205e029d93df7ad8be",
+  "proto_ru_commit": "9bee50c5e8c4bf99d9159a3823a2c08bd42b6254",
   "proto_ru_branch": "feat/null-radio",
   "image": "openru/protoru:m1",
   "compare_gate": "0 differing samples (CPU vs CPU)",
-  "shm_note": "compose shm_size=2gb; b100 uses max_dump_slots=800 (~752 MiB IQ) so the dump fits in /dev/shm",
+  "shm_note": "compose shm_size=2gb; port files start at the first written block",
+  "dump_gate": {
+    "dump_start_stable_slots": 100,
+    "dump_start_at_sfn0": true,
+    "prestart_dropped_buffers": 2824,
+    "first_dump_sample_offset": 0,
+    "first_dump_abs_sample_offset": 173631040
+  },
   "delta_mapping": {
     "applied_delta_slots": -8,
     "du_log": "mac_metrics_consumers.cpp:37 slots=[start, END)",
     "ru_log": "ru_emulator_tti_orchestrator.cpp:161 ofh=",
-    "iq_compare": "Compares dumps by sequential sample/slot_grid order (radio timeline). Does not remap via \u0394. Size (slots_written/bytes) must match; GPS last_du_* labels may differ across cold starts."
+    "iq_compare": "Aligns on DU slot from iq_meta/tx_index, normalizes the shortest offset, and requires full golden-range overlap; does not remap by \u0394."
   }
 }
