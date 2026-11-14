@@ -614,12 +614,13 @@ int main(int argc, char** argv)
                   current.dl.p99_ms,
                   current.dl.max_ms,
                   current.cores_dl);
-      std::printf("  %u ports UL p50/p99/max=%.4f/%.4f/%.4f ms (cores_needed=%u); DL+UL cores=%u\n",
-                  ports,
+      std::printf("  %u ports UL p50/p99/max=%.4f/%.4f/%.4f ms (cores_needed=%u); TDD cores=%u; FDD cores=%u\n",
+                  current.ports,
                   current.ul.p50_ms,
                   current.ul.p99_ms,
                   current.ul.max_ms,
                   current.cores_ul,
+                  std::max(current.cores_dl, current.cores_ul),
                   current.cores_both);
     }
   }
@@ -661,15 +662,16 @@ int main(int argc, char** argv)
                 r.cores_ul);
   }
 
-  std::printf("\n## GPU replaces N CPU cores (ceil((DL_p99+UL_p99)/0.5 ms))\n\n");
-  std::printf("| Profile | Ports | DL cores | UL cores | DL+UL cores (GPU replaces N) |\n");
-  std::printf("|---|---:|---:|---:|---:|\n");
+  std::printf("\n## GPU replaces N CPU cores\n\n");
+  std::printf("| Profile | Ports | DL cores | UL cores | TDD cores | FDD cores (DL+UL) |\n");
+  std::printf("|---|---:|---:|---:|---:|---:|\n");
   for (const case_result& r : results) {
-    std::printf("| %s | %u | %u | %u | %u |\n",
+    std::printf("| %s | %u | %u | %u | %u | %u |\n",
                 r.profile_name.c_str(),
                 r.ports,
                 r.cores_dl,
                 r.cores_ul,
+                std::max(r.cores_dl, r.cores_ul),
                 r.cores_both);
   }
 

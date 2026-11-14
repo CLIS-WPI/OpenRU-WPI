@@ -789,14 +789,18 @@ int main(int argc, char** argv)
 
   CUDA_CHECK(cudaStreamDestroy(stream));
 
-  // Find thresholds
-  int cpu_miss_ports = -1;
+  // Find thresholds. TDD (DDDSU) puts one direction in a slot, so compare the
+  // larger direction; FDD puts DL and UL in the same interval, so compare the sum.
+  int cpu_miss_ports_tdd = -1;
+  int cpu_miss_ports_fdd = -1;
   int gpu_half_ports = -1;
   for (const auto& r : results) {
     if (!r.stopped_early) {
-      if (cpu_miss_ports < 0 && (r.cpu_dl.p99 > SLOT_MS || r.cpu_ul.p99 > SLOT_MS ||
-                                (r.cpu_dl.p99 + r.cpu_ul.p99) > SLOT_MS)) {
-        cpu_miss_ports = static_cast<int>(r.ports);
+      if (cpu_miss_ports_tdd < 0 && std::max(r.cpu_dl.p99, r.cpu_ul.p99) > SLOT_MS) {
+        cpu_miss_ports_tdd = static_cast<int>(r.ports);
+      }
+      if (cpu_miss_ports_fdd < 0 && (r.cpu_dl.p99 + r.cpu_ul.p99) > SLOT_MS) {
+        cpu_miss_ports_fdd = static_cast<int>(r.ports);
       }
       // Use p50 for the 50%-slot threshold so a single p99 outlier cannot trip it.
       if (gpu_half_ports < 0 && (r.gpu_dl.p50 > 0.5 * SLOT_MS || r.gpu_ul.p50 > 0.5 * SLOT_MS)) {
@@ -808,15 +812,15 @@ int main(int argc, char** argv)
   std::printf("\n## Results table (100 MHz, 30 kHz SCS) [MEASURED] H100 compute-only\n\n");
   std::printf("| Ports | Layers | GPU DL p50/p99/max | GPU UL p50/p99/max | "
               "CPU DL p50/p99/max | CPU UL p50/p99/max | GPU p99/p50 DL|UL | CPU p99/p50 DL|UL | "
-              "cores_needed | GPU frac slot DL|UL | Pass |\n");
-  std::printf("|---:|---:|---|---|---|---|---|---|---:|---|:---:|\n");
+              "cores_needed TDD | cores_needed FDD | GPU frac slot DL|UL | Pass |\n");
+  std::printf("|---:|---:|---|---|---|---|---|---|---:|---:|---|:---:|\n");
 
   std::ofstream csv(csv_path);
   csv << "ports,layers,gpu_dl_p50_ms,gpu_dl_p99_ms,gpu_dl_max_ms,gpu_ul_p50_ms,gpu_ul_p99_ms,gpu_ul_max_ms,"
          "cpu_dl_p50_ms,cpu_dl_p99_ms,cpu_dl_max_ms,cpu_ul_p50_ms,cpu_ul_p99_ms,cpu_ul_max_ms,"
          "gpu_precode_p50_ms,cpu_precode_p50_ms,ocudu_prg_precode_p50_ms,precode_flops,"
          "gpu_dl_p99_p50,gpu_ul_p99_p50,cpu_dl_p99_p50,cpu_ul_p99_p50,"
-         "cores_needed_dl_ul,gpu_frac_slot_dl,gpu_frac_slot_ul,cpu_precode_impl,precode_mismatches,"
+         "cores_needed_tdd,cores_needed_fdd,gpu_frac_slot_dl,gpu_frac_slot_ul,cpu_precode_impl,precode_mismatches,"
          "combine_mismatches,precode_max_err,combine_max_err,opt_vs_ref_max_err,pass\n";
 
   for (const auto& r : results) {
@@ -827,11 +831,12 @@ int main(int argc, char** argv)
     const double gul_r = r.gpu_ul.p50 > 0 ? r.gpu_ul.p99 / r.gpu_ul.p50 : 0;
     const double cdl_r = r.cpu_dl.p50 > 0 ? r.cpu_dl.p99 / r.cpu_dl.p50 : 0;
     const double cul_r = r.cpu_ul.p50 > 0 ? r.cpu_ul.p99 / r.cpu_ul.p50 : 0;
-    const unsigned cores = cores_needed(r.cpu_dl.p99 + r.cpu_ul.p99);
+    const unsigned cores_tdd = cores_needed(std::max(r.cpu_dl.p99, r.cpu_ul.p99));
+    const unsigned cores_fdd = cores_needed(r.cpu_dl.p99 + r.cpu_ul.p99);
     const double frac_dl = r.gpu_dl.p99 / SLOT_MS;
     const double frac_ul = r.gpu_ul.p99 / SLOT_MS;
     std::printf("| %u | %u | %.4f/%.4f/%.4f | %.4f/%.4f/%.4f | %.4f/%.4f/%.4f | %.4f/%.4f/%.4f | "
-                "%.2f|%.2f | %.2f|%.2f | %u | %.3f|%.3f | %s |\n",
+                "%.2f|%.2f | %.2f|%.2f | %u | %u | %.3f|%.3f | %s |\n",
                 r.ports,
                 r.layers,
                 r.gpu_dl.p50,
@@ -850,7 +855,8 @@ int main(int argc, char** argv)
                 gul_r,
                 cdl_r,
                 cul_r,
-                cores,
+                cores_tdd,
+                cores_fdd,
                 frac_dl,
                 frac_ul,
                 r.pass ? "PASS" : "FAIL");
@@ -858,19 +864,26 @@ int main(int argc, char** argv)
         << r.gpu_ul.p50 << ',' << r.gpu_ul.p99 << ',' << r.gpu_ul.maxv << ',' << r.cpu_dl.p50 << ',' << r.cpu_dl.p99
         << ',' << r.cpu_dl.maxv << ',' << r.cpu_ul.p50 << ',' << r.cpu_ul.p99 << ',' << r.cpu_ul.maxv << ','
         << r.gpu_precode.p50 << ',' << r.cpu_precode.p50 << ',' << r.ocudu_prg_precode.p50 << ',' << r.precode_flops
-        << ',' << gdl_r << ',' << gul_r << ',' << cdl_r << ',' << cul_r << ',' << cores << ',' << frac_dl << ','
-        << frac_ul << ',' << '"' << r.cpu_precode_impl << '"' << ',' << r.precode_mismatches << ','
+        << ',' << gdl_r << ',' << gul_r << ',' << cdl_r << ',' << cul_r << ',' << cores_tdd << ',' << cores_fdd
+        << ',' << frac_dl << ',' << frac_ul << ',' << '"' << r.cpu_precode_impl << '"' << ','
+        << r.precode_mismatches << ','
         << r.combine_mismatches << ',' << r.precode_max_err << ',' << r.combine_max_err << ','
         << r.opt_vs_ref_max_err << ',' << (r.pass ? 1 : 0) << '\n';
   }
   csv.close();
 
   std::printf("\nThresholds:\n");
-  if (cpu_miss_ports > 0) {
-    std::printf("- (a) One CPU core misses p99 (DL p99, UL p99, or DL+UL p99 > 0.5 ms): first at %d ports\n",
-                cpu_miss_ports);
+  if (cpu_miss_ports_tdd > 0) {
+    std::printf("- (a) TDD (DDDSU, one direction per slot): max(DL p99, UL p99) > 0.5 ms first at %d ports\n",
+                cpu_miss_ports_tdd);
   } else {
-    std::printf("- (a) One CPU core never misses p99 within tested port counts\n");
+    std::printf("- (a) TDD: one CPU core never misses p99 within tested port counts\n");
+  }
+  if (cpu_miss_ports_fdd > 0) {
+    std::printf("- (a) FDD (DL+UL in the same 0.5 ms interval): DL p99 + UL p99 > 0.5 ms first at %d ports\n",
+                cpu_miss_ports_fdd);
+  } else {
+    std::printf("- (a) FDD: one CPU core never misses p99 within tested port counts\n");
   }
   if (gpu_half_ports > 0) {
     std::printf("- (b) GPU exceeds 50%% of the 0.5 ms slot (DL or UL p50 > 0.25 ms): first at %d ports\n",

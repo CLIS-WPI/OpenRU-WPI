@@ -224,19 +224,21 @@ GPU numbers unchanged from the H100 run above. CPU is the fair baseline on core 
 
 ## Cores needed / GPU replaces N CPU cores [DERIVED]
 
-`cores_needed = ceil(CPU_p99 / slot_duration)` with slot duration **0.5 ms** (30 kHz SCS).
-DL+UL uses `ceil((DL_p99 + UL_p99) / 0.5)`. CPU p99 from the **FFTW + AVX-512** primary
-baseline. “GPU replaces N” is the DL+UL column (one device-resident GPU pipeline for both
-directions vs N single-threaded CPU cores at this profile).
+`cores = ceil(CPU_p99 / slot_duration)` with slot duration **0.5 ms** (30 kHz SCS).
+**TDD (DDDSU):** each slot carries one direction, so the budget is
+`max(DL_p99, UL_p99)`; TDD cores use that max. **FDD:** DL and UL share the same
+0.5 ms interval, so FDD cores use `DL_p99 + UL_p99`. CPU p99 from the
+**FFTW + AVX-512** primary baseline. “GPU replaces N” is the **TDD** column for
+DDDSU; the FDD column is the simultaneous DL+UL sum.
 
-| Profile | Ports | DL cores | UL cores | DL+UL cores (GPU replaces N) |
-|---|---:|---:|---:|---:|
-| 20 MHz | 2 | 1 | 1 | 1 |
-| 20 MHz | 4 | 1 | 1 | 1 |
-| 40 MHz | 2 | 1 | 1 | 1 |
-| 40 MHz | 4 | 1 | 1 | 1 |
-| 100 MHz | 2 | 1 | 1 | 2 |
-| 100 MHz | 4 | 2 | 2 | 3 |
+| Profile | Ports | DL cores | UL cores | TDD cores | FDD cores (DL+UL) |
+|---|---:|---:|---:|---:|---:|
+| 20 MHz | 2 | 1 | 1 | 1 | 1 |
+| 20 MHz | 4 | 1 | 1 | 1 | 1 |
+| 40 MHz | 2 | 1 | 1 | 1 | 1 |
+| 40 MHz | 4 | 1 | 1 | 1 | 1 |
+| 100 MHz | 2 | 1 | 1 | 1 | 2 |
+| 100 MHz | 4 | 2 | 2 | 2 | 3 |
 
 ## CPU isolation and 20 MHz / 2-port p99 outlier [MEASURED]
 
