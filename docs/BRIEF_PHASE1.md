@@ -106,12 +106,14 @@ Scope of the port, in this order (each step passes `iq_compare` before the next 
 Engineering constraints:
 
 - Keep the CPU implementation selectable at runtime (`low_phy: {backend: cpu|cuda}`); CI runs both.
-- Fixed-point behaviour: ProtO-RU/OCUDU low-PHY uses float internally; match its FFT scaling exactly. A difference up to 1 LSB of the 16-bit BFP output is acceptable only if documented and justified; the target is 0 differing samples after BFP.
+- Fixed-point / compare gate (human-approved): CUDA vs CPU golden passes if **BFP output is byte-identical** and **OFDM modulator `ci16` output** has, per port per slot, max \|diff\| ≤ 1 LSB and error power ≤ −60 dB relative to signal power. **"0 differing samples" remains the requirement for CPU-vs-CPU determinism** (two CPU replays / M1 `replay-golden`).
 - Kernels must build for `sm_90` and `sm_87`. No HBM-specific tuning, no NVLink, no MIG assumptions, so the same code later runs on Jetson.
 - Use Nsight Systems on the replay run to measure, per slot: H2D copy, kernel time, D2H copy, and end-to-end time from U-plane arrival to buffer handed to the radio backend. Report p50/p99 for `baseline` and `4t4r` profiles. These are compute-time figures `[MEASURED]` on H100; state explicitly that the fronthaul delay profile (T2a/Ta3) is still `[UNVERIFIED]` until the hardware week.
 - Any overlap of copy and compute is done with streams and events, never by spinning a CPU thread.
 
-Done when: `cuda` backend produces 0 differing samples versus golden on `baseline` and `b40` (M2 gate; `b100` reported); p99 end-to-end compute time per slot on H100 is reported and is below one 30 kHz slot (500 microseconds) for `b40`; the 60 s live `make smoke` still passes with `low_phy.backend: cuda`.
+Late-ratio baseline for M2 live smoke (CUDA+null): compare against the **M1 CPU+null** measured ratio **7.094e-6** (*null radio, slot RX buffers, not representative of UHD*), not the M0 **emulator** baseline **2.096e-6**. Both numbers remain in reports with those labels.
+
+Done when: on `baseline` and `b40` (M2 gate; `b100` reported), `cuda` vs CPU golden meets the compare gate above (BFP byte-identical; OFDM `ci16` ≤ 1 LSB and ≤ −60 dB error power, per port per slot); p99 end-to-end compute time per slot on H100 is reported and is below one 30 kHz slot (500 microseconds) for `b40`; the 60 s live `make smoke` still passes with `low_phy.backend: cuda` and late ratio ≤ **7.094e-6** (CPU+null baseline).
 
 ## Milestone 3: 4T4R support
 
@@ -161,8 +163,8 @@ Done when: the M-plane API is documented with examples; the three energy states 
 | Milestone | CI job | Pass condition | Report |
 | --- | --- | --- | --- |
 | M0 Docker | `smoke` | `make smoke` 60 s run, GPU visible, zero late packets | `docs/reports/M0.md` with host and image versions |
-| M1 Harness | `replay-golden` | CPU replay = golden, 0 differing samples, baseline/b40/b100, under 10 min | M1.md with capture method and golden manifest |
-| M2 CUDA | `replay-cuda` | CUDA = golden, 0 differing samples; p99 compute per slot under 500 us on b40 | M2.md with Nsight figures p50/p99, labeled compute-only |
+| M1 Harness | `replay-golden` | CPU replay = golden, **0 differing samples**, baseline/b40/b100, under 10 min | M1.md with capture method and golden manifest |
+| M2 CUDA | `replay-cuda` | CUDA vs CPU golden: **BFP byte-identical**; OFDM `ci16` max\|diff\|≤1 LSB and error power ≤−60 dB (per port/slot); p99 compute < 500 µs on b40; live late ≤ **7.094e-6** (CPU+null), not emulator 2.096e-6 | M2.md with Nsight p50/p99, labeled compute-only |
 | M3 4T4R | `replay-4t4r` | both backends = golden on 4t4r; 60 s live run with no late packets | M3.md with scaling 2 vs 4 ports and list of changed code paths |
 | M4 Virtual E2E | `e2e-virt` | UE registered; iperf3 DL/UL 30 s on cpu and cuda, 2x2 and 4x4 | M4.md with SNR, channel, timing parameters, throughput, RTT |
 | M5 M-plane | `mplane` | API examples pass; energy-state transitions measured; rf\_mute zeros within one slot; one closed-loop scenario | M5.md with state timings and NVML power |

@@ -1,0 +1,31 @@
+{
+  "sample_rate_Hz": 4.608e+07,
+  "start_timestamp": 4608000,
+  "nof_tx_ports": 2,
+  "nof_rx_ports": 2,
+  "format": "cf32",
+  "backend": "null",
+  "pace": "realtime",
+  "slot_numbering": "du_ota_gps_ofh",
+  "slot_numbering_note": "du_sfn/du_slot are GPS/OFH wire slots (SFN mod 256), matching the DU OTA grid; radio_* are free-running from start_timestamp",
+  "slot_grid": {
+    "scs_kHz": 30,
+    "samples_per_slot": 23040,
+    "slots_per_frame": 20,
+    "ofh_sfn_mod": 256,
+    "symbol0_sample_offset_basis": "ts - start_timestamp"
+  },
+  "dump": {
+    "max_dump_slots": 2000,
+    "max_dump_bytes": 0,
+    "slots_written": 2000,
+    "bytes_written": 738026880,
+    "dropped_buffers": 0,
+    "cap_reached": true,
+    "stop_reason": "max_dump_slots reached",
+    "last_du_sfn": 33,
+    "last_du_slot": 12
+  },
+  "tx_index": "tx_index.jsonl",
+  "align": "du_slot"
+}

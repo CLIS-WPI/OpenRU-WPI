@@ -6,8 +6,20 @@ __pycache__/
 *.pyc
 .env
 docker/lab.env
+.DS_Store
+
+# Large IQ / pcap blobs — never plain-git. Use `make fetch-golden` + MANIFEST SHA256.
 *.cf32
-testdata/golden/
+testdata/pcap/*.pcapng
+testdata/golden/**/port*.cf32
+testdata/golden/**/tx_index.jsonl
+testdata/iq/
+
+# Keep golden manifests + checksums + iq_meta in git (small).
+!testdata/golden/**/MANIFEST.json
+!testdata/golden/**/SHA256SUMS
+!testdata/golden/**/iq_meta.json
+
 docs/reports/smoke-*.log
 docs/reports/smoke-*-run.log.bak
 docs/reports/smoke-gpu.txt
@@ -15,5 +27,5 @@ docs/reports/build-*.log
 # Keep KPI JSON / late histograms from baseline runs.
 !docs/reports/smoke-fh-*-kpi.json
 !docs/reports/smoke-fh-*-late-hist.csv
-.DS_Store
 
+logs/

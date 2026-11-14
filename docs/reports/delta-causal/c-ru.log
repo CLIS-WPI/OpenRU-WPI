@@ -1,0 +1,1060 @@
+===== compose logs: protoru =====
+protoru-1  | GPU 0: NVIDIA H100 NVL (UUID: GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058)
+protoru-1  | Available radio types: uhd and null.
+protoru-1  | Running. Waiting for incoming packets...
+protoru-1  | [1m|   TIME   | ID  |  RX_TOTAL   | RX_ON_TIME  |  RX_EARLY   |   RX_LATE   |   RX_SEQ_ERR    | RX_ON_TIME_C  |  RX_EARLY_C   |   RX_LATE_C   |  RX_SEQ_ERR_C   | RX_ON_TIME_C_U |  RX_EARLY_C_U  |  RX_LATE_C_U   | RX_SEQ_ERR_C_U  | RX_SEQ_ERR_PRACH | RX_CORRUPT  | RX_ERR_DROP |  TX_TOTAL   |
+protoru-1  | [0m| 00:53:50 |  0  |    9186     |    6768     |      0      |     84      |      85/85      |      512      |       0       |       8       |      32/32      |      1800      |       0        |       14       |      54/54      |       1/1       |      0      |      0      |      0      |
+protoru-1  | | 00:53:51 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    14720    |
+protoru-1  | | 00:53:52 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:53:53 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1794      |       0        |       6        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:53:54 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:53:55 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:53:56 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:53:57 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:53:58 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:53:59 |  0  |    9114     |    6780     |      0      |     16      |       0/0       |      512      |       0       |       2       |       0/0       |      1804      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:54:00 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:01 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:54:02 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:03 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:04 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15180    |
+protoru-1  | | 00:54:05 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15204    |
+protoru-1  | | 00:54:06 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15180    |
+protoru-1  | | 00:54:07 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15204    |
+protoru-1  | | 00:54:08 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15202    |
+protoru-1  | | 00:54:09 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15180    |
+protoru-1  | [1m|   TIME   | ID  |  RX_TOTAL   | RX_ON_TIME  |  RX_EARLY   |   RX_LATE   |   RX_SEQ_ERR    | RX_ON_TIME_C  |  RX_EARLY_C   |   RX_LATE_C   |  RX_SEQ_ERR_C   | RX_ON_TIME_C_U |  RX_EARLY_C_U  |  RX_LATE_C_U   | RX_SEQ_ERR_C_U  | RX_SEQ_ERR_PRACH | RX_CORRUPT  | RX_ERR_DROP |  TX_TOTAL   |
+protoru-1  | [0m| 00:54:10 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15204    |
+protoru-1  | | 00:54:11 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15180    |
+protoru-1  | | 00:54:12 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15202    |
+protoru-1  | | 00:54:13 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:14 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:54:15 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:16 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:17 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:54:18 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:19 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:54:20 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:21 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:22 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:54:23 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:24 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:54:25 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:26 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:27 |  0  |    9112     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1802      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:54:28 |  0  |    9084     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1804      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:29 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | [1m|   TIME   | ID  |  RX_TOTAL   | RX_ON_TIME  |  RX_EARLY   |   RX_LATE   |   RX_SEQ_ERR    | RX_ON_TIME_C  |  RX_EARLY_C   |   RX_LATE_C   |  RX_SEQ_ERR_C   | RX_ON_TIME_C_U |  RX_EARLY_C_U  |  RX_LATE_C_U   | RX_SEQ_ERR_C_U  | RX_SEQ_ERR_PRACH | RX_CORRUPT  | RX_ERR_DROP |  TX_TOTAL   |
+protoru-1  | [0m| 00:54:30 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:31 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:32 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:54:33 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:34 |  0  |    9082     |    6768     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:35 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:54:36 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15204    |
+protoru-1  | | 00:54:37 |  0  |    9085     |    6773     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15180    |
+protoru-1  | | 00:54:38 |  0  |    9085     |    6773     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15206    |
+protoru-1  | | 00:54:39 |  0  |    9114     |    6800     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15204    |
+protoru-1  | | 00:54:40 |  0  |    9084     |    6772     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15180    |
+protoru-1  | | 00:54:41 |  0  |    9086     |    6774     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15204    |
+protoru-1  | | 00:54:42 |  0  |    9084     |    6770     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15180    |
+protoru-1  | | 00:54:43 |  0  |    9110     |    6798     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15202    |
+protoru-1  | | 00:54:44 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:45 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1798      |       2        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:54:46 |  0  |    9096     |    6782     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:47 |  0  |    9096     |    6782     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:54:48 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:49 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | [1m|   TIME   | ID  |  RX_TOTAL   | RX_ON_TIME  |  RX_EARLY   |   RX_LATE   |   RX_SEQ_ERR    | RX_ON_TIME_C  |  RX_EARLY_C   |   RX_LATE_C   |  RX_SEQ_ERR_C   | RX_ON_TIME_C_U |  RX_EARLY_C_U  |  RX_LATE_C_U   | RX_SEQ_ERR_C_U  | RX_SEQ_ERR_PRACH | RX_CORRUPT  | RX_ERR_DROP |  TX_TOTAL   |
+protoru-1  | [0m| 00:54:50 |  0  |    9112     |    6798     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:54:51 |  0  |    9084     |    6772     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:52 |  0  |    9084     |    6772     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:54:53 |  0  |    9084     |    6772     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:54 |  0  |    9115     |    6781     |      0      |     18      |       0/0       |      514      |       0       |       2       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:54:55 |  0  |    9085     |    6773     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+===== /tmp/proto-ru.log =====
+2026-11-14T00:53:47.832429 [CONFIG  ] [I] Input configuration (all values): 
+log:
+  filename: /tmp/proto-ru.log
+  level: info
+ru_emu:
+  timing_cpus: [32]
+  cells:
+    - network_interface: eth0
+      ru_mac_addr: 02:00:00:00:00:20
+      du_mac_addr: 02:00:00:00:00:10
+      enable_promiscuous: true
+      bandwidth: 20
+      common_scs: 30
+      dl_arfcn: 628032
+      band: 78
+      dl_port_id: [0, 1]
+      ul_port_id: [0, 1]
+      prach_port_id: [4, 5]
+      prach_format: short
+      compr_method_ul: bfp
+      compr_bitwidth_ul: 9
+      compr_method_dl: bfp
+      compr_bitwidth_dl: 9
+      compr_method_prach: bfp
+      compr_bitwidth_prach: 9
+      is_ul_static_compr_hdr: true
+      is_dl_static_compr_hdr: true
+      iq_scaling: 1
+      t2a_max_cp_dl: 2435
+      t2a_min_cp_dl: 2235
+      t2a_max_cp_ul: 2435
+      t2a_min_cp_ul: 2235
+      t2a_max_up: 2215
+      t2a_min_up: 2015
+      ta3_max_up: 1200
+      ta3_min_up: 800
+      ofh_cpus: [33, 34]
+      sdr:
+        device_driver: "null"
+        device_args: tx_dump=/dev/shm/openru_iq,rx_feed=,pace=realtime,scs_khz=30,max_dump_slots=4000
+        srate: 23.039999999999999
+        tx_gain: 60
+        rx_gain: 60
+        center_freq_offset: 0
+        calibrate_clock_ppm: 0
+        lo_offset: 0
+        transmission_mode: continuous
+        power_ramping: 0
+        gain_backoff: 12
+        power_ceiling: -0.100000001
+        enable_clipping: false
+        otw_format: default
+        clock_source: default
+        sync_source: default
+        max_proc_delay: 2
+        execution_profile: auto
+        pinning_policy: mask
+2026-11-14T00:53:47.835951 [ALL     ] [I] Task worker "ru_rx_#0" started...
+2026-11-14T00:53:47.835957 [ALL     ] [I] Task worker "ru_emu_#0" started...
+2026-11-14T00:53:47.836047 [ALL     ] [I] Task worker "ru_ofh_tx_#0" started...
+2026-11-14T00:53:47.836132 [ALL     ] [I] Task worker "ru_radio_#0" started...
+2026-11-14T00:53:47.836263 [ALL     ] [I] Task worker "ru_phy_hp_#0" started...
+2026-11-14T00:53:47.836316 [ALL     ] [I] Task worker "ru_phy_tx_#0" started...
+2026-11-14T00:53:47.836361 [ALL     ] [I] Task worker "ru_phy_rx_#0" started...
+2026-11-14T00:53:47.836428 [ALL     ] [I] Task worker "ru_phy_ul_#0" started...
+2026-11-14T00:53:47.836487 [ALL     ] [I] Task worker "ru_timing" started...
+2026-11-14T00:53:47.851383 [RU_EMU  ] [I] Opened successfully the NIC interface 'eth0' (fd = '3') used by the Ethernet receiver
+2026-11-14T00:53:47.851457 [RU_EMU  ] [I] Opened successfully the NIC interface 'eth0' (fd = '5') used by the Ethernet transmitter
+2026-11-14T00:53:47.942841 [RADIO   ] [I] null radio ready: tx_dump='/dev/shm/openru_iq' rx_feed='' pace=realtime tx_ports=2 rx_ports=2 srate=23040000.00Hz samples_per_slot=11520 max_dump_slots=4000 max_dump_bytes=0
+2026-11-14T00:53:49.153057 [RU_EMU  ] [I] Starting the realtime timing notifier
+2026-11-14T00:53:49.153085 [RU_EMU  ] [I] Started the realtime timing worker
+2026-11-14T00:53:49.153202 [RU_EMU  ] [I] Starting the ethernet frame receiver
+2026-11-14T00:53:49.153260 [RU_EMU  ] [I] Started the ethernet frame receiver with fd = '3'
+2026-11-14T00:53:49.153553 [RU_EMU  ] [W] Slot '18.2', symbol '0': potentially lost '1' messages sent by the DU on DL CP eAxC '0'. Last valid slot was '18.0', symbol '0'
+2026-11-14T00:53:49.153575 [RU_EMU  ] [W] Slot '18.2', symbol '0': potentially lost '1' messages sent by the DU on DL CP eAxC '1'. Last valid slot was '18.0', symbol '0'
+2026-11-14T00:53:49.153588 [RU_EMU  ] [W] Slot '18.2', symbol '0': potentially lost '10' messages sent by the DU on DL UP eAxC '0'. Last valid slot was '18.0', symbol '13'
+2026-11-14T00:53:49.153590 [RU_EMU  ] [W] Slot '18.2', symbol '0': potentially lost '10' messages sent by the DU on DL UP eAxC '1'. Last valid slot was '18.0', symbol '13'
+2026-11-14T00:53:49.153666 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '18.3' symbol '0' with sequence identifier '1' from the past; processing it. Last valid slot was '18.0', symbol '0'
+2026-11-14T00:53:49.153676 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '1' from the past; processing it
+2026-11-14T00:53:49.153690 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '18.3' symbol '0' with sequence identifier '1' from the past; processing it. Last valid slot was '18.0', symbol '0'
+2026-11-14T00:53:49.153694 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '1' from the past; processing it
+2026-11-14T00:53:49.153750 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '18.3' symbol '0' with sequence identifier '14' from the past; processing it. Last valid slot was '18.2', symbol '13'
+2026-11-14T00:53:49.153750 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '14' from the past; processing it
+2026-11-14T00:53:49.153755 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '18.3' symbol '0' with sequence identifier '14' from the past; processing it. Last valid slot was '18.2', symbol '13'
+2026-11-14T00:53:49.153759 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '14' from the past; processing it
+2026-11-14T00:53:49.153769 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '18.3' symbol '1' with sequence identifier '15' from the past; processing it. Last valid slot was '18.2', symbol '13'
+2026-11-14T00:53:49.153772 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '15' from the past; processing it
+2026-11-14T00:53:49.153780 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '18.3' symbol '1' with sequence identifier '15' from the past; processing it. Last valid slot was '18.2', symbol '13'
+2026-11-14T00:53:49.153780 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '15' from the past; processing it
+2026-11-14T00:53:49.153785 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '18.3' symbol '2' with sequence identifier '16' from the past; processing it. Last valid slot was '18.2', symbol '13'
+2026-11-14T00:53:49.153786 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '16' from the past; processing it
+2026-11-14T00:53:49.153792 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '18.3' symbol '2' with sequence identifier '16' from the past; processing it. Last valid slot was '18.2', symbol '13'
+2026-11-14T00:53:49.153794 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '16' from the past; processing it
+2026-11-14T00:53:49.153802 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '18.3' symbol '3' with sequence identifier '17' from the past; processing it. Last valid slot was '18.2', symbol '13'
+2026-11-14T00:53:49.153802 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '17' from the past; processing it
+2026-11-14T00:53:49.153809 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '18.3' symbol '3' with sequence identifier '17' from the past; processing it. Last valid slot was '18.2', symbol '13'
+2026-11-14T00:53:49.153809 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '17' from the past; processing it
+2026-11-14T00:53:49.153816 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '18.3' symbol '4' with sequence identifier '18' from the past; processing it. Last valid slot was '18.2', symbol '13'
+2026-11-14T00:53:49.153817 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '18' from the past; processing it
+2026-11-14T00:53:49.153820 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '18.3' symbol '4' with sequence identifier '18' from the past; processing it. Last valid slot was '18.2', symbol '13'
+2026-11-14T00:53:49.153820 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '18' from the past; processing it
+2026-11-14T00:53:49.153831 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '18.3' symbol '5' with sequence identifier '19' from the past; processing it. Last valid slot was '18.2', symbol '13'
+2026-11-14T00:53:49.153831 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '19' from the past; processing it
+2026-11-14T00:53:49.153833 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '18.3' symbol '5' with sequence identifier '19' from the past; processing it. Last valid slot was '18.2', symbol '13'
+2026-11-14T00:53:49.153834 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '19' from the past; processing it
+2026-11-14T00:53:49.153838 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '18.3' symbol '6' with sequence identifier '20' from the past; processing it. Last valid slot was '18.2', symbol '13'
+2026-11-14T00:53:49.153838 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '20' from the past; processing it
+2026-11-14T00:53:49.153842 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '18.3' symbol '6' with sequence identifier '20' from the past; processing it. Last valid slot was '18.2', symbol '13'
+2026-11-14T00:53:49.153842 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '20' from the past; processing it
+2026-11-14T00:53:49.153845 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '18.3' symbol '7' with sequence identifier '21' from the past; processing it. Last valid slot was '18.2', symbol '13'
+2026-11-14T00:53:49.153845 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '21' from the past; processing it
+2026-11-14T00:53:49.153847 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '18.3' symbol '7' with sequence identifier '21' from the past; processing it. Last valid slot was '18.2', symbol '13'
+2026-11-14T00:53:49.153847 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '21' from the past; processing it
+2026-11-14T00:53:49.153851 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '18.3' symbol '8' with sequence identifier '22' from the past; processing it. Last valid slot was '18.2', symbol '13'
+2026-11-14T00:53:49.153852 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '22' from the past; processing it
+2026-11-14T00:53:49.153855 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '18.3' symbol '8' with sequence identifier '22' from the past; processing it. Last valid slot was '18.2', symbol '13'
+2026-11-14T00:53:49.153855 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '22' from the past; processing it
+2026-11-14T00:53:49.153858 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '18.3' symbol '9' with sequence identifier '23' from the past; processing it. Last valid slot was '18.2', symbol '13'
+2026-11-14T00:53:49.153859 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '23' from the past; processing it
+2026-11-14T00:53:49.153864 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '18.3' symbol '9' with sequence identifier '23' from the past; processing it. Last valid slot was '18.2', symbol '13'
+2026-11-14T00:53:49.153865 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '23' from the past; processing it
+2026-11-14T00:53:49.154547 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '107.13' symbol '12' with sequence identifier '208' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.154554 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '208' from the past; processing it
+2026-11-14T00:53:49.154556 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '107.13' symbol '12' with sequence identifier '208' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.154556 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '208' from the past; processing it
+2026-11-14T00:53:49.154601 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '107.14' symbol '0' with sequence identifier '209' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.154602 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '209' from the past; processing it
+2026-11-14T00:53:49.154633 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '107.14' symbol '0' with sequence identifier '209' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.154633 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '209' from the past; processing it
+2026-11-14T00:53:49.157042 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '107.18' symbol '12' with sequence identifier '210' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.157043 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '210' from the past; processing it
+2026-11-14T00:53:49.157045 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '107.18' symbol '12' with sequence identifier '210' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.157046 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '210' from the past; processing it
+2026-11-14T00:53:49.157122 [RU_EMU  ] [W] Slot '107.19', symbol '0': potentially lost '89' messages sent by the DU on PRACH eAxC '4'. Last valid slot was '17.19', symbol '0'
+2026-11-14T00:53:49.157123 [RU_EMU  ] [W] Slot '107.19', symbol '0': potentially lost '89' messages sent by the DU on PRACH eAxC '5'. Last valid slot was '17.19', symbol '0'
+2026-11-14T00:53:49.157132 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '107.19' symbol '0' with sequence identifier '211' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.157132 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '211' from the past; processing it
+2026-11-14T00:53:49.157134 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '107.19' symbol '0' with sequence identifier '211' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.157134 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '211' from the past; processing it
+2026-11-14T00:53:49.157626 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '108.0' symbol '0' with sequence identifier '230' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.157628 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '230' from the past; processing it
+2026-11-14T00:53:49.157631 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '108.0' symbol '0' with sequence identifier '230' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.157633 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '230' from the past; processing it
+2026-11-14T00:53:49.157827 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.0' symbol '0' with sequence identifier '224' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.157827 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '224' from the past; processing it
+2026-11-14T00:53:49.157831 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.0' symbol '0' with sequence identifier '224' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.157831 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '224' from the past; processing it
+2026-11-14T00:53:49.157853 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.0' symbol '1' with sequence identifier '225' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.157853 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '225' from the past; processing it
+2026-11-14T00:53:49.157856 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.0' symbol '1' with sequence identifier '225' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.157857 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '225' from the past; processing it
+2026-11-14T00:53:49.157896 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.0' symbol '2' with sequence identifier '226' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.157898 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '226' from the past; processing it
+2026-11-14T00:53:49.157901 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.0' symbol '2' with sequence identifier '226' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.157902 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '226' from the past; processing it
+2026-11-14T00:53:49.157925 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.0' symbol '3' with sequence identifier '227' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.157925 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '227' from the past; processing it
+2026-11-14T00:53:49.157936 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.0' symbol '3' with sequence identifier '227' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.157936 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '227' from the past; processing it
+2026-11-14T00:53:49.157992 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.0' symbol '4' with sequence identifier '228' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.157993 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '228' from the past; processing it
+2026-11-14T00:53:49.157997 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.0' symbol '4' with sequence identifier '228' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.157997 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '228' from the past; processing it
+2026-11-14T00:53:49.158026 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.0' symbol '5' with sequence identifier '229' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158026 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '229' from the past; processing it
+2026-11-14T00:53:49.158030 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.0' symbol '5' with sequence identifier '229' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158030 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '229' from the past; processing it
+2026-11-14T00:53:49.158041 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.0' symbol '6' with sequence identifier '230' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158041 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '230' from the past; processing it
+2026-11-14T00:53:49.158043 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.0' symbol '6' with sequence identifier '230' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158043 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '230' from the past; processing it
+2026-11-14T00:53:49.158078 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.0' symbol '7' with sequence identifier '231' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158078 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '231' from the past; processing it
+2026-11-14T00:53:49.158088 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.0' symbol '7' with sequence identifier '231' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158088 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '231' from the past; processing it
+2026-11-14T00:53:49.158127 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.0' symbol '8' with sequence identifier '232' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158128 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '232' from the past; processing it
+2026-11-14T00:53:49.158139 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.0' symbol '8' with sequence identifier '232' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158140 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '232' from the past; processing it
+2026-11-14T00:53:49.158143 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.0' symbol '9' with sequence identifier '233' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158144 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '233' from the past; processing it
+2026-11-14T00:53:49.158147 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.0' symbol '9' with sequence identifier '233' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158148 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '233' from the past; processing it
+2026-11-14T00:53:49.158190 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.0' symbol '10' with sequence identifier '234' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158192 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '234' from the past; processing it
+2026-11-14T00:53:49.158195 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.0' symbol '10' with sequence identifier '234' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158197 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '234' from the past; processing it
+2026-11-14T00:53:49.158228 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.0' symbol '11' with sequence identifier '235' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158228 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '235' from the past; processing it
+2026-11-14T00:53:49.158240 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.0' symbol '11' with sequence identifier '235' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158240 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '235' from the past; processing it
+2026-11-14T00:53:49.158267 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.0' symbol '12' with sequence identifier '236' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158267 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '236' from the past; processing it
+2026-11-14T00:53:49.158270 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.0' symbol '12' with sequence identifier '236' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158271 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '236' from the past; processing it
+2026-11-14T00:53:49.158279 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.0' symbol '13' with sequence identifier '237' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158279 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '237' from the past; processing it
+2026-11-14T00:53:49.158289 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.0' symbol '13' with sequence identifier '237' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158289 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '237' from the past; processing it
+2026-11-14T00:53:49.158599 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '108.2' symbol '0' with sequence identifier '231' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.158600 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '231' from the past; processing it
+2026-11-14T00:53:49.158607 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '108.2' symbol '0' with sequence identifier '231' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.158607 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '231' from the past; processing it
+2026-11-14T00:53:49.158810 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.2' symbol '0' with sequence identifier '238' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158811 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '238' from the past; processing it
+2026-11-14T00:53:49.158814 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.2' symbol '0' with sequence identifier '238' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158815 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '238' from the past; processing it
+2026-11-14T00:53:49.158861 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.2' symbol '1' with sequence identifier '239' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158869 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '239' from the past; processing it
+2026-11-14T00:53:49.158873 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.2' symbol '1' with sequence identifier '239' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158874 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '239' from the past; processing it
+2026-11-14T00:53:49.158901 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.2' symbol '2' with sequence identifier '240' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158902 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '240' from the past; processing it
+2026-11-14T00:53:49.158904 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.2' symbol '2' with sequence identifier '240' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158905 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '240' from the past; processing it
+2026-11-14T00:53:49.158944 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.2' symbol '3' with sequence identifier '241' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158946 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '241' from the past; processing it
+2026-11-14T00:53:49.158948 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.2' symbol '3' with sequence identifier '241' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158949 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '241' from the past; processing it
+2026-11-14T00:53:49.158973 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.2' symbol '4' with sequence identifier '242' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158974 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '242' from the past; processing it
+2026-11-14T00:53:49.158978 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.2' symbol '4' with sequence identifier '242' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.158978 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '242' from the past; processing it
+2026-11-14T00:53:49.159012 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.2' symbol '5' with sequence identifier '243' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159013 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '243' from the past; processing it
+2026-11-14T00:53:49.159016 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.2' symbol '5' with sequence identifier '243' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159016 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '243' from the past; processing it
+2026-11-14T00:53:49.159057 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.2' symbol '6' with sequence identifier '244' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159057 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '244' from the past; processing it
+2026-11-14T00:53:49.159061 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.2' symbol '6' with sequence identifier '244' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159062 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '244' from the past; processing it
+2026-11-14T00:53:49.159111 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.2' symbol '7' with sequence identifier '245' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159111 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '245' from the past; processing it
+2026-11-14T00:53:49.159115 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.2' symbol '7' with sequence identifier '245' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159116 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '245' from the past; processing it
+2026-11-14T00:53:49.159119 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '108.3' symbol '0' with sequence identifier '232' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.159120 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '232' from the past; processing it
+2026-11-14T00:53:49.159123 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '108.3' symbol '0' with sequence identifier '232' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.159125 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '232' from the past; processing it
+2026-11-14T00:53:49.159127 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.2' symbol '8' with sequence identifier '246' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159127 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '246' from the past; processing it
+2026-11-14T00:53:49.159131 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.2' symbol '8' with sequence identifier '246' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159131 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '246' from the past; processing it
+2026-11-14T00:53:49.159169 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.2' symbol '9' with sequence identifier '247' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159170 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '247' from the past; processing it
+2026-11-14T00:53:49.159174 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.2' symbol '9' with sequence identifier '247' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159175 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '247' from the past; processing it
+2026-11-14T00:53:49.159209 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.2' symbol '10' with sequence identifier '248' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159210 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '248' from the past; processing it
+2026-11-14T00:53:49.159212 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.2' symbol '10' with sequence identifier '248' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159214 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '248' from the past; processing it
+2026-11-14T00:53:49.159250 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.2' symbol '11' with sequence identifier '249' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159250 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '249' from the past; processing it
+2026-11-14T00:53:49.159262 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.2' symbol '11' with sequence identifier '249' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159262 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '249' from the past; processing it
+2026-11-14T00:53:49.159265 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.2' symbol '12' with sequence identifier '250' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159265 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '250' from the past; processing it
+2026-11-14T00:53:49.159267 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.2' symbol '12' with sequence identifier '250' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159268 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '250' from the past; processing it
+2026-11-14T00:53:49.159308 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.2' symbol '13' with sequence identifier '251' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159308 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '251' from the past; processing it
+2026-11-14T00:53:49.159311 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.2' symbol '13' with sequence identifier '251' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159311 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '251' from the past; processing it
+2026-11-14T00:53:49.159342 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.3' symbol '0' with sequence identifier '252' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159342 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '252' from the past; processing it
+2026-11-14T00:53:49.159348 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.3' symbol '0' with sequence identifier '252' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159348 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '252' from the past; processing it
+2026-11-14T00:53:49.159359 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.3' symbol '1' with sequence identifier '253' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159359 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '253' from the past; processing it
+2026-11-14T00:53:49.159363 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.3' symbol '1' with sequence identifier '253' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159363 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '253' from the past; processing it
+2026-11-14T00:53:49.159402 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.3' symbol '2' with sequence identifier '254' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159402 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '254' from the past; processing it
+2026-11-14T00:53:49.159405 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.3' symbol '2' with sequence identifier '254' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159406 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '254' from the past; processing it
+2026-11-14T00:53:49.159423 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.3' symbol '3' with sequence identifier '255' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159424 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '255' from the past; processing it
+2026-11-14T00:53:49.159467 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.3' symbol '3' with sequence identifier '255' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159468 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '255' from the past; processing it
+2026-11-14T00:53:49.159470 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.3' symbol '4' with sequence identifier '0' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159471 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '0' from the past; processing it
+2026-11-14T00:53:49.159474 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.3' symbol '4' with sequence identifier '0' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159475 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '0' from the past; processing it
+2026-11-14T00:53:49.159518 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.3' symbol '5' with sequence identifier '1' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159518 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '1' from the past; processing it
+2026-11-14T00:53:49.159521 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.3' symbol '5' with sequence identifier '1' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159521 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '1' from the past; processing it
+2026-11-14T00:53:49.159565 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '108.3' symbol '12' with sequence identifier '212' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.159565 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '212' from the past; processing it
+2026-11-14T00:53:49.159567 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '108.3' symbol '12' with sequence identifier '212' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.159568 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '212' from the past; processing it
+2026-11-14T00:53:49.159570 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.3' symbol '6' with sequence identifier '2' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159570 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '2' from the past; processing it
+2026-11-14T00:53:49.159581 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.3' symbol '6' with sequence identifier '2' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159581 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '2' from the past; processing it
+2026-11-14T00:53:49.159590 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.3' symbol '7' with sequence identifier '3' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159591 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '3' from the past; processing it
+2026-11-14T00:53:49.159596 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.3' symbol '7' with sequence identifier '3' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159596 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '3' from the past; processing it
+2026-11-14T00:53:49.159601 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '108.4' symbol '0' with sequence identifier '213' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.159605 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '213' from the past; processing it
+2026-11-14T00:53:49.159613 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '108.4' symbol '0' with sequence identifier '213' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.159615 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '213' from the past; processing it
+2026-11-14T00:53:49.159615 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.3' symbol '8' with sequence identifier '4' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159616 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '4' from the past; processing it
+2026-11-14T00:53:49.159619 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.3' symbol '8' with sequence identifier '4' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159620 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '4' from the past; processing it
+2026-11-14T00:53:49.159658 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.3' symbol '9' with sequence identifier '5' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159658 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '5' from the past; processing it
+2026-11-14T00:53:49.159662 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.3' symbol '9' with sequence identifier '5' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.159663 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '5' from the past; processing it
+2026-11-14T00:53:49.160097 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '108.5' symbol '0' with sequence identifier '233' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.160099 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '233' from the past; processing it
+2026-11-14T00:53:49.160102 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '108.5' symbol '0' with sequence identifier '233' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.160104 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '233' from the past; processing it
+2026-11-14T00:53:49.160309 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.5' symbol '0' with sequence identifier '6' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160310 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '6' from the past; processing it
+2026-11-14T00:53:49.160322 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.5' symbol '0' with sequence identifier '6' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160322 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '6' from the past; processing it
+2026-11-14T00:53:49.160348 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.5' symbol '1' with sequence identifier '7' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160349 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '7' from the past; processing it
+2026-11-14T00:53:49.160360 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.5' symbol '1' with sequence identifier '7' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160360 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '7' from the past; processing it
+2026-11-14T00:53:49.160405 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.5' symbol '2' with sequence identifier '8' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160405 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '8' from the past; processing it
+2026-11-14T00:53:49.160408 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.5' symbol '2' with sequence identifier '8' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160409 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '8' from the past; processing it
+2026-11-14T00:53:49.160433 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.5' symbol '3' with sequence identifier '9' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160433 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '9' from the past; processing it
+2026-11-14T00:53:49.160437 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.5' symbol '3' with sequence identifier '9' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160438 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '9' from the past; processing it
+2026-11-14T00:53:49.160496 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.5' symbol '4' with sequence identifier '10' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160496 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '10' from the past; processing it
+2026-11-14T00:53:49.160506 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.5' symbol '4' with sequence identifier '10' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160506 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '10' from the past; processing it
+2026-11-14T00:53:49.160509 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.5' symbol '5' with sequence identifier '11' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160510 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '11' from the past; processing it
+2026-11-14T00:53:49.160512 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.5' symbol '5' with sequence identifier '11' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160512 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '11' from the past; processing it
+2026-11-14T00:53:49.160540 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.5' symbol '6' with sequence identifier '12' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160540 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '12' from the past; processing it
+2026-11-14T00:53:49.160553 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.5' symbol '6' with sequence identifier '12' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160555 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '12' from the past; processing it
+2026-11-14T00:53:49.160598 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.5' symbol '7' with sequence identifier '13' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160599 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '13' from the past; processing it
+2026-11-14T00:53:49.160601 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.5' symbol '7' with sequence identifier '13' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160605 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '13' from the past; processing it
+2026-11-14T00:53:49.160609 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.5' symbol '8' with sequence identifier '14' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160609 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '14' from the past; processing it
+2026-11-14T00:53:49.160615 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.5' symbol '8' with sequence identifier '14' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160615 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '14' from the past; processing it
+2026-11-14T00:53:49.160653 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.5' symbol '9' with sequence identifier '15' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160653 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '15' from the past; processing it
+2026-11-14T00:53:49.160658 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.5' symbol '9' with sequence identifier '15' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160658 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '15' from the past; processing it
+2026-11-14T00:53:49.160670 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.5' symbol '10' with sequence identifier '16' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160671 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '16' from the past; processing it
+2026-11-14T00:53:49.160680 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.5' symbol '10' with sequence identifier '16' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160680 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '16' from the past; processing it
+2026-11-14T00:53:49.160719 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.5' symbol '11' with sequence identifier '17' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160720 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '17' from the past; processing it
+2026-11-14T00:53:49.160733 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.5' symbol '11' with sequence identifier '17' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160734 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '17' from the past; processing it
+2026-11-14T00:53:49.160742 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.5' symbol '12' with sequence identifier '18' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160742 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '18' from the past; processing it
+2026-11-14T00:53:49.160745 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.5' symbol '12' with sequence identifier '18' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160752 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '18' from the past; processing it
+2026-11-14T00:53:49.160779 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '108.5' symbol '13' with sequence identifier '19' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160779 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '19' from the past; processing it
+2026-11-14T00:53:49.160812 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '108.5' symbol '13' with sequence identifier '19' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.160812 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '19' from the past; processing it
+2026-11-14T00:53:49.162030 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '108.8' symbol '12' with sequence identifier '214' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.162032 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '214' from the past; processing it
+2026-11-14T00:53:49.162033 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '108.8' symbol '12' with sequence identifier '214' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.162035 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '214' from the past; processing it
+2026-11-14T00:53:49.162141 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '108.9' symbol '0' with sequence identifier '215' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.162142 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '215' from the past; processing it
+2026-11-14T00:53:49.162143 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '108.9' symbol '0' with sequence identifier '215' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.162150 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '215' from the past; processing it
+2026-11-14T00:53:49.164559 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '108.13' symbol '12' with sequence identifier '216' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.164559 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '216' from the past; processing it
+2026-11-14T00:53:49.164562 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '108.13' symbol '12' with sequence identifier '216' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.164562 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '216' from the past; processing it
+2026-11-14T00:53:49.164635 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '108.14' symbol '0' with sequence identifier '217' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.164636 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '217' from the past; processing it
+2026-11-14T00:53:49.164638 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '108.14' symbol '0' with sequence identifier '217' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.164639 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '217' from the past; processing it
+2026-11-14T00:53:49.167040 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '108.18' symbol '12' with sequence identifier '218' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.167043 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '218' from the past; processing it
+2026-11-14T00:53:49.167054 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '108.18' symbol '12' with sequence identifier '218' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.167054 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '218' from the past; processing it
+2026-11-14T00:53:49.167117 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '108.19' symbol '0' with sequence identifier '219' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.167117 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '219' from the past; processing it
+2026-11-14T00:53:49.167124 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '108.19' symbol '0' with sequence identifier '219' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.167128 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '219' from the past; processing it
+2026-11-14T00:53:49.167615 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '109.0' symbol '0' with sequence identifier '234' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.167617 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '234' from the past; processing it
+2026-11-14T00:53:49.167635 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '109.0' symbol '0' with sequence identifier '234' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.167636 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '234' from the past; processing it
+2026-11-14T00:53:49.167827 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '109.0' symbol '0' with sequence identifier '20' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.167827 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '20' from the past; processing it
+2026-11-14T00:53:49.167834 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '109.0' symbol '0' with sequence identifier '20' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.167835 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '20' from the past; processing it
+2026-11-14T00:53:49.167859 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '109.0' symbol '1' with sequence identifier '21' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.167859 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '21' from the past; processing it
+2026-11-14T00:53:49.167864 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '109.0' symbol '1' with sequence identifier '21' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.167875 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '21' from the past; processing it
+2026-11-14T00:53:49.167896 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '109.0' symbol '2' with sequence identifier '22' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.167897 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '22' from the past; processing it
+2026-11-14T00:53:49.167912 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '109.0' symbol '2' with sequence identifier '22' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.167913 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '22' from the past; processing it
+2026-11-14T00:53:49.167928 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '109.0' symbol '3' with sequence identifier '23' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.167928 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '23' from the past; processing it
+2026-11-14T00:53:49.167938 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '109.0' symbol '3' with sequence identifier '23' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.167938 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '23' from the past; processing it
+2026-11-14T00:53:49.167951 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '109.0' symbol '4' with sequence identifier '24' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.167952 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '24' from the past; processing it
+2026-11-14T00:53:49.167982 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '109.0' symbol '4' with sequence identifier '24' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.167982 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '24' from the past; processing it
+2026-11-14T00:53:49.167993 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '109.0' symbol '5' with sequence identifier '25' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.167993 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '25' from the past; processing it
+2026-11-14T00:53:49.168001 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '109.0' symbol '5' with sequence identifier '25' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.168002 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '25' from the past; processing it
+2026-11-14T00:53:49.168029 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '109.0' symbol '6' with sequence identifier '26' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.168030 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '26' from the past; processing it
+2026-11-14T00:53:49.168042 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '109.0' symbol '6' with sequence identifier '26' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.168042 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '26' from the past; processing it
+2026-11-14T00:53:49.168070 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '109.0' symbol '7' with sequence identifier '27' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.168070 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '27' from the past; processing it
+2026-11-14T00:53:49.168081 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '109.0' symbol '7' with sequence identifier '27' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.168081 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '27' from the past; processing it
+2026-11-14T00:53:49.168113 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '109.0' symbol '8' with sequence identifier '28' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.168114 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '28' from the past; processing it
+2026-11-14T00:53:49.168120 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '109.0' symbol '8' with sequence identifier '28' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.168120 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '28' from the past; processing it
+2026-11-14T00:53:49.168148 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '109.0' symbol '9' with sequence identifier '29' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.168148 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '29' from the past; processing it
+2026-11-14T00:53:49.168152 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '109.0' symbol '9' with sequence identifier '29' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.168154 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '29' from the past; processing it
+2026-11-14T00:53:49.168163 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '109.0' symbol '10' with sequence identifier '30' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.168165 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '30' from the past; processing it
+2026-11-14T00:53:49.168199 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '109.0' symbol '10' with sequence identifier '30' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.168201 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '30' from the past; processing it
+2026-11-14T00:53:49.168219 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '109.0' symbol '11' with sequence identifier '31' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.168220 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '31' from the past; processing it
+2026-11-14T00:53:49.168226 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '109.0' symbol '11' with sequence identifier '31' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.168227 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '31' from the past; processing it
+2026-11-14T00:53:49.168265 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '109.0' symbol '12' with sequence identifier '32' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.168265 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '32' from the past; processing it
+2026-11-14T00:53:49.168269 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '109.0' symbol '12' with sequence identifier '32' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.168269 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '32' from the past; processing it
+2026-11-14T00:53:49.168282 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '109.0' symbol '13' with sequence identifier '33' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.168282 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '33' from the past; processing it
+2026-11-14T00:53:49.168314 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '109.0' symbol '13' with sequence identifier '33' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.168314 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '33' from the past; processing it
+2026-11-14T00:53:49.169552 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '109.3' symbol '12' with sequence identifier '220' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.169552 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '220' from the past; processing it
+2026-11-14T00:53:49.169555 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '109.3' symbol '12' with sequence identifier '220' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.169555 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '220' from the past; processing it
+2026-11-14T00:53:49.169600 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '109.4' symbol '0' with sequence identifier '221' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.169602 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '221' from the past; processing it
+2026-11-14T00:53:49.169603 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '109.4' symbol '0' with sequence identifier '221' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.169605 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '221' from the past; processing it
+2026-11-14T00:53:49.172054 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '109.8' symbol '12' with sequence identifier '222' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.172057 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '222' from the past; processing it
+2026-11-14T00:53:49.172058 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '109.8' symbol '12' with sequence identifier '222' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.172060 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '222' from the past; processing it
+2026-11-14T00:53:49.172089 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '109.9' symbol '0' with sequence identifier '223' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.172091 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '223' from the past; processing it
+2026-11-14T00:53:49.172102 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '109.9' symbol '0' with sequence identifier '223' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.172104 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '223' from the past; processing it
+2026-11-14T00:53:49.174534 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '109.13' symbol '12' with sequence identifier '224' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.174537 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '224' from the past; processing it
+2026-11-14T00:53:49.174538 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '109.13' symbol '12' with sequence identifier '224' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.174539 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '224' from the past; processing it
+2026-11-14T00:53:49.174596 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '109.14' symbol '0' with sequence identifier '225' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.174597 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '225' from the past; processing it
+2026-11-14T00:53:49.174598 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '109.14' symbol '0' with sequence identifier '225' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.174601 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '225' from the past; processing it
+2026-11-14T00:53:49.177040 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '109.18' symbol '12' with sequence identifier '226' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.177041 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '226' from the past; processing it
+2026-11-14T00:53:49.177043 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '109.18' symbol '12' with sequence identifier '226' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.177043 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '226' from the past; processing it
+2026-11-14T00:53:49.177111 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '109.19' symbol '0' with sequence identifier '227' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.177112 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '227' from the past; processing it
+2026-11-14T00:53:49.177119 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '109.19' symbol '0' with sequence identifier '227' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.177119 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '227' from the past; processing it
+2026-11-14T00:53:49.177604 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '110.0' symbol '0' with sequence identifier '235' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.177605 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '235' from the past; processing it
+2026-11-14T00:53:49.177609 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '110.0' symbol '0' with sequence identifier '235' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.177610 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '235' from the past; processing it
+2026-11-14T00:53:49.177822 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '110.0' symbol '0' with sequence identifier '34' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.177823 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '34' from the past; processing it
+2026-11-14T00:53:49.177839 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '110.0' symbol '0' with sequence identifier '34' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.177840 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '34' from the past; processing it
+2026-11-14T00:53:49.177856 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '110.0' symbol '1' with sequence identifier '35' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.177857 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '35' from the past; processing it
+2026-11-14T00:53:49.177860 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '110.0' symbol '1' with sequence identifier '35' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.177861 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '35' from the past; processing it
+2026-11-14T00:53:49.177885 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '110.0' symbol '2' with sequence identifier '36' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.177886 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '36' from the past; processing it
+2026-11-14T00:53:49.177894 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '110.0' symbol '2' with sequence identifier '36' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.177895 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '36' from the past; processing it
+2026-11-14T00:53:49.177925 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '110.0' symbol '3' with sequence identifier '37' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.177933 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '37' from the past; processing it
+2026-11-14T00:53:49.177936 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '110.0' symbol '3' with sequence identifier '37' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.177937 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '37' from the past; processing it
+2026-11-14T00:53:49.177960 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '110.0' symbol '4' with sequence identifier '38' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.177962 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '38' from the past; processing it
+2026-11-14T00:53:49.177972 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '110.0' symbol '4' with sequence identifier '38' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.177972 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '38' from the past; processing it
+2026-11-14T00:53:49.177992 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '110.0' symbol '5' with sequence identifier '39' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.177993 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '39' from the past; processing it
+2026-11-14T00:53:49.178017 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '110.0' symbol '5' with sequence identifier '39' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.178018 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '39' from the past; processing it
+2026-11-14T00:53:49.178038 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '110.0' symbol '6' with sequence identifier '40' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.178039 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '40' from the past; processing it
+2026-11-14T00:53:49.178043 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '110.0' symbol '6' with sequence identifier '40' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.178044 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '40' from the past; processing it
+2026-11-14T00:53:49.178076 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '110.0' symbol '7' with sequence identifier '41' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.178077 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '41' from the past; processing it
+2026-11-14T00:53:49.178080 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '110.0' symbol '7' with sequence identifier '41' from the past; processing it. Last valid slot was '18.5', symbol '3'
+2026-11-14T00:53:49.178080 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '41' from the past; processing it
+2026-11-14T00:53:49.178618 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '110.2' symbol '0' with sequence identifier '236' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.178619 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '236' from the past; processing it
+2026-11-14T00:53:49.178622 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '110.2' symbol '0' with sequence identifier '236' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.178625 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '236' from the past; processing it
+2026-11-14T00:53:49.179110 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '110.3' symbol '0' with sequence identifier '237' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.179112 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '237' from the past; processing it
+2026-11-14T00:53:49.179115 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '110.3' symbol '0' with sequence identifier '237' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.179117 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '237' from the past; processing it
+2026-11-14T00:53:49.179549 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '110.3' symbol '12' with sequence identifier '228' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.179551 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '228' from the past; processing it
+2026-11-14T00:53:49.179552 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '110.3' symbol '12' with sequence identifier '228' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.179554 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '228' from the past; processing it
+2026-11-14T00:53:49.179612 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '110.4' symbol '0' with sequence identifier '229' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.179613 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '229' from the past; processing it
+2026-11-14T00:53:49.179614 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '110.4' symbol '0' with sequence identifier '229' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.179616 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '229' from the past; processing it
+2026-11-14T00:53:49.180100 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '110.5' symbol '0' with sequence identifier '238' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.180101 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '238' from the past; processing it
+2026-11-14T00:53:49.180105 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '110.5' symbol '0' with sequence identifier '238' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.180112 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '238' from the past; processing it
+2026-11-14T00:53:49.182037 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '110.8' symbol '12' with sequence identifier '230' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.182038 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '230' from the past; processing it
+2026-11-14T00:53:49.182040 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '110.8' symbol '12' with sequence identifier '230' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.182040 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '230' from the past; processing it
+2026-11-14T00:53:49.182120 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '110.9' symbol '0' with sequence identifier '231' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.182121 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '231' from the past; processing it
+2026-11-14T00:53:49.182123 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '110.9' symbol '0' with sequence identifier '231' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.182123 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '231' from the past; processing it
+2026-11-14T00:53:49.184548 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '110.13' symbol '12' with sequence identifier '232' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.184548 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '232' from the past; processing it
+2026-11-14T00:53:49.184556 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '110.13' symbol '12' with sequence identifier '232' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.184556 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '232' from the past; processing it
+2026-11-14T00:53:49.184607 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '110.14' symbol '0' with sequence identifier '233' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.184609 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '233' from the past; processing it
+2026-11-14T00:53:49.184610 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '110.14' symbol '0' with sequence identifier '233' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.184612 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '233' from the past; processing it
+2026-11-14T00:53:49.187042 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '110.18' symbol '12' with sequence identifier '234' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.187044 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '234' from the past; processing it
+2026-11-14T00:53:49.187045 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '110.18' symbol '12' with sequence identifier '234' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.187047 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '234' from the past; processing it
+2026-11-14T00:53:49.187114 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '110.19' symbol '0' with sequence identifier '235' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.187117 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '235' from the past; processing it
+2026-11-14T00:53:49.187119 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '110.19' symbol '0' with sequence identifier '235' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.187120 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '235' from the past; processing it
+2026-11-14T00:53:49.187599 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '111.0' symbol '0' with sequence identifier '239' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.187607 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '239' from the past; processing it
+2026-11-14T00:53:49.187610 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '111.0' symbol '0' with sequence identifier '239' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.187611 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '239' from the past; processing it
+2026-11-14T00:53:49.189556 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '111.3' symbol '12' with sequence identifier '236' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.189557 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '236' from the past; processing it
+2026-11-14T00:53:49.189559 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '111.3' symbol '12' with sequence identifier '236' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.189560 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '236' from the past; processing it
+2026-11-14T00:53:49.189593 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '111.4' symbol '0' with sequence identifier '237' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.189594 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '237' from the past; processing it
+2026-11-14T00:53:49.189597 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '111.4' symbol '0' with sequence identifier '237' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.189599 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '237' from the past; processing it
+2026-11-14T00:53:49.192040 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '111.8' symbol '12' with sequence identifier '238' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.192041 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '238' from the past; processing it
+2026-11-14T00:53:49.192044 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '111.8' symbol '12' with sequence identifier '238' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.192044 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '238' from the past; processing it
+2026-11-14T00:53:49.192095 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '111.9' symbol '0' with sequence identifier '239' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.192095 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '239' from the past; processing it
+2026-11-14T00:53:49.192097 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '111.9' symbol '0' with sequence identifier '239' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.192098 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '239' from the past; processing it
+2026-11-14T00:53:49.194543 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '111.13' symbol '12' with sequence identifier '240' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.194545 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '240' from the past; processing it
+2026-11-14T00:53:49.194546 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '111.13' symbol '12' with sequence identifier '240' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.194548 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '240' from the past; processing it
+2026-11-14T00:53:49.194614 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '111.14' symbol '0' with sequence identifier '241' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.194616 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '241' from the past; processing it
+2026-11-14T00:53:49.194618 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '111.14' symbol '0' with sequence identifier '241' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.194620 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '241' from the past; processing it
+2026-11-14T00:53:49.197042 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '111.18' symbol '12' with sequence identifier '242' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.197044 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '242' from the past; processing it
+2026-11-14T00:53:49.197045 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '111.18' symbol '12' with sequence identifier '242' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.197047 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '242' from the past; processing it
+2026-11-14T00:53:49.197106 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '111.19' symbol '0' with sequence identifier '243' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.197113 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '243' from the past; processing it
+2026-11-14T00:53:49.197114 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '111.19' symbol '0' with sequence identifier '243' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.197116 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '243' from the past; processing it
+2026-11-14T00:53:49.197617 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '112.0' symbol '0' with sequence identifier '240' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.197618 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '240' from the past; processing it
+2026-11-14T00:53:49.197622 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '112.0' symbol '0' with sequence identifier '240' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.197622 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '240' from the past; processing it
+2026-11-14T00:53:49.198117 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '112.1' symbol '0' with sequence identifier '241' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.198117 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '241' from the past; processing it
+2026-11-14T00:53:49.198127 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '112.1' symbol '0' with sequence identifier '241' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.198128 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '241' from the past; processing it
+2026-11-14T00:53:49.198629 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '112.2' symbol '0' with sequence identifier '242' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.198630 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '242' from the past; processing it
+2026-11-14T00:53:49.198643 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '112.2' symbol '0' with sequence identifier '242' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.198643 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '242' from the past; processing it
+2026-11-14T00:53:49.199087 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '112.3' symbol '0' with sequence identifier '243' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.199094 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '243' from the past; processing it
+2026-11-14T00:53:49.199098 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '112.3' symbol '0' with sequence identifier '243' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.199099 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '243' from the past; processing it
+2026-11-14T00:53:49.199552 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '112.3' symbol '12' with sequence identifier '244' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.199553 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '244' from the past; processing it
+2026-11-14T00:53:49.199555 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '112.3' symbol '12' with sequence identifier '244' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.199556 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '244' from the past; processing it
+2026-11-14T00:53:49.199607 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '112.4' symbol '0' with sequence identifier '245' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.199609 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '245' from the past; processing it
+2026-11-14T00:53:49.199610 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '112.4' symbol '0' with sequence identifier '245' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.199612 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '245' from the past; processing it
+2026-11-14T00:53:49.200108 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '112.5' symbol '0' with sequence identifier '244' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.200114 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '244' from the past; processing it
+2026-11-14T00:53:49.200120 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '112.5' symbol '0' with sequence identifier '244' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.200121 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '244' from the past; processing it
+2026-11-14T00:53:49.202052 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '112.8' symbol '12' with sequence identifier '246' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.202054 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '246' from the past; processing it
+2026-11-14T00:53:49.202055 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '112.8' symbol '12' with sequence identifier '246' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.202057 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '246' from the past; processing it
+2026-11-14T00:53:49.202100 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '112.9' symbol '0' with sequence identifier '247' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.202101 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '247' from the past; processing it
+2026-11-14T00:53:49.202121 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '112.9' symbol '0' with sequence identifier '247' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.202122 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '247' from the past; processing it
+2026-11-14T00:53:49.204536 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '112.13' symbol '12' with sequence identifier '248' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.204543 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '248' from the past; processing it
+2026-11-14T00:53:49.204545 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '112.13' symbol '12' with sequence identifier '248' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.204546 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '248' from the past; processing it
+2026-11-14T00:53:49.204596 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '112.14' symbol '0' with sequence identifier '249' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.204597 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '249' from the past; processing it
+2026-11-14T00:53:49.204600 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '112.14' symbol '0' with sequence identifier '249' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.204601 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '249' from the past; processing it
+2026-11-14T00:53:49.207052 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '112.18' symbol '12' with sequence identifier '250' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.207052 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '250' from the past; processing it
+2026-11-14T00:53:49.207055 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '112.18' symbol '12' with sequence identifier '250' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.207055 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '250' from the past; processing it
+2026-11-14T00:53:49.207115 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '112.19' symbol '0' with sequence identifier '251' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.207119 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '251' from the past; processing it
+2026-11-14T00:53:49.207123 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '112.19' symbol '0' with sequence identifier '251' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.207130 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '251' from the past; processing it
+2026-11-14T00:53:49.207625 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '113.0' symbol '0' with sequence identifier '245' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.207628 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '245' from the past; processing it
+2026-11-14T00:53:49.207640 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '113.0' symbol '0' with sequence identifier '245' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.207642 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '245' from the past; processing it
+2026-11-14T00:53:49.209541 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '113.3' symbol '12' with sequence identifier '252' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.209543 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '252' from the past; processing it
+2026-11-14T00:53:49.209554 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '113.3' symbol '12' with sequence identifier '252' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.209556 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '252' from the past; processing it
+2026-11-14T00:53:49.209605 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '113.4' symbol '0' with sequence identifier '253' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.209607 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '253' from the past; processing it
+2026-11-14T00:53:49.209608 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '113.4' symbol '0' with sequence identifier '253' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.209609 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '253' from the past; processing it
+2026-11-14T00:53:49.212049 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '113.8' symbol '12' with sequence identifier '254' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.212050 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '254' from the past; processing it
+2026-11-14T00:53:49.212052 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '113.8' symbol '12' with sequence identifier '254' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.212052 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '254' from the past; processing it
+2026-11-14T00:53:49.212125 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '113.9' symbol '0' with sequence identifier '255' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.212126 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '255' from the past; processing it
+2026-11-14T00:53:49.212128 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '113.9' symbol '0' with sequence identifier '255' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.212128 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '255' from the past; processing it
+2026-11-14T00:53:49.214523 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '113.13' symbol '12' with sequence identifier '0' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.214524 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '0' from the past; processing it
+2026-11-14T00:53:49.214526 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '113.13' symbol '12' with sequence identifier '0' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.214527 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '0' from the past; processing it
+2026-11-14T00:53:49.214613 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '113.14' symbol '0' with sequence identifier '1' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.214613 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '1' from the past; processing it
+2026-11-14T00:53:49.214615 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '113.14' symbol '0' with sequence identifier '1' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.214616 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '1' from the past; processing it
+2026-11-14T00:53:49.217038 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '113.18' symbol '12' with sequence identifier '2' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.217040 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '2' from the past; processing it
+2026-11-14T00:53:49.217041 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '113.18' symbol '12' with sequence identifier '2' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.217043 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '2' from the past; processing it
+2026-11-14T00:53:49.217110 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '113.19' symbol '0' with sequence identifier '3' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.217117 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '3' from the past; processing it
+2026-11-14T00:53:49.217118 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '113.19' symbol '0' with sequence identifier '3' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.217120 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '3' from the past; processing it
+2026-11-14T00:53:49.217621 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '114.0' symbol '0' with sequence identifier '246' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.217623 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '246' from the past; processing it
+2026-11-14T00:53:49.217626 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '114.0' symbol '0' with sequence identifier '246' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.217627 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '246' from the past; processing it
+2026-11-14T00:53:49.218606 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '114.2' symbol '0' with sequence identifier '247' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.218607 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '247' from the past; processing it
+2026-11-14T00:53:49.218611 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '114.2' symbol '0' with sequence identifier '247' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.218613 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '247' from the past; processing it
+2026-11-14T00:53:49.219106 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '114.3' symbol '0' with sequence identifier '248' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.219107 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '248' from the past; processing it
+2026-11-14T00:53:49.219124 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '114.3' symbol '0' with sequence identifier '248' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.219125 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '248' from the past; processing it
+2026-11-14T00:53:49.219534 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '114.3' symbol '12' with sequence identifier '4' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.219535 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '4' from the past; processing it
+2026-11-14T00:53:49.219545 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '114.3' symbol '12' with sequence identifier '4' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.219549 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '4' from the past; processing it
+2026-11-14T00:53:49.219635 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '0' in slot '114.4' symbol '0' with sequence identifier '5' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.219636 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '0' with sequence identifier '5' from the past; processing it
+2026-11-14T00:53:49.219638 [RU_EMU  ] [W] Received Open Fronthaul packet for UL CP eAxC value '1' in slot '114.4' symbol '0' with sequence identifier '5' from the past; processing it. Last valid slot was '18.4', symbol '0'
+2026-11-14T00:53:49.219639 [RU_EMU  ] [I] Sector#0: received uplink Control-Plane message for eAxC '1' with sequence identifier '5' from the past; processing it
+2026-11-14T00:53:49.220104 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '114.5' symbol '0' with sequence identifier '249' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.220105 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '249' from the past; processing it
+2026-11-14T00:53:49.220119 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '114.5' symbol '0' with sequence identifier '249' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.220119 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '249' from the past; processing it
+2026-11-14T00:53:49.227616 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '115.0' symbol '0' with sequence identifier '250' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.227618 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '250' from the past; processing it
+2026-11-14T00:53:49.227621 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '115.0' symbol '0' with sequence identifier '250' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.227623 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '250' from the past; processing it
+2026-11-14T00:53:49.237589 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '116.0' symbol '0' with sequence identifier '251' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.237592 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '251' from the past; processing it
+2026-11-14T00:53:49.237610 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '116.0' symbol '0' with sequence identifier '251' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.237612 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '251' from the past; processing it
+2026-11-14T00:53:49.238611 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '116.2' symbol '0' with sequence identifier '252' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.238626 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '252' from the past; processing it
+2026-11-14T00:53:49.238629 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '116.2' symbol '0' with sequence identifier '252' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.238631 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '252' from the past; processing it
+2026-11-14T00:53:49.239106 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '116.3' symbol '0' with sequence identifier '253' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.239116 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '253' from the past; processing it
+2026-11-14T00:53:49.239122 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '116.3' symbol '0' with sequence identifier '253' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.239123 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '253' from the past; processing it
+2026-11-14T00:53:49.240110 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '116.5' symbol '0' with sequence identifier '254' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.240111 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '254' from the past; processing it
+2026-11-14T00:53:49.240115 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '116.5' symbol '0' with sequence identifier '254' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.240116 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '254' from the past; processing it
+2026-11-14T00:53:49.247609 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '117.0' symbol '0' with sequence identifier '255' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.247610 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '255' from the past; processing it
+2026-11-14T00:53:49.247615 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '117.0' symbol '0' with sequence identifier '255' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.247616 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '255' from the past; processing it
+2026-11-14T00:53:49.257605 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '118.0' symbol '0' with sequence identifier '0' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.257606 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '0' from the past; processing it
+2026-11-14T00:53:49.257612 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '118.0' symbol '0' with sequence identifier '0' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.257613 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '0' from the past; processing it
+2026-11-14T00:53:49.258604 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '118.2' symbol '0' with sequence identifier '1' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.258605 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '1' from the past; processing it
+2026-11-14T00:53:49.258609 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '118.2' symbol '0' with sequence identifier '1' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.258610 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '1' from the past; processing it
+2026-11-14T00:53:49.259134 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '118.3' symbol '0' with sequence identifier '2' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.259139 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '2' from the past; processing it
+2026-11-14T00:53:49.259150 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '118.3' symbol '0' with sequence identifier '2' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.259152 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '2' from the past; processing it
+2026-11-14T00:53:49.260101 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '118.5' symbol '0' with sequence identifier '3' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.260103 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '3' from the past; processing it
+2026-11-14T00:53:49.260107 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '118.5' symbol '0' with sequence identifier '3' from the past; processing it. Last valid slot was '18.5', symbol '0'
+2026-11-14T00:53:49.260109 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '3' from the past; processing it
+2026-11-14T00:53:50.152636 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=2000 ul_capture_req=2000 dl_tx=0 prach_capture_req=0 (slot=110.3 ofh=110.3)
+2026-11-14T00:53:50.153135 [RADIO   ] [I] null_pace wall_s=1794617630.153135 radio_ts=25344000
+2026-11-14T00:53:50.184655 [RU_EMU  ] [I] Aligned the radio slot numbering to the GPS wire numbering: slot offset '1946'. Tracking the radio clock drift against the host clock; keep the host clock GPS/NTP-synchronized.
+2026-11-14T00:53:50.197137 [PHY     ] [W] [  113.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 113.14.
+2026-11-14T00:53:50.308158 [PHY     ] [W] [  124.16] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 124.16.
+2026-11-14T00:53:50.947120 [PHY     ] [W] [  188.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 188.14.
+2026-11-14T00:53:50.977116 [PHY     ] [W] [  191.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 191.14.
+2026-11-14T00:53:51.152621 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=4000 ul_capture_req=4000 dl_tx=247 prach_capture_req=96 (slot=210.3 ofh=51.9)
+2026-11-14T00:53:51.152708 [RADIO   ] [W] null radio: dump stop — max_dump_slots reached at DU slot 51.7 (bytes=737653440 slots=4000 dropped=0)
+2026-11-14T00:53:51.153105 [RADIO   ] [I] null_pace wall_s=1794617631.153105 radio_ts=48384000
+2026-11-14T00:53:51.248116 [PHY     ] [W] [  218.16] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 218.16.
+2026-11-14T00:53:52.152652 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=6000 ul_capture_req=6000 dl_tx=503 prach_capture_req=196 (slot=310.3 ofh=151.9)
+2026-11-14T00:53:52.153135 [RADIO   ] [I] null_pace wall_s=1794617632.153134 radio_ts=71424000
+2026-11-14T00:53:53.152662 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=8000 ul_capture_req=8000 dl_tx=759 prach_capture_req=296 (slot=410.3 ofh=251.9)
+2026-11-14T00:53:53.153135 [RADIO   ] [I] null_pace wall_s=1794617633.153134 radio_ts=94464000
+2026-11-14T00:53:53.487125 [PHY     ] [W] [  442.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 442.14.
+2026-11-14T00:53:53.528116 [PHY     ] [W] [  446.16] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 446.16.
+2026-11-14T00:53:53.587107 [PHY     ] [W] [  452.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 452.14.
+2026-11-14T00:53:53.647127 [PHY     ] [W] [  458.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 458.14.
+2026-11-14T00:53:53.657113 [PHY     ] [W] [  459.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 459.14.
+2026-11-14T00:53:53.677132 [PHY     ] [W] [  461.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 461.14.
+2026-11-14T00:53:53.688112 [PHY     ] [W] [  462.16] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 462.16.
+2026-11-14T00:53:53.709625 [PHY     ] [W] [  464.19] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 464.19.
+2026-11-14T00:53:53.748106 [PHY     ] [W] [  468.16] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 468.16.
+2026-11-14T00:53:53.988628 [PHY     ] [W] [  492.17] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 492.17.
+2026-11-14T00:53:54.107116 [PHY     ] [W] [  504.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 504.14.
+2026-11-14T00:53:54.152623 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=10000 ul_capture_req=10000 dl_tx=1015 prach_capture_req=395 (slot=510.3 ofh=95.9)
+2026-11-14T00:53:54.153103 [RADIO   ] [I] null_pace wall_s=1794617634.153102 radio_ts=117504000
+2026-11-14T00:53:54.157116 [PHY     ] [W] [  509.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 509.14.
+2026-11-14T00:53:54.168611 [PHY     ] [W] [  510.17] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 510.17.
+2026-11-14T00:53:54.188115 [PHY     ] [W] [  512.16] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 512.16.
+2026-11-14T00:53:54.189608 [PHY     ] [W] [  512.19] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 512.19.
+2026-11-14T00:53:54.209610 [PHY     ] [W] [  514.19] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 514.19.
+2026-11-14T00:53:54.247118 [PHY     ] [W] [  518.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 518.14.
+2026-11-14T00:53:54.317118 [PHY     ] [W] [  525.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 525.14.
+2026-11-14T00:53:54.408124 [PHY     ] [W] [  534.16] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 534.16.
+2026-11-14T00:53:54.427110 [PHY     ] [W] [  536.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 536.14.
+2026-11-14T00:53:54.477129 [PHY     ] [W] [  541.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 541.14.
+2026-11-14T00:53:54.507112 [PHY     ] [W] [  544.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 544.14.
+2026-11-14T00:53:54.607126 [PHY     ] [W] [  554.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 554.14.
+2026-11-14T00:53:54.888620 [PHY     ] [W] [  582.17] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 582.17.
+2026-11-14T00:53:55.088628 [PHY     ] [W] [  602.17] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 602.17.
+2026-11-14T00:53:55.089612 [PHY     ] [W] [  602.19] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 602.19.
+2026-11-14T00:53:55.097123 [PHY     ] [W] [  603.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 603.14.
+2026-11-14T00:53:55.152620 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=12000 ul_capture_req=12000 dl_tx=1272 prach_capture_req=495 (slot=610.3 ofh=195.9)
+2026-11-14T00:53:55.153115 [RADIO   ] [I] null_pace wall_s=1794617635.153108 radio_ts=140544000
+2026-11-14T00:53:56.117112 [PHY     ] [W] [  705.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 705.14.
+2026-11-14T00:53:56.152621 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=14000 ul_capture_req=14000 dl_tx=1528 prach_capture_req=594 (slot=710.3 ofh=39.9)
+2026-11-14T00:53:56.153102 [RADIO   ] [I] null_pace wall_s=1794617636.153102 radio_ts=163584000
+2026-11-14T00:53:56.307136 [PHY     ] [W] [  724.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 724.14.
+2026-11-14T00:53:56.408618 [PHY     ] [W] [  734.17] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 734.17.
+2026-11-14T00:53:56.409605 [PHY     ] [W] [  734.19] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 734.19.
+2026-11-14T00:53:56.428122 [PHY     ] [W] [  736.16] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 736.16.
+2026-11-14T00:53:56.517117 [PHY     ] [W] [  745.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 745.14.
+2026-11-14T00:53:56.668114 [PHY     ] [W] [  760.16] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 760.16.
+2026-11-14T00:53:56.897118 [PHY     ] [W] [  783.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 783.14.
+2026-11-14T00:53:56.967117 [PHY     ] [W] [  790.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 790.14.
+2026-11-14T00:53:56.968123 [PHY     ] [W] [  790.16] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 790.16.
+2026-11-14T00:53:57.117120 [PHY     ] [W] [  805.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 805.14.
+2026-11-14T00:53:57.137105 [PHY     ] [W] [  807.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 807.14.
+2026-11-14T00:53:57.148608 [PHY     ] [W] [  808.17] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 808.17.
+2026-11-14T00:53:57.152609 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=16000 ul_capture_req=16000 dl_tx=1784 prach_capture_req=694 (slot=810.3 ofh=139.9)
+2026-11-14T00:53:57.153113 [RADIO   ] [I] null_pace wall_s=1794617637.153107 radio_ts=186624000
+2026-11-14T00:53:57.237111 [PHY     ] [W] [  817.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 817.14.
+2026-11-14T00:53:57.328122 [PHY     ] [W] [  826.16] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 826.16.
+2026-11-14T00:53:57.377120 [PHY     ] [W] [  831.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 831.14.
+2026-11-14T00:53:57.388109 [PHY     ] [W] [  832.16] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 832.16.
+2026-11-14T00:53:58.152639 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=18000 ul_capture_req=18000 dl_tx=2040 prach_capture_req=794 (slot=910.3 ofh=239.9)
+2026-11-14T00:53:58.153128 [RADIO   ] [I] null_pace wall_s=1794617638.153127 radio_ts=209664000
+2026-11-14T00:53:58.157137 [PHY     ] [W] [  909.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 909.14.
+2026-11-14T00:53:59.152633 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=20000 ul_capture_req=20000 dl_tx=2297 prach_capture_req=893 (slot=1010.3 ofh=83.9)
+2026-11-14T00:53:59.153143 [RADIO   ] [I] null_pace wall_s=1794617639.153134 radio_ts=232704000
+2026-11-14T00:53:59.268134 [PHY     ] [W] [ 1020.16] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 1020.16.
+2026-11-14T00:53:59.917150 [PHY     ] [W] [   61.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 61.14.
+2026-11-14T00:54:00.152715 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=22000 ul_capture_req=22000 dl_tx=2553 prach_capture_req=993 (slot=86.3 ofh=183.9)
+2026-11-14T00:54:00.153144 [RADIO   ] [I] null_pace wall_s=1794617640.153136 radio_ts=255744000
+2026-11-14T00:54:00.588637 [PHY     ] [W] [  128.17] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 128.17.
+2026-11-14T00:54:01.152640 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=24000 ul_capture_req=24000 dl_tx=2809 prach_capture_req=1092 (slot=186.3 ofh=27.9)
+2026-11-14T00:54:01.153129 [RADIO   ] [I] null_pace wall_s=1794617641.153127 radio_ts=278784000
+2026-11-14T00:54:02.117143 [PHY     ] [W] [  281.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 281.14.
+2026-11-14T00:54:02.152639 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=26000 ul_capture_req=26000 dl_tx=3065 prach_capture_req=1192 (slot=286.3 ofh=127.9)
+2026-11-14T00:54:02.153135 [RADIO   ] [I] null_pace wall_s=1794617642.153133 radio_ts=301824000
+2026-11-14T00:54:02.889654 [PHY     ] [W] [  358.19] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 358.19.
+2026-11-14T00:54:03.152644 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=28000 ul_capture_req=28000 dl_tx=3322 prach_capture_req=1292 (slot=386.3 ofh=227.9)
+2026-11-14T00:54:03.153147 [RADIO   ] [I] null_pace wall_s=1794617643.153136 radio_ts=324864000
+2026-11-14T00:54:04.152647 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=30000 ul_capture_req=30000 dl_tx=3578 prach_capture_req=1391 (slot=486.3 ofh=71.9)
+2026-11-14T00:54:04.153149 [RADIO   ] [I] null_pace wall_s=1794617644.153139 radio_ts=347904000
+2026-11-14T00:54:05.152640 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=32000 ul_capture_req=32000 dl_tx=3834 prach_capture_req=1491 (slot=586.3 ofh=171.9)
+2026-11-14T00:54:05.153146 [RADIO   ] [I] null_pace wall_s=1794617645.153136 radio_ts=370944000
+2026-11-14T00:54:06.149642 [PHY     ] [W] [  684.19] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 684.19.
+2026-11-14T00:54:06.152636 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=34000 ul_capture_req=34000 dl_tx=4090 prach_capture_req=1590 (slot=686.3 ofh=15.9)
+2026-11-14T00:54:06.153131 [RADIO   ] [I] null_pace wall_s=1794617646.153130 radio_ts=393984000
+2026-11-14T00:54:07.152650 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=36000 ul_capture_req=36000 dl_tx=4347 prach_capture_req=1690 (slot=786.3 ofh=115.9)
+2026-11-14T00:54:07.153151 [RADIO   ] [I] null_pace wall_s=1794617647.153150 radio_ts=417024000
+2026-11-14T00:54:07.588626 [PHY     ] [W] [  828.17] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 828.17.
+2026-11-14T00:54:07.728106 [PHY     ] [W] [  842.16] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 842.16.
+2026-11-14T00:54:07.817122 [PHY     ] [W] [  851.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 851.14.
+2026-11-14T00:54:07.917126 [PHY     ] [W] [  861.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 861.14.
+2026-11-14T00:54:08.152613 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=38000 ul_capture_req=38000 dl_tx=4603 prach_capture_req=1790 (slot=886.3 ofh=215.9)
+2026-11-14T00:54:08.153113 [RADIO   ] [I] null_pace wall_s=1794617648.153103 radio_ts=440064000
+2026-11-14T00:54:08.607151 [PHY     ] [W] [  930.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 930.14.
+2026-11-14T00:54:09.087124 [PHY     ] [W] [  978.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 978.14.
+2026-11-14T00:54:09.107108 [PHY     ] [W] [  980.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 980.14.
+2026-11-14T00:54:09.128617 [PHY     ] [W] [  982.17] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 982.17.
+2026-11-14T00:54:09.137121 [PHY     ] [W] [  983.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 983.14.
+2026-11-14T00:54:09.152624 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=40000 ul_capture_req=40000 dl_tx=4859 prach_capture_req=1889 (slot=986.3 ofh=59.9)
+2026-11-14T00:54:09.153102 [RADIO   ] [I] null_pace wall_s=1794617649.153102 radio_ts=463104000
+2026-11-14T00:54:09.227121 [PHY     ] [W] [  992.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 992.14.
+2026-11-14T00:54:10.067117 [PHY     ] [W] [   52.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 52.14.
+2026-11-14T00:54:10.089625 [PHY     ] [W] [   54.19] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 54.19.
+2026-11-14T00:54:10.152609 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=42000 ul_capture_req=42000 dl_tx=5115 prach_capture_req=1989 (slot=62.3 ofh=159.9)
+2026-11-14T00:54:10.153114 [RADIO   ] [I] null_pace wall_s=1794617650.153106 radio_ts=486144000
+2026-11-14T00:54:10.368128 [PHY     ] [W] [   82.16] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 82.16.
+2026-11-14T00:54:10.368619 [PHY     ] [W] [   82.17] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 82.17.
+2026-11-14T00:54:10.428616 [PHY     ] [W] [   88.17] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 88.17.
+2026-11-14T00:54:11.152639 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=44000 ul_capture_req=44000 dl_tx=5372 prach_capture_req=2088 (slot=162.3 ofh=3.9)
+2026-11-14T00:54:11.153141 [RADIO   ] [I] null_pace wall_s=1794617651.153131 radio_ts=509184000
+2026-11-14T00:54:11.618803 [RU_EMU  ] [I] RU emulator timing worker woke up late, skipped '2' symbols
+2026-11-14T00:54:12.152654 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=46000 ul_capture_req=46000 dl_tx=5628 prach_capture_req=2188 (slot=262.3 ofh=103.9)
+2026-11-14T00:54:12.153149 [RADIO   ] [I] null_pace wall_s=1794617652.153149 radio_ts=532224000
+2026-11-14T00:54:12.168157 [PHY     ] [W] [  262.16] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 262.16.
+2026-11-14T00:54:12.789645 [PHY     ] [W] [  324.19] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 324.19.
+2026-11-14T00:54:13.152650 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=48000 ul_capture_req=48000 dl_tx=5884 prach_capture_req=2288 (slot=362.3 ofh=203.9)
+2026-11-14T00:54:13.153133 [RADIO   ] [I] null_pace wall_s=1794617653.153133 radio_ts=555264000
+2026-11-14T00:54:14.128154 [PHY     ] [W] [  458.16] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 458.16.
+2026-11-14T00:54:14.152629 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=50000 ul_capture_req=50000 dl_tx=6140 prach_capture_req=2387 (slot=462.3 ofh=47.9)
+2026-11-14T00:54:14.153133 [RADIO   ] [I] null_pace wall_s=1794617654.153127 radio_ts=578304000
+2026-11-14T00:54:14.477134 [PHY     ] [W] [  493.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 493.14.
+2026-11-14T00:54:14.827161 [PHY     ] [W] [  528.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 528.14.
+2026-11-14T00:54:14.828663 [PHY     ] [W] [  528.17] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 528.17.
+2026-11-14T00:54:15.152631 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=52000 ul_capture_req=52000 dl_tx=6397 prach_capture_req=2487 (slot=562.3 ofh=147.9)
+2026-11-14T00:54:15.153141 [RADIO   ] [I] null_pace wall_s=1794617655.153128 radio_ts=601344000
+2026-11-14T00:54:16.152645 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=54000 ul_capture_req=54000 dl_tx=6653 prach_capture_req=2587 (slot=662.3 ofh=247.9)
+2026-11-14T00:54:16.153133 [RADIO   ] [I] null_pace wall_s=1794617656.153127 radio_ts=624384000
+2026-11-14T00:54:17.152640 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=56000 ul_capture_req=56000 dl_tx=6909 prach_capture_req=2686 (slot=762.3 ofh=91.9)
+2026-11-14T00:54:17.153139 [RADIO   ] [I] null_pace wall_s=1794617657.153129 radio_ts=647424000
+2026-11-14T00:54:18.152637 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=58000 ul_capture_req=58000 dl_tx=7165 prach_capture_req=2786 (slot=862.3 ofh=191.9)
+2026-11-14T00:54:18.153149 [RADIO   ] [I] null_pace wall_s=1794617658.153139 radio_ts=670464000
+2026-11-14T00:54:19.152644 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=60000 ul_capture_req=60000 dl_tx=7422 prach_capture_req=2885 (slot=962.3 ofh=35.9)
+2026-11-14T00:54:19.153143 [RADIO   ] [I] null_pace wall_s=1794617659.153134 radio_ts=693504000
+2026-11-14T00:54:20.152613 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=62000 ul_capture_req=62000 dl_tx=7678 prach_capture_req=2985 (slot=38.3 ofh=135.9)
+2026-11-14T00:54:20.153118 [RADIO   ] [I] null_pace wall_s=1794617660.153106 radio_ts=716544000
+2026-11-14T00:54:20.287129 [PHY     ] [W] [   50.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 50.14.
+2026-11-14T00:54:20.289633 [PHY     ] [W] [   50.19] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 50.19.
+2026-11-14T00:54:20.977121 [PHY     ] [W] [  119.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 119.14.
+2026-11-14T00:54:21.049615 [PHY     ] [W] [  126.19] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 126.19.
+2026-11-14T00:54:21.152630 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=64000 ul_capture_req=64000 dl_tx=7934 prach_capture_req=3085 (slot=138.3 ofh=235.9)
+2026-11-14T00:54:21.153104 [RADIO   ] [I] null_pace wall_s=1794617661.153103 radio_ts=739584000
+2026-11-14T00:54:21.177120 [PHY     ] [W] [  139.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 139.14.
+2026-11-14T00:54:21.277117 [PHY     ] [W] [  149.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 149.14.
+2026-11-14T00:54:21.288124 [PHY     ] [W] [  150.16] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 150.16.
+2026-11-14T00:54:21.288620 [PHY     ] [W] [  150.17] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 150.17.
+2026-11-14T00:54:22.152643 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=66000 ul_capture_req=66000 dl_tx=8190 prach_capture_req=3184 (slot=238.3 ofh=79.9)
+2026-11-14T00:54:22.153136 [RADIO   ] [I] null_pace wall_s=1794617662.153135 radio_ts=762624000
+2026-11-14T00:54:23.152653 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=68000 ul_capture_req=68000 dl_tx=8447 prach_capture_req=3284 (slot=338.3 ofh=179.9)
+2026-11-14T00:54:23.153136 [RADIO   ] [I] null_pace wall_s=1794617663.153135 radio_ts=785664000
+2026-11-14T00:54:24.152645 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=70000 ul_capture_req=70000 dl_tx=8703 prach_capture_req=3383 (slot=438.3 ofh=23.9)
+2026-11-14T00:54:24.153134 [RADIO   ] [I] null_pace wall_s=1794617664.153134 radio_ts=808704000
+2026-11-14T00:54:25.152644 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=72000 ul_capture_req=72000 dl_tx=8959 prach_capture_req=3483 (slot=538.3 ofh=123.9)
+2026-11-14T00:54:25.153134 [RADIO   ] [I] null_pace wall_s=1794617665.153133 radio_ts=831744000
+2026-11-14T00:54:25.667153 [PHY     ] [W] [  588.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 588.14.
+2026-11-14T00:54:26.152657 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=74000 ul_capture_req=74000 dl_tx=9215 prach_capture_req=3583 (slot=638.3 ofh=223.9)
+2026-11-14T00:54:26.153134 [RADIO   ] [I] null_pace wall_s=1794617666.153133 radio_ts=854784000
+2026-11-14T00:54:26.289639 [PHY     ] [W] [  650.19] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 650.19.
+2026-11-14T00:54:27.025824 [RU_EMU  ] [I] RU emulator timing worker woke up late, skipped '2' symbols
+2026-11-14T00:54:27.088647 [PHY     ] [W] [  730.17] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 730.17.
+2026-11-14T00:54:27.152641 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=76000 ul_capture_req=76000 dl_tx=9472 prach_capture_req=3682 (slot=738.3 ofh=67.9)
+2026-11-14T00:54:27.153142 [RADIO   ] [I] null_pace wall_s=1794617667.153134 radio_ts=877824000
+2026-11-14T00:54:27.917139 [PHY     ] [W] [  813.14] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 813.14.
+2026-11-14T00:54:28.152642 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=78000 ul_capture_req=78000 dl_tx=9728 prach_capture_req=3782 (slot=838.3 ofh=167.9)
+2026-11-14T00:54:28.153131 [RADIO   ] [I] null_pace wall_s=1794617668.153130 radio_ts=900864000
+2026-11-14T00:54:29.152656 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=80000 ul_capture_req=80000 dl_tx=9984 prach_capture_req=3881 (slot=938.3 ofh=11.9)
+2026-11-14T00:54:29.153136 [RADIO   ] [I] null_pace wall_s=1794617669.153136 radio_ts=923904000
+2026-11-14T00:54:30.152661 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=82000 ul_capture_req=82000 dl_tx=10240 prach_capture_req=3981 (slot=14.3 ofh=111.9)
+2026-11-14T00:54:30.153164 [RADIO   ] [I] null_pace wall_s=1794617670.153163 radio_ts=946944000
+2026-11-14T00:54:31.152652 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=84000 ul_capture_req=84000 dl_tx=10497 prach_capture_req=4081 (slot=114.3 ofh=211.9)
+2026-11-14T00:54:31.153134 [RADIO   ] [I] null_pace wall_s=1794617671.153134 radio_ts=969984000
+2026-11-14T00:54:32.152644 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=86000 ul_capture_req=86000 dl_tx=10753 prach_capture_req=4180 (slot=214.3 ofh=55.9)
+2026-11-14T00:54:32.153137 [RADIO   ] [I] null_pace wall_s=1794617672.153135 radio_ts=993024000
+2026-11-14T00:54:33.152650 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=88000 ul_capture_req=88000 dl_tx=11009 prach_capture_req=4280 (slot=314.3 ofh=155.9)
+2026-11-14T00:54:33.153144 [RADIO   ] [I] null_pace wall_s=1794617673.153133 radio_ts=1016064000
+2026-11-14T00:54:33.527635 [PHY     ] [W] [  350.15] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 350.15.
+2026-11-14T00:54:34.152660 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=90000 ul_capture_req=90000 dl_tx=11265 prach_capture_req=4380 (slot=414.3 ofh=255.9)
+2026-11-14T00:54:34.153138 [RADIO   ] [I] null_pace wall_s=1794617674.153138 radio_ts=1039104000
+2026-11-14T00:54:34.289645 [PHY     ] [W] [  426.19] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 426.19.
+2026-11-14T00:54:35.152636 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=92000 ul_capture_req=92000 dl_tx=11522 prach_capture_req=4479 (slot=514.3 ofh=99.9)
+2026-11-14T00:54:35.153145 [RADIO   ] [I] null_pace wall_s=1794617675.153134 radio_ts=1062144000
+2026-11-14T00:54:35.429641 [PHY     ] [W] [  540.19] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 540.19.
+2026-11-14T00:54:35.928124 [PHY     ] [W] [  590.16] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 590.16.
+2026-11-14T00:54:35.928607 [PHY     ] [W] [  590.17] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 590.17.
+2026-11-14T00:54:36.109615 [PHY     ] [W] [  608.19] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 608.19.
+2026-11-14T00:54:36.152610 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=94000 ul_capture_req=94000 dl_tx=11778 prach_capture_req=4579 (slot=614.3 ofh=199.9)
+2026-11-14T00:54:36.153105 [RADIO   ] [I] null_pace wall_s=1794617676.153104 radio_ts=1085184000
+2026-11-14T00:54:36.188120 [PHY     ] [W] [  616.16] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 616.16.
+2026-11-14T00:54:36.268113 [PHY     ] [W] [  624.16] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 624.16.
+2026-11-14T00:54:36.268621 [PHY     ] [W] [  624.17] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 624.17.
+2026-11-14T00:54:36.488631 [PHY     ] [W] [  646.17] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 646.17.
+2026-11-14T00:54:37.152624 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=96000 ul_capture_req=96000 dl_tx=12034 prach_capture_req=4678 (slot=714.3 ofh=43.9)
+2026-11-14T00:54:37.153099 [RADIO   ] [I] null_pace wall_s=1794617677.153098 radio_ts=1108224000
+2026-11-14T00:54:38.152628 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=98000 ul_capture_req=98000 dl_tx=12290 prach_capture_req=4778 (slot=814.3 ofh=143.9)
+2026-11-14T00:54:38.153105 [RADIO   ] [I] null_pace wall_s=1794617678.153104 radio_ts=1131264000
+2026-11-14T00:54:39.152621 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=100000 ul_capture_req=100000 dl_tx=12547 prach_capture_req=4878 (slot=914.3 ofh=243.9)
+2026-11-14T00:54:39.153102 [RADIO   ] [I] null_pace wall_s=1794617679.153100 radio_ts=1154304000
+2026-11-14T00:54:40.152616 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=102000 ul_capture_req=102000 dl_tx=12803 prach_capture_req=4977 (slot=1014.3 ofh=87.9)
+2026-11-14T00:54:40.153116 [RADIO   ] [I] null_pace wall_s=1794617680.153116 radio_ts=1177344000
+2026-11-14T00:54:41.152624 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=104000 ul_capture_req=104000 dl_tx=13059 prach_capture_req=5077 (slot=90.3 ofh=187.9)
+2026-11-14T00:54:41.153103 [RADIO   ] [I] null_pace wall_s=1794617681.153102 radio_ts=1200384000
+2026-11-14T00:54:42.152644 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=106000 ul_capture_req=106000 dl_tx=13315 prach_capture_req=5176 (slot=190.3 ofh=31.9)
+2026-11-14T00:54:42.153124 [RADIO   ] [I] null_pace wall_s=1794617682.153123 radio_ts=1223424000
+2026-11-14T00:54:43.152648 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=108000 ul_capture_req=108000 dl_tx=13572 prach_capture_req=5276 (slot=290.3 ofh=131.9)
+2026-11-14T00:54:43.153136 [RADIO   ] [I] null_pace wall_s=1794617683.153135 radio_ts=1246464000
+2026-11-14T00:54:44.152654 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=110000 ul_capture_req=110000 dl_tx=13828 prach_capture_req=5376 (slot=390.3 ofh=231.9)
+2026-11-14T00:54:44.153142 [RADIO   ] [I] null_pace wall_s=1794617684.153133 radio_ts=1269504000
+2026-11-14T00:54:45.142044 [RU_EMU  ] [I] RU emulator timing worker woke up late, skipped '2' symbols
+2026-11-14T00:54:45.152647 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=112000 ul_capture_req=112000 dl_tx=14084 prach_capture_req=5475 (slot=490.3 ofh=75.9)
+2026-11-14T00:54:45.153143 [RADIO   ] [I] null_pace wall_s=1794617685.153132 radio_ts=1292544000
+2026-11-14T00:54:46.152656 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=114000 ul_capture_req=114000 dl_tx=14340 prach_capture_req=5575 (slot=590.3 ofh=175.9)
+2026-11-14T00:54:46.153136 [RADIO   ] [I] null_pace wall_s=1794617686.153135 radio_ts=1315584000
+2026-11-14T00:54:47.152648 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=116000 ul_capture_req=116000 dl_tx=14597 prach_capture_req=5674 (slot=690.3 ofh=19.9)
+2026-11-14T00:54:47.153133 [RADIO   ] [I] null_pace wall_s=1794617687.153132 radio_ts=1338624000
+2026-11-14T00:54:48.152648 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=118000 ul_capture_req=118000 dl_tx=14853 prach_capture_req=5774 (slot=790.3 ofh=119.9)
+2026-11-14T00:54:48.153130 [RADIO   ] [I] null_pace wall_s=1794617688.153129 radio_ts=1361664000
+2026-11-14T00:54:49.152639 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=120000 ul_capture_req=120000 dl_tx=15109 prach_capture_req=5874 (slot=890.3 ofh=219.9)
+2026-11-14T00:54:49.153128 [RADIO   ] [I] null_pace wall_s=1794617689.153127 radio_ts=1384704000
+2026-11-14T00:54:50.152654 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=122000 ul_capture_req=122000 dl_tx=15365 prach_capture_req=5973 (slot=990.3 ofh=63.9)
+2026-11-14T00:54:50.153130 [RADIO   ] [I] null_pace wall_s=1794617690.153129 radio_ts=1407744000
+2026-11-14T00:54:51.152652 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=124000 ul_capture_req=124000 dl_tx=15622 prach_capture_req=6073 (slot=66.3 ofh=163.9)
+2026-11-14T00:54:51.153144 [RADIO   ] [I] null_pace wall_s=1794617691.153134 radio_ts=1430784000
+2026-11-14T00:54:52.152636 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=126000 ul_capture_req=126000 dl_tx=15878 prach_capture_req=6172 (slot=166.3 ofh=7.9)
+2026-11-14T00:54:52.153145 [RADIO   ] [I] null_pace wall_s=1794617692.153135 radio_ts=1453824000

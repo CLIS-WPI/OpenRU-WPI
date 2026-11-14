@@ -1,0 +1,53 @@
+# baseline ProtO-RU — null radio (M1). Runs low-PHY; dumps TX IQ after low-PHY.
+# pace=realtime (default): receive() blocks to system_clock like UHD/GPS alignment.
+# Dump on tmpfs (/dev/shm) so the async writer does not stall the TX path.
+
+log:
+  filename: /tmp/proto-ru.log
+  level: info
+
+ru_emu:
+  timing_cpus: [32]
+  cells:
+    - network_interface: eth0
+      ru_mac_addr: 02:00:00:00:00:20
+      du_mac_addr: 02:00:00:00:00:10
+      enable_promiscuous: true
+
+      bandwidth: 100
+      common_scs: 30
+      dl_arfcn: 628032
+      band: 78
+
+      dl_port_id: [0, 1]
+      ul_port_id: [0, 1]
+      prach_port_id: [4, 5]
+      prach_format: short
+
+      compr_method_dl: bfp
+      compr_bitwidth_dl: 9
+      compr_method_ul: bfp
+      compr_bitwidth_ul: 9
+      compr_method_prach: bfp
+      compr_bitwidth_prach: 9
+      is_ul_static_compr_hdr: true
+      is_dl_static_compr_hdr: true
+      iq_scaling: 1.0
+
+      t2a_max_cp_dl: 2435
+      t2a_min_cp_dl: 2235
+      t2a_max_cp_ul: 2435
+      t2a_min_cp_ul: 2235
+      t2a_max_up: 2215
+      t2a_min_up: 2015
+      ta3_max_up: 1200
+      ta3_min_up: 800
+
+      ofh_cpus: [33, 34]
+      sdr:
+        device_driver: "null"
+        # max_dump_slots=800 ≈ 2 s @ 30 kHz; raise for longer goldens. Requires compose shm_size ≥ dump.
+        # dump_start_stable_slots=100 skips the cold-start DU/OFH-vs-radio Δ settle.
+        device_args: "tx_dump=/dev/shm/openru_iq,rx_feed=,pace=realtime,scs_khz=30,max_dump_slots=800,dump_start_stable_slots=100"
+        srate: 122.88
+        max_proc_delay: 2

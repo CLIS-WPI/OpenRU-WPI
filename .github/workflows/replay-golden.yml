@@ -1,0 +1,52 @@
+# M1 acceptance: CPU fh_replay IQ == golden (0 differing samples), < 10 min on H100.
+#
+# SECURITY: this repository is public and the job runs on a self-hosted GPU host.
+# Never add pull_request or pull_request_target triggers here: a fork PR would run
+# untrusted code on the lab machine. Only trusted pushes to main and manual
+# dispatches by a maintainer may use the runner. See docs/CI.md.
+name: replay-golden
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  replay-golden:
+    runs-on: [self-hosted, gpu]
+    timeout-minutes: 15
+    env:
+      OPENRU_TAG: m1
+      # Self-hosted runner keeps goldens/pcaps out of band; override if needed.
+      OPENRU_GOLDEN_URL: ${{ vars.OPENRU_GOLDEN_URL }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Fetch golden IQ (if URL configured)
+        if: ${{ env.OPENRU_GOLDEN_URL != '' }}
+        run: make fetch-golden
+
+      - name: Require goldens + short pcaps on runner
+        run: |
+          set -e
+          for p in baseline b40 b100; do
+            test -s "testdata/golden/$p/port0.cf32"
+            test -s "testdata/golden/$p/MANIFEST.json"
+            test -s "testdata/pcap/${p}_3s.pcapng"
+          done
+
+      - name: replay-golden
+        run: make replay-golden
+
+      - name: Upload iq_compare dumps on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: replay-golden-dumps
+          path: docs/reports/replay-golden-*
+          if-no-files-found: ignore

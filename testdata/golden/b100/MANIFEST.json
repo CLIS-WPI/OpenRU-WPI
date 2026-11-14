@@ -1,0 +1,66 @@
+{
+  "profile": "b100",
+  "bandwidth_MHz": 100,
+  "nof_ports": 2,
+  "ports": [
+    "port0.cf32",
+    "port1.cf32"
+  ],
+  "scs_kHz": 30,
+  "sample_rate_Hz": 122880000.0,
+  "samples_per_slot": 61440,
+  "nof_slots": 800,
+  "max_dump_slots_cap": 800,
+  "first_du": {
+    "sfn": 165,
+    "slot": 11
+  },
+  "last_du": {
+    "sfn": 203,
+    "slot": 8
+  },
+  "last_du_from_meta": {
+    "sfn": 205,
+    "slot": 10
+  },
+  "total_iq_bytes": 788423680,
+  "tx_index_entries": 758,
+  "files": {
+    "port0.cf32": {
+      "sha256": "f5c6331b10b95812c0ec32561e98b7b03846788ccf1a01bb3d7113a83f8a8bbb",
+      "bytes": 394211840
+    },
+    "port1.cf32": {
+      "sha256": "f5c6331b10b95812c0ec32561e98b7b03846788ccf1a01bb3d7113a83f8a8bbb",
+      "bytes": 394211840
+    },
+    "iq_meta.json": {
+      "sha256": "0724b4d7b3c571a3beeb1f37fb9b18d6e0a4717c9dc76fc3f09ebc040afbbf3d",
+      "bytes": 867
+    },
+    "tx_index.jsonl": {
+      "sha256": "6f7435ae00ff703d4fc70e3d4c8c8567f8c8fba14cf810019394f09e73d88ef7",
+      "bytes": 106551
+    }
+  },
+  "SHA256": {
+    "port0.cf32": "f5c6331b10b95812c0ec32561e98b7b03846788ccf1a01bb3d7113a83f8a8bbb",
+    "port1.cf32": "f5c6331b10b95812c0ec32561e98b7b03846788ccf1a01bb3d7113a83f8a8bbb",
+    "iq_meta.json": "0724b4d7b3c571a3beeb1f37fb9b18d6e0a4717c9dc76fc3f09ebc040afbbf3d",
+    "tx_index.jsonl": "6f7435ae00ff703d4fc70e3d4c8c8567f8c8fba14cf810019394f09e73d88ef7"
+  },
+  "pcap": "testdata/pcap/b100_3s.pcapng",
+  "pcap_source": "testdata/pcap/b100.pcapng (first 3.5s)",
+  "openru_sw_commit": "62e0da81165ddee99a62d4b94d065f5c158e23aa",
+  "proto_ru_commit": "790b899b0745ecc2b65633cf226ccce4b9e36a3d",
+  "proto_ru_branch": "feat/null-radio",
+  "image": "openru/protoru:m1",
+  "compare_gate": "0 differing samples (CPU vs CPU)",
+  "shm_note": "compose shm_size=2gb; b100 uses max_dump_slots=800 (~752 MiB IQ) so the dump fits in /dev/shm",
+  "delta_mapping": {
+    "applied_delta_slots": -8,
+    "du_log": "mac_metrics_consumers.cpp:37 slots=[start, END)",
+    "ru_log": "ru_emulator_tti_orchestrator.cpp:161 ofh=",
+    "iq_compare": "Compares dumps by sequential sample/slot_grid order (radio timeline). Does not remap via \u0394. Size (slots_written/bytes) must match; GPS last_du_* labels may differ across cold starts."
+  }
+}

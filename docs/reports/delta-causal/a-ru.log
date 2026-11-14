@@ -1,0 +1,386 @@
+===== compose logs: protoru =====
+protoru-1  | GPU 0: NVIDIA H100 NVL (UUID: GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058)
+protoru-1  | Available radio types: uhd and null.
+protoru-1  | Running. Waiting for incoming packets...
+protoru-1  | [1m|   TIME   | ID  |  RX_TOTAL   | RX_ON_TIME  |  RX_EARLY   |   RX_LATE   |   RX_SEQ_ERR    | RX_ON_TIME_C  |  RX_EARLY_C   |   RX_LATE_C   |  RX_SEQ_ERR_C   | RX_ON_TIME_C_U |  RX_EARLY_C_U  |  RX_LATE_C_U   | RX_SEQ_ERR_C_U  | RX_SEQ_ERR_PRACH | RX_CORRUPT  | RX_ERR_DROP |  TX_TOTAL   |
+protoru-1  | [0m| 00:39:25 |  0  |    9190     |    6768     |      0      |     82      |       1/1       |      512      |       0       |       8       |       4/4       |      1796      |       0        |       24       |       1/1       |       1/1       |      0      |      0      |      0      |
+protoru-1  | | 00:39:26 |  0  |    9084     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1804      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    14712    |
+protoru-1  | | 00:39:27 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:39:28 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:39:29 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:39:30 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:39:31 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:39:32 |  0  |    9111     |    6796     |      0      |      0      |       0/0       |      515      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:39:33 |  0  |    9081     |    6768     |      0      |      0      |       0/0       |      513      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:39:34 |  0  |    9080     |    6766     |      2      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:39:35 |  0  |    9082     |    6770     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15182    |
+protoru-1  | | 00:39:36 |  0  |    9114     |    6799     |      1      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15204    |
+protoru-1  | | 00:39:37 |  0  |    9086     |    6774     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15208    |
+protoru-1  | | 00:39:38 |  0  |    9090     |    6778     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15186    |
+protoru-1  | | 00:39:39 |  0  |    9086     |    6774     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15204    |
+protoru-1  | | 00:39:40 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:39:41 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:39:42 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:39:43 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:39:44 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | [1m|   TIME   | ID  |  RX_TOTAL   | RX_ON_TIME  |  RX_EARLY   |   RX_LATE   |   RX_SEQ_ERR    | RX_ON_TIME_C  |  RX_EARLY_C   |   RX_LATE_C   |  RX_SEQ_ERR_C   | RX_ON_TIME_C_U |  RX_EARLY_C_U  |  RX_LATE_C_U   | RX_SEQ_ERR_C_U  | RX_SEQ_ERR_PRACH | RX_CORRUPT  | RX_ERR_DROP |  TX_TOTAL   |
+protoru-1  | [0m| 00:39:45 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:39:46 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:39:47 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:39:48 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:39:49 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:39:50 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:39:51 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:39:52 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:39:53 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:39:54 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:39:55 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:39:56 |  0  |    9112     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1802      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:39:57 |  0  |    9082     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1802      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15008    |
+protoru-1  | | 00:39:58 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:39:59 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:40:00 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:40:01 |  0  |    9080     |    6762     |      6      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:40:02 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:40:03 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:40:04 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | [1m|   TIME   | ID  |  RX_TOTAL   | RX_ON_TIME  |  RX_EARLY   |   RX_LATE   |   RX_SEQ_ERR    | RX_ON_TIME_C  |  RX_EARLY_C   |   RX_LATE_C   |  RX_SEQ_ERR_C   | RX_ON_TIME_C_U |  RX_EARLY_C_U  |  RX_LATE_C_U   | RX_SEQ_ERR_C_U  | RX_SEQ_ERR_PRACH | RX_CORRUPT  | RX_ERR_DROP |  TX_TOTAL   |
+protoru-1  | [0m| 00:40:05 |  0  |    9080     |    6767     |      1      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15202    |
+protoru-1  | | 00:40:06 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15178    |
+protoru-1  | | 00:40:07 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15208    |
+protoru-1  | | 00:40:08 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15184    |
+protoru-1  | | 00:40:09 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15208    |
+protoru-1  | | 00:40:10 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15204    |
+protoru-1  | | 00:40:11 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15180    |
+protoru-1  | | 00:40:12 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15212    |
+protoru-1  | | 00:40:13 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15206    |
+protoru-1  | | 00:40:14 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15178    |
+protoru-1  | | 00:40:15 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:40:16 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:40:17 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:40:18 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:40:19 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:40:20 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:40:21 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:40:22 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:40:23 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:40:24 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | [1m|   TIME   | ID  |  RX_TOTAL   | RX_ON_TIME  |  RX_EARLY   |   RX_LATE   |   RX_SEQ_ERR    | RX_ON_TIME_C  |  RX_EARLY_C   |   RX_LATE_C   |  RX_SEQ_ERR_C   | RX_ON_TIME_C_U |  RX_EARLY_C_U  |  RX_LATE_C_U   | RX_SEQ_ERR_C_U  | RX_SEQ_ERR_PRACH | RX_CORRUPT  | RX_ERR_DROP |  TX_TOTAL   |
+protoru-1  | [0m| 00:40:25 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:40:26 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:40:27 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:40:28 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:40:29 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:40:30 |  0  |    9082     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1802      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+===== /tmp/proto-ru.log =====
+2026-11-14T00:39:23.482700 [CONFIG  ] [I] Input configuration (all values): 
+log:
+  filename: /tmp/proto-ru.log
+  level: info
+ru_emu:
+  timing_cpus: [32]
+  cells:
+    - network_interface: eth0
+      ru_mac_addr: 02:00:00:00:00:20
+      du_mac_addr: 02:00:00:00:00:10
+      enable_promiscuous: true
+      bandwidth: 20
+      common_scs: 30
+      dl_arfcn: 628032
+      band: 78
+      dl_port_id: [0, 1]
+      ul_port_id: [0, 1]
+      prach_port_id: [4, 5]
+      prach_format: short
+      compr_method_ul: bfp
+      compr_bitwidth_ul: 9
+      compr_method_dl: bfp
+      compr_bitwidth_dl: 9
+      compr_method_prach: bfp
+      compr_bitwidth_prach: 9
+      is_ul_static_compr_hdr: true
+      is_dl_static_compr_hdr: true
+      iq_scaling: 1
+      t2a_max_cp_dl: 2435
+      t2a_min_cp_dl: 2235
+      t2a_max_cp_ul: 2435
+      t2a_min_cp_ul: 2235
+      t2a_max_up: 2215
+      t2a_min_up: 2015
+      ta3_max_up: 1200
+      ta3_min_up: 800
+      ofh_cpus: [33, 34]
+      sdr:
+        device_driver: "null"
+        device_args: tx_dump=/dev/shm/openru_iq,rx_feed=,pace=realtime,scs_khz=30,max_dump_slots=4000
+        srate: 23.039999999999999
+        tx_gain: 60
+        rx_gain: 60
+        center_freq_offset: 0
+        calibrate_clock_ppm: 0
+        lo_offset: 0
+        transmission_mode: continuous
+        power_ramping: 0
+        gain_backoff: 12
+        power_ceiling: -0.100000001
+        enable_clipping: false
+        otw_format: default
+        clock_source: default
+        sync_source: default
+        max_proc_delay: 2
+        execution_profile: auto
+        pinning_policy: mask
+2026-11-14T00:39:23.485901 [ALL     ] [I] Task worker "ru_rx_#0" started...
+2026-11-14T00:39:23.485901 [ALL     ] [I] Task worker "ru_emu_#0" started...
+2026-11-14T00:39:23.486172 [ALL     ] [I] Task worker "ru_ofh_tx_#0" started...
+2026-11-14T00:39:23.486333 [ALL     ] [I] Task worker "ru_radio_#0" started...
+2026-11-14T00:39:23.486388 [ALL     ] [I] Task worker "ru_phy_hp_#0" started...
+2026-11-14T00:39:23.486443 [ALL     ] [I] Task worker "ru_phy_tx_#0" started...
+2026-11-14T00:39:23.486495 [ALL     ] [I] Task worker "ru_phy_rx_#0" started...
+2026-11-14T00:39:23.486643 [ALL     ] [I] Task worker "ru_phy_ul_#0" started...
+2026-11-14T00:39:23.486770 [ALL     ] [I] Task worker "ru_timing" started...
+2026-11-14T00:39:23.507393 [RU_EMU  ] [I] Opened successfully the NIC interface 'eth0' (fd = '3') used by the Ethernet receiver
+2026-11-14T00:39:23.507478 [RU_EMU  ] [I] Opened successfully the NIC interface 'eth0' (fd = '4') used by the Ethernet transmitter
+2026-11-14T00:39:23.592987 [RADIO   ] [I] null radio ready: tx_dump='/dev/shm/openru_iq' rx_feed='' pace=realtime tx_ports=2 rx_ports=2 srate=23040000.00Hz samples_per_slot=11520 max_dump_slots=4000 max_dump_bytes=0
+2026-11-14T00:39:24.906766 [RU_EMU  ] [I] Starting the realtime timing notifier
+2026-11-14T00:39:24.906811 [RU_EMU  ] [I] Started the realtime timing worker
+2026-11-14T00:39:24.906925 [RU_EMU  ] [I] Starting the ethernet frame receiver
+2026-11-14T00:39:24.906993 [RU_EMU  ] [I] Started the ethernet frame receiver with fd = '3'
+2026-11-14T00:39:24.907695 [RU_EMU  ] [W] Slot '210.18', symbol '12': potentially lost '22' messages sent by the DU on UL CP eAxC '0'. Last valid slot was '111.19', symbol '0'
+2026-11-14T00:39:24.907696 [RU_EMU  ] [W] Slot '210.18', symbol '12': potentially lost '22' messages sent by the DU on UL CP eAxC '1'. Last valid slot was '111.19', symbol '0'
+2026-11-14T00:39:24.907699 [RU_EMU  ] [W] Slot '210.19', symbol '0': potentially lost '98' messages sent by the DU on PRACH eAxC '4'. Last valid slot was '111.19', symbol '0'
+2026-11-14T00:39:24.907747 [RU_EMU  ] [W] Slot '210.19', symbol '0': potentially lost '98' messages sent by the DU on PRACH eAxC '5'. Last valid slot was '111.19', symbol '0'
+2026-11-14T00:39:24.907757 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '211.0' symbol '0' with sequence identifier '0' from the past; processing it. Last valid slot was '112.3', symbol '0'
+2026-11-14T00:39:24.907762 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '0' from the past; processing it
+2026-11-14T00:39:24.907773 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '211.0' symbol '0' with sequence identifier '0' from the past; processing it. Last valid slot was '112.3', symbol '0'
+2026-11-14T00:39:24.907773 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '0' from the past; processing it
+2026-11-14T00:39:24.907829 [RU_EMU  ] [W] Slot '211.0', symbol '0': potentially lost '15' messages sent by the DU on DL UP eAxC '0'. Last valid slot was '112.2', symbol '12'
+2026-11-14T00:39:24.907839 [RU_EMU  ] [W] Slot '211.0', symbol '0': potentially lost '15' messages sent by the DU on DL UP eAxC '1'. Last valid slot was '112.2', symbol '12'
+2026-11-14T00:39:24.917632 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '212.0' symbol '0' with sequence identifier '1' from the past; processing it. Last valid slot was '112.3', symbol '0'
+2026-11-14T00:39:24.917634 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '1' from the past; processing it
+2026-11-14T00:39:24.917637 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '212.0' symbol '0' with sequence identifier '1' from the past; processing it. Last valid slot was '112.3', symbol '0'
+2026-11-14T00:39:24.917638 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '1' from the past; processing it
+2026-11-14T00:39:24.918609 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '212.2' symbol '0' with sequence identifier '2' from the past; processing it. Last valid slot was '112.3', symbol '0'
+2026-11-14T00:39:24.918621 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '2' from the past; processing it
+2026-11-14T00:39:24.918625 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '212.2' symbol '0' with sequence identifier '2' from the past; processing it. Last valid slot was '112.3', symbol '0'
+2026-11-14T00:39:24.918626 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '2' from the past; processing it
+2026-11-14T00:39:24.919109 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '212.3' symbol '0' with sequence identifier '3' from the past; processing it. Last valid slot was '112.3', symbol '0'
+2026-11-14T00:39:24.919121 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '3' from the past; processing it
+2026-11-14T00:39:24.919125 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '212.3' symbol '0' with sequence identifier '3' from the past; processing it. Last valid slot was '112.3', symbol '0'
+2026-11-14T00:39:24.919127 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '3' from the past; processing it
+2026-11-14T00:39:25.906374 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=2000 ul_capture_req=2000 dl_tx=0 prach_capture_req=0 (slot=110.3 ofh=110.3)
+2026-11-14T00:39:25.906856 [RADIO   ] [I] null_pace wall_s=1794616765.906855 radio_ts=25344000
+2026-11-14T00:39:25.938384 [RU_EMU  ] [I] Aligned the radio slot numbering to the GPS wire numbering: slot offset '4014'. Tracking the radio clock drift against the host clock; keep the host clock GPS/NTP-synchronized.
+2026-11-14T00:39:26.906377 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=4000 ul_capture_req=4000 dl_tx=250 prach_capture_req=97 (slot=210.3 ofh=154.17)
+2026-11-14T00:39:26.906838 [RADIO   ] [W] null radio: dump stop — max_dump_slots reached at DU slot 154.15 (bytes=737653440 slots=4000 dropped=0)
+2026-11-14T00:39:26.906863 [RADIO   ] [I] null_pace wall_s=1794616766.906862 radio_ts=48384000
+2026-11-14T00:39:27.761377 [RU_EMU  ] [I] RU emulator timing worker woke up late, skipped '11' symbols
+2026-11-14T00:39:27.906377 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=6000 ul_capture_req=6000 dl_tx=506 prach_capture_req=197 (slot=310.3 ofh=254.17)
+2026-11-14T00:39:27.906862 [RADIO   ] [I] null_pace wall_s=1794616767.906862 radio_ts=71424000
+2026-11-14T00:39:28.906380 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=8000 ul_capture_req=8000 dl_tx=763 prach_capture_req=296 (slot=410.3 ofh=98.17)
+2026-11-14T00:39:28.906867 [RADIO   ] [I] null_pace wall_s=1794616768.906865 radio_ts=94464000
+2026-11-14T00:39:29.906389 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=10000 ul_capture_req=10000 dl_tx=1019 prach_capture_req=396 (slot=510.3 ofh=198.17)
+2026-11-14T00:39:29.906866 [RADIO   ] [I] null_pace wall_s=1794616769.906865 radio_ts=117504000
+2026-11-14T00:39:30.906350 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=12000 ul_capture_req=12000 dl_tx=1275 prach_capture_req=495 (slot=610.3 ofh=42.17)
+2026-11-14T00:39:30.906829 [RADIO   ] [I] null_pace wall_s=1794616770.906829 radio_ts=140544000
+2026-11-14T00:39:31.906374 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=14000 ul_capture_req=14000 dl_tx=1531 prach_capture_req=595 (slot=710.3 ofh=142.17)
+2026-11-14T00:39:31.906857 [RADIO   ] [I] null_pace wall_s=1794616771.906856 radio_ts=163584000
+2026-11-14T00:39:32.410544 [RU_EMU  ] [I] RU emulator timing worker woke up late, skipped '2' symbols
+2026-11-14T00:39:32.906374 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=16000 ul_capture_req=16000 dl_tx=1788 prach_capture_req=695 (slot=810.3 ofh=242.17)
+2026-11-14T00:39:32.906872 [RADIO   ] [I] null_pace wall_s=1794616772.906861 radio_ts=186624000
+2026-11-14T00:39:33.906384 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=18000 ul_capture_req=18000 dl_tx=2044 prach_capture_req=794 (slot=910.3 ofh=86.17)
+2026-11-14T00:39:33.906873 [RADIO   ] [I] null_pace wall_s=1794616773.906864 radio_ts=209664000
+2026-11-14T00:39:34.906375 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=20000 ul_capture_req=20000 dl_tx=2300 prach_capture_req=894 (slot=1010.3 ofh=186.17)
+2026-11-14T00:39:34.906866 [RADIO   ] [I] null_pace wall_s=1794616774.906855 radio_ts=232704000
+2026-11-14T00:39:35.906380 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=22000 ul_capture_req=22000 dl_tx=2556 prach_capture_req=993 (slot=86.3 ofh=30.17)
+2026-11-14T00:39:35.906867 [RADIO   ] [I] null_pace wall_s=1794616775.906859 radio_ts=255744000
+2026-11-14T00:39:36.906350 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=24000 ul_capture_req=24000 dl_tx=2813 prach_capture_req=1093 (slot=186.3 ofh=130.17)
+2026-11-14T00:39:36.906844 [RADIO   ] [I] null_pace wall_s=1794616776.906834 radio_ts=278784000
+2026-11-14T00:39:37.906345 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=26000 ul_capture_req=26000 dl_tx=3069 prach_capture_req=1193 (slot=286.3 ofh=230.17)
+2026-11-14T00:39:37.906830 [RADIO   ] [I] null_pace wall_s=1794616777.906830 radio_ts=301824000
+2026-11-14T00:39:38.906346 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=28000 ul_capture_req=28000 dl_tx=3325 prach_capture_req=1292 (slot=386.3 ofh=74.17)
+2026-11-14T00:39:38.906833 [RADIO   ] [I] null_pace wall_s=1794616778.906832 radio_ts=324864000
+2026-11-14T00:39:39.906348 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=30000 ul_capture_req=30000 dl_tx=3581 prach_capture_req=1392 (slot=486.3 ofh=174.17)
+2026-11-14T00:39:39.906829 [RADIO   ] [I] null_pace wall_s=1794616779.906829 radio_ts=347904000
+2026-11-14T00:39:40.906389 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=32000 ul_capture_req=32000 dl_tx=3838 prach_capture_req=1491 (slot=586.3 ofh=18.17)
+2026-11-14T00:39:40.906861 [RADIO   ] [I] null_pace wall_s=1794616780.906860 radio_ts=370944000
+2026-11-14T00:39:41.906344 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=34000 ul_capture_req=34000 dl_tx=4094 prach_capture_req=1591 (slot=686.3 ofh=118.17)
+2026-11-14T00:39:41.906829 [RADIO   ] [I] null_pace wall_s=1794616781.906828 radio_ts=393984000
+2026-11-14T00:39:42.906344 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=36000 ul_capture_req=36000 dl_tx=4350 prach_capture_req=1691 (slot=786.3 ofh=218.17)
+2026-11-14T00:39:42.906837 [RADIO   ] [I] null_pace wall_s=1794616782.906836 radio_ts=417024000
+2026-11-14T00:39:43.906387 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=38000 ul_capture_req=38000 dl_tx=4606 prach_capture_req=1790 (slot=886.3 ofh=62.17)
+2026-11-14T00:39:43.906865 [RADIO   ] [I] null_pace wall_s=1794616783.906864 radio_ts=440064000
+2026-11-14T00:39:44.906392 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=40000 ul_capture_req=40000 dl_tx=4863 prach_capture_req=1890 (slot=986.3 ofh=162.17)
+2026-11-14T00:39:44.906859 [RADIO   ] [I] null_pace wall_s=1794616784.906857 radio_ts=463104000
+2026-11-14T00:39:45.906384 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=42000 ul_capture_req=42000 dl_tx=5119 prach_capture_req=1989 (slot=62.3 ofh=6.17)
+2026-11-14T00:39:45.906860 [RADIO   ] [I] null_pace wall_s=1794616785.906860 radio_ts=486144000
+2026-11-14T00:39:46.906347 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=44000 ul_capture_req=44000 dl_tx=5375 prach_capture_req=2089 (slot=162.3 ofh=106.17)
+2026-11-14T00:39:46.906834 [RADIO   ] [I] null_pace wall_s=1794616786.906831 radio_ts=509184000
+2026-11-14T00:39:47.906367 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=46000 ul_capture_req=46000 dl_tx=5631 prach_capture_req=2189 (slot=262.3 ofh=206.17)
+2026-11-14T00:39:47.906889 [RADIO   ] [I] null_pace wall_s=1794616787.906879 radio_ts=532224000
+2026-11-14T00:39:48.906375 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=48000 ul_capture_req=48000 dl_tx=5888 prach_capture_req=2288 (slot=362.3 ofh=50.17)
+2026-11-14T00:39:48.906874 [RADIO   ] [I] null_pace wall_s=1794616788.906863 radio_ts=555264000
+2026-11-14T00:39:49.906361 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=50000 ul_capture_req=50000 dl_tx=6144 prach_capture_req=2388 (slot=462.3 ofh=150.17)
+2026-11-14T00:39:49.906866 [RADIO   ] [I] null_pace wall_s=1794616789.906861 radio_ts=578304000
+2026-11-14T00:39:50.906376 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=52000 ul_capture_req=52000 dl_tx=6400 prach_capture_req=2488 (slot=562.3 ofh=250.17)
+2026-11-14T00:39:50.906868 [RADIO   ] [I] null_pace wall_s=1794616790.906857 radio_ts=601344000
+2026-11-14T00:39:51.906366 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=54000 ul_capture_req=54000 dl_tx=6656 prach_capture_req=2587 (slot=662.3 ofh=94.17)
+2026-11-14T00:39:51.906870 [RADIO   ] [I] null_pace wall_s=1794616791.906860 radio_ts=624384000
+2026-11-14T00:39:52.906365 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=56000 ul_capture_req=56000 dl_tx=6913 prach_capture_req=2687 (slot=762.3 ofh=194.17)
+2026-11-14T00:39:52.906872 [RADIO   ] [I] null_pace wall_s=1794616792.906862 radio_ts=647424000
+2026-11-14T00:39:53.651540 [RU_EMU  ] [I] RU emulator timing worker woke up late, skipped '2' symbols
+2026-11-14T00:39:53.906383 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=58000 ul_capture_req=58000 dl_tx=7169 prach_capture_req=2786 (slot=862.3 ofh=38.17)
+2026-11-14T00:39:53.906865 [RADIO   ] [I] null_pace wall_s=1794616793.906862 radio_ts=670464000
+2026-11-14T00:39:54.906378 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=60000 ul_capture_req=60000 dl_tx=7425 prach_capture_req=2886 (slot=962.3 ofh=138.17)
+2026-11-14T00:39:54.906866 [RADIO   ] [I] null_pace wall_s=1794616794.906860 radio_ts=693504000
+2026-11-14T00:39:55.906377 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=62000 ul_capture_req=62000 dl_tx=7681 prach_capture_req=2986 (slot=38.3 ofh=238.17)
+2026-11-14T00:39:55.906872 [RADIO   ] [I] null_pace wall_s=1794616795.906862 radio_ts=716544000
+2026-11-14T00:39:56.906378 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=64000 ul_capture_req=64000 dl_tx=7938 prach_capture_req=3085 (slot=138.3 ofh=82.17)
+2026-11-14T00:39:56.906864 [RADIO   ] [I] null_pace wall_s=1794616796.906860 radio_ts=739584000
+2026-11-14T00:39:57.488504 [PHY     ] [E] [   196.6] The modulator is busy.
+2026-11-14T00:39:57.498504 [PHY     ] [E] [   197.6] The modulator is busy.
+2026-11-14T00:39:57.499503 [PHY     ] [E] [   197.8] The modulator is busy.
+2026-11-14T00:39:57.500006 [PHY     ] [E] [   197.9] The modulator is busy.
+2026-11-14T00:39:57.501000 [PHY     ] [E] [  197.11] The modulator is busy.
+2026-11-14T00:39:57.508376 [PHY     ] [W] [   198.5] Real-time failure in lower PHY: PRACH request overflow for sector 0, slot 198.5 and start symbol 0.
+2026-11-14T00:39:57.508505 [PHY     ] [E] [   198.6] The modulator is busy.
+2026-11-14T00:39:57.518366 [PHY     ] [W] [   199.5] Real-time failure in lower PHY: PRACH request overflow for sector 0, slot 199.5 and start symbol 0.
+2026-11-14T00:39:57.518501 [PHY     ] [E] [   199.6] The modulator is busy.
+2026-11-14T00:39:57.519005 [PHY     ] [E] [   199.7] The modulator is busy.
+2026-11-14T00:39:57.519506 [PHY     ] [E] [   199.8] The modulator is busy.
+2026-11-14T00:39:57.520002 [PHY     ] [E] [   199.9] The modulator is busy.
+2026-11-14T00:39:57.521005 [PHY     ] [E] [  199.11] The modulator is busy.
+2026-11-14T00:39:57.528366 [PHY     ] [W] [   200.5] Real-time failure in lower PHY: PRACH request overflow for sector 0, slot 200.5 and start symbol 0.
+2026-11-14T00:39:57.528502 [PHY     ] [E] [   200.6] The modulator is busy.
+2026-11-14T00:39:57.537626 [PHY     ] [W] [   146.0] Resource grid with identifier 15 is not available.
+2026-11-14T00:39:57.537628 [RU_EMU  ] [W] Sector#0: no downlink resource grid available to receive slot '146.0' and eAxC '0'
+2026-11-14T00:39:57.537629 [PHY     ] [W] [   146.0] Resource grid with identifier 0 is not available.
+2026-11-14T00:39:57.537631 [RU_EMU  ] [W] Sector#0: no downlink resource grid available to receive slot '146.0' and eAxC '1'
+2026-11-14T00:39:57.537836 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '0' and eAxC '0'
+2026-11-14T00:39:57.537846 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '0' and eAxC '1'
+2026-11-14T00:39:57.537859 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '1' and eAxC '0'
+2026-11-14T00:39:57.537861 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '1' and eAxC '1'
+2026-11-14T00:39:57.537879 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '2' and eAxC '0'
+2026-11-14T00:39:57.537884 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '2' and eAxC '1'
+2026-11-14T00:39:57.537931 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '3' and eAxC '0'
+2026-11-14T00:39:57.537933 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '3' and eAxC '1'
+2026-11-14T00:39:57.537979 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '4' and eAxC '0'
+2026-11-14T00:39:57.537982 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '4' and eAxC '1'
+2026-11-14T00:39:57.538006 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '5' and eAxC '0'
+2026-11-14T00:39:57.538008 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '5' and eAxC '1'
+2026-11-14T00:39:57.538040 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '6' and eAxC '0'
+2026-11-14T00:39:57.538042 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '6' and eAxC '1'
+2026-11-14T00:39:57.538079 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '7' and eAxC '0'
+2026-11-14T00:39:57.538080 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '7' and eAxC '1'
+2026-11-14T00:39:57.538112 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '8' and eAxC '0'
+2026-11-14T00:39:57.538113 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '8' and eAxC '1'
+2026-11-14T00:39:57.538140 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '9' and eAxC '0'
+2026-11-14T00:39:57.538143 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '9' and eAxC '1'
+2026-11-14T00:39:57.538181 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '10' and eAxC '0'
+2026-11-14T00:39:57.538184 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '10' and eAxC '1'
+2026-11-14T00:39:57.538195 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '11' and eAxC '0'
+2026-11-14T00:39:57.538203 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '11' and eAxC '1'
+2026-11-14T00:39:57.538238 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '12' and eAxC '0'
+2026-11-14T00:39:57.538254 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '12' and eAxC '1'
+2026-11-14T00:39:57.538295 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '13' and eAxC '0'
+2026-11-14T00:39:57.538298 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.0', symbol '13' and eAxC '1'
+2026-11-14T00:39:57.538371 [PHY     ] [W] [   201.5] Real-time failure in lower PHY: PRACH request overflow for sector 0, slot 201.5 and start symbol 0.
+2026-11-14T00:39:57.538613 [PHY     ] [W] [   146.2] Resource grid with identifier 1 is not available.
+2026-11-14T00:39:57.538613 [RU_EMU  ] [W] Sector#0: no downlink resource grid available to receive slot '146.2' and eAxC '0'
+2026-11-14T00:39:57.538616 [PHY     ] [W] [   146.2] Resource grid with identifier 2 is not available.
+2026-11-14T00:39:57.538616 [RU_EMU  ] [W] Sector#0: no downlink resource grid available to receive slot '146.2' and eAxC '1'
+2026-11-14T00:39:57.538814 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '0' and eAxC '0'
+2026-11-14T00:39:57.538815 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '0' and eAxC '1'
+2026-11-14T00:39:57.538861 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '1' and eAxC '0'
+2026-11-14T00:39:57.538863 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '1' and eAxC '1'
+2026-11-14T00:39:57.538885 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '2' and eAxC '0'
+2026-11-14T00:39:57.538887 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '2' and eAxC '1'
+2026-11-14T00:39:57.538926 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '3' and eAxC '0'
+2026-11-14T00:39:57.538928 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '3' and eAxC '1'
+2026-11-14T00:39:57.538959 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '4' and eAxC '0'
+2026-11-14T00:39:57.538961 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '4' and eAxC '1'
+2026-11-14T00:39:57.539004 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '5' and eAxC '0'
+2026-11-14T00:39:57.539008 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '5' and eAxC '1'
+2026-11-14T00:39:57.539024 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '6' and eAxC '0'
+2026-11-14T00:39:57.539026 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '6' and eAxC '1'
+2026-11-14T00:39:57.539073 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '7' and eAxC '0'
+2026-11-14T00:39:57.539075 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '7' and eAxC '1'
+2026-11-14T00:39:57.539137 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '8' and eAxC '0'
+2026-11-14T00:39:57.539139 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '8' and eAxC '1'
+2026-11-14T00:39:57.539140 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '9' and eAxC '0'
+2026-11-14T00:39:57.539143 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '9' and eAxC '1'
+2026-11-14T00:39:57.539178 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '10' and eAxC '0'
+2026-11-14T00:39:57.539179 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '10' and eAxC '1'
+2026-11-14T00:39:57.539226 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '11' and eAxC '0'
+2026-11-14T00:39:57.539228 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '11' and eAxC '1'
+2026-11-14T00:39:57.539253 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '12' and eAxC '0'
+2026-11-14T00:39:57.539254 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '12' and eAxC '1'
+2026-11-14T00:39:57.539291 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '13' and eAxC '0'
+2026-11-14T00:39:57.539297 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '146.2', symbol '13' and eAxC '1'
+2026-11-14T00:39:57.542865 [PHY     ] [W] [   195.6] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 195.6.
+2026-11-14T00:39:57.543860 [PHY     ] [W] [   195.8] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 195.8.
+2026-11-14T00:39:57.544364 [PHY     ] [W] [   195.9] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 195.9.
+2026-11-14T00:39:57.545366 [PHY     ] [W] [  195.11] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 195.11.
+2026-11-14T00:39:57.906367 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=66000 ul_capture_req=66000 dl_tx=8192 prach_capture_req=3185 (slot=238.3 ofh=182.17)
+2026-11-14T00:39:57.906855 [RADIO   ] [I] null_pace wall_s=1794616797.906855 radio_ts=762624000
+2026-11-14T00:39:58.906388 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=68000 ul_capture_req=68000 dl_tx=8448 prach_capture_req=3284 (slot=338.3 ofh=26.17)
+2026-11-14T00:39:58.906862 [RADIO   ] [I] null_pace wall_s=1794616798.906862 radio_ts=785664000
+2026-11-14T00:39:59.906392 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=70000 ul_capture_req=70000 dl_tx=8704 prach_capture_req=3384 (slot=438.3 ofh=126.17)
+2026-11-14T00:39:59.906871 [RADIO   ] [I] null_pace wall_s=1794616799.906862 radio_ts=808704000
+2026-11-14T00:40:00.906366 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=72000 ul_capture_req=72000 dl_tx=8961 prach_capture_req=3484 (slot=538.3 ofh=226.17)
+2026-11-14T00:40:00.906870 [RADIO   ] [I] null_pace wall_s=1794616800.906861 radio_ts=831744000
+2026-11-14T00:40:01.204472 [RU_EMU  ] [I] RU emulator timing worker woke up late, skipped '2' symbols
+2026-11-14T00:40:01.818999 [RU_EMU  ] [I] RU emulator timing worker woke up late, skipped '3' symbols
+2026-11-14T00:40:01.906375 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=74000 ul_capture_req=74000 dl_tx=9217 prach_capture_req=3583 (slot=638.3 ofh=70.17)
+2026-11-14T00:40:01.906871 [RADIO   ] [I] null_pace wall_s=1794616801.906861 radio_ts=854784000
+2026-11-14T00:40:02.906365 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=76000 ul_capture_req=76000 dl_tx=9473 prach_capture_req=3683 (slot=738.3 ofh=170.17)
+2026-11-14T00:40:02.906873 [RADIO   ] [I] null_pace wall_s=1794616802.906862 radio_ts=877824000
+2026-11-14T00:40:03.906363 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=78000 ul_capture_req=78000 dl_tx=9729 prach_capture_req=3782 (slot=838.3 ofh=14.17)
+2026-11-14T00:40:03.906868 [RADIO   ] [I] null_pace wall_s=1794616803.906857 radio_ts=900864000
+2026-11-14T00:40:04.212466 [RU_EMU  ] [I] RU emulator timing worker woke up late, skipped '2' symbols
+2026-11-14T00:40:04.906404 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=80000 ul_capture_req=80000 dl_tx=9986 prach_capture_req=3882 (slot=938.3 ofh=114.17)
+2026-11-14T00:40:04.906873 [RADIO   ] [I] null_pace wall_s=1794616804.906871 radio_ts=923904000
+2026-11-14T00:40:05.906377 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=82000 ul_capture_req=82000 dl_tx=10242 prach_capture_req=3982 (slot=14.3 ofh=214.17)
+2026-11-14T00:40:05.906862 [RADIO   ] [I] null_pace wall_s=1794616805.906861 radio_ts=946944000
+2026-11-14T00:40:06.906378 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=84000 ul_capture_req=84000 dl_tx=10498 prach_capture_req=4081 (slot=114.3 ofh=58.17)
+2026-11-14T00:40:06.906870 [RADIO   ] [I] null_pace wall_s=1794616806.906860 radio_ts=969984000
+2026-11-14T00:40:07.906377 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=86000 ul_capture_req=86000 dl_tx=10754 prach_capture_req=4181 (slot=214.3 ofh=158.17)
+2026-11-14T00:40:07.906872 [RADIO   ] [I] null_pace wall_s=1794616807.906862 radio_ts=993024000
+2026-11-14T00:40:08.906366 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=88000 ul_capture_req=88000 dl_tx=11011 prach_capture_req=4280 (slot=314.3 ofh=2.17)
+2026-11-14T00:40:08.906877 [RADIO   ] [I] null_pace wall_s=1794616808.906866 radio_ts=1016064000
+2026-11-14T00:40:09.906394 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=90000 ul_capture_req=90000 dl_tx=11267 prach_capture_req=4380 (slot=414.3 ofh=102.17)
+2026-11-14T00:40:09.906878 [RADIO   ] [I] null_pace wall_s=1794616809.906867 radio_ts=1039104000
+2026-11-14T00:40:10.906372 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=92000 ul_capture_req=92000 dl_tx=11523 prach_capture_req=4480 (slot=514.3 ofh=202.17)
+2026-11-14T00:40:10.906874 [RADIO   ] [I] null_pace wall_s=1794616810.906865 radio_ts=1062144000
+2026-11-14T00:40:11.906368 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=94000 ul_capture_req=94000 dl_tx=11779 prach_capture_req=4579 (slot=614.3 ofh=46.17)
+2026-11-14T00:40:11.906873 [RADIO   ] [I] null_pace wall_s=1794616811.906862 radio_ts=1085184000
+2026-11-14T00:40:12.906392 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=96000 ul_capture_req=96000 dl_tx=12036 prach_capture_req=4679 (slot=714.3 ofh=146.17)
+2026-11-14T00:40:12.906881 [RADIO   ] [I] null_pace wall_s=1794616812.906870 radio_ts=1108224000
+2026-11-14T00:40:13.906379 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=98000 ul_capture_req=98000 dl_tx=12292 prach_capture_req=4779 (slot=814.3 ofh=246.17)
+2026-11-14T00:40:13.906861 [RADIO   ] [I] null_pace wall_s=1794616813.906859 radio_ts=1131264000
+2026-11-14T00:40:14.906379 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=100000 ul_capture_req=100000 dl_tx=12548 prach_capture_req=4878 (slot=914.3 ofh=90.17)
+2026-11-14T00:40:14.906856 [RADIO   ] [I] null_pace wall_s=1794616814.906855 radio_ts=1154304000
+2026-11-14T00:40:15.906386 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=102000 ul_capture_req=102000 dl_tx=12804 prach_capture_req=4978 (slot=1014.3 ofh=190.17)
+2026-11-14T00:40:15.906863 [RADIO   ] [I] null_pace wall_s=1794616815.906862 radio_ts=1177344000
+2026-11-14T00:40:16.906377 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=104000 ul_capture_req=104000 dl_tx=13061 prach_capture_req=5077 (slot=90.3 ofh=34.17)
+2026-11-14T00:40:16.906857 [RADIO   ] [I] null_pace wall_s=1794616816.906857 radio_ts=1200384000
+2026-11-14T00:40:17.906384 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=106000 ul_capture_req=106000 dl_tx=13317 prach_capture_req=5177 (slot=190.3 ofh=134.17)
+2026-11-14T00:40:17.906861 [RADIO   ] [I] null_pace wall_s=1794616817.906861 radio_ts=1223424000
+2026-11-14T00:40:18.906390 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=108000 ul_capture_req=108000 dl_tx=13573 prach_capture_req=5277 (slot=290.3 ofh=234.17)
+2026-11-14T00:40:18.906859 [RADIO   ] [I] null_pace wall_s=1794616818.906858 radio_ts=1246464000
+2026-11-14T00:40:19.906375 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=110000 ul_capture_req=110000 dl_tx=13829 prach_capture_req=5376 (slot=390.3 ofh=78.17)
+2026-11-14T00:40:19.906861 [RADIO   ] [I] null_pace wall_s=1794616819.906860 radio_ts=1269504000
+2026-11-14T00:40:20.906387 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=112000 ul_capture_req=112000 dl_tx=14086 prach_capture_req=5476 (slot=490.3 ofh=178.17)
+2026-11-14T00:40:20.906864 [RADIO   ] [I] null_pace wall_s=1794616820.906862 radio_ts=1292544000
+2026-11-14T00:40:21.906389 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=114000 ul_capture_req=114000 dl_tx=14342 prach_capture_req=5575 (slot=590.3 ofh=22.17)
+2026-11-14T00:40:21.906876 [RADIO   ] [I] null_pace wall_s=1794616821.906875 radio_ts=1315584000
+2026-11-14T00:40:22.906373 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=116000 ul_capture_req=116000 dl_tx=14598 prach_capture_req=5675 (slot=690.3 ofh=122.17)
+2026-11-14T00:40:22.906867 [RADIO   ] [I] null_pace wall_s=1794616822.906857 radio_ts=1338624000
+2026-11-14T00:40:23.906380 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=118000 ul_capture_req=118000 dl_tx=14854 prach_capture_req=5775 (slot=790.3 ofh=222.17)
+2026-11-14T00:40:23.906872 [RADIO   ] [I] null_pace wall_s=1794616823.906861 radio_ts=1361664000
+2026-11-14T00:40:24.906388 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=120000 ul_capture_req=120000 dl_tx=15111 prach_capture_req=5874 (slot=890.3 ofh=66.17)
+2026-11-14T00:40:24.906873 [RADIO   ] [I] null_pace wall_s=1794616824.906861 radio_ts=1384704000
+2026-11-14T00:40:25.906377 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=122000 ul_capture_req=122000 dl_tx=15367 prach_capture_req=5974 (slot=990.3 ofh=166.17)
+2026-11-14T00:40:25.906869 [RADIO   ] [I] null_pace wall_s=1794616825.906860 radio_ts=1407744000
+2026-11-14T00:40:26.906376 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=124000 ul_capture_req=124000 dl_tx=15623 prach_capture_req=6073 (slot=66.3 ofh=10.17)
+2026-11-14T00:40:26.906871 [RADIO   ] [I] nu

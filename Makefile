@@ -21,7 +21,7 @@ endif
 
 
 .PHONY: help preflight gpu-check build build-core build-protoru down logs \
-        smoke smoke-fh smoke-core fetch-golden compare-plmn capture
+        smoke smoke-fh smoke-core fetch-golden replay-golden compare-plmn capture
 
 help:
 	@echo "OpenRU targets (GPU: $$(test -f $(ROOT)/docker/lab.env && echo set || echo 'lab.env MISSING'))"
@@ -29,6 +29,8 @@ help:
 	@echo "  make smoke-core   NG Setup only (required before M4)"
 	@echo "  make smoke        alias for smoke-fh"
 	@echo "  make capture      M1: OFH pcap capture ($(CAPTURE_SECS)s, PROFILE=$(PROFILE))"
+	@echo "  make fetch-golden Fetch golden .cf32 via OPENRU_GOLDEN_URL + verify SHA256"
+	@echo "  make replay-golden CI gate: fh_replay vs golden, 0 differing samples"
 
 preflight:
 	@$(ROOT)/scripts/gpu1_preflight.sh
@@ -159,4 +161,26 @@ capture: preflight
 	@CAPTURE_SECS=$(CAPTURE_SECS) PROFILE=$(PROFILE) $(ROOT)/scripts/capture_ofh.sh
 
 fetch-golden:
-	@echo "Golden IQ fetch not configured yet (Milestone 1)."
+	@chmod +x $(ROOT)/scripts/fetch_golden.sh
+	@$(ROOT)/scripts/fetch_golden.sh
+
+# CPU replay vs stored golden (requires fetched .cf32 under testdata/golden/).
+# Replays each profile's _3s pcap twice is done offline when generating goldens;
+# CI verifies the on-disk golden still matches a fresh replay dump.
+replay-golden: preflight
+	@mkdir -p $(REPORTS)
+	@echo "[replay-golden] profiles=baseline b40 b100 (OPENRU_TAG=$${OPENRU_TAG:-m1})"
+	@set -e; \
+	  for prof in baseline b40 b100; do \
+	    echo "[replay-golden] $$prof"; \
+	    test -f testdata/golden/$$prof/MANIFEST.json; \
+	    test -s testdata/golden/$$prof/port0.cf32 || { \
+	      echo "FAIL: missing golden IQ for $$prof — run make fetch-golden"; exit 1; }; \
+	    $(ROOT)/scripts/replay_iq_dump.sh $$prof testdata/pcap/$${prof}_3s.pcapng \
+	      $(REPORTS)/replay-golden-$$prof 1.0; \
+	    python3 $(ROOT)/tools/iq_compare/iq_compare.py \
+	      --dut $(REPORTS)/replay-golden-$$prof \
+	      --golden testdata/golden/$$prof \
+	      --by-slot --threshold 0; \
+	  done; \
+	  echo "[replay-golden] PASS"
