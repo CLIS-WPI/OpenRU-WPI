@@ -12,7 +12,7 @@ COMPOSE_CORE := $(COMPOSE) -f $(ROOT)/docker/compose.core.yml
 SMOKE_SECS ?= 60
 REPORTS := $(ROOT)/docs/reports
 
-CAPTURE_SECS ?= 10
+CAPTURE_SECS ?= 12
 PROFILE ?= baseline
 # Prefer lab.env MARCH; else versions.env MARCH_DEFAULT; else x86-64-v3.
 ifeq ($(origin MARCH),undefined)
