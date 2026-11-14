@@ -102,8 +102,20 @@ smoke-fh: preflight
 	  done; \
 	  if [ $$ready -ne 1 ]; then echo "FAIL: no OFH RX in ProtO-RU KPI within 45s"; \
 	    $(COMPOSE) --profile fh logs --no-color --tail=40 protoru du; exit 1; fi
-	@echo "[smoke-fh] OFH traffic seen; measuring $(SMOKE_SECS)s..."
+	@echo "[smoke-fh] OFH traffic seen; quiet-host pre-check..."
+	@python3 $(ROOT)/scripts/quiet_host.py --once \
+	   --reserved "$(PROTORU_CPUSET),$(DU_CPUSET)" \
+	   --containers openru-protoru-1,openru-du-1 \
+	   --out $(REPORTS)/smoke-fh-hostcheck-pre.json || \
+	   { echo "[smoke-fh] INVALID: busy host before measurement (see $(REPORTS)/smoke-fh-hostcheck-pre.json)"; \
+	     $(COMPOSE) --profile fh down --remove-orphans >/dev/null 2>&1; exit 3; }
+	@echo "[smoke-fh] measuring $(SMOKE_SECS)s with quiet-host monitor..."
+	@nohup python3 $(ROOT)/scripts/quiet_host.py --monitor --interval 30 \
+	   --reserved "$(PROTORU_CPUSET),$(DU_CPUSET)" \
+	   --containers openru-protoru-1,openru-du-1 \
+	   --out $(REPORTS)/smoke-fh-hostcheck.json >/dev/null 2>&1 & echo $$! > /tmp/openru-hostcheck.pid
 	@sleep $(SMOKE_SECS)
+	@kill $$(cat /tmp/openru-hostcheck.pid) 2>/dev/null || true; rm -f /tmp/openru-hostcheck.pid; sleep 1
 	@cid_ru=$$($(COMPOSE) --profile fh ps -q protoru); \
 	  cid_du=$$($(COMPOSE) --profile fh ps -q du); \
 	  { echo "===== compose logs: du ====="; $(COMPOSE) --profile fh logs --no-color du 2>&1; \
@@ -112,13 +124,17 @@ smoke-fh: preflight
 	  { echo "===== compose logs: protoru ====="; $(COMPOSE) --profile fh logs --no-color protoru 2>&1; \
 	    echo "===== /tmp/proto-ru.log ====="; docker exec $$cid_ru cat /tmp/proto-ru.log 2>/dev/null || true; \
 	  } > $(REPORTS)/smoke-fh-ru.log
+	@python3 -c "import json,sys; d=json.load(open('$(REPORTS)/smoke-fh-hostcheck.json')); sys.exit(0 if d.get('valid') else 3)" || \
+	   { echo "[smoke-fh] INVALID: busy host during measurement (see $(REPORTS)/smoke-fh-hostcheck.json)"; \
+	     $(COMPOSE) --profile fh down --remove-orphans >/dev/null 2>&1; exit 3; }
 	@set +e; \
 	  python3 $(ROOT)/scripts/parse_smoke_fh.py \
 	    --du-log $(REPORTS)/smoke-fh-du.log \
 	    --ru-log $(REPORTS)/smoke-fh-ru.log \
 	    --secs $(SMOKE_SECS) \
 	    --json-out $(REPORTS)/smoke-fh-kpi.json \
-	    --hist-out $(REPORTS)/smoke-fh-late-hist.csv; \
+	    --hist-out $(REPORTS)/smoke-fh-late-hist.csv \
+	    --hostcheck $(REPORTS)/smoke-fh-hostcheck.json; \
 	  rc=$$?; \
 	  $(COMPOSE) --profile fh down --remove-orphans >/dev/null 2>&1; \
 	  if [ $$rc -ne 0 ]; then echo "[smoke-fh] FAIL rc=$$rc"; exit $$rc; fi; \

@@ -331,6 +331,7 @@ def main() -> int:
     ap.add_argument("--json-out", default="")
     ap.add_argument("--hist-out", default="")
     ap.add_argument("--late-frac-limit", type=float, default=LATE_FRAC_LIMIT)
+    ap.add_argument("--hostcheck", default="", help="quiet_host.py JSON to attach to the KPI")
     args = ap.parse_args()
 
     du = Path(args.du_log).read_text(errors="replace")
@@ -439,11 +440,19 @@ def main() -> int:
     else:
         print(f"PASS: zero late/drop after warm-up={warm}s")
 
+    hostcheck = {}
+    if args.hostcheck:
+        hostcheck_path = Path(args.hostcheck)
+        if hostcheck_path.exists():
+            hostcheck = json.loads(hostcheck_path.read_text())
+
     payload = {
         "secs": args.secs,
         "warmup_s": warm,
         "warmup_note": warm_note,
         "late_frac_limit": args.late_frac_limit,
+        "valid": bool(hostcheck.get("valid", True)) if hostcheck else None,
+        "hostcheck": hostcheck,
         "full": full,
         "gate": gated,
         "du_ofh": du_ofh,
