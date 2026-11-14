@@ -1,0 +1,18 @@
+=== PRE RUN1 2026-11-14T16:17:36-05:00 ===
+NAMES               IMAGE                                 STATUS
+paperbanana-api     paperbanana-api                       Up 5 days
+ollama              46d2fa8707cc                          Up 8 days (healthy)
+ngsi-dev-1          ngsi-dev:latest                       Up 2 weeks
+harmony-dev-proxy   nginx:alpine                          Up 12 days
+minikube            gcr.io/k8s-minikube/kicbase:v0.0.50   Up 12 days
+--- pins 32-55 high CPU ---
+  32150  46  129 nr-uesoftmodem  /opt/oai-nr-ue/bin/nr-uesoftmodem -O /opt/oai-nr-ue/etc/uicc.conf --rfsim -r 51 --numerology 1 --band 78 -C 3609120000 --ssb 234 --rfsimulator.[0].serveraddr test-1-xb4f8192-rfsim-gnb --rfsimulator.[0].options chanmod
+ 432255  50  168 nr-softmodem    /opt/oai-gnb/bin/nr-softmodem -O /opt/oai-gnb/etc/gnb.conf --rfsim --gNBs.[0].min_rxtxtime 6
+ 657568  34  4.9 MainThread      /home/tanglab/.cursor-server/bin/linux-x64/8fcb8ace5c73fa31f2e2707fd6783160e4ed3e40/node --dns-result-order=ipv4first --inspect-port=0 --experimental-network-inspection /home/tanglab/.cursor-server/bin/linux-x64/8fcb8ace5c73fa31f2e2707fd6783160e4ed3e40/out/bootstrap-fork --type=extensionHost --transformURIs --useHostProxy=false
+3270191  55 53.6 nr-uesoftmodem  /opt/oai-nr-ue/bin/nr-uesoftmodem -O /opt/oai-nr-ue/etc/uicc.conf --rfsim -r 51 --numerology 1 --band 78 -C 3609120000 --ssb 234 --rfsimulator.serveraddr test-1-xb4f8192-rfsim-gnb
+3473785  34  4.0 dockerd         /usr/bin/dockerd -H tcp://0.0.0.0:2376 -H fd:// --containerd=/run/containerd/containerd.sock -H unix:///var/run/docker.sock --default-ulimit=nofile=1048576:1048576 --tlsverify --tlscacert /etc/docker/ca.pem --tlscert /etc/docker/server.pem --tlskey /etc/docker/server-key.pem --label provider=docker --insecure-registry 10.96.0.0/12
+3474247  35  2.7 cri-dockerd     /usr/bin/cri-dockerd --container-runtime-endpoint fd:// --pod-infra-container-image=registry.k8s.io/pause:3.9 --network-plugin=cni --hairpin-mode=hairpin-veth
+--- gpu ---
+index, uuid, utilization.gpu [%], memory.used [MiB]
+0, GPU-96b18ccc-7894-5e31-0ad6-a74b5b79ac28, 0 %, 841 MiB
+1, GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058, 0 %, 17 MiB
