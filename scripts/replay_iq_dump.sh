@@ -15,7 +15,9 @@ COMPOSE=(docker compose --env-file "${ROOT}/docker/versions.env" --env-file "${R
          -f "${ROOT}/docker/compose.yml")
 
 export DU_CONFIG_PATH="${ROOT}/profiles/${PROFILE}/du-fh.yml"
-export PROTORU_CONFIG_PATH="${ROOT}/profiles/${PROFILE}/protoru-null.yml"
+# The gated null radio starts at the next SFN 0 after N stable slots, so the
+# replay's first DU is 0.0 regardless of the cold-start alignment.
+export PROTORU_CONFIG_PATH="${PROTORU_CONFIG_PATH:-${ROOT}/profiles/${PROFILE}/protoru-null.yml}"
 export OPENRU_TAG="$TAG"
 
 rm -rf "$OUT"
@@ -34,6 +36,12 @@ for i in $(seq 1 30); do
   fi
   sleep 1
 done
+
+# "null radio ready" is logged by the radio constructor, before the OFH
+# receiver socket is bound. Starting the replay immediately can drop the first
+# 0-90 pcap slots, which shifts the first DU slot between cold runs. Give the
+# receiver time to come up so the dump starts on the same DU slot every time.
+sleep "${OPENRU_REPLAY_READY_SLEEP:-10}"
 
 # Replay peer on openru_fh with DU MAC. Install scapy inside the image Python.
 docker rm -f openru-fh-replay >/dev/null 2>&1 || true

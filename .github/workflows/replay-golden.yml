@@ -31,13 +31,18 @@ jobs:
         if: ${{ env.OPENRU_GOLDEN_URL != '' }}
         run: make fetch-golden
 
-      - name: Require goldens + short pcaps on runner
+      - name: Require goldens + pcaps on runner
         run: |
           set -e
           for p in baseline b40 b100; do
             test -s "testdata/golden/$p/port0.cf32"
             test -s "testdata/golden/$p/MANIFEST.json"
-            test -s "testdata/pcap/${p}_3s.pcapng"
+            if [ "$p" = baseline ]; then
+              pcap=testdata/pcap/baseline.pcapng
+            else
+              pcap=testdata/pcap/${p}_3s.pcapng
+            fi
+            test -s "$pcap"
           done
 
       - name: replay-golden

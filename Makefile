@@ -165,8 +165,9 @@ fetch-golden:
 	@$(ROOT)/scripts/fetch_golden.sh
 
 # CPU replay vs stored golden (requires fetched .cf32 under testdata/golden/).
-# Replays each profile's _3s pcap twice is done offline when generating goldens;
-# CI verifies the on-disk golden still matches a fresh replay dump.
+# Replays each profile twice offline when generating goldens; CI verifies the
+# on-disk golden still matches a fresh replay dump. baseline uses the full 10 s
+# pcap so the SFN-0 window has 4000 slots; b40/b100 fit in their _3s slices.
 replay-golden: preflight
 	@mkdir -p $(REPORTS)
 	@echo "[replay-golden] profiles=baseline b40 b100 (OPENRU_TAG=$${OPENRU_TAG:-m1})"
@@ -176,7 +177,9 @@ replay-golden: preflight
 	    test -f testdata/golden/$$prof/MANIFEST.json; \
 	    test -s testdata/golden/$$prof/port0.cf32 || { \
 	      echo "FAIL: missing golden IQ for $$prof — run make fetch-golden"; exit 1; }; \
-	    $(ROOT)/scripts/replay_iq_dump.sh $$prof testdata/pcap/$${prof}_3s.pcapng \
+	    pcap=testdata/pcap/$${prof}_3s.pcapng; \
+	    if [ "$$prof" = "baseline" ]; then pcap=testdata/pcap/baseline.pcapng; fi; \
+	    $(ROOT)/scripts/replay_iq_dump.sh $$prof $$pcap \
 	      $(REPORTS)/replay-golden-$$prof 1.0; \
 	    python3 $(ROOT)/tools/iq_compare/iq_compare.py \
 	      --dut $(REPORTS)/replay-golden-$$prof \
