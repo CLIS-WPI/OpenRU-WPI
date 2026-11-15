@@ -86,6 +86,7 @@ make gpu-check && make down
 ## Multiple agents
 
 - Exactly one agent is the primary at any time, assigned by the human. Only the primary runs builds, compose and measurements and commits to milestone branches. All other agents follow the secondary rules below.
+- Agents and IDEs run with affinity 0-31 (e.g. `taskset -c 0-31 opencode`); cores 32-63 are for OpenRU measurement containers only.
 - Agent-instruction files (AGENTS.md, CLAUDE.md, .cursorrules, etc.) are edited only by the
   human or in a PR the human approves. Agents propose changes in PR descriptions.
 - Secondary agents work in a separate `git worktree` on their own `ds/<task>` branch and never
