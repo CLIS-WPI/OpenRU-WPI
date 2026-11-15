@@ -28,8 +28,8 @@ sleep 4
 # Confirm mounted bandwidth from inside containers
 cid=$(${COMPOSE} --profile fh ps -q protoru)
 cid_du=$(${COMPOSE} --profile fh ps -q du)
-docker exec "$cid" bash -lc 'grep -E "bandwidth:|srate:" /opt/protoru.yml | head -5' | tee "${ROOT}/docs/reports/capture-${PROFILE}-cfg.txt"
-docker exec "$cid_du" bash -lc 'grep -E "bandwidth_MHz|channel_bandwidth" /opt/du.yml | head -5' | tee -a "${ROOT}/docs/reports/capture-${PROFILE}-cfg.txt"
+docker exec "$cid" bash -lc 'grep -E "bandwidth:|srate:" /opt/protoru.yml | head -5' | tee "${ROOT}/docs/reports/raw/capture-${PROFILE}-cfg.txt"
+docker exec "$cid_du" bash -lc 'grep -E "bandwidth_MHz|channel_bandwidth" /opt/du.yml | head -5' | tee -a "${ROOT}/docs/reports/raw/capture-${PROFILE}-cfg.txt"
 
 # tcpdump on the docker bridge attached to protoru eth0
 BR=$(docker network inspect openru_fh -f '{{(index .Options "com.docker.network.bridge.name")}}' 2>/dev/null || true)
@@ -44,7 +44,7 @@ else
   sudo timeout "$SECS" tcpdump -i "$BR" -w "$OUT" || true
 fi
 
-${COMPOSE} --profile fh logs --no-color du 2>&1 | tee "${ROOT}/docs/reports/capture-${PROFILE}-du.log" >/dev/null || true
+${COMPOSE} --profile fh logs --no-color du 2>&1 | tee "${ROOT}/docs/reports/raw/capture-${PROFILE}-du.log" >/dev/null || true
 ${COMPOSE} --profile fh down --remove-orphans >/dev/null 2>&1 || true
 test -s "$OUT"
 

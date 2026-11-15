@@ -20,12 +20,12 @@ testdata/iq/
 !testdata/golden/**/SHA256SUMS
 !testdata/golden/**/iq_meta.json
 
-docs/reports/smoke-*.log
-docs/reports/smoke-*-run.log.bak
-docs/reports/smoke-gpu.txt
-docs/reports/build-*.log
+docs/reports/raw/smoke-*.log
+docs/reports/raw/smoke-*-run.log.bak
+docs/reports/raw/smoke-gpu.txt
+docs/reports/raw/build-*.log
 # Keep KPI JSON / late histograms from baseline runs.
-!docs/reports/smoke-fh-*-kpi.json
-!docs/reports/smoke-fh-*-late-hist.csv
+!docs/reports/raw/smoke-fh-*-kpi.json
+!docs/reports/raw/smoke-fh-*-late-hist.csv
 
 logs/

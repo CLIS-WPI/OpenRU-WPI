@@ -10,7 +10,7 @@ COMPOSE := docker compose --env-file $(ROOT)/docker/versions.env \
 	-f $(ROOT)/docker/compose.yml
 COMPOSE_CORE := $(COMPOSE) -f $(ROOT)/docker/compose.core.yml
 SMOKE_SECS ?= 60
-REPORTS := $(ROOT)/docs/reports
+REPORTS := $(ROOT)/docs/reports/raw
 
 CAPTURE_SECS ?= 12
 PROFILE ?= baseline
