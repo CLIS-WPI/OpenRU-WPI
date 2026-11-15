@@ -1,0 +1,73 @@
+{
+  "profile": "baseline",
+  "bandwidth_MHz": 20,
+  "nof_ports": 2,
+  "ports": [
+    "port0.cf32",
+    "port1.cf32"
+  ],
+  "scs_kHz": 30,
+  "sample_rate_Hz": 23040000.0,
+  "samples_per_slot": 11520,
+  "nof_slots": 4000,
+  "max_dump_slots_cap": 4000,
+  "first_du": {
+    "sfn": 0,
+    "slot": 0
+  },
+  "last_du": {
+    "sfn": 199,
+    "slot": 19
+  },
+  "last_du_from_meta": {
+    "sfn": 199,
+    "slot": 19
+  },
+  "total_iq_bytes": 737280000,
+  "tx_index_entries": 3948,
+  "files": {
+    "port0.cf32": {
+      "sha256": "58491b9628b68056140d6bb33effbe773fc71b7677f252cc2d3722dc2be0d9ea",
+      "bytes": 368640000
+    },
+    "port1.cf32": {
+      "sha256": "58491b9628b68056140d6bb33effbe773fc71b7677f252cc2d3722dc2be0d9ea",
+      "bytes": 368640000
+    },
+    "iq_meta.json": {
+      "sha256": "219fe63241b92f236bf306613d7c201728ec0f876711a89444185bbf06c24ed4",
+      "bytes": 1158
+    },
+    "tx_index.jsonl": {
+      "sha256": "cb361556879c378fb5cfe48db27c052ec58315c483e9c83445ab6210774161d8",
+      "bytes": 557344
+    }
+  },
+  "SHA256": {
+    "port0.cf32": "58491b9628b68056140d6bb33effbe773fc71b7677f252cc2d3722dc2be0d9ea",
+    "port1.cf32": "58491b9628b68056140d6bb33effbe773fc71b7677f252cc2d3722dc2be0d9ea",
+    "iq_meta.json": "219fe63241b92f236bf306613d7c201728ec0f876711a89444185bbf06c24ed4",
+    "tx_index.jsonl": "cb361556879c378fb5cfe48db27c052ec58315c483e9c83445ab6210774161d8"
+  },
+  "pcap": "testdata/pcap/baseline.pcapng",
+  "pcap_source": "10 s capture (SFN-0 window)",
+  "openru_sw_commit": "52c597b60b419c14c51b47205e029d93df7ad8be",
+  "proto_ru_commit": "9bee50c5e8c4bf99d9159a3823a2c08bd42b6254",
+  "proto_ru_branch": "feat/null-radio",
+  "image": "openru/protoru:m1",
+  "compare_gate": "0 differing samples (CPU vs CPU)",
+  "shm_note": "compose shm_size=2gb; port files start at the first written block",
+  "dump_gate": {
+    "dump_start_stable_slots": 100,
+    "dump_start_at_sfn0": true,
+    "prestart_dropped_buffers": 2498,
+    "first_dump_sample_offset": 0,
+    "first_dump_abs_sample_offset": 28800300
+  },
+  "delta_mapping": {
+    "applied_delta_slots": -8,
+    "du_log": "mac_metrics_consumers.cpp:37 slots=[start, END)",
+    "ru_log": "ru_emulator_tti_orchestrator.cpp:161 ofh=",
+    "iq_compare": "Aligns on DU slot from iq_meta/tx_index, normalizes the shortest offset, and requires full golden-range overlap; does not remap by \u0394."
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "secs": 60.0,
+  "warmup_s": 3,
+  "warmup_note": "start-cluster: 130/132 lates in first 5s (dens 26.0000/s vs rest 0.0364/s); warm-up=3s",
+  "late_frac_limit": 1e-05,
+  "full": {
+    "label": "FULL WINDOW (incl. warm-up)",
+    "kpi_rows": 66,
+    "dl_u_plane_pkts": 447268,
+    "dl_c_plane_pkts": 33836,
+    "ul_c_plane_pkts_at_ru": 118846,
+    "dl_rx_total": 599950,
+    "ul_tx_total": 986156,
+    "late_dl_u_at_ru": 90,
+    "late_dl_c_at_ru": 10,
+    "late_ul_c_at_ru": 32,
+    "late_dl_sum_at_ru": 132,
+    "drop_at_ru": 0,
+    "late_per_M_dl": 220.01833486123843,
+    "late_frac_dl": 0.00022001833486123845,
+    "all_pkts": 1586106,
+    "late_per_M_all": 83.22268499078876,
+    "late_frac_all": 8.322268499078876e-05
+  },
+  "gate": {
+    "label": "GATE WINDOW (after warm-up=3s)",
+    "kpi_rows": 63,
+    "dl_u_plane_pkts": 426860,
+    "dl_c_plane_pkts": 32290,
+    "ul_c_plane_pkts_at_ru": 113414,
+    "dl_rx_total": 572564,
+    "ul_tx_total": 956240,
+    "late_dl_u_at_ru": 0,
+    "late_dl_c_at_ru": 2,
+    "late_ul_c_at_ru": 0,
+    "late_dl_sum_at_ru": 2,
+    "drop_at_ru": 0,
+    "late_per_M_dl": 3.4930592911884086,
+    "late_frac_dl": 3.493059291188409e-06,
+    "all_pkts": 1528804,
+    "late_per_M_all": 1.3082121710827548,
+    "late_frac_all": 1.308212171082755e-06
+  },
+  "du_ofh": {
+    "ofh_metric_samples": 73,
+    "ul_rx_total": 1079062,
+    "ul_rx_late": 18,
+    "ul_past_seq_drops": 254,
+    "nof_late_dl_rgs": 0,
+    "nof_late_ul_req": 0,
+    "nof_late_cp_dl": 0,
+    "nof_late_up_dl": 0,
+    "nof_late_cp_ul": 0
+  },
+  "hist_nonzero": [
+    {
+      "rel_s": 0,
+      "late_up": 76,
+      "late_c": 8,
+      "late_c_u": 32,
+      "late_sum": 116
+    },
+    {
+      "rel_s": 2,
+      "late_up": 14,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 14
+    },
+    {
+      "rel_s": 6,
+      "late_up": 0,
+      "late_c": 2,
+      "late_c_u": 0,
+      "late_sum": 2
+    }
+  ],
+  "slot_ok": true,
+  "slot_msg": "66 MAC reports, nof_slots>0, windows advance (SFN-wrap safe)"
+}

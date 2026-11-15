@@ -43,6 +43,8 @@ services:
         DPDK_VERSION: ${DPDK_VERSION:-24.11.2}
         CUDA_RUNTIME_IMAGE: ${CUDA_RUNTIME_IMAGE:-nvidia/cuda:12.6.0-runtime-ubuntu24.04}
         MARCH: ${MARCH:-x86-64-v3}
+        NUM_JOBS: ${NUM_JOBS:-32}
+        OCUDU_BUILD_TARGETS: ${OCUDU_BUILD_TARGETS:-ocu odu odu_split_8 odu_split_7_2 gnb gnb_split_8 gnb_split_7_2 ru_emulator}
     profiles: ["build"]
     command: ["true"]
 
@@ -70,6 +72,8 @@ services:
   protoru:
     image: openru/protoru:${OPENRU_TAG:-m0}
     # Never privileged — breaks GPU device pin.
+    # Default Docker shm is 64 MiB; null-radio IQ dumps fill it in <1 s and writes fail silently.
+    shm_size: ${PROTORU_SHM_SIZE:-2gb}
     entrypoint: ["/bin/bash", "-lc"]
     cap_add: [NET_RAW, NET_ADMIN, SYS_NICE, IPC_LOCK]
     ulimits:

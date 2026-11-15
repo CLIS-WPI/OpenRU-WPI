@@ -1,0 +1,4 @@
+      bandwidth: 100
+        srate: 122.88
+  ru_bandwidth_MHz: 100
+  channel_bandwidth_MHz: 100

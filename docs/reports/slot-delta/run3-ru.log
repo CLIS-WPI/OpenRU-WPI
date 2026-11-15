@@ -1,0 +1,233 @@
+===== compose logs: protoru =====
+protoru-1  | GPU 0: NVIDIA H100 NVL (UUID: GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058)
+protoru-1  | Available radio types: uhd and null.
+protoru-1  | Running. Waiting for incoming packets...
+protoru-1  | [1m|   TIME   | ID  |  RX_TOTAL   | RX_ON_TIME  |  RX_EARLY   |   RX_LATE   |   RX_SEQ_ERR    | RX_ON_TIME_C  |  RX_EARLY_C   |   RX_LATE_C   |  RX_SEQ_ERR_C   | RX_ON_TIME_C_U |  RX_EARLY_C_U  |  RX_LATE_C_U   | RX_SEQ_ERR_C_U  | RX_SEQ_ERR_PRACH | RX_CORRUPT  | RX_ERR_DROP |  TX_TOTAL   |
+protoru-1  | [0m| 00:08:25 |  0  |    9199     |    6748     |      0      |     101     |       1/2       |      512      |       0       |       8       |       2/2       |      1800      |       0        |       30       |       1/1       |       1/1       |      0      |      0      |      0      |
+protoru-1  | | 00:08:26 |  0  |    9084     |    6772     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    14704    |
+protoru-1  | | 00:08:27 |  0  |    9115     |    6801     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15180    |
+protoru-1  | | 00:08:28 |  0  |    9087     |    6775     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15208    |
+protoru-1  | | 00:08:29 |  0  |    9084     |    6772     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15180    |
+protoru-1  | | 00:08:30 |  0  |    9088     |    6774     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:08:31 |  0  |    9102     |    6790     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:08:32 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:08:33 |  0  |    9082     |    6768     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:08:34 |  0  |    9106     |    6792     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:08:35 |  0  |    9086     |    6774     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:08:36 |  0  |    9087     |    6775     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:08:37 |  0  |    9083     |    6771     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:08:38 |  0  |    9116     |    6800     |      0      |      0      |       0/0       |      516      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:08:39 |  0  |    9086     |    6774     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:08:40 |  0  |    9086     |    6774     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:08:41 |  0  |    9086     |    6774     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:08:42 |  0  |    9112     |    6798     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:08:43 |  0  |    9090     |    6776     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1802      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:08:44 |  0  |    9086     |    6772     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1802      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | [1m|   TIME   | ID  |  RX_TOTAL   | RX_ON_TIME  |  RX_EARLY   |   RX_LATE   |   RX_SEQ_ERR    | RX_ON_TIME_C  |  RX_EARLY_C   |   RX_LATE_C   |  RX_SEQ_ERR_C   | RX_ON_TIME_C_U |  RX_EARLY_C_U  |  RX_LATE_C_U   | RX_SEQ_ERR_C_U  | RX_SEQ_ERR_PRACH | RX_CORRUPT  | RX_ERR_DROP |  TX_TOTAL   |
+protoru-1  | [0m| 00:08:45 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:08:46 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:08:47 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 00:08:48 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 00:08:49 |  0  |    9080     |    6767     |      1      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    14924    |
+protoru-1  | | 00:08:50 |  0  |    9112     |    6796     |      0      |      0      |       0/0       |      516      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+===== /tmp/proto-ru.log =====
+2026-11-14T00:08:23.174100 [CONFIG  ] [I] Input configuration (all values): 
+log:
+  filename: /tmp/proto-ru.log
+  level: info
+ru_emu:
+  timing_cpus: [32]
+  cells:
+    - network_interface: eth0
+      ru_mac_addr: 02:00:00:00:00:20
+      du_mac_addr: 02:00:00:00:00:10
+      enable_promiscuous: true
+      bandwidth: 20
+      common_scs: 30
+      dl_arfcn: 628032
+      band: 78
+      dl_port_id: [0, 1]
+      ul_port_id: [0, 1]
+      prach_port_id: [4, 5]
+      prach_format: short
+      compr_method_ul: bfp
+      compr_bitwidth_ul: 9
+      compr_method_dl: bfp
+      compr_bitwidth_dl: 9
+      compr_method_prach: bfp
+      compr_bitwidth_prach: 9
+      is_ul_static_compr_hdr: true
+      is_dl_static_compr_hdr: true
+      iq_scaling: 1
+      t2a_max_cp_dl: 2435
+      t2a_min_cp_dl: 2235
+      t2a_max_cp_ul: 2435
+      t2a_min_cp_ul: 2235
+      t2a_max_up: 2215
+      t2a_min_up: 2015
+      ta3_max_up: 1200
+      ta3_min_up: 800
+      ofh_cpus: [33, 34]
+      sdr:
+        device_driver: "null"
+        device_args: tx_dump=/dev/shm/openru_iq,rx_feed=,pace=realtime,scs_khz=30,max_dump_slots=4000
+        srate: 23.039999999999999
+        tx_gain: 60
+        rx_gain: 60
+        center_freq_offset: 0
+        calibrate_clock_ppm: 0
+        lo_offset: 0
+        transmission_mode: continuous
+        power_ramping: 0
+        gain_backoff: 12
+        power_ceiling: -0.100000001
+        enable_clipping: false
+        otw_format: default
+        clock_source: default
+        sync_source: default
+        max_proc_delay: 2
+        execution_profile: auto
+        pinning_policy: mask
+2026-11-14T00:08:23.177675 [ALL     ] [I] Task worker "ru_rx_#0" started...
+2026-11-14T00:08:23.177797 [ALL     ] [I] Task worker "ru_emu_#0" started...
+2026-11-14T00:08:23.177864 [ALL     ] [I] Task worker "ru_ofh_tx_#0" started...
+2026-11-14T00:08:23.177935 [ALL     ] [I] Task worker "ru_radio_#0" started...
+2026-11-14T00:08:23.178057 [ALL     ] [I] Task worker "ru_phy_hp_#0" started...
+2026-11-14T00:08:23.178094 [ALL     ] [I] Task worker "ru_phy_tx_#0" started...
+2026-11-14T00:08:23.178247 [ALL     ] [I] Task worker "ru_phy_rx_#0" started...
+2026-11-14T00:08:23.178468 [ALL     ] [I] Task worker "ru_phy_ul_#0" started...
+2026-11-14T00:08:23.178594 [ALL     ] [I] Task worker "ru_timing" started...
+2026-11-14T00:08:23.207398 [RU_EMU  ] [I] Opened successfully the NIC interface 'eth0' (fd = '3') used by the Ethernet receiver
+2026-11-14T00:08:23.207515 [RU_EMU  ] [I] Opened successfully the NIC interface 'eth0' (fd = '5') used by the Ethernet transmitter
+2026-11-14T00:08:23.328802 [RADIO   ] [I] null radio ready: tx_dump='/dev/shm/openru_iq' rx_feed='' pace=realtime tx_ports=2 rx_ports=2 srate=23040000.00Hz samples_per_slot=11520
+2026-11-14T00:08:24.637619 [RU_EMU  ] [I] Starting the realtime timing notifier
+2026-11-14T00:08:24.637644 [RU_EMU  ] [I] Started the realtime timing worker
+2026-11-14T00:08:24.637796 [RU_EMU  ] [I] Starting the ethernet frame receiver
+2026-11-14T00:08:24.637854 [RU_EMU  ] [I] Started the ethernet frame receiver with fd = '3'
+2026-11-14T00:08:24.638667 [RU_EMU  ] [W] Slot '40.0', symbol '1': potentially lost '33' messages sent by the DU on DL UP eAxC '1'. Last valid slot was '196.2', symbol '10'
+2026-11-14T00:08:24.638668 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '40.0', symbol '1' and eAxC '1'
+2026-11-14T00:08:24.638671 [RU_EMU  ] [W] Slot '40.0', symbol '2': potentially lost '33' messages sent by the DU on DL UP eAxC '0'. Last valid slot was '196.2', symbol '10'
+2026-11-14T00:08:24.638674 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '40.0', symbol '2' and eAxC '0'
+2026-11-14T00:08:24.638677 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '40.0', symbol '2' and eAxC '1'
+2026-11-14T00:08:24.638682 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '40.0', symbol '3' and eAxC '0'
+2026-11-14T00:08:24.638685 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '40.0', symbol '3' and eAxC '1'
+2026-11-14T00:08:24.638694 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '40.0', symbol '4' and eAxC '0'
+2026-11-14T00:08:24.638696 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '40.0', symbol '5' and eAxC '0'
+2026-11-14T00:08:24.638698 [RU_EMU  ] [W] Slot '40.0', symbol '5': potentially lost '1' messages sent by the DU on DL UP eAxC '1'. Last valid slot was '40.0', symbol '5'
+2026-11-14T00:08:24.638698 [RU_EMU  ] [I] Sector#0: dropped received Open Fronthaul message as no uplink slot context was found for slot '40.0', symbol '5' and eAxC '1'
+2026-11-14T00:08:24.638714 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '40.2' symbol '0' with sequence identifier '2' from the past; processing it. Last valid slot was '196.3', symbol '0'
+2026-11-14T00:08:24.638715 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '2' from the past; processing it
+2026-11-14T00:08:24.638720 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '40.2' symbol '0' with sequence identifier '2' from the past; processing it. Last valid slot was '196.3', symbol '0'
+2026-11-14T00:08:24.638720 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '2' from the past; processing it
+2026-11-14T00:08:24.639115 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '40.3' symbol '0' with sequence identifier '3' from the past; processing it. Last valid slot was '196.3', symbol '0'
+2026-11-14T00:08:24.639118 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '3' from the past; processing it
+2026-11-14T00:08:24.639123 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '40.3' symbol '0' with sequence identifier '3' from the past; processing it. Last valid slot was '196.3', symbol '0'
+2026-11-14T00:08:24.639124 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '3' from the past; processing it
+2026-11-14T00:08:24.639543 [RU_EMU  ] [W] Slot '40.3', symbol '12': potentially lost '32' messages sent by the DU on UL CP eAxC '0'. Last valid slot was '195.19', symbol '0'
+2026-11-14T00:08:24.639545 [RU_EMU  ] [W] Slot '40.3', symbol '12': potentially lost '32' messages sent by the DU on UL CP eAxC '1'. Last valid slot was '195.19', symbol '0'
+2026-11-14T00:08:24.647124 [RU_EMU  ] [W] Slot '40.19', symbol '0': potentially lost '100' messages sent by the DU on PRACH eAxC '4'. Last valid slot was '195.19', symbol '0'
+2026-11-14T00:08:24.647126 [RU_EMU  ] [W] Slot '40.19', symbol '0': potentially lost '100' messages sent by the DU on PRACH eAxC '5'. Last valid slot was '195.19', symbol '0'
+2026-11-14T00:08:25.637195 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=2000 ul_capture_req=2000 dl_tx=0 prach_capture_req=0 (slot=110.3 ofh=110.3)
+2026-11-14T00:08:25.637704 [RADIO   ] [I] null_pace wall_s=1794614905.637693 radio_ts=25344000
+2026-11-14T00:08:25.669216 [RU_EMU  ] [I] Aligned the radio slot numbering to the GPS wire numbering: slot offset '595'. Tracking the radio clock drift against the host clock; keep the host clock GPS/NTP-synchronized.
+2026-11-14T00:08:26.637198 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=4000 ul_capture_req=4000 dl_tx=246 prach_capture_req=96 (slot=210.3 ofh=239.18)
+2026-11-14T00:08:26.637699 [RADIO   ] [I] null_pace wall_s=1794614906.637697 radio_ts=48384000
+2026-11-14T00:08:27.569509 [RU_EMU  ] [I] RU emulator timing worker woke up late, skipped '11' symbols
+2026-11-14T00:08:27.637212 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=6000 ul_capture_req=6000 dl_tx=503 prach_capture_req=195 (slot=310.3 ofh=83.18)
+2026-11-14T00:08:27.637708 [RADIO   ] [I] null_pace wall_s=1794614907.637708 radio_ts=71424000
+2026-11-14T00:08:27.676826 [RU_EMU  ] [I] RU emulator timing worker woke up late, skipped '10' symbols
+2026-11-14T00:08:28.637208 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=8000 ul_capture_req=8000 dl_tx=759 prach_capture_req=295 (slot=410.3 ofh=183.18)
+2026-11-14T00:08:28.637712 [RADIO   ] [I] null_pace wall_s=1794614908.637712 radio_ts=94464000
+2026-11-14T00:08:29.637213 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=10000 ul_capture_req=10000 dl_tx=1015 prach_capture_req=394 (slot=510.3 ofh=27.18)
+2026-11-14T00:08:29.637700 [RADIO   ] [I] null_pace wall_s=1794614909.637695 radio_ts=117504000
+2026-11-14T00:08:30.637220 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=12000 ul_capture_req=12000 dl_tx=1271 prach_capture_req=494 (slot=610.3 ofh=127.18)
+2026-11-14T00:08:30.637702 [RADIO   ] [I] null_pace wall_s=1794614910.637692 radio_ts=140544000
+2026-11-14T00:08:31.637210 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=14000 ul_capture_req=14000 dl_tx=1528 prach_capture_req=594 (slot=710.3 ofh=227.18)
+2026-11-14T00:08:31.637706 [RADIO   ] [I] null_pace wall_s=1794614911.637695 radio_ts=163584000
+2026-11-14T00:08:32.637196 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=16000 ul_capture_req=16000 dl_tx=1784 prach_capture_req=693 (slot=810.3 ofh=71.18)
+2026-11-14T00:08:32.637719 [RADIO   ] [I] null_pace wall_s=1794614912.637694 radio_ts=186624000
+2026-11-14T00:08:33.068506 [PHY     ] [E] [   853.5] The modulator is busy.
+2026-11-14T00:08:33.078504 [PHY     ] [E] [   854.5] The modulator is busy.
+2026-11-14T00:08:33.079502 [PHY     ] [E] [   854.7] The modulator is busy.
+2026-11-14T00:08:33.080003 [PHY     ] [E] [   854.8] The modulator is busy.
+2026-11-14T00:08:33.083229 [PHY     ] [W] [   852.5] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 852.5.
+2026-11-14T00:08:33.084221 [PHY     ] [W] [   852.7] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 852.7.
+2026-11-14T00:08:33.084761 [PHY     ] [W] [   852.8] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 852.8.
+2026-11-14T00:08:33.085706 [PHY     ] [W] [  852.10] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 852.10.
+2026-11-14T00:08:33.637213 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=18000 ul_capture_req=18000 dl_tx=2040 prach_capture_req=793 (slot=910.3 ofh=171.18)
+2026-11-14T00:08:33.637719 [RADIO   ] [I] null_pace wall_s=1794614913.637719 radio_ts=209664000
+2026-11-14T00:08:34.637200 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=20000 ul_capture_req=20000 dl_tx=2296 prach_capture_req=892 (slot=1010.3 ofh=15.18)
+2026-11-14T00:08:34.637690 [RADIO   ] [I] null_pace wall_s=1794614914.637690 radio_ts=232704000
+2026-11-14T00:08:35.637182 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=22000 ul_capture_req=22000 dl_tx=2553 prach_capture_req=992 (slot=86.3 ofh=115.18)
+2026-11-14T00:08:35.637663 [RADIO   ] [I] null_pace wall_s=1794614915.637662 radio_ts=255744000
+2026-11-14T00:08:36.637209 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=24000 ul_capture_req=24000 dl_tx=2809 prach_capture_req=1092 (slot=186.3 ofh=215.18)
+2026-11-14T00:08:36.637686 [RADIO   ] [I] null_pace wall_s=1794614916.637685 radio_ts=278784000
+2026-11-14T00:08:37.637216 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=26000 ul_capture_req=26000 dl_tx=3065 prach_capture_req=1191 (slot=286.3 ofh=59.18)
+2026-11-14T00:08:37.637699 [RADIO   ] [I] null_pace wall_s=1794614917.637697 radio_ts=301824000
+2026-11-14T00:08:38.637210 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=28000 ul_capture_req=28000 dl_tx=3321 prach_capture_req=1291 (slot=386.3 ofh=159.18)
+2026-11-14T00:08:38.637697 [RADIO   ] [I] null_pace wall_s=1794614918.637697 radio_ts=324864000
+2026-11-14T00:08:39.637213 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=30000 ul_capture_req=30000 dl_tx=3578 prach_capture_req=1390 (slot=486.3 ofh=3.18)
+2026-11-14T00:08:39.637706 [RADIO   ] [I] null_pace wall_s=1794614919.637706 radio_ts=347904000
+2026-11-14T00:08:40.637216 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=32000 ul_capture_req=32000 dl_tx=3834 prach_capture_req=1490 (slot=586.3 ofh=103.18)
+2026-11-14T00:08:40.637694 [RADIO   ] [I] null_pace wall_s=1794614920.637693 radio_ts=370944000
+2026-11-14T00:08:41.637213 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=34000 ul_capture_req=34000 dl_tx=4090 prach_capture_req=1590 (slot=686.3 ofh=203.18)
+2026-11-14T00:08:41.637696 [RADIO   ] [I] null_pace wall_s=1794614921.637695 radio_ts=393984000
+2026-11-14T00:08:42.637234 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=36000 ul_capture_req=36000 dl_tx=4346 prach_capture_req=1689 (slot=786.3 ofh=47.18)
+2026-11-14T00:08:42.637708 [RADIO   ] [I] null_pace wall_s=1794614922.637698 radio_ts=417024000
+2026-11-14T00:08:43.637194 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=38000 ul_capture_req=38000 dl_tx=4603 prach_capture_req=1789 (slot=886.3 ofh=147.18)
+2026-11-14T00:08:43.637707 [RADIO   ] [I] null_pace wall_s=1794614923.637695 radio_ts=440064000
+2026-11-14T00:08:44.637203 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=40000 ul_capture_req=40000 dl_tx=4859 prach_capture_req=1889 (slot=986.3 ofh=247.18)
+2026-11-14T00:08:44.637707 [RADIO   ] [I] null_pace wall_s=1794614924.637696 radio_ts=463104000
+2026-11-14T00:08:45.637204 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=42000 ul_capture_req=42000 dl_tx=5115 prach_capture_req=1988 (slot=62.3 ofh=91.18)
+2026-11-14T00:08:45.637706 [RADIO   ] [I] null_pace wall_s=1794614925.637694 radio_ts=486144000
+2026-11-14T00:08:46.637172 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=44000 ul_capture_req=44000 dl_tx=5371 prach_capture_req=2088 (slot=162.3 ofh=191.18)
+2026-11-14T00:08:46.637674 [RADIO   ] [I] null_pace wall_s=1794614926.637662 radio_ts=509184000
+2026-11-14T00:08:47.637175 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=46000 ul_capture_req=46000 dl_tx=5628 prach_capture_req=2187 (slot=262.3 ofh=35.18)
+2026-11-14T00:08:47.637669 [RADIO   ] [I] null_pace wall_s=1794614927.637661 radio_ts=532224000
+2026-11-14T00:08:48.637207 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=48000 ul_capture_req=48000 dl_tx=5884 prach_capture_req=2287 (slot=362.3 ofh=135.18)
+2026-11-14T00:08:48.637702 [RADIO   ] [I] null_pace wall_s=1794614928.637693 radio_ts=555264000
+2026-11-14T00:08:49.061430 [PHY     ] [W] [   403.3] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 403.3.
+2026-11-14T00:08:49.062448 [PHY     ] [W] [   403.4] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 403.4.
+2026-11-14T00:08:49.063471 [PHY     ] [W] [   403.5] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 403.5.
+2026-11-14T00:08:49.064488 [PHY     ] [W] [   403.6] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 403.6.
+2026-11-14T00:08:49.065504 [PHY     ] [W] [   403.7] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 403.7.
+2026-11-14T00:08:49.066528 [PHY     ] [W] [   403.8] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 403.8.
+2026-11-14T00:08:49.067540 [PHY     ] [W] [   403.9] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 403.9.
+2026-11-14T00:08:49.068564 [PHY     ] [W] [  403.10] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 403.10.
+2026-11-14T00:08:49.069580 [PHY     ] [W] [  403.11] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 403.11.
+2026-11-14T00:08:49.070630 [PHY     ] [W] [  403.12] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 403.12.
+2026-11-14T00:08:49.071648 [PHY     ] [W] [  403.13] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 403.13.
+2026-11-14T00:08:49.072693 [PHY     ] [W] [  403.14] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 403.14.
+2026-11-14T00:08:49.073746 [PHY     ] [W] [  403.15] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 403.15.
+2026-11-14T00:08:49.073747 [PHY     ] [W] [   405.5] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 405.5.
+2026-11-14T00:08:49.074771 [PHY     ] [W] [  403.16] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 403.16.
+2026-11-14T00:08:49.075813 [PHY     ] [W] [  403.17] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 403.17.
+2026-11-14T00:08:49.076825 [PHY     ] [W] [  403.18] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 403.18.
+2026-11-14T00:08:49.077850 [PHY     ] [W] [  403.19] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 403.19.
+2026-11-14T00:08:49.078869 [PHY     ] [W] [   404.0] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 404.0.
+2026-11-14T00:08:49.079886 [PHY     ] [W] [   404.1] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 404.1.
+2026-11-14T00:08:49.079887 [PHY     ] [W] [   406.7] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 406.7.
+2026-11-14T00:08:49.080352 [PHY     ] [W] [  404.15] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 404.15.
+2026-11-14T00:08:49.080373 [PHY     ] [W] [  404.16] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 404.16.
+2026-11-14T00:08:49.080409 [PHY     ] [W] [  404.17] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 404.17.
+2026-11-14T00:08:49.080426 [PHY     ] [W] [   404.2] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 404.2.
+2026-11-14T00:08:49.080473 [PHY     ] [W] [   404.3] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 404.3.
+2026-11-14T00:08:49.080503 [PHY     ] [W] [   404.4] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 404.4.
+2026-11-14T00:08:49.080551 [PHY     ] [W] [   404.5] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 404.5.
+2026-11-14T00:08:49.080588 [PHY     ] [W] [   404.6] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 404.6.
+2026-11-14T00:08:49.080635 [PHY     ] [W] [   404.7] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 404.7.
+2026-11-14T00:08:49.080679 [PHY     ] [W] [   404.8] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 404.8.
+2026-11-14T00:08:49.080727 [PHY     ] [W] [   404.9] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 404.9.
+2026-11-14T00:08:49.080759 [PHY     ] [W] [  404.10] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 404.10.
+2026-11-14T00:08:49.080806 [PHY     ] [W] [  404.11] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 404.11.
+2026-11-14T00:08:49.080836 [PHY     ] [W] [  404.12] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 404.12.
+2026-11-14T00:08:49.080884 [PHY     ] [W] [  404.13] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 404.13.
+2026-11-14T00:08:49.080910 [PHY     ] [W] [   406.8] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 406.8.
+2026-11-14T00:08:49.080917 [PHY     ] [W] [  404.14] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 404.14.
+2026-11-14T00:08:49.081091 [PHY     ] [W] [  404.18] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 404.18.
+2026-11-14T00:08:49.081634 [PHY     ] [W] [  406.10] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 406.10.
+2026-11-14T00:08:49.082151 [PHY     ] [W] [   406.5] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 406.5.
+2026-11-14T00:08:49.281851 [RU_EMU  ] [I] RU emulator timing worker woke up late, skipped '4' symbols
+2026-11-14T00:08:49.637207 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=50000 ul_capture_req=50000 dl_tx=6140 prach_capture_req=2387 (slot=462.3 ofh=235.18)
+2026-11-14T00:08:49.637701 [RADIO   ] [I] null_pace wall_s=1794614929.637700 radio_ts=578304000
+2026-11-14T00:08:50.637194 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=52000 ul_capture_re

@@ -1,5 +1,6 @@
-# baseline ProtO-RU — null radio (M1). Runs low-PHY; dumps TX IQ to .cf32.
-# Emulator mode (no sdr:) stays M0-only and cannot produce golden IQ.
+# baseline ProtO-RU — null radio (M1). Runs low-PHY; dumps TX IQ after low-PHY.
+# pace=realtime (default): receive() blocks to system_clock like UHD/GPS alignment.
+# Dump on tmpfs (/dev/shm) so the async writer does not stall the TX path.
 
 log:
   filename: /tmp/proto-ru.log
@@ -44,6 +45,9 @@ ru_emu:
 
       ofh_cpus: [33, 34]
       sdr:
-        device_driver: null
-        device_args: "tx_dump=/tmp/iq_dump,rx_feed="
-        srate_MHz: 23.04
+        device_driver: "null"
+        # max_dump_slots=4000 ≈ 2 s @ 30 kHz; raise for longer goldens. Requires compose shm_size ≥ dump.
+        # dump_start_stable_slots=100 skips the cold-start DU/OFH-vs-radio Δ settle.
+        device_args: "tx_dump=/dev/shm/openru_iq,rx_feed=,pace=realtime,scs_khz=30,max_dump_slots=4000,dump_start_stable_slots=100"
+        srate: 23.04
+        max_proc_delay: 2

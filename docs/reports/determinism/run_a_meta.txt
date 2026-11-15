@@ -1,0 +1,8 @@
+total 720920
+drwxr-xr-x 2 root root       120 Nov 14 01:14 .
+drwxrwxrwt 3 root root        60 Nov 14 01:14 ..
+-rw-r--r-- 1 root root       865 Nov 14 01:14 iq_meta.json
+-rw-r--r-- 1 root root 368826720 Nov 14 01:14 port0.cf32
+-rw-r--r-- 1 root root 368826720 Nov 14 01:14 port1.cf32
+-rw-r--r-- 1 root root    557434 Nov 14 01:14 tx_index.jsonl
+{'max_dump_slots': 4000, 'max_dump_bytes': 0, 'slots_written': 4000, 'bytes_written': 737653440, 'dropped_buffers': 0, 'cap_reached': True, 'stop_reason': 'max_dump_slots reached', 'last_du_sfn': 99, 'last_du_slot': 9}

@@ -1,0 +1,157 @@
+{
+  "secs": 600.0,
+  "warmup_s": 3,
+  "warmup_note": "start-cluster: 115/219 lates in first 5s (dens 23.0000/s vs rest 0.1748/s); warm-up=3s",
+  "late_frac_limit": 1e-05,
+  "full": {
+    "label": "FULL WINDOW (incl. warm-up)",
+    "kpi_rows": 607,
+    "dl_u_plane_pkts": 4112803,
+    "dl_c_plane_pkts": 311118,
+    "ul_c_plane_pkts_at_ru": 1092716,
+    "dl_rx_total": 5516637,
+    "ul_tx_total": 9201390,
+    "late_dl_u_at_ru": 181,
+    "late_dl_c_at_ru": 8,
+    "late_ul_c_at_ru": 30,
+    "late_dl_sum_at_ru": 219,
+    "drop_at_ru": 0,
+    "late_per_M_dl": 39.69809867859713,
+    "late_frac_dl": 3.9698098678597125e-05,
+    "all_pkts": 14718027,
+    "late_per_M_all": 14.879711798327316,
+    "late_frac_all": 1.4879711798327317e-05
+  },
+  "gate": {
+    "label": "GATE WINDOW (after warm-up=3s)",
+    "kpi_rows": 604,
+    "dl_u_plane_pkts": 4092420,
+    "dl_c_plane_pkts": 309574,
+    "ul_c_plane_pkts_at_ru": 1087290,
+    "dl_rx_total": 5489284,
+    "ul_tx_total": 9171522,
+    "late_dl_u_at_ru": 100,
+    "late_dl_c_at_ru": 0,
+    "late_ul_c_at_ru": 4,
+    "late_dl_sum_at_ru": 104,
+    "drop_at_ru": 0,
+    "late_per_M_dl": 18.9460046155382,
+    "late_frac_dl": 1.89460046155382e-05,
+    "all_pkts": 14660806,
+    "late_per_M_all": 7.0937436863975964,
+    "late_frac_all": 7.093743686397596e-06
+  },
+  "du_ofh": {
+    "ofh_metric_samples": 614,
+    "ul_rx_total": 9286578,
+    "ul_rx_late": 215,
+    "ul_past_seq_drops": 1556,
+    "nof_late_dl_rgs": 0,
+    "nof_late_ul_req": 0,
+    "nof_late_cp_dl": 0,
+    "nof_late_up_dl": 0,
+    "nof_late_cp_ul": 0
+  },
+  "hist_nonzero": [
+    {
+      "rel_s": 0,
+      "late_up": 79,
+      "late_c": 8,
+      "late_c_u": 26,
+      "late_sum": 113
+    },
+    {
+      "rel_s": 2,
+      "late_up": 2,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 2
+    },
+    {
+      "rel_s": 43,
+      "late_up": 5,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 5
+    },
+    {
+      "rel_s": 67,
+      "late_up": 9,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 9
+    },
+    {
+      "rel_s": 97,
+      "late_up": 24,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 24
+    },
+    {
+      "rel_s": 134,
+      "late_up": 17,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 17
+    },
+    {
+      "rel_s": 138,
+      "late_up": 1,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 1
+    },
+    {
+      "rel_s": 202,
+      "late_up": 9,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 9
+    },
+    {
+      "rel_s": 318,
+      "late_up": 1,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 1
+    },
+    {
+      "rel_s": 319,
+      "late_up": 13,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 13
+    },
+    {
+      "rel_s": 320,
+      "late_up": 1,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 1
+    },
+    {
+      "rel_s": 399,
+      "late_up": 0,
+      "late_c": 0,
+      "late_c_u": 4,
+      "late_sum": 4
+    },
+    {
+      "rel_s": 532,
+      "late_up": 6,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 6
+    },
+    {
+      "rel_s": 540,
+      "late_up": 14,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 14
+    }
+  ],
+  "slot_ok": true,
+  "slot_msg": "554 MAC reports, nof_slots>0, windows advance (SFN-wrap safe)"
+}

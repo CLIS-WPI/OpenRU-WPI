@@ -1,0 +1,4 @@
+      bandwidth: 40
+        srate: 46.08
+  ru_bandwidth_MHz: 40
+  channel_bandwidth_MHz: 40
