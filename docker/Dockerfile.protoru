@@ -87,6 +87,10 @@ COPY --from=builder /opt/rohc                 /opt/rohc
 COPY --from=builder /opt/uhd/${UHD_VERSION}   /opt/uhd/${UHD_VERSION}
 COPY --from=builder /opt/dpdk/${DPDK_VERSION} /opt/dpdk/${DPDK_VERSION}
 COPY --from=builder /opt/ocudu                /usr/local
+# Build-time FFTW wisdom for the OCUDU DFT sizes (768/1536/4096, 1D c2c float).
+# The runtime dft_processor_fftw_impl imports ~/.ocudu_fftwisdom, so the
+# FFTW_MEASURE plan creation at startup reuses the precomputed plans.
+RUN fftwf-wisdom -v -o /root/.ocudu_fftwisdom 768 1536 4096
 COPY external/proto-ru/docker/scripts/install_rohc_dependencies.sh /usr/local/etc/install_rohc_dependencies.sh
 COPY external/proto-ru/docker/scripts/install_uhd_dependencies.sh  /usr/local/etc/install_uhd_dependencies.sh
 COPY external/proto-ru/docker/scripts/install_dpdk_dependencies.sh /usr/local/etc/install_dpdk_dependencies.sh
