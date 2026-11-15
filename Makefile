@@ -70,14 +70,14 @@ smoke: smoke-fh
 
 # PROTORU_PROFILE=emulator (M0) | null (M1+). Default emulator for backward compat.
 PROTORU_PROFILE ?= emulator
-PROTORU_YML := $(if $(filter null,$(PROTORU_PROFILE)),$(ROOT)/profiles/baseline/protoru-null.yml,$(ROOT)/profiles/baseline/protoru.yml)
+PROTORU_YML := $(if $(filter null,$(PROTORU_PROFILE)),$(ROOT)/profiles/$(PROFILE)/protoru-null.yml,$(ROOT)/profiles/$(PROFILE)/protoru.yml)
 
 smoke-fh: preflight
 	@mkdir -p $(REPORTS)
 	@rm -f $(REPORTS)/caps-protoru.md $(REPORTS)/caps-du.md
 	@echo "[smoke-fh] DU(no_core)+ProtO-RU $(PROTORU_PROFILE), $(SMOKE_SECS)s, GPU $(OPENRU_GPU_UUID)"
 	@$(COMPOSE) --profile fh --profile core --profile full down --remove-orphans >/dev/null 2>&1 || true
-	@DU_CONFIG_PATH=$(ROOT)/profiles/baseline/du-fh.yml \
+	@DU_CONFIG_PATH=$(ROOT)/profiles/$(PROFILE)/du-fh.yml \
 	  PROTORU_CONFIG_PATH=$(PROTORU_YML) \
 	  $(COMPOSE) --profile fh up -d du protoru
 	@sleep 4

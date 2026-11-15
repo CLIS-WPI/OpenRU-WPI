@@ -61,3 +61,15 @@ per-PRG views (`precoding.get_prg_coefficients`, `re_buffer_reader_view` /
 for a plain AVX-512 Cat-B strip on the same core — **~4x slower**. Upstream candidate:
 hoist/cache the PRG weights and widen the inner kernel beyond 12 REs. [MEASURED]
 Artifacts: `src/cuda/standalone/RESULTS_SCALING.md` (PR #4), `scaling_results.csv`.
+
+## Backlog (hardware week): UHD ATR / TDD switching
+
+**Do not start until the hardware week / FEM bench.**
+
+Backlog item for the hardware week: Cursor found that ProtO-RU defaults to
+`transmission_mode: continuous` (`ru_sdr_config.h:25`), so UHD never sends end-of-burst
+and N310 ATR cannot drive TDD switching. For the FEM bench: implement `feat/uhd-atr` per
+`hardware/n78/H1_TDD_GPIO.md` §4 (OpenRU repo, `hw/n78-fem`), switch to discontinuous
+transmission with `power_ramping_time_us >= 2` (prefer 5-10), then rerun
+`replay-golden` and the 600 s null `smoke-fh` to confirm DL IQ and late ratio are
+unchanged by the mode change.
