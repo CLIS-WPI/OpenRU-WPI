@@ -123,6 +123,11 @@ def main() -> int:
         default="",
         help="Create this file just before the first frame is sent, arming the RU dump gate.",
     )
+    ap.add_argument(
+        "--report-send-errors",
+        action="store_true",
+        help="Collect actual-send minus scheduled-time per frame and print p50/p90/p99/max (positive = late).",
+    )
     ap.add_argument("--count", type=int, default=0, help="Max packets (0=all)")
     ap.add_argument("--dry-run", action="store_true", help="Parse only; do not send")
     args = ap.parse_args()
@@ -142,6 +147,7 @@ def main() -> int:
     lead_s = args.lead_us * 1e-6
     uplane_delay_s = args.uplane_delay_us * 1e-6
     marker_armed = False
+    send_errors = [] if args.report_send_errors else None
     sock = None
     if not args.dry_run:
         sock = socket.socket(socket.AF_PACKET, socket.SOCK_RAW)
@@ -222,10 +228,28 @@ def main() -> int:
                 struct.pack_into(">H", frame, 14, args.vlan)
             if sock is not None:
                 sock.send(frame)
+            if send_errors is not None and args.rate > 0:
+                send_errors.append(time.perf_counter() - target)
             n += 1
     finally:
         if sock is not None:
             sock.close()
+
+    if send_errors:
+        errs = sorted(send_errors)
+        cnt = len(errs)
+
+        def pct(q: float) -> float:
+            return errs[min(cnt - 1, int(q * (cnt - 1)))]
+
+        late200 = sum(1 for e in errs if e > 200e-6)
+        late500 = sum(1 for e in errs if e > 500e-6)
+        late1ms = sum(1 for e in errs if e > 1e-3)
+        print(
+            f"fh_replay: send_error_us n={cnt} min={errs[0]*1e6:.1f} p50={pct(0.5)*1e6:.1f} "
+            f"p90={pct(0.9)*1e6:.1f} p99={pct(0.99)*1e6:.1f} max={errs[-1]*1e6:.1f} "
+            f"late>200us={late200} late>500us={late500} late>1ms={late1ms}"
+        )
 
     print(
         f"fh_replay: sent={n} skipped={skipped} pcap={args.pcap} "

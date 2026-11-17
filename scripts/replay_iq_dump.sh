@@ -112,8 +112,18 @@ sleep "${OPENRU_REPLAY_READY_SLEEP:-2}"
 IFACE=$(docker exec openru-fh-replay bash -lc "ip -o link | awk -F': ' '/^[0-9]+: eth/{print \$2; exit}' | cut -d@ -f1")
 echo "[replay] iface=${IFACE} profile=${PROFILE} rate=${RATE} window=${WINDOW} start_du=${START_DU} lead_us=${LEAD_US}"
 
+if [[ "${OPENRU_REPLAY_SENDER:-python}" == "c" ]]; then
+  if [[ ! -x "${ROOT}/tools/fh_replay/fh_replay_c" ]]; then
+    gcc -O2 -std=c11 -Wall -Wextra -o "${ROOT}/tools/fh_replay/fh_replay_c" \
+      "${ROOT}/tools/fh_replay/fh_replay_c.c" -lm
+  fi
+  SENDER_CMD="taskset -c ${OPENRU_REPLAY_CPUSET:-39} /work/tools/fh_replay/fh_replay_c"
+else
+  SENDER_CMD="python3 /work/tools/fh_replay/fh_replay.py"
+fi
+
 docker exec openru-fh-replay bash -lc \
-  "python3 /work/tools/fh_replay/fh_replay.py \
+  "${SENDER_CMD} \
     --pcap ${PCAP_IN_CT} \
     --iface ${IFACE} \
     --only-dst-mac ${RU_MAC} \
@@ -123,6 +133,7 @@ docker exec openru-fh-replay bash -lc \
     --lead-us ${OPENRU_REPLAY_LEAD_US:-0} \
     --uplane-delay-us ${OPENRU_REPLAY_UPLANE_DELAY_US:-${UPLANE_DELAY_US:-0}} \
     --align-cplane-lead-us ${OPENRU_REPLAY_ALIGN_LEAD_US:-${LEAD_US}} \
+    --report-send-errors \
     --start-marker ${MARKER_REPLAY}"
 
 # Wait for the dump cap

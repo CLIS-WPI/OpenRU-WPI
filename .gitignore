@@ -34,3 +34,4 @@ docs/reports/raw/build-*.log
 
 logs/
 tools/golden/__pycache__/
+tools/fh_replay/fh_replay_c
