@@ -33,7 +33,8 @@ def _uplane_filter_offset(buf: bytes) -> int:
     return _header(buf, 0)[0]
 
 
-def analyze(pcap: str, window_slots: int, t2a_us: float, dst_mac: str) -> dict:
+def analyze(pcap: str, window_slots: int, t2a_us: float, dst_mac: str,
+            uplane_delay_us: float = 250.0) -> dict:
     dst = _mac(dst_mac) if dst_mac else b""
     t_first = None
     t_last = None
@@ -106,6 +107,7 @@ def analyze(pcap: str, window_slots: int, t2a_us: float, dst_mac: str) -> dict:
         "start_du_slot": start_du % SLOTS_PER_FRAME,
         "start_du_delta_slots": delta,
         "lead_us": t2a_us,
+        "uplane_delay_us": uplane_delay_us,
         "pcap_span_s": round(t_last - t_first, 6),
         "start_air_offset_s": round(start_off, 6),
         "end_air_offset_s": round(start_off + window_slots * SLOT_SECONDS, 6),
@@ -125,11 +127,13 @@ def main() -> int:
     ap.add_argument("--window-slots", type=int, required=True)
     ap.add_argument("--t2a-us", type=float, required=True, help="C-plane lead (RU t2a_min_cp_dl)")
     ap.add_argument("--dst-mac", default=RU_MAC, help="Only count frames to this MAC (empty = all)")
+    ap.add_argument("--uplane-delay-us", type=float, default=250.0,
+                    help="Replay sends each U-plane this much later to clear the null radio's C-plane slot-update lag")
     ap.add_argument("--json", default=None, help="Write the result here")
     args = ap.parse_args()
 
     try:
-        info = analyze(args.pcap, args.window_slots, args.t2a_us, args.dst_mac)
+        info = analyze(args.pcap, args.window_slots, args.t2a_us, args.dst_mac, args.uplane_delay_us)
     except Exception as exc:  # noqa: BLE001
         print(f"golden-window: ERROR {exc}", file=sys.stderr)
         return 1

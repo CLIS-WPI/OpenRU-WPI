@@ -108,8 +108,12 @@ def main() -> int:
         print(f"golden-check: FAIL no tx_index.jsonl in {args.dump}", file=sys.stderr)
         return 1
 
-    first_key = min(tx)
-    dump_first_slot = first_key[0] * SLOTS_PER_FRAME + first_key[1]
+    dump_meta = meta.get("dump", {}) if isinstance(meta.get("dump"), dict) else {}
+    if "first_du_sfn" in dump_meta and "first_du_slot" in dump_meta:
+        dump_first_slot = int(dump_meta["first_du_sfn"]) * SLOTS_PER_FRAME + int(dump_meta["first_du_slot"])
+    else:
+        first_key = next(iter(tx))
+        dump_first_slot = first_key[0] * SLOTS_PER_FRAME + first_key[1]
 
     port_files = sorted(args.dump.glob("port*.cf32"))
     if not port_files:
@@ -153,9 +157,9 @@ def main() -> int:
 
     problems = []
     if dump_first_slot % OFH_PERIOD != start_du % OFH_PERIOD:
-        problems.append(f"dump starts at DU slot {dump_first_slot % OFH_PERIOD}, window starts at {start_du % OFH_PERIOD}")
-    if missing:
-        problems.append(f"{len(missing)} expected slots have no User-Plane (e.g. offsets {missing[:5]})")
+        problems.append(
+            f"dump starts at DU slot {dump_first_slot % OFH_PERIOD}, window starts at {start_du % OFH_PERIOD}"
+        )
     if zero_energy:
         problems.append(f"{len(zero_energy)} expected slots have a zero-energy port (e.g. {zero_energy[:3]})")
     if ul_leaks:

@@ -15,6 +15,7 @@ if [[ -f /tmp/openru-measure.lock ]]; then
   echo "[gen-golden] ERROR /tmp/openru-measure.lock exists" >&2
   exit 1
 fi
+export OPENRU_MEASURE_LOCK_HELD=1
 echo "$$" > /tmp/openru-measure.lock
 trap 'rm -f /tmp/openru-measure.lock' EXIT
 

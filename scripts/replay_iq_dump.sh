@@ -21,12 +21,15 @@ MARKER_REPLAY="/work/docs/reports/raw/replay-start.marker"
 COMPOSE=(docker compose --env-file "${ROOT}/docker/versions.env" --env-file "${ROOT}/docker/lab.env"
          -f "${ROOT}/docker/compose.yml")
 
-if [[ -f /tmp/openru-measure.lock ]]; then
+if [[ "${OPENRU_MEASURE_LOCK_HELD:-0}" == "1" ]]; then
+  : # parent harness owns the lock
+elif [[ -f /tmp/openru-measure.lock ]]; then
   echo "[replay] ERROR /tmp/openru-measure.lock exists; no measurement while another run holds it" >&2
   exit 1
+else
+  echo "$$" > /tmp/openru-measure.lock
+  trap 'rm -f /tmp/openru-measure.lock' EXIT
 fi
-echo "$$" > /tmp/openru-measure.lock
-trap 'rm -f /tmp/openru-measure.lock' EXIT
 
 export DU_CONFIG_PATH="${ROOT}/profiles/${PROFILE}/du-fh.yml"
 BASE_RU_YML="${PROTORU_CONFIG_PATH:-${ROOT}/profiles/${PROFILE}/protoru-null.yml}"
@@ -59,7 +62,7 @@ else
       --t2a-us "$T2A_US" --json "$WIN_JSON"
   fi
 fi
-read -r START_DU WINDOW LEAD_US < <(python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); print(d["start_du"], d["window_slots"], d["lead_us"])' "$WIN_JSON")
+read -r START_DU WINDOW LEAD_US UPLANE_DELAY_US < <(python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); print(d["start_du"], d["window_slots"], d["lead_us"], d.get("uplane_delay_us", 0))' "$WIN_JSON")
 
 TMP_YML="/tmp/protoru-replay-${PROFILE}-$$.yml"
 python3 "${ROOT}/tools/golden/prep_config.py" --profile-yaml "$BASE_RU_YML" --window-json "$WIN_JSON" \
@@ -118,7 +121,7 @@ docker exec openru-fh-replay bash -lc \
     --dst-mac ${RU_MAC} \
     --rate ${RATE} \
     --lead-us ${OPENRU_REPLAY_LEAD_US:-0} \
-    --uplane-delay-us ${OPENRU_REPLAY_UPLANE_DELAY_US:-0} \
+    --uplane-delay-us ${OPENRU_REPLAY_UPLANE_DELAY_US:-${UPLANE_DELAY_US:-0}} \
     --align-cplane-lead-us ${OPENRU_REPLAY_ALIGN_LEAD_US:-${LEAD_US}} \
     --start-marker ${MARKER_REPLAY}"
 
