@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Capture OFH on the compose fh network for M1 golden generation.
+# Capture OFH on the compose fh network for golden generation.
 # Usage: make capture PROFILE=baseline CAPTURE_SECS=12
-# The final guard fails a pcap that cannot contain a full SFN 0 after the
-# stability gate (SFN wraps every 1024 frames = 10.24 s).
+# The final guard computes the golden window from the pcap content (tools/golden/window.py) and fails unless the
+# window fits, the capture has downlink User-Plane, and the fh network is MTU 9000.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PROFILE="${PROFILE:-baseline}"
@@ -24,6 +24,13 @@ ${COMPOSE} --profile fh down --remove-orphans >/dev/null 2>&1 || true
 # Force config recreate so profile switches are not sticky.
 ${COMPOSE} --profile fh up -d --force-recreate du protoru
 sleep 4
+
+MTU=$(docker network inspect openru_fh -f '{{index .Options "com.docker.network.driver.mtu"}}' 2>/dev/null || true)
+if [[ "$MTU" != "9000" ]]; then
+  echo "[capture] FAIL openru_fh MTU=${MTU:-unknown}, expected 9000 (pre-MTU captures lack DL User-Plane)" >&2
+  ${COMPOSE} --profile fh down --remove-orphans >/dev/null 2>&1 || true
+  exit 1
+fi
 
 # Confirm mounted bandwidth from inside containers
 cid=$(${COMPOSE} --profile fh ps -q protoru)
@@ -48,36 +55,18 @@ ${COMPOSE} --profile fh logs --no-color du 2>&1 | tee "${ROOT}/docs/reports/raw/
 ${COMPOSE} --profile fh down --remove-orphans >/dev/null 2>&1 || true
 test -s "$OUT"
 
-# SFN guard: the null-radio gate waits for the next full SFN 0 after the
-# N-slot stability window. A capture shorter than one 1024-frame period
-# (10.24 s) is not guaranteed to contain it; the replay would never start.
-SFN_PERIOD_S=10.24
-STABLE_GATE_S=0.05   # 100 slots at 30 kHz SCS
-if python3 -c "import scapy" 2>/dev/null; then
-  SPAN=$(python3 - "$OUT" <<'PY'
-import sys
-from scapy.all import PcapReader
-first = last = None
-with PcapReader(sys.argv[1]) as reader:
-    for pkt in reader:
-        t = float(pkt.time)
-        if first is None:
-            first = t
-        last = t
-print(f"{last - first:.6f}" if first is not None else "0")
-PY
-)
-else
-  SPAN="$SECS"
-  echo "[capture] scapy not available; using requested duration ${SECS}s for the SFN guard"
-fi
-if python3 -c "import sys; sys.exit(0 if float('${SPAN:-0}') >= ${SFN_PERIOD_S} + ${STABLE_GATE_S} else 1)"; then
-  echo "[capture] SFN guard OK: span ${SPAN}s >= ${SFN_PERIOD_S}s + stability gate"
-else
-  echo "[capture] FAIL: pcap span ${SPAN:-0}s cannot contain a full SFN 0 after the ${STABLE_GATE_S}s stability gate." >&2
-  echo "[capture] SFN wraps every 1024 frames = 10.24 s. Increase CAPTURE_SECS (e.g. 12) or capture across an SFN 0." >&2
+# Window guard: anchor the window to the pcap's first DL C-plane and require the expected User-Plane content.
+T2A_US=$(sed -n 's/^[[:space:]]*t2a_min_cp_dl:[[:space:]]*\([0-9][0-9]*\).*/\1/p' "$PROTORU_CONFIG_PATH" | head -1)
+T2A_US="${T2A_US:-2235}"
+WINDOW=$(sed -n 's/.*max_dump_slots=\([0-9][0-9]*\).*/\1/p' "$PROTORU_CONFIG_PATH" | head -1)
+WINDOW="${WINDOW:-4000}"
+WIN_JSON="${OUT%.*}.window.json"
+if ! python3 "${ROOT}/tools/golden/window.py" --pcap "$OUT" --window-slots "$WINDOW" --t2a-us "$T2A_US" --json "$WIN_JSON"; then
+  echo "[capture] FAIL: pcap cannot provide a ${WINDOW}-slot window with DL User-Plane (see message above)." >&2
+  echo "[capture] Increase CAPTURE_SECS or check MTU 9000 and the O-DU data path." >&2
   exit 1
 fi
+echo "[capture] window OK: $(python3 -c "import json,sys;d=json.load(open(sys.argv[1]));print(f\"{d['expected_uplane_count']} DL U-plane slots from {d['start_du_sfn']}.{d['start_du_slot']}\")" "$WIN_JSON")"
 
 ls -la "$OUT"
 echo "[capture] done sha=$(sha256sum "$OUT" | awk '{print $1}')"

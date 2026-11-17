@@ -14,6 +14,10 @@ testdata/pcap/*.pcapng
 testdata/golden/**/port*.cf32
 testdata/golden/**/tx_index.jsonl
 testdata/iq/
+testdata/pcap/*.window.json
+docs/reports/raw/replay-*/
+docs/reports/raw/gen-golden-*/
+docs/reports/raw/replay-start.marker
 
 # Keep golden manifests + checksums + iq_meta in git (small).
 !testdata/golden/**/MANIFEST.json
@@ -29,3 +33,4 @@ docs/reports/raw/build-*.log
 !docs/reports/raw/smoke-fh-*-late-hist.csv
 
 logs/
+tools/golden/__pycache__/

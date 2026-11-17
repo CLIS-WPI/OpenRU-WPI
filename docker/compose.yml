@@ -125,6 +125,8 @@ networks:
   fh:
     name: openru_fh
     driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: "9000"
     ipam:
       config:
         - subnet: 10.54.1.0/24

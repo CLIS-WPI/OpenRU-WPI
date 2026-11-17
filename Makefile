@@ -181,9 +181,9 @@ fetch-golden:
 	@$(ROOT)/scripts/fetch_golden.sh
 
 # CPU replay vs stored golden (requires fetched .cf32 under testdata/golden/).
-# Replays each profile twice offline when generating goldens; CI verifies the
-# on-disk golden still matches a fresh replay dump. baseline uses the full 10 s
-# pcap so the SFN-0 window has 4000 slots; b40/b100 fit in their _3s slices.
+# Every run also enforces the permanent golden checks: dump starts at the golden's window slot, all expected DL
+# User-Plane slots have non-zero energy on every port, no UL-slot leakage, expected non-empty count within tolerance.
+# The window is tracked in testdata/golden/<profile>/window.json and is reused for the dump gate and the check.
 replay-golden: preflight
 	@mkdir -p $(REPORTS)
 	@echo "[replay-golden] profiles=baseline b40 b100 (OPENRU_TAG=$${OPENRU_TAG:-m1})"
@@ -191,15 +191,26 @@ replay-golden: preflight
 	  for prof in baseline b40 b100; do \
 	    echo "[replay-golden] $$prof"; \
 	    test -f testdata/golden/$$prof/MANIFEST.json; \
+	    test -f testdata/golden/$$prof/window.json || { echo "FAIL: missing golden window for $$prof"; exit 1; }; \
+	    test -s testdata/pcap/$$prof.pcapng || { echo "FAIL: missing pcap for $$prof"; exit 1; }; \
 	    test -s testdata/golden/$$prof/port0.cf32 || { \
 	      echo "FAIL: missing golden IQ for $$prof — run make fetch-golden"; exit 1; }; \
-	    pcap=testdata/pcap/$${prof}_3s.pcapng; \
-	    if [ "$$prof" = "baseline" ]; then pcap=testdata/pcap/baseline.pcapng; fi; \
-	    $(ROOT)/scripts/replay_iq_dump.sh $$prof $$pcap \
+	    OPENRU_WINDOW_JSON=testdata/golden/$$prof/window.json \
+	      $(ROOT)/scripts/replay_iq_dump.sh $$prof testdata/pcap/$$prof.pcapng \
 	      $(REPORTS)/replay-golden-$$prof 1.0; \
+	    python3 $(ROOT)/tools/golden/check.py \
+	      --dump $(REPORTS)/replay-golden-$$prof \
+	      --window-json testdata/golden/$$prof/window.json \
+	      --du-config profiles/$$prof/du-fh.yml \
+	      --out $(REPORTS)/replay-golden-$$prof-check.json; \
 	    python3 $(ROOT)/tools/iq_compare/iq_compare.py \
 	      --dut $(REPORTS)/replay-golden-$$prof \
 	      --golden testdata/golden/$$prof \
 	      --by-slot --threshold 0; \
 	  done; \
 	  echo "[replay-golden] PASS"
+
+# Regenerate the three CPU goldens from fresh MTU-9000 captures: two cold replays each (0 differing samples), then
+# install the window, IQ, tx index and MANIFEST into testdata/golden/<profile>/.
+gen-golden: preflight
+	@OPENRU_TAG=$${OPENRU_TAG:-m1} $(ROOT)/scripts/gen_golden.sh
