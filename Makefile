@@ -198,7 +198,10 @@ replay-golden: preflight
 	    test -s testdata/pcap/$$prof.pcapng || { echo "FAIL: missing pcap for $$prof"; exit 1; }; \
 	    test -s testdata/golden/$$prof/port0.cf32 || { \
 	      echo "FAIL: missing golden IQ for $$prof — run make fetch-golden"; exit 1; }; \
-	    OPENRU_WINDOW_JSON=testdata/golden/$$prof/window.json \
+	    tag=$$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1])).get("image") or "")' testdata/golden/$$prof/MANIFEST.json); \
+	    sender=$$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1])).get("sender") or "c")' testdata/golden/$$prof/MANIFEST.json); \
+	    OPENRU_WINDOW_JSON=testdata/golden/$$prof/window.json OPENRU_TAG=$${tag:-$${OPENRU_TAG:-m1}} \
+	      OPENRU_REPLAY_SENDER=$$sender \
 	      $(ROOT)/scripts/replay_iq_dump.sh $$prof testdata/pcap/$$prof.pcapng \
 	      $(REPORTS)/replay-golden-$$prof 1.0; \
 	    python3 $(ROOT)/tools/golden/check.py \

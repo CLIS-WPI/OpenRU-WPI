@@ -44,3 +44,24 @@ OPENRU_REPLAY_SENDER=c OPENRU_REPLAY_CPUSET=52 OPENRU_REPLAY_UPLANE_DELAY_US=0 \
   scripts/replay_iq_dump.sh b100 testdata/pcap/b100.pcapng /tmp/b100-c
 # send_error_us line in the replay log; RU late counts in /tmp/b100-c/ru.log
 ```
+
+## Host-latency finding (step 4 re-run)
+
+The accurate C sender exposed a host problem that the slow Python sender had masked. With `OPENRU_REPLAY_SENDER=c`
+the **baseline** two cold replays differed at **2 DU slots** (port0 28.0 and 140.0); with the committed Python sender
+the same baseline pcap gives two clean replays (0 differing) because its parse lag is deterministic — it is
+reproducible but late, not the live timing. `quiet_host.py` reports `valid: true` (average CPU), but the host has
+**no `isolcpus`/`nohz_full`** and `sched_rt_runtime_us=950000`, so a fast sender sees random 1–3 ms preemptions
+(12/55,157 frames standalone, 36/55,157 with the RU). Those preemptions are what make the two runs differ.
+
+Consequence: on this host, **0-differing** is achievable only with the deterministic (slow) Python sender for the
+low-rate profiles. The b100 requirement (0 differing **and** 0 late DL grids) needs both an isolated core (to remove
+the random preemption) and a fast DFT (the FFTW image removes the RU backpressure). The host currently provides
+neither.
+
+State after this step:
+- `testdata/golden/baseline` regenerated from the new MTU-9000 capture with the Python sender: 513/513 expected
+  slots, two cold replays 0 differing, MANIFEST `image=m2`, `sender=python`.
+- `testdata/golden/b40` unchanged (image m2, sender python; pcap and golden consistent).
+- `testdata/golden/b100` remains `status: deferred`.
+- `make replay-golden` reads each golden's `image`/`sender` from its MANIFEST and skips deferred profiles.

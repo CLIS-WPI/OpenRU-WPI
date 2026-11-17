@@ -8,6 +8,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 TAG="${OPENRU_TAG:?set OPENRU_TAG to the candidate image tag}"
+export OPENRU_REPLAY_SENDER="${OPENRU_REPLAY_SENDER:-python}"
 RAW="${ROOT}/docs/reports/raw/gen-golden"
 mkdir -p "$RAW"
 
@@ -22,8 +23,10 @@ trap 'rm -f /tmp/openru-measure.lock' EXIT
 for prof in baseline b40 b100; do
   secs=12
   [[ "$prof" != "baseline" ]] && secs=6
-  echo "[gen-golden] capture $prof (${secs}s)"
-  CAPTURE_SECS="$secs" PROFILE="$prof" make -C "$ROOT" OPENRU_TAG="$TAG" capture
+  tag="$TAG"
+  [[ "$prof" == "b100" ]] && tag="${B100_TAG:-$TAG}"
+  echo "[gen-golden] capture $prof (${secs}s, image $tag)"
+  CAPTURE_SECS="$secs" PROFILE="$prof" make -C "$ROOT" OPENRU_TAG="$tag" capture
 
   pcap="${ROOT}/testdata/pcap/${prof}.pcapng"
   test -s "$pcap"
@@ -32,7 +35,7 @@ for prof in baseline b40 b100; do
 
   for i in 1 2; do
     echo "[gen-golden] replay $prof run $i"
-    OPENRU_WINDOW_JSON="$win" OPENRU_TAG="$TAG" \
+    OPENRU_WINDOW_JSON="$win" OPENRU_TAG="$tag" \
       "${ROOT}/scripts/replay_iq_dump.sh" "$prof" "$pcap" "${RAW}/${prof}-${i}" 1.0
     python3 "${ROOT}/tools/golden/check.py" --dump "${RAW}/${prof}-${i}" --window-json "$win" \
       --du-config "${ROOT}/profiles/${prof}/du-fh.yml" --out "${RAW}/${prof}-${i}.check.json"
@@ -51,7 +54,7 @@ for prof in baseline b40 b100; do
   python3 "${ROOT}/tools/golden/manifest.py" \
     --dump "$dst" --profile "$prof" --profile-yaml "${ROOT}/profiles/${prof}/protoru-null.yml" \
     --window-json "$dst/window.json" --pcap "testdata/pcap/${prof}.pcapng" \
-    --tag "$TAG" --mtu 9000 --check-json "${RAW}/${prof}-1.check.json" \
+    --tag "$tag" --sender "$OPENRU_REPLAY_SENDER" --mtu 9000 --check-json "${RAW}/${prof}-1.check.json" \
     --out-dir "$dst" --root "$ROOT"
 done
 echo "[gen-golden] done: baseline b40 b100 regenerated with $TAG"

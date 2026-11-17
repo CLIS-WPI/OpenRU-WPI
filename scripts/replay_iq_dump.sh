@@ -91,7 +91,7 @@ docker rm -f openru-fh-replay >/dev/null 2>&1 || true
 docker run -d --name openru-fh-replay \
   --network openru_fh --ip 10.54.1.10 --mac-address "$DU_MAC" \
   --cap-add NET_RAW --cap-add NET_ADMIN \
-  --cpuset-cpus "${OPENRU_REPLAY_CPUSET:-39}" \
+  --cpuset-cpus "${OPENRU_REPLAY_CPUSET:-52}" \
   -v "${ROOT}:/work" \
   --entrypoint bash \
   "openru/protoru:${TAG}" \
@@ -117,7 +117,7 @@ if [[ "${OPENRU_REPLAY_SENDER:-python}" == "c" ]]; then
     gcc -O2 -std=c11 -Wall -Wextra -o "${ROOT}/tools/fh_replay/fh_replay_c" \
       "${ROOT}/tools/fh_replay/fh_replay_c.c" -lm
   fi
-  SENDER_CMD="taskset -c ${OPENRU_REPLAY_CPUSET:-39} /work/tools/fh_replay/fh_replay_c"
+  SENDER_CMD="taskset -c ${OPENRU_REPLAY_CPUSET:-52} /work/tools/fh_replay/fh_replay_c"
 else
   SENDER_CMD="python3 /work/tools/fh_replay/fh_replay.py"
 fi

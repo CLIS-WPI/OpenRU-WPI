@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import hashlib
 import json
 import re
@@ -59,6 +60,7 @@ def main() -> int:
     ap.add_argument("--window-json", required=True, type=Path)
     ap.add_argument("--pcap", required=True)
     ap.add_argument("--tag", required=True)
+    ap.add_argument("--sender", default=os.environ.get("OPENRU_REPLAY_SENDER", "python"))
     ap.add_argument("--mtu", type=int, required=True)
     ap.add_argument("--check-json", default=None, type=Path)
     ap.add_argument("--out-dir", required=True, type=Path)
@@ -116,6 +118,7 @@ def main() -> int:
         "proto_ru_commit": git_rev(args.root / "external" / "proto-ru"),
         "proto_ru_branch": git_branch(args.root / "external" / "proto-ru"),
         "image": args.tag,
+        "sender": args.sender,
         "network_mtu": args.mtu,
         "compare_gate": "0 differing samples (CPU vs CPU, two cold replays)",
         "golden_check": json.loads(args.check_json.read_text()) if args.check_json and args.check_json.exists() else {},
