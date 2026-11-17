@@ -69,5 +69,18 @@
     "du_log": "mac_metrics_consumers.cpp:37 slots=[start, END)",
     "ru_log": "ru_emulator_tti_orchestrator.cpp:161 ofh=",
     "iq_compare": "Aligns on DU slot from iq_meta/tx_index, normalizes the shortest offset, and requires full golden-range overlap; does not remap by \u0394."
+  },
+  "status": "deferred",
+  "deferred_at": "2026-11-17",
+  "deferred_reason": "b100 cannot produce a deterministic IQ golden with the current replay/image: during the 800-slot dump the RU lower PHY reported 1246 'Downlink data late' events (lib/ru/sdr/ru_lower_phy_error_adapter.h:26) and the dump contained 1/103 expected DL slots (worst run); repeated cold replays vary 1-95/103. The RU correctly drops late DL resource grids, so the replay stimulus is outside the real-time budget at 100 MHz. A new sender and a b100-specific image are being investigated (see M1.md). Do not use these files as a golden.",
+  "deferred_evidence": {
+    "run": "docs/reports/raw/gen-golden/b100-1 (ref) and /tmp/b100-diag (log)",
+    "ru_log": "/tmp/b100-diag/ru.log",
+    "downlink_data_late_events": 1246,
+    "puxch_request_late_events": 416,
+    "dump_nonempty_offsets": [
+      19
+    ],
+    "expected_slots": 103
   }
 }

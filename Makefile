@@ -191,6 +191,9 @@ replay-golden: preflight
 	  for prof in baseline b40 b100; do \
 	    echo "[replay-golden] $$prof"; \
 	    test -f testdata/golden/$$prof/MANIFEST.json; \
+	    if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if d.get("status")=="deferred" else 1)' testdata/golden/$$prof/MANIFEST.json; then \
+	      echo "[replay-golden] $$prof deferred — skipping"; continue; \
+	    fi; \
 	    test -f testdata/golden/$$prof/window.json || { echo "FAIL: missing golden window for $$prof"; exit 1; }; \
 	    test -s testdata/pcap/$$prof.pcapng || { echo "FAIL: missing pcap for $$prof"; exit 1; }; \
 	    test -s testdata/golden/$$prof/port0.cf32 || { \
