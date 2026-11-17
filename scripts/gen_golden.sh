@@ -22,7 +22,7 @@ for prof in baseline b40 b100; do
   secs=12
   [[ "$prof" != "baseline" ]] && secs=6
   echo "[gen-golden] capture $prof (${secs}s)"
-  OPENRU_TAG="$TAG" CAPTURE_SECS="$secs" PROFILE="$prof" make -C "$ROOT" capture
+  CAPTURE_SECS="$secs" PROFILE="$prof" make -C "$ROOT" OPENRU_TAG="$TAG" capture
 
   pcap="${ROOT}/testdata/pcap/${prof}.pcapng"
   test -s "$pcap"
