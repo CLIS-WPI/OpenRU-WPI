@@ -1,5 +1,9 @@
 # OpenRU Agent Brief: Phase 1 — GPU-native ProtO-RU on H100 (Docker)
 
+> **Historical document.** This is the original Phase 1 brief (Nov 2026, GPU-first H100 plan) kept for the
+> milestone acceptance record. It is **not** the current plan: see [`docs/ROADMAP.md`](ROADMAP.md) for stages and
+> next steps, [`README.md`](../README.md) for status, and [`docs/TESTS.md`](TESTS.md) for the test catalogue.
+
 Nov 13, 2026 · @Milad Natanzi
 
 ## Mission and scope
