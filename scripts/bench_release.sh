@@ -69,10 +69,13 @@ echo "[release] dest    $DEST"
 
 # --------------------------------------------------------------------- build --
 step "building $IMG from $SHA (BENCH=1)"
-BENCH=1 OPENRU_TAG="$TAG" UHD_VERSION="$UHD_VERSION" MARCH="$MARCH" \
-  OPENRU_GIT_COMMIT="$SHA" OPENRU_GIT_SUBMODULE="$SUBMODULE_COMMIT" \
-  EXTRA_CMAKE_ARGS="-DENABLE_FFTW=ON -DOPENRU_CUDA=OFF -DOPENRU_FFTW_ESTIMATE=ON" \
-  timeout 7200 make build-protoru || fail "image build failed"
+# Make command-line assignments, not env: the Makefile includes lab.env /
+# versions.env, and makefile assignments override the environment (lab.env has
+# MARCH=x86-64-v4, versions.env has OPENRU_TAG=m2).
+BENCH=1 OPENRU_GIT_COMMIT="$SHA" OPENRU_GIT_SUBMODULE="$SUBMODULE_COMMIT" \
+  timeout 7200 make build-protoru OPENRU_TAG="$TAG" UHD_VERSION="$UHD_VERSION" MARCH="$MARCH" \
+    EXTRA_CMAKE_ARGS="-DENABLE_FFTW=ON -DOPENRU_CUDA=OFF -DOPENRU_FFTW_ESTIMATE=ON" \
+  || fail "image build failed"
 docker image inspect "$IMG" >/dev/null 2>&1 || fail "build finished but $IMG is missing"
 docker image inspect openru/core:m0 >/dev/null 2>&1 || fail "openru/core:m0 missing (run make build-core)"
 docker tag openru/core:m0 "$CORE_TAG"
@@ -93,8 +96,9 @@ echo "[release] smoke: UHD $CONT_UHD ok"
 step "smoke: replay-golden baseline with the null radio (measurement lock held)"
 echo "$$" > "$LOCK"
 trap 'rm -f "$LOCK"' EXIT
-OPENRU_MEASURE_LOCK_HELD=1 OPENRU_REPLAY_TAG="$TAG" OPENRU_TAG="$TAG" \
-  timeout 2400 make replay-golden || fail "replay-golden smoke failed for $TAG"
+# OPENRU_TAG on the command line: versions.env sets it (m2) otherwise.
+OPENRU_MEASURE_LOCK_HELD=1 OPENRU_REPLAY_TAG="$TAG" \
+  timeout 2400 make replay-golden OPENRU_TAG="$TAG" || fail "replay-golden smoke failed for $TAG"
 rm -f "$LOCK"
 trap - EXIT
 echo "[release] smoke: replay-golden baseline PASS"
