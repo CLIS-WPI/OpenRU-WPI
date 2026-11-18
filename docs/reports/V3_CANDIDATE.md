@@ -84,5 +84,8 @@ Replay: `docs/reports/raw/v3-smoke/replay-golden-baseline/{run.log,check.json}`;
   host (mandatory step in `docs/BENCH_BUNDLE.md`); the AVX-512 server cannot answer this because FFTW/OCUDU dispatch
   at runtime.
 - 100 MHz with v3 — not run (b100 golden remains deferred; 100 MHz is not validated on this host for v4 either).
-- The N310 MPM/filesystem vs container UHD 4.7.0.0 compatibility — device address/version pending
-  (`docs/OPEN_QUESTIONS.md`).
+- The N310 MPM/filesystem vs container UHD compatibility — resolved for the bench host: N310-10 (serial
+  `33A6E56`, `192.168.10.2`) has MPM 4.11.0.0-g0d7ed3b1 / FPGA 8.2 / filesystem 20260908111319, and the bench
+  image `openru/protoru:v1-candidate-v3-uhd411` ships UHD 4.11.0.0 (`e2e955360db9`); `make bench-preflight` runs
+  `uhd_usrp_probe` inside that image and fails on any MPM incompatibility (`docs/BENCH_BUNDLE.md`).
+- The first live N310 run (20 MHz 2×2, `profiles/bench-20mhz`) — pending the bench-host campaign.

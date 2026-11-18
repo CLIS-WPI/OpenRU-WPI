@@ -21,7 +21,7 @@ else
            -f "$ROOT/docker/compose.yml")
 fi
 
-"$ROOT/scripts/gpu1_preflight.sh"
+OPENRU_PREFLIGHT_ENV="$ENV_FILE" "$ROOT/scripts/gpu1_preflight.sh"
 
 set -a; . "$ENV_FILE"; set +a
 echo

@@ -1,0 +1,64 @@
+# bench-20mhz ProtO-RU — UHD radio (N310-10), 20 MHz 2x2, stage 1 of the bench
+# campaign (docs/BENCH_BUNDLE.md). Antennas: RF0 -> RM520N ANT2 (primary n78 TX),
+# RF1 -> ANT0 (second TX). CPU lanes are the bench map (Protó-RU 2-5).
+# Device args + master clock rate: see the sdr block below.
+
+log:
+  filename: /tmp/proto-ru.log
+  level: info
+
+ru_emu:
+  timing_cpus: [2]
+  cells:
+    - network_interface: eth0
+      ru_mac_addr: 02:00:00:00:00:20
+      du_mac_addr: 02:00:00:00:00:10
+      enable_promiscuous: true
+
+      bandwidth: 20
+      common_scs: 30
+      dl_arfcn: 628032
+      band: 78
+
+      dl_port_id: [0, 1]
+      ul_port_id: [0, 1]
+      prach_port_id: [4, 5]
+      prach_format: short
+
+      compr_method_dl: bfp
+      compr_bitwidth_dl: 9
+      compr_method_ul: bfp
+      compr_bitwidth_ul: 9
+      compr_method_prach: bfp
+      compr_bitwidth_prach: 9
+      is_ul_static_compr_hdr: true
+      is_dl_static_compr_hdr: true
+      iq_scaling: 1.0
+
+      t2a_max_cp_dl: 2435
+      t2a_min_cp_dl: 2235
+      t2a_max_cp_ul: 2435
+      t2a_min_cp_ul: 2235
+      t2a_max_up: 2215
+      t2a_min_up: 2015
+      ta3_max_up: 1200
+      ta3_min_up: 800
+
+      ofh_cpus: [3, 4]
+      sdr:
+        device_driver: "uhd"
+        # N310-10 (serial 33A6E56), IQ over SFP1 10 GbE. MCR 184.32 MHz = 8 x
+        # 23.04 Msps (integer decimation; OCUDU's N3x0 default 122.88 MHz is
+        # not an integer multiple of 23.04 and would be rejected).
+        device_args: "type=n3xx,addr=192.168.10.2,mgmt_addr=192.168.10.2,clock_source=internal,time_source=internal,master_clock_rate=184.32e6"
+        srate: 23.04
+        # Day-1 placeholder gains (N310 range 0-30 dB); lock after the first
+        # conducted RF check with the RM520N.
+        tx_gain: 10
+        rx_gain: 10
+        clock_source: internal
+        sync_source: internal
+        max_proc_delay: 2
+        execution_profile: auto
+        ru_cpus: [5]
+        pinning_policy: mask

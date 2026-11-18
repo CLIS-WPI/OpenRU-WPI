@@ -68,7 +68,8 @@ Other required host settings: MTU 9000 on the fronthaul port, `PROTORU_SHM_SIZE`
 
 | Tag | Config | Provenance |
 |---|---|---|
-| `openru/protoru:v1-candidate-v3` | FFTW + ESTIMATE, `MARCH=x86-64-v3` (AVX2) | built on the dev server 2026-11-18, submodule `d8d2097894`, image `c88dc855d7de` |
+| `openru/protoru:v1-candidate-v3-uhd411` | FFTW + ESTIMATE, `MARCH=x86-64-v3` (AVX2), **UHD 4.11.0.0** | bench image, built on the dev server 2026-11-18, submodule `d8d2097894`, image `e2e955360db9` |
+| `openru/protoru:v1-candidate-v3` | FFTW + ESTIMATE, `MARCH=x86-64-v3` (AVX2), UHD 4.7.0.0 | built on the dev server 2026-11-18, submodule `d8d2097894`, image `c88dc855d7de` |
 | `openru/protoru:v1-candidate` | FFTW + ESTIMATE, `MARCH=x86-64-v4` (AVX-512) | v1 reference (GPU-server milestone runs) |
 
 The AVX-512 kernel variants inside OCUDU (`_avx512` objects) are guarded by runtime CPU-feature selection, so a
@@ -79,9 +80,12 @@ v3 image is safe on a non-AVX-512 host; the reverse is not.
 
 ```bash
 # one switch for every make target (compose env file + CPU overlay + preflight)
-make BENCH=1 smoke-fh            # live 60 s gate (SMOKE_SECS=600 for the campaign)
-make BENCH=1 replay-golden
-BENCH=1 make bench-preflight
+BENCH=1 make bench-preflight     # includes the in-container N310 probe
+BENCH=1 make build-protoru       # UHD 4.11.0.0 image (docker/bench.env)
+BENCH=1 PROFILE=bench-20mhz PROTORU_PROFILE=uhd make smoke-fh   # live 60 s gate
+BENCH=1 PROFILE=bench-20mhz PROTORU_PROFILE=uhd SMOKE_SECS=600 make smoke-fh
+BENCH=1 OPENRU_REPLAY_TAG=v1-candidate-v3-uhd411 make replay-golden
+make up                          # prints the core map + antenna map
 ```
 
 `BENCH=1` makes the Makefile use `docker/bench.env`, add `docker/compose.cpu.yml`, and
@@ -102,6 +106,45 @@ Goldens record the image in `testdata/golden/<profile>/MANIFEST.json` (`image`).
 differs from the v4 goldens, a v3 golden set is generated (two cold replays, 0 differing samples) and its MANIFEST
 records `image: v1-candidate-v3`. Never present a v4 golden as validation of the v3 image.
 
+## Radio (stage 1: N310-10 only)
+
+| Radio | Address | NIC (host) | Use |
+|---|---|---|---|
+| **n310-10** | `192.168.10.2` (mgmt same) | `enp5s0f1np1` `192.168.10.1/24`, MTU 9000 | **stage 1** |
+| n310-20 | `192.168.20.2` | `enp5s0f2np2` | later stage |
+| n310-30 | `192.168.30.2` | `enp5s0f3np3` | later stage |
+
+- **N310 software:** MPM 4.11.0.0-g0d7ed3b1 (MPM version 7.0), FPGA 8.2, filesystem 20260908111319.
+- **Clock:** sources available are `internal`, `external`, `gpsdo`. Day 1 uses
+  `clock_source=internal,time_source=internal`; the OctoClock on the LAN (`192.168.60.2`) provides the
+  10 MHz/PPS reference for a later external-clock stage.
+- **Host UHD must not be used by the container.** The host has both a 4.10.0 distro package and a 4.11.0
+  source build installed; the image ships its own UHD and the preflight probes **inside the container**.
+- **Image:** `openru/protoru:v1-candidate-v3-uhd411` — UHD **4.11.0.0** (matching the N310 MPM), FFTW +
+  ESTIMATE, `MARCH=x86-64-v3`, `OPENRU_CUDA=OFF`. Built with
+  `make BENCH=1 build-protoru` (`UHD_VERSION=4.11.0.0` from `docker/bench.env`). UHD 4.11 needs
+  Protobuf **and gRPC** (`libprotobuf-dev protobuf-compiler libgrpc++-dev protobuf-compiler-grpc`) in the
+  builder base and `libprotobuf32 libgrpc++1.51 libabsl20220623t64` at runtime — added in
+  `docker/Dockerfile.protoru`; without them `uhd_config_info`/`uhd_usrp_probe` die on a missing `.so`.
+- **Preflight** (`make bench-preflight`) verifies the container UHD version equals `4.11.0.0`, then runs
+  `uhd_usrp_probe --args addr=192.168.10.2[,mgmt_addr=192.168.10.2]` **inside the container**
+  (`--network host`) and **fails** on any MPM/filesystem incompatibility, on a missing serial `33A6E56`, or on
+  a probe error. `BENCH_SKIP_USRP=1` is a dev-only escape hatch.
+
+### ProtO-RU device args (bench profile)
+
+`profiles/bench-20mhz/protoru.yml` (20 MHz 2×2, stage 1):
+
+```text
+type=n3xx,addr=192.168.10.2,mgmt_addr=192.168.10.2,clock_source=internal,time_source=internal,master_clock_rate=184.32e6
+```
+
+**Master clock rate 184.32 MHz** because the profile's sample rate is 23.04 Msps (20 MHz, 30 kHz SCS) and
+184.32 = 8 × 23.04 — the integer decimation UHD requires. OCUDU's default for N3x0 is 122.88 MHz
+(`lib/radio/uhd/radio_uhd_device.h`), and 122.88/23.04 = 5.33 is **not** an integer, so the 23.04 Msps rate
+would be rejected; the `master_clock_rate` key must therefore be explicit. 40 MHz (46.08 Msps, ×4) keeps
+184.32 MHz; the 4×4/100 MHz stage re-evaluates it (122.88 or 245.76 MHz for 122.88 Msps).
+
 ## Antenna map (measured cabling)
 
 | N310 RF port | RM520N port | Role |
@@ -116,8 +159,8 @@ on every bring-up (together with the core map and the image tags).
 
 ## Run order (start → last)
 
-1. 20 MHz 2×2 — `baseline` (the reference profile).
-2. 40 MHz 2×2 — `b40`.
+1. 20 MHz 2×2 — `bench-20mhz` (N310 RF0–RF1; benchmarks against the `baseline` goldens).
+2. 40 MHz 2×2 — `b40` (profile to add on top of `bench-20mhz`, MCR stays 184.32 MHz).
 3. 4×4 at 40/100 MHz — **last** (new profile; not yet created, requires radio config + golden per profile).
 
 For each stage, in this order:

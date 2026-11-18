@@ -140,6 +140,13 @@ if ip link show "$IFACE" >/dev/null 2>&1; then
   [[ "$state" == "UP" ]] || fail "$IFACE is not link up"
   [[ "$speed" == "10000Mb/s" ]] || fail "$IFACE speed ${speed:-unknown} != 10000Mb/s (10 GbE required)"
   [[ "$mtu" == "9000" ]] || fail "$IFACE mtu ${mtu:-?} != 9000 (set: sudo ip link set $IFACE mtu 9000)"
+  if [[ -n "${BENCH_USRP_HOST_IP:-}" ]]; then
+    if ip -4 -o addr show "$IFACE" | grep -q " ${BENCH_USRP_HOST_IP} "; then
+      ok "$IFACE has ${BENCH_USRP_HOST_IP} (N310 subnet)"
+    else
+      fail "$IFACE has no ${BENCH_USRP_HOST_IP} address (set: sudo ip addr add ${BENCH_USRP_HOST_IP} dev $IFACE)"
+    fi
+  fi
 else
   fail "interface $IFACE not found (X710 fronthaul port)"
 fi
@@ -176,42 +183,48 @@ else
 fi
 
 # --------------------------------------------------------------- UHD / N310 --
-# Container UHD major must match the device MPM/filesystem generation
-# (N310 MPM 3.x ↔ UHD 3.x filesystem, MPM 4.x ↔ UHD 4.x filesystem).
+# The bench container must not depend on host UHD: the image ships UHD matching
+# the N310 MPM, and the probe runs INSIDE the container against the radio.
+IMG="openru/protoru:${OPENRU_TAG}"
 CONT_UHD=""
-if docker image inspect "openru/protoru:${OPENRU_TAG}" >/dev/null 2>&1; then
-  CONT_UHD="$(docker run --rm --network none --entrypoint /bin/bash \
-    "openru/protoru:${OPENRU_TAG}" -lc 'uhd_config_info --version 2>/dev/null' 2>/dev/null \
-    | grep -Eo 'UHD [0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -1 | awk '{print $2}')"
-  [[ -n "$CONT_UHD" ]] && ok "container UHD ${CONT_UHD} (openru/protoru:${OPENRU_TAG})" || warn "could not read the container UHD version"
-else
-  fail "image openru/protoru:${OPENRU_TAG} not found (build/load the v3 image)"
-fi
-docker image inspect openru/core:m0 >/dev/null 2>&1 || warn "openru/core:m0 not found (needed for smoke-core)"
-
-if command -v uhd_find_devices >/dev/null 2>&1; then
-  DEVS="$(uhd_find_devices 2>&1)"
-  if [[ -n "$USRP_SERIAL" ]] && ! printf '%s' "$DEVS" | grep -q "$USRP_SERIAL"; then
-    if [[ "${BENCH_USRP_REQUIRED:-0}" == "1" ]]; then fail "USRP $USRP_SERIAL not found by host UHD"
-    else warn "USRP $USRP_SERIAL not found yet (address open item; BENCH_USRP_REQUIRED=1 to enforce)"; fi
+if docker image inspect "$IMG" >/dev/null 2>&1; then
+  CONT_UHD="$(docker run --rm --network none --entrypoint /bin/bash "$IMG" -lc \
+    'uhd_config_info --version 2>/dev/null' 2>/dev/null \
+    | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -1)"
+  if [[ -z "$CONT_UHD" ]]; then
+    fail "cannot read the container UHD version from $IMG"
+  elif [[ -n "${BENCH_UHD_VERSION:-}" && "$CONT_UHD" != "$BENCH_UHD_VERSION" ]]; then
+    fail "container UHD ${CONT_UHD} != required ${BENCH_UHD_VERSION} (must match the N310 MPM)"
   else
-    ok "host UHD sees USRP ${USRP_SERIAL:-unknown}"
-    MPM_MAJOR="$(printf '%s' "$DEVS" | grep -Eo 'MPM[^0-9]*([0-9]+)\.[0-9]+' | grep -Eo '[0-9]+' | head -1)"
-    if [[ -n "$MPM_MAJOR" && -n "$CONT_UHD" ]]; then
-      if [[ "${CONT_UHD%%.*}" == "$MPM_MAJOR" ]]; then
-        ok "UHD majors match: container $CONT_UHD, device MPM $MPM_MAJOR.x"
-      else
-        fail "container UHD $CONT_UHD vs device MPM ${MPM_MAJOR}.x: major mismatch — update one side (uhd_images_downloader + usrp_n3xx_fs_updater --type filesystem)"
-      fi
-    elif [[ -z "$MPM_MAJOR" ]]; then
-      warn "device MPM version not exposed by uhd_find_devices; verify with uhd_usrp_probe once the address is known"
+    ok "container UHD ${CONT_UHD} ($IMG)"
+  fi
+
+  if [[ -z "${BENCH_USRP_ADDR:-}" ]]; then
+    fail "BENCH_USRP_ADDR missing (N310 IQ address)"
+  elif [[ "${BENCH_SKIP_USRP:-0}" == "1" ]]; then
+    warn "in-container USRP probe skipped (BENCH_SKIP_USRP=1)"
+  else
+    PROBE_ARGS="addr=${BENCH_USRP_ADDR}${BENCH_MGMT_ADDR:+,mgmt_addr=${BENCH_MGMT_ADDR}}"
+    PROBE_RC=0
+    OUT="$(timeout 180 docker run --rm --network host --entrypoint /bin/bash "$IMG" -lc \
+      "uhd_usrp_probe --args '${PROBE_ARGS}'" 2>&1)" || PROBE_RC=$?
+    if printf '%s' "$OUT" | grep -qiE "compatib|MPM.*(expected|requires)|update.*(filesystem|FPGA|image)"; then
+      fail "N310 MPM/filesystem incompatible with container UHD ${CONT_UHD:-?}: $(printf '%s' "$OUT" | grep -iE 'compatib|MPM|filesystem|FPGA' | head -3 | tr '\n' ' ')"
+    elif [[ "$PROBE_RC" -ne 0 ]]; then
+      DETAIL="$(printf '%s' "$OUT" | grep -iE "error|no devices|not found" | head -2 | tr '\n' ' ')"
+      [[ -n "$DETAIL" ]] || DETAIL="$(printf '%s' "$OUT" | tail -2 | tr '\n' ' ')"
+      fail "uhd_usrp_probe failed (rc=$PROBE_RC) for ${PROBE_ARGS}: ${DETAIL}"
+    elif [[ -n "${BENCH_USRP_SERIAL:-}" ]] && ! printf '%s' "$OUT" | grep -q "${BENCH_USRP_SERIAL}"; then
+      fail "probe returned no USRP with serial ${BENCH_USRP_SERIAL} (${PROBE_ARGS})"
+    else
+      ok "in-container uhd_usrp_probe OK: ${PROBE_ARGS}, serial ${BENCH_USRP_SERIAL:-?}"
+      printf '%s\n' "$OUT" | grep -iE "MPM|FPGA|filesystem" | head -2 | sed 's/^/      /'
     fi
   fi
 else
-  wake_pkg=""
-  command -v docker >/dev/null && wake_pkg="docker"
-  fail "host uhd_find_devices not installed (UHD is required on the bench host: apt install libuhd-dev uhd-host, or uhd_find_devices via the ${wake_pkg:-container} image)"
+  fail "image ${IMG} not found (build with UHD ${BENCH_UHD_VERSION:-4.11.0.0}: make BENCH=1 build-protoru)"
 fi
+docker image inspect openru/core:m0 >/dev/null 2>&1 || warn "openru/core:m0 not found (needed for smoke-core)"
 
 echo
 if [[ "$FAIL" -eq 0 ]]; then
