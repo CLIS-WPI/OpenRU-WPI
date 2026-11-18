@@ -210,6 +210,14 @@ UHD/MARCH/FFTW/CUDA configuration, smoke results, every image (`repo_tag`, image
 then compares the image's `org.openru.git.commit` label with the checked-out repo HEAD and
 **warns** when they differ (an older release is a supported state; the warning makes it visible).
 
+First end-to-end check (2026-11-18, this server): `make bench-release` produced `bench-a8998ce`
+(commit `a8998ce`, submodule `d8d2097894`; 2.1 GB protoru + 0.79 GB core tarballs, SHA-256 in
+`SHA256SUMS`); the tags were removed and `scripts/bench_load.sh` re-loaded the release with matching
+image IDs (`c72090b0365e`, `d0b9d41bde6d`), and `bench-preflight` reported `ok container UHD 4.11.0.0`
+and `ok image commit matches repo HEAD`. The refusal paths were exercised too (dirty tree, branch with no
+`origin/<branch>`), and `make bench-ship HOST=ran` printed the manual copy steps because `ran` is not
+reachable in SSH batch mode from this server.
+
 `docker/bench.env` uses `OPENRU_TAG=bench-latest`; pin a specific release with
 `OPENRU_TAG=bench-<short-sha>` when a campaign must stay on one image. SSH reachability of the
 bench host (`ran`) is not assumed: `make bench-ship` falls back to printing the manual
