@@ -37,12 +37,26 @@ GPU hosts only.
 ## Kernel / real-time isolation (REQUIRED, fail closed)
 
 ```text
-isolcpus=2-11 nohz_full=2-11 rcu_nocbs=2-11 irqaffinity=0-1,12-19
+isolcpus=2-11 nohz_full=2-11 rcu_nocbs=2-11 irqaffinity=0-1,12-19 intel_idle.max_cstate=1 processor.max_cstate=1
 ```
 
 Set via GRUB (`/etc/default/grub`, then `update-grub` + reboot). Why: without isolation the scheduler, the timer
 tick and RCU disturb the DU/RU RT threads, which is what made the b100 golden impossible on the shared server
-(`docs/reports/B100_SENDER.md`).
+(`docs/reports/B100_SENDER.md`). The two `*_max_cstate=1` arguments keep the CPUs out of deep idle states, which
+otherwise add wake-up latency on the order of tens of microseconds.
+
+**`hwlatdetect` is not an isolation test.** It measures *hardware* latency sources — firmware/SMI (System
+Management Interrupt) handlers, memory/bus contention and C-state exit — none of which `isolcpus`/`nohz_full`
+change. If it stays above 20 µs after the cmdline is applied, check these BIOS settings on the bench host:
+
+- CPU C-states: **disabled** (C1E, C3, C6, C7, package C-states) and "C-State limit" = `C0`;
+- "Power Technology"/"Energy Efficient Turbo"/EIST: **Maximum Performance** (no frequency scaling surprises);
+- SMI/legacy sources: "Legacy USB Support" **disabled** (USB SMI), "PCIe ASPM" **disabled**, "HPET" enabled;
+- "Memory Frequency"/XMP: keep the validated profile (memory contention shows up as SMI latency);
+- firmware: BIOS/ME updates per the vendor's low-latency guidance.
+
+The cmdline arguments are listed for the operator; `bench-preflight` enforces the isolation trio and `irqaffinity`
+but does not fail on the `*_max_cstate` values (a BIOS that disables C-states makes them redundant).
 
 `scripts/bench_preflight.sh` (via `make bench-preflight`) fails closed when:
 
@@ -209,7 +223,11 @@ UHD/MARCH/FFTW/CUDA configuration, the `march_check` values (builder log + image
 smoke results, every image (`repo_tag`, image ID,
 `RepoDigests`, size), and every tarball (bytes, SHA-256); `SHA256SUMS` covers the tarballs.
 
-`bench_load.sh` prints the release commit and tags `bench-latest` locally. `bench-preflight`
+`bench_load.sh` verifies the tarball SHA-256, then the **content**: the config digest read from the tarball
+(`manifest.json` or OCI `index.json`) plus the provenance labels recorded in RELEASE.json. Docker 29 with the
+containerd image store assigns different image IDs on `docker load` than the build host had, so loaded IDs are
+**recorded in `LOAD-REPORT.json` but not required to match**; identity is the config digest. It prints the release
+commit and tags `bench-latest` locally. `bench-preflight`
 then compares the image's `org.openru.git.commit` label with the checked-out repo HEAD and
 **warns** when they differ (an older release is a supported state; the warning makes it visible).
 

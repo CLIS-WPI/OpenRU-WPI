@@ -137,19 +137,27 @@ done
 BUILT_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 HOSTNAME_FQ="$(hostname -f 2>/dev/null || hostname)"
 python3 - "$DEST" "$SHA" "$SHORT" "$BRANCH" "$SUBMODULE_COMMIT" "$TAG" \
-  "$UHD_VERSION" "$MARCH" "$BUILT_AT" "$HOSTNAME_FQ" "$CONT_UHD" <<'PY'
+  "$UHD_VERSION" "$MARCH" "$BUILT_AT" "$HOSTNAME_FQ" "$CONT_UHD" "$ROOT" <<'PY'
 import hashlib, json, os, pathlib, subprocess, sys
 
 dest = pathlib.Path(sys.argv[1])
-sha, short, branch, submodule, tag, uhd, march, built_at, host, cont_uhd = sys.argv[2:12]
+sha, short, branch, submodule, tag, uhd, march, built_at, host, cont_uhd, root = sys.argv[2:13]
+sys.path.insert(0, str(pathlib.Path(root) / "tools" / "bench"))
+from load_verify import config_digest_from_tar
 
 def image_info(repo_tag):
     out = subprocess.run(["docker", "image", "inspect", repo_tag, "--format",
-                          '{{.Id}}\t{{json .RepoDigests}}\t{{.Size}}'],
+                          '{{.Id}}\t{{json .RepoDigests}}\t{{.Size}}\t{{json .Config.Labels}}'],
                          capture_output=True, text=True, check=True).stdout.strip()
-    image_id, digests, size = out.split("\t")
+    image_id, digests, size, labels = out.split("\t")
+    tarball = pathlib.Path(repo_tag.replace("/", "_").replace(":", "_") + ".tar.gz")
+    cfg = config_digest_from_tar(str(dest / tarball)).get(repo_tag)
+    labels = json.loads(labels) if labels else {}
     return {"repo_tag": repo_tag, "id": image_id,
-            "repo_digests": json.loads(digests), "size_bytes": int(size)}
+            "repo_digests": json.loads(digests), "size_bytes": int(size),
+            "file": tarball.name,
+            "config_digest": cfg,
+            "labels": {k: v for k, v in labels.items() if k.startswith("org.openru.")}}
 
 files = []
 for name in (dest / ".files.tmp").read_text().split():

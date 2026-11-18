@@ -33,32 +33,13 @@ USRP_SERIAL="${USRP_SERIAL:-${BENCH_USRP_SERIAL:-}}"
 : "${DU_CPUSET:?bench.env must set DU_CPUSET}"
 : "${OPENRU_TAG:?bench.env must set OPENRU_TAG}"
 
-# cpuset_expand <list> → space-separated CPU numbers ("2-5,8" → "2 3 4 5 8").
-cpuset_expand() {
-  python3 - "$1" <<'PY'
-import sys
-out = []
-for part in sys.argv[1].split(","):
-    part = part.strip()
-    if not part:
-        continue
-    if "-" in part:
-        a, b = part.split("-", 1)
-        out.extend(range(int(a), int(b) + 1))
-    else:
-        out.append(int(part))
-print(" ".join(map(str, out)))
-PY
-}
-in_set() { # in_set <cpu> <list>
-  local c="$1"; shift
-  [[ " $(cpuset_expand "$1") " == *" $c "* ]]
-}
-subset() { # subset <a-list> <b-list>
-  local c
-  for c in $(cpuset_expand "$1"); do in_set "$c" "$2" || return 1; done
-  return 0
-}
+# CPU lists are parsed by tools/bench/cpulist.py (ranges, commas, spaces, mixed;
+# sysfs/lscpu output is space-separated, cmdline is comma-separated).
+CPULIST="python3 $ROOT/tools/bench/cpulist.py"
+cpuset_expand() { $CPULIST expand "$1"; }
+in_set() { $CPULIST contains "$1" "$2"; }
+subset() { $CPULIST check "$1" "$2" 2>/dev/null; }
+
 
 echo "== bench preflight ($BENCH_ENV) =="
 echo "    protoru=${PROTORU_CPUSET} du=${DU_CPUSET} tag=${OPENRU_TAG} iface=${IFACE}"
