@@ -1,0 +1,21 @@
+# CPU-only overlay for the bench bundle host (no NVIDIA GPU).
+#
+# Usage on the bench host (see docs/BENCH_BUNDLE.md):
+#   docker compose --env-file docker/bench.env \
+#     -f docker/compose.yml -f docker/compose.cpu.yml <service ...>
+#
+# protoru runs the v1-candidate-v3 CPU image; the GPU pin, the nvidia-smi
+# precheck and the NVIDIA env vars are removed. Open5GS/core containers are
+# pinned to the E-cores via CORE_CPUSET from docker/bench.env.
+services:
+  protoru:
+    gpus: !reset []
+    deploy: !reset []
+    environment:
+      NVIDIA_VISIBLE_DEVICES: ""
+      NVIDIA_DRIVER_CAPABILITIES: ""
+    command: !override
+      - "exec ru_emulator -c /opt/protoru.yml"
+
+  core:
+    cpuset: ${CORE_CPUSET:?Set CORE_CPUSET in docker/bench.env}

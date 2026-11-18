@@ -5,7 +5,7 @@ Defaults from the Phase 1 brief; update when a human decides.
 - [x] Software UE: **srsUE over ZMQ** for Milestone 4 (decided 2026-11-17).
 - [x] OCUDU ZMQ radio with ProtO-RU's SDR path: use it for M4 only (`ru_emulator_cli11_schema.cpp` accepts `--device_driver zmq`; ProtO-RU README says ZMQ is unsupported). **Do not use in M1/M2/M3.**
 - [ ] Golden storage: Git LFS on GitHub, a WPI file share, or **Zenodo with a DOI**? **Proposal:** Zenodo record *OpenRU Phase 1 golden IQ — M1* (`baseline`, `b40`, `b100`), concept DOI + per-milestone version DOI, `openru-goldens-m1.tar.zst` (~2.11 GiB uncompressed), AGPL-3.0 or CC-BY-4.0, verified against in-tree `MANIFEST.json`/`SHA256SUMS` via `OPENRU_GOLDEN_URL=… make fetch-golden`. **License: AGPL-3.0 (decided 2026-11-17).** Not uploaded yet; a human creates the Zenodo record. See `docs/reports/M1.md` appendix.
-- [x] Hardware week: USRP N310, Quectel RM520N-GL and a programmable SIM are available. The N310 is **not** connected to the server. Bench host is aarch64 (Jetson AGX Orin 64 GB or DGX Spark; choice pending); the bench bundle is built on this server. 10 GbE NIC with PTP timestamping: still open.
+- [x] Hardware week: USRP N310, Quectel RM520N-GL and a programmable SIM are available. The N310 **is connected to the bench host**: n310-10, serial `33A6E56`, IQ over SFP1 at `192.168.10.2` (host `enp5s0f1np1` `192.168.10.1/24`, MTU 9000); two more units (n310-20 `.20.2`, n310-30 `.30.2`) exist for later stages. Bench host is **x86-64** (Intel i5-13600KF, 6 P-cores with HT + 8 E-cores, Intel X710 4-port 10 GbE, no AVX-512, no GPU); the bench bundle is built on this server for `x86-64-v3`. 10 GbE NIC with PTP timestamping: still open.
 - [ ] **Real-time host:** `isolcpus`/`nohz_full`/`rcu_nocbs` on cores 32-63 would allow the b100 golden here; needs a reboot of the shared server (human/lab decision).
 
 - [ ] **Null-radio dump label.** The null radio labels TX buffers by the radio TX sample clock (`external/proto-ru/lib/radio/null/radio_null_session.cpp:234-245`), not by the DU slot of the grid; under replay timing a correct grid N can be labelled N+1 in `tx_index`/`iq_meta`. The RU writes U-plane by its header slot (`ofh_uplane_rx_symbol_data_flow_writer.cpp:17`) and drops late data (no wrong-slot writes). Open: take the dump label from the grid/upper-PHY `tx_request` slot.
@@ -76,3 +76,22 @@ and N310 ATR cannot drive TDD switching. For the FEM bench: implement `feat/uhd-
 transmission with `power_ramping_time_us >= 2` (prefer 5-10), then rerun
 `replay-golden` and the 600 s null `smoke-fh` to confirm DL IQ and late ratio are
 unchanged by the mode change.
+
+## Bench host: core map + P/E pinning — LOCKED
+
+Bench host measured 2026-11-18: i5-13600KF (6 P-cores with HT = logical 0-11, 8 E-cores = 12-19), no AVX-512,
+X710 `enp5s0f1np1` (`192.168.10.1/24`, MTU 9000), kernel 7.0.0-28, N310-10 serial `33A6E56` at
+`192.168.10.2` (MPM 4.11.0.0-g0d7ed3b1). Bench map, in `docker/bench.env`
+and enforced by `scripts/bench_preflight.sh`: housekeeping/Open5GS/IRQs `0-1,12-19` (`irqaffinity`), ProtO-RU
+`2-5`, DU `6-11`; HT on, both siblings of each isolated core inside `isolcpus`; kernel cmdline
+`isolcpus=2-11 nohz_full=2-11 rcu_nocbs=2-11 irqaffinity=0-1,12-19`. Images: `x86-64-v3`
+(`openru/protoru:v1-candidate-v3`, FFTW + ESTIMATE), GPU-less via `docker/compose.cpu.yml`.
+Locked from the measured topology; `make bench-preflight` fails closed on drift.
+
+## Bench host: USRP N310 identity — RESOLVED (2026-11-18)
+
+n310-10, serial `33A6E56`, IQ/mgmt `192.168.10.2` over `enp5s0f1np1` (host `192.168.10.1/24`, MTU 9000);
+MPM 4.11.0.0-g0d7ed3b1 (MPM version 7.0), FPGA 8.2, filesystem 20260908111319. The bench image ships
+UHD 4.11.0.0 and preflight probes it **inside the container**, failing on any MPM/filesystem incompatibility.
+Day 1 uses `clock_source=internal,time_source=internal`; the OctoClock (`192.168.60.2`) is reserved for a later
+external-reference stage.

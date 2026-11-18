@@ -1,0 +1,66 @@
+# bench-40mhz ProtO-RU — UHD radio (N310-10), 40 MHz 2x2, stage 2 of the bench
+# campaign (docs/BENCH_BUNDLE.md). Cabling: RF0 -> RM520N ANT2, RF1 -> ANT0
+# (both TX/RX); ANT1/ANT3 are RX-only on the UE side.
+#
+# Sample rate 61.44 Msps = MCR 122.88 MHz / 2 (integer, even decimation), FFT
+# 2048 = 61.44e6 / 30 kHz. The null-radio b40 golden runs 46.08 Msps; the DU
+# side of the 7.2 split is unaffected by the RU sample rate.
+
+log:
+  filename: /tmp/proto-ru.log
+  level: info
+
+ru_emu:
+  timing_cpus: [2]
+  cells:
+    - network_interface: eth0
+      ru_mac_addr: 02:00:00:00:00:20
+      du_mac_addr: 02:00:00:00:00:10
+      enable_promiscuous: true
+
+      bandwidth: 40
+      common_scs: 30
+      dl_arfcn: 628032
+      band: 78
+
+      dl_port_id: [0, 1]
+      ul_port_id: [0, 1]
+      prach_port_id: [4, 5]
+      prach_format: short
+
+      compr_method_dl: bfp
+      compr_bitwidth_dl: 9
+      compr_method_ul: bfp
+      compr_bitwidth_ul: 9
+      compr_method_prach: bfp
+      compr_bitwidth_prach: 9
+      is_ul_static_compr_hdr: true
+      is_dl_static_compr_hdr: true
+      iq_scaling: 1.0
+
+      t2a_max_cp_dl: 2435
+      t2a_min_cp_dl: 2235
+      t2a_max_cp_ul: 2435
+      t2a_min_cp_ul: 2235
+      t2a_max_up: 2215
+      t2a_min_up: 2015
+      ta3_max_up: 1200
+      ta3_min_up: 800
+
+      ofh_cpus: [3, 4]
+      sdr:
+        device_driver: "uhd"
+        # N310-10 (serial 33A6E56), IQ over SFP1 10 GbE. MCR 122.88 MHz / 2 =
+        # 61.44 Msps; 122.88 is the N310's lowest supported MCR.
+        device_args: "type=n3xx,addr=192.168.10.2,mgmt_addr=192.168.10.2,clock_source=internal,time_source=internal,master_clock_rate=122.88e6"
+        srate: 61.44
+        # Day-1 placeholder gains (N310 range -30..25 dB); lock after the first
+        # conducted RF check with the RM520N.
+        tx_gain: 10
+        rx_gain: 10
+        clock_source: internal
+        sync_source: internal
+        max_proc_delay: 2
+        execution_profile: auto
+        ru_cpus: [5]
+        pinning_policy: mask
