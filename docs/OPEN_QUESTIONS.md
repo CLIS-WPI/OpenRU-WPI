@@ -2,10 +2,8 @@
 
 Defaults from the Phase 1 brief; update when a human decides.
 
-- [x] Software UE: **srsUE over ZMQ** for Milestone 4 (decided 2026-11-17).
-- [x] OCUDU ZMQ radio with ProtO-RU's SDR path: use it for M4 only (`ru_emulator_cli11_schema.cpp` accepts `--device_driver zmq`; ProtO-RU README says ZMQ is unsupported). **Do not use in M1/M2/M3.**
-- [ ] Golden storage: Git LFS on GitHub, a WPI file share, or **Zenodo with a DOI**? **Proposal:** Zenodo record *OpenRU Phase 1 golden IQ — M1* (`baseline`, `b40`, `b100`), concept DOI + per-milestone version DOI, `openru-goldens-m1.tar.zst` (~2.11 GiB uncompressed), AGPL-3.0 or CC-BY-4.0, verified against in-tree `MANIFEST.json`/`SHA256SUMS` via `OPENRU_GOLDEN_URL=… make fetch-golden`. **License: AGPL-3.0 (decided 2026-11-17).** Not uploaded yet; a human creates the Zenodo record. See `docs/reports/M1.md` appendix.
-- [x] Hardware week: USRP N310, Quectel RM520N-GL and a programmable SIM are available. The N310 **is connected to the bench host**: n310-10, serial `33A6E56`, IQ over SFP1 at `192.168.10.2` (host `enp5s0f1np1` `192.168.10.1/24`, MTU 9000); two more units (n310-20 `.20.2`, n310-30 `.30.2`) exist for later stages. Bench host is **x86-64** (Intel i5-13600KF, 6 P-cores with HT + 8 E-cores, Intel X710 4-port 10 GbE, no AVX-512, no GPU); the bench bundle is built on this server for `x86-64-v3`. 10 GbE NIC with PTP timestamping: still open.
+- [ ] Golden storage: Git LFS on GitHub, a WPI file share, or **Zenodo with a DOI**? **Proposal:** Zenodo record *OpenRU Phase 1 golden IQ — M1* (`baseline`, `b40`, `b100`), concept DOI + per-milestone version DOI, `openru-goldens-m1.tar.zst` (~2.11 GiB uncompressed), verified against in-tree `MANIFEST.json`/`SHA256SUMS` via `OPENRU_GOLDEN_URL=… make fetch-golden`. License AGPL-3.0 (decided, see *Resolved*). Not uploaded yet; a human creates the Zenodo record. See `docs/reports/M1.md` appendix.
+- [ ] **10 GbE NIC with PTP timestamping** for the capture path.
 - [ ] **Real-time host:** `isolcpus`/`nohz_full`/`rcu_nocbs` on cores 32-63 would allow the b100 golden here; needs a reboot of the shared server (human/lab decision).
 
 - [ ] **Null-radio dump label.** The null radio labels TX buffers by the radio TX sample clock (`external/proto-ru/lib/radio/null/radio_null_session.cpp:234-245`), not by the DU slot of the grid; under replay timing a correct grid N can be labelled N+1 in `tx_index`/`iq_meta`. The RU writes U-plane by its header slot (`ofh_uplane_rx_symbol_data_flow_writer.cpp:17`) and drops late data (no wrong-slot writes). Open: take the dump label from the grid/upper-PHY `tx_request` slot.
@@ -19,41 +17,9 @@ Defaults from the Phase 1 brief; update when a human decides.
 - ROHC **skipped, not needed for Phase 1**.
 - ProtO-RU fork: [CLIS-WPI/ProtO-RU](https://github.com/CLIS-WPI/ProtO-RU) `openru/main` @ `45dbc958`.
 
-## M1 closure decisions — OPEN
+## M1 closure — open item
 
-- [x] **Regenerate the goldens with the N=100 Δ gate — DONE.** The null radio waits for N=100 stable slots **and the next SFN 0**, so `first_du=0.0` on every cold replay; the −1052 at DU_end **68.0** is in the preceding period and is excluded. Regenerated baseline/b40/b100 (baseline `baseline.pcapng` 10 s; b40/b100 `_3s`): 4000/2000/800 slots, two cold replays each, `max_abs=0` over the full window. The strict full-range `iq_compare` remains. The gate was **not** retuned to −1052.
 - [ ] **CI runner hosting:** register an ephemeral self-hosted runner (dedicated VM, unprivileged user, rootless Docker) for `replay-golden`, or keep the workflow `workflow_dispatch`-only/inert through M2? No runner is registered today (`total_count=0`). **Default:** keep inert; manual `make replay-golden` is the gate.
-- [ ] **Golden record license:** AGPL-3.0 (repo-consistent) or CC-BY-4.0 (data)? **Default:** AGPL-3.0.
-
-## M2 CUDA vs CPU golden compare — APPROVED
-
-CUDA low-PHY vs CPU golden passes if **BFP output is byte-identical** and OFDM modulator **`ci16`** has, per port per slot, max \|diff\| ≤ 1 LSB and error power ≤ −60 dB relative to signal power. **"0 differing samples"** remains the bar for **CPU-vs-CPU** determinism (M1 `replay-golden`). Recorded in `docs/BRIEF_PHASE1.md` and `AGENTS.md`.
-
-## Late-packet threshold — APPROVED (ratio, Phase 1 only)
-
-Hard fail if, after warm-up:
-
-- `drop > 0`, or
-- `late / (rx_total + tx_total) > 1e-5`
-
-Always report the **ratio** and the absolute late/drop/packet counts.  
-Prior 60 s soft-fail counts imply ≈ **6.3e-6** \[DERIVED\] (`10 / (595586+996076)`).
-
-**CPU baseline (confirmed 600 s, NUMA1 pin, warm-up=57 s)** \[MEASURED\]:
-
-- late=28, rx+tx=13 359 426, drop=0 → **ratio = 2.096e-6**
-- Full-window (incl. warm-up): late=56, ratio=3.802e-6
-- Artifacts: `docs/reports/smoke-fh-10m-kpi.json`, histogram CSV, `M0.md`
-
-**Superseded for M2 live null path:** the M2 late-ratio gate compares **CUDA+null** against the **M1 CPU+null** baseline **7.094e-6** [MEASURED] (*null radio, slot RX buffers, not representative of UHD*), not this emulator **2.096e-6**. Keep both numbers in reports with their labels. Emulator 2.096e-6 remains the M0 reference.
-
-## CPU topology (this host) — pinning decision
-
-See `docs/reports/cpu-topology.md`.
-
-- SMT **off** (`Thread(s) per core: 1`); `thread_siblings_list` is a singleton — **32–63 are not SMT siblings of 0–31** (SMT re-pin clause does not apply).
-- GPU0 and GPU1 PCI are both on **NUMA0**. Optional NUMA0 OFH pin (`16-27`/`28-31`) raised 600 s late ratio **~4.9e-6 → ~6.6e-5** \[MEASURED\] (`smoke-fh-10m-numa0-*`). **Kept NUMA1** `PROTORU=32-47`, `DU=48-55` for the Phase 1 CPU baseline.
-- Recorded in `docker/lab.env.example` with this reasoning.
 
 ## Upstream candidate: OCUDU PRG-view precoding path [MEASURED]
 
@@ -77,21 +43,19 @@ transmission with `power_ramping_time_us >= 2` (prefer 5-10), then rerun
 `replay-golden` and the 600 s null `smoke-fh` to confirm DL IQ and late ratio are
 unchanged by the mode change.
 
-## Bench host: core map + P/E pinning — LOCKED
+## Resolved decisions
 
-Bench host measured 2026-11-18: i5-13600KF (6 P-cores with HT = logical 0-11, 8 E-cores = 12-19), no AVX-512,
-X710 `enp5s0f1np1` (`192.168.10.1/24`, MTU 9000), kernel 7.0.0-28, N310-10 serial `33A6E56` at
-`192.168.10.2` (MPM 4.11.0.0-g0d7ed3b1). Bench map, in `docker/bench.env`
-and enforced by `scripts/bench_preflight.sh`: housekeeping/Open5GS/IRQs `0-1,12-19` (`irqaffinity`), ProtO-RU
-`2-5`, DU `6-11`; HT on, both siblings of each isolated core inside `isolcpus`; kernel cmdline
-`isolcpus=2-11 nohz_full=2-11 rcu_nocbs=2-11 irqaffinity=0-1,12-19`. Images: `x86-64-v3`
-(`openru/protoru:v1-candidate-v3`, FFTW + ESTIMATE), GPU-less via `docker/compose.cpu.yml`.
-Locked from the measured topology; `make bench-preflight` fails closed on drift.
+Moved here when a decision landed; the commit that resolved it is listed.
 
-## Bench host: USRP N310 identity — RESOLVED (2026-11-18)
-
-n310-10, serial `33A6E56`, IQ/mgmt `192.168.10.2` over `enp5s0f1np1` (host `192.168.10.1/24`, MTU 9000);
-MPM 4.11.0.0-g0d7ed3b1 (MPM version 7.0), FPGA 8.2, filesystem 20260908111319. The bench image ships
-UHD 4.11.0.0 and preflight probes it **inside the container**, failing on any MPM/filesystem incompatibility.
-Day 1 uses `clock_source=internal,time_source=internal`; the OctoClock (`192.168.60.2`) is reserved for a later
-external-reference stage.
+| Decision | Resolved by |
+|---|---|
+| Software UE = **srsUE over ZMQ** (M4) | `8d24d30` |
+| OCUDU ZMQ radio with ProtO-RU's SDR path: M4 only (`--device_driver zmq`; ProtO-RU README calls ZMQ unsupported) — not used in M1/M2/M3 | `8d24d30` |
+| Golden-record **license: AGPL-3.0** (storage/Zenodo upload remains open) | `58d343c` |
+| M1 goldens **regenerated with the N=100 Δ gate**: null radio waits for N=100 stable slots and the next SFN 0, `first_du=0.0` on every cold replay; baseline/b40/b100 = 4000/2000/800 slots, two cold replays each, `max_abs=0`; strict full-range `iq_compare` kept; gate not retuned to −1052 | `8d24d30` |
+| **M2 CUDA vs CPU golden criteria**: BFP byte-identical; OFDM `ci16` max \|diff\| ≤ 1 LSB and error power ≤ −60 dB per port/slot; "0 differing samples" stays the CPU-vs-CPU bar | `8d24d30` (merge `8a3e2c0`) |
+| **Late-packet threshold**: hard fail if `drop > 0` or `late/(rx+tx) > 1e-5` after warm-up; always report the ratio and absolute counts; M0 emulator reference `2.096e-6` (600 s), M2 gate vs the M1 CPU+null `7.094e-6` | `07e6a70` |
+| **CPU topology / pinning (dev server)**: SMT off, 32–63 not siblings of 0–31; a NUMA0 OFH pin raised the 600 s late ratio ~4.9e-6 → ~6.6e-5, so NUMA1 `PROTORU=32-47` / `DU=48-55` is kept and recorded in `docker/lab.env.example` | `07e6a70` |
+| **Hardware week availability**: N310, RM520N-GL and a programmable SIM available; bench host is x86-64 (i5-13600KF, no AVX-512, no GPU); build server produces x86-64-v3 images | `2797fbf` |
+| **Bench host core map + P/E pinning (LOCKED)**: ProtO-RU `2-5`, DU `6-11`, housekeeping/Open5GS/IRQs `0-1,12-19`; `isolcpus=2-11 nohz_full=2-11 rcu_nocbs=2-11 irqaffinity=0-1,12-19`; HT on with both siblings isolated; enforced by `make bench-preflight` | `2797fbf`, locked in `e014149` |
+| **Bench N310 identity**: n310-10, serial `33A6E56`, IQ/mgmt `192.168.10.2` over `enp5s0f1np1` (host `192.168.10.1/24`, MTU 9000); MPM 4.11.0.0-g0d7ed3b1 (MPM 7.0), FPGA 8.2, FS 20260908111319; image ships UHD 4.11.0.0, preflight probes in-container; day 1 internal clock, OctoClock (`192.168.60.2`) later | `2797fbf` |

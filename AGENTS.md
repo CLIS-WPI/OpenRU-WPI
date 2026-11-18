@@ -1,5 +1,13 @@
 # AGENTS.md — OpenRU Phase 1
 
+## Roles
+
+- **DeepSeek — primary, this server.** Runs builds, compose, measurements and git (branches, PRs). Never merges.
+- **Cursor — reviewer and hardware docs.** Reviews PRs; maintains the bench/radio documentation
+  (`docs/BENCH_BUNDLE.md`, bench profiles, `docs/OPEN_QUESTIONS.md` entries). Does not merge or commit to `main`.
+- **Human — merges every PR.** No agent merges. Before merging, **always check the PR base is `main`**
+  (`gh pr view <n> --json baseRefName`); a PR still based on a feature branch (stacked PR) must be retargeted first.
+
 ## Repo facts
 
 - The git repo is `openru-sw/`, not the parent directory. Run all git/make commands here.
