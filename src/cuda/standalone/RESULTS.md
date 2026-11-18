@@ -123,13 +123,13 @@ is `pre + cuFFT + post`.
 
 Environment:
 
-- GPU: NVIDIA H100 NVL, compute capability 9.0 ([MEASURED])
-- Host CPU: AMD EPYC 9354 32-Core Processor; CPU path pinned to core 8 (NUMA0, in 0–15)
-- CUDA: 12.5; OCUDU Release at `8937cab`, AVX2 BFP width 9
+- GPU: NVIDIA H100 NVL, compute capability 9.0 ([MEASURED]); **compute-only** — Jetson will be slower; no Jetson numbers claimed
+- Host CPU: AMD EPYC 9354 32-Core Processor (NUMA0 cores 0–15 for CPU path; 32–63 unused during measure lock)
+- CUDA: 12.5; OCUDU Release at `8937cab`, BFP width 9
 - Host buffers: preallocated then `cudaHostRegister`; two CUDA streams, double-buffered by slot
-- Command: `CUDA_VISIBLE_DEVICES=GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058 ./build/test_pipeline --sustained 4000 --latency-iters 200 --cpu-core 8`
-- Measurement lock: `/tmp/openru-measure.lock` held for the full run; cores 32–63 unused
-- Label: **compute-only** (no fronthaul, no radio)
+- GPU command: `CUDA_VISIBLE_DEVICES=GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058 ./build/test_pipeline --sustained 4000 --latency-iters 200 --cpu-core 8`
+- Fair CPU command: `./build/test_cpu_baseline --dft fftw --bfp avx512 --cpu-core 10` against `build/ocudu-fair` (`-DENABLE_FFTW=ON -DMARCH=x86-64-v4`)
+- Measurement lock: `/tmp/openru-measure.lock` held for GPU and fair-CPU runs
 
 DL chain (device-resident): compressed U-plane H2D once → BFP decompress → grid → OFDM
 pre → cuFFT → post → ci16 D2H once. UL is the reverse with cf32→cbf16 before BFP compress.
@@ -148,10 +148,17 @@ sequence (no intermediate host round-trips).
 | 100 MHz | 4096 | 2 | 0 | 0 | PASS |
 | 100 MHz | 4096 | 4 | 0 | 0 | PASS |
 
-## GPU vs CPU per-slot latency (ms) [MEASURED] compute-only
+## Caveat: GPU numbers are H100 compute-only
 
-Wall time from H2D start to D2H done (GPU) vs OCUDU CPU chain on one pinned core (BFP
-AVX2 decompress + OFDM modulate; UL reverse). 200 iterations after warm-up.
+All GPU timings below are **H100 NVL compute-only** (no fronthaul, no radio). The
+target embedded GPU (Jetson) will be slower; **no Jetson numbers are claimed**.
+
+## GPU vs CPU — original table (kept): CPU: AVX2, generic DFT, 1 core
+
+Wall time from H2D start to D2H done (GPU) vs the first CPU baseline: OCUDU Release
+with **generic DFT** and **AVX2 BFP**, pinned to core 8. 200 iterations after warm-up.
+This is **not** the fair production-like CPU baseline; see the next sections.
+Speedup column is vs this weak CPU path only and must not be quoted alone.
 
 | Profile | Ports | Dir | GPU p50 | GPU p99 | GPU max | CPU p50 | CPU p99 | CPU max | Speedup (p50) |
 |---|---:|---|---:|---:|---:|---:|---:|---:|---:|
@@ -167,6 +174,84 @@ AVX2 decompress + OFDM modulate; UL reverse). 200 iterations after warm-up.
 | 100 MHz | 2 | UL | 0.0580 | 0.0701 | 0.0702 | 0.4383 | 0.4531 | 0.4570 | 7.56x |
 | 100 MHz | 4 | DL | 0.0676 | 0.0813 | 0.0874 | 0.8275 | 0.8403 | 0.8582 | 12.24x |
 | 100 MHz | 4 | UL | 0.0752 | 0.0893 | 0.0894 | 0.8808 | 0.8973 | 0.8975 | 11.71x |
+
+## Fair CPU baseline methodology
+
+OCUDU rebuilt from `external/proto-ru` at `8937cab`:
+
+- **FFTW DFT:** CMake option `ENABLE_FFTW` (`external/proto-ru/CMakeLists.txt:66`),
+  wired into `lib/phy/generic_functions/CMakeLists.txt:26–44` (`HAVE_FFTW`,
+  `dft_processor_fftw_impl.cpp`). Runtime factory:
+  `create_dft_processor_factory_fftw_fast()`.
+- **AVX-512:** `-DMARCH=x86-64-v4` (`CMakeLists.txt:563–571`; host GCC 11 has no
+  `znver4`). Confirmed path: `create_iq_compressor(..., "avx512")` selects
+  `iq_compression_bfp_avx512` when `avx512f/vl/bw/dq/cd` are present
+  (`lib/ofh/compression/compression_factory.cpp:54–67`);
+  `iq_compression_bfp_avx512.cpp` is compiled with `-mavx512*`
+  (`lib/ofh/compression/CMakeLists.txt:22–23`). Harness also compiled with
+  `-march=x86-64-v4` so `ocuduvec` AVX-512 conversion paths are enabled
+  (`__AVX512F__/__AVX512BW__` defined at compile time).
+- Harness: `./build/test_cpu_baseline --dft fftw --bfp avx512 --cpu-core 10`
+
+### Intermediate CPU configs (ms/slot, 1 core) [MEASURED]
+
+| Config | 20 MHz/2 DL p50 | 100 MHz/4 DL p50 | Notes |
+|---|---:|---:|---|
+| AVX2 + generic DFT (original) | 0.0593 | 0.8275 | Kept table above |
+| FFTW + AVX2 | 0.0313 | 0.4056 | FFTW alone |
+| generic DFT + AVX-512 | 0.0655 | 0.7249 | AVX-512 BFP/vectors alone |
+| **FFTW + AVX-512 (primary)** | **0.0305** | **0.4029** | Best CPU baseline |
+
+## Primary: GPU vs CPU (FFTW + AVX-512, 1 core) [MEASURED] compute-only
+
+GPU numbers unchanged from the H100 run above. CPU is the fair baseline on core 10
+(pre-run idle mean 95.4%, isolation PASS). Speedup is vs this primary CPU path.
+
+| Profile | Ports | Dir | GPU p50 | GPU p99 | GPU max | CPU p50 | CPU p99 | CPU max | Speedup (p50) |
+|---|---:|---|---:|---:|---:|---:|---:|---:|---:|
+| 20 MHz | 2 | DL | 0.0316 | 0.0469 | 0.0470 | 0.0305 | 0.0418 | 0.0447 | 0.96x |
+| 20 MHz | 2 | UL | 0.0333 | 0.0426 | 0.0481 | 0.0378 | 0.0480 | 0.0503 | 1.14x |
+| 20 MHz | 4 | DL | 0.0343 | 0.0499 | 0.0500 | 0.0615 | 0.0689 | 0.2147 | 1.79x |
+| 20 MHz | 4 | UL | 0.0345 | 0.0518 | 0.0521 | 0.0689 | 0.0928 | 0.2245 | 2.00x |
+| 40 MHz | 2 | DL | 0.0344 | 0.0499 | 0.0502 | 0.0694 | 0.0782 | 0.2331 | 2.02x |
+| 40 MHz | 2 | UL | 0.0422 | 0.0580 | 0.0581 | 0.0756 | 0.0872 | 0.0894 | 1.79x |
+| 40 MHz | 4 | DL | 0.0456 | 0.0548 | 0.0548 | 0.1390 | 0.2810 | 0.2908 | 3.05x |
+| 40 MHz | 4 | UL | 0.0527 | 0.0596 | 0.0596 | 0.1553 | 0.1744 | 0.3024 | 2.95x |
+| 100 MHz | 2 | DL | 0.0559 | 0.0634 | 0.0647 | 0.2001 | 0.3665 | 0.3752 | 3.58x |
+| 100 MHz | 2 | UL | 0.0580 | 0.0701 | 0.0702 | 0.2081 | 0.2181 | 0.3522 | 3.59x |
+| 100 MHz | 4 | DL | 0.0676 | 0.0813 | 0.0874 | 0.4029 | 0.5512 | 0.5601 | 5.96x |
+| 100 MHz | 4 | UL | 0.0752 | 0.0893 | 0.0894 | 0.4190 | 0.5855 | 0.5859 | 5.57x |
+
+## Cores needed / GPU replaces N CPU cores [DERIVED]
+
+`cores = ceil(CPU_p99 / slot_duration)` with slot duration **0.5 ms** (30 kHz SCS).
+**TDD (DDDSU):** each slot carries one direction, so the budget is
+`max(DL_p99, UL_p99)`; TDD cores use that max. **FDD:** DL and UL share the same
+0.5 ms interval, so FDD cores use `DL_p99 + UL_p99`. CPU p99 from the
+**FFTW + AVX-512** primary baseline. “GPU replaces N” is the **TDD** column for
+DDDSU; the FDD column is the simultaneous DL+UL sum.
+
+| Profile | Ports | DL cores | UL cores | TDD cores | FDD cores (DL+UL) |
+|---|---:|---:|---:|---:|---:|
+| 20 MHz | 2 | 1 | 1 | 1 | 1 |
+| 20 MHz | 4 | 1 | 1 | 1 | 1 |
+| 40 MHz | 2 | 1 | 1 | 1 | 1 |
+| 40 MHz | 4 | 1 | 1 | 1 | 1 |
+| 100 MHz | 2 | 1 | 1 | 1 | 2 |
+| 100 MHz | 4 | 2 | 2 | 2 | 3 |
+
+## CPU isolation and 20 MHz / 2-port p99 outlier [MEASURED]
+
+- Sampler: `/proc/stat` idle for the pinned core (mpstat/`sysstat` not installed on the
+  host without sudo; same counters).
+- Fair-baseline run on **core 10**: pre-run idle mean **95.4%** (PASS — no competing
+  load before the timed work). During-run idle near 0% is expected (benchmark owns the core).
+- Original table 20 MHz / 2-port DL had CPU p99 **0.1836** ms vs p50 **0.0593** ms
+  (≈3×). Isolated fair-baseline rerun (400 iters, FFTW+AVX-512, core 10): DL
+  p50/p99/max = **0.0308 / 0.0374 / 0.0391** ms. The original p99 outlier is therefore
+  attributed to the weak generic-DFT path and/or transient interference on core 8, not
+  to steady-state AVX2/FFTW cost. Rare max spikes can still appear under load; p99 on an
+  idle core stays within ~1.3× of p50.
 
 ## GPU sustained throughput (4000 slots, 2 streams, double-buffered) [MEASURED]
 

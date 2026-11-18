@@ -27,6 +27,10 @@ output against the CPU reference (`iq_compression_bfp_impl`, `iq_compression_bfp
 | `tests/ofdm_radix2_reference.h` | Test-only radix-2 reference interface. |
 | `tests/test_lowphy.cpp` | Standalone kernel correctness and timing harness. |
 | `tests/test_pipeline.cpp` | Device-resident pipeline vs CPU comparison harness. |
+| `tests/test_cpu_baseline.cpp` | Fair CPU baseline (FFTW / AVX-512) and cores-needed. |
+| `include/lowphy_precoding.h` | Category-B precoding / UL combining CUDA API. |
+| `kernels/precoding.cu` | Per-PRB layers→ports (DL) and Wᴴ combine (UL). |
+| `tests/test_scaling.cpp` | Port scaling study harness + CSV writer. |
 | `CMakeLists.txt` | Standalone build against a prepared OCUDU build tree. |
 
 ## BFP compression
@@ -148,8 +152,10 @@ on the host. Before each build and GPU run the harness operator confirms that
 Two CUDA streams and a pair of device working sets provide double-buffering by slot.
 Host buffers are preallocated (as ProtO-RU would provide) and pinned with
 `cudaHostRegister`. `test_pipeline` checks byte-identical agreement with the standalone
-kernel sequence, measures per-slot GPU latency and 4000-slot sustained throughput with
-overlap, and times the OCUDU AVX2/Release CPU path on one core in 0–15.
+kernel sequence and measures per-slot GPU latency plus 4000-slot sustained throughput.
+`test_cpu_baseline` times the fair CPU path (FFTW via `ENABLE_FFTW`, AVX-512 BFP via
+`-DMARCH=x86-64-v4`) on one core in 0–15; see `RESULTS.md` for the primary baseline and
+cores-needed derivation.
 
 ## Limitations
 

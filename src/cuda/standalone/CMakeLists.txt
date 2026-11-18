@@ -13,13 +13,16 @@ set(CMAKE_CUDA_ARCHITECTURES "90;87" CACHE STRING "CUDA architectures" FORCE)
 
 set(PROTO_RU "${CMAKE_CURRENT_SOURCE_DIR}/../../../external/proto-ru" CACHE PATH "Path to the ProtO-RU submodule")
 set(OCUDU_BUILD "${CMAKE_CURRENT_SOURCE_DIR}/../../../build/ocudu" CACHE PATH "Path to the OCUDU build tree")
+set(OCUDU_FAIR_BUILD "${CMAKE_CURRENT_SOURCE_DIR}/../../../build/ocudu-fair" CACHE PATH "OCUDU build with ENABLE_FFTW=ON and MARCH=x86-64-v4")
+set(FFTW3F_ROOT "/home/tanglab/.local/fftw3" CACHE PATH "User-local FFTW3F prefix")
 
 find_package(CUDAToolkit REQUIRED)
 
 add_library(lowphy_cuda STATIC
   kernels/bfp_kernels.cu
   kernels/ofdm_cufft.cu
-  kernels/pipeline.cu)
+  kernels/pipeline.cu
+  kernels/precoding.cu)
 target_include_directories(lowphy_cuda PUBLIC include)
 target_compile_options(lowphy_cuda PRIVATE
   $<$<COMPILE_LANGUAGE:CUDA>:-O3>)
@@ -43,7 +46,8 @@ set(OCUDU_INCLUDE_DIRS
   "${PROTO_RU}/external"
   "${PROTO_RU}/external/fmt/include"
   "${PROTO_RU}/lib/ofh/compression"
-  "${PROTO_RU}/lib/phy/lower/modulation")
+  "${PROTO_RU}/lib/phy/lower/modulation"
+  "${PROTO_RU}/lib/phy/generic_functions/precoding")
 
 add_executable(test_lowphy
   tests/test_lowphy.cpp
@@ -73,6 +77,55 @@ target_link_libraries(test_pipeline PRIVATE
   "-Wl,--start-group"
   ${OCUDU_LIBRARIES}
   "-Wl,--end-group"
+  "/home/tanglab/miniconda3/lib/libyaml-cpp.so"
+  pthread
+  dl
+  m)
+
+set(OCUDU_FAIR_LIBRARIES
+  "${OCUDU_FAIR_BUILD}/lib/phy/lower/modulation/libocudu_lower_phy_modulation.a"
+  "${OCUDU_FAIR_BUILD}/lib/ofh/compression/libocudu_ofh_compression.a"
+  "${OCUDU_FAIR_BUILD}/lib/phy/support/libocudu_phy_support.a"
+  "${OCUDU_FAIR_BUILD}/lib/phy/generic_functions/libocudu_dft.a"
+  "${OCUDU_FAIR_BUILD}/lib/ocuduvec/libocuduvec.a"
+  "${OCUDU_FAIR_BUILD}/lib/ran/libocudu_ran.a"
+  "${OCUDU_FAIR_BUILD}/lib/support/libocudu_support.a"
+  "${OCUDU_FAIR_BUILD}/lib/support/math/libocudu_support_math.a"
+  "${OCUDU_FAIR_BUILD}/lib/ocudulog/libocudulog.a"
+  "${OCUDU_FAIR_BUILD}/lib/instrumentation/libocudu_instrumentation.a"
+  "${OCUDU_FAIR_BUILD}/external/fmt/libfmt.a")
+
+add_executable(test_cpu_baseline
+  tests/test_cpu_baseline.cpp)
+target_include_directories(test_cpu_baseline PRIVATE include ${OCUDU_INCLUDE_DIRS} "${FFTW3F_ROOT}/include")
+target_compile_definitions(test_cpu_baseline PRIVATE BUILD_TYPE_RELEASE NDEBUG)
+target_compile_options(test_cpu_baseline PRIVATE -O3 -march=x86-64-v4)
+
+target_link_libraries(test_cpu_baseline PRIVATE
+  "-Wl,--start-group"
+  ${OCUDU_FAIR_LIBRARIES}
+  "-Wl,--end-group"
+  "${FFTW3F_ROOT}/lib/libfftw3f.so"
+  "/home/tanglab/miniconda3/lib/libyaml-cpp.so"
+  pthread
+  dl
+  m)
+
+list(APPEND OCUDU_FAIR_LIBRARIES
+  "${OCUDU_FAIR_BUILD}/lib/phy/generic_functions/precoding/libocudu_channel_precoder.a")
+
+add_executable(test_scaling
+  tests/test_scaling.cpp)
+target_include_directories(test_scaling PRIVATE include ${OCUDU_INCLUDE_DIRS} "${FFTW3F_ROOT}/include")
+target_compile_definitions(test_scaling PRIVATE BUILD_TYPE_RELEASE NDEBUG)
+target_compile_options(test_scaling PRIVATE -O3 -march=x86-64-v4)
+
+target_link_libraries(test_scaling PRIVATE
+  lowphy_cuda
+  "-Wl,--start-group"
+  ${OCUDU_FAIR_LIBRARIES}
+  "-Wl,--end-group"
+  "${FFTW3F_ROOT}/lib/libfftw3f.so"
   "/home/tanglab/miniconda3/lib/libyaml-cpp.so"
   pthread
   dl
