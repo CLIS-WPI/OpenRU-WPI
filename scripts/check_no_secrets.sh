@@ -13,6 +13,7 @@
 #   * credential assignments: password=/passwd=/secret=/token=/api_key=
 # Lab-private radio addresses (192.168.x.x) are allowed.
 #
+# The checker's own fixture file is skipped: it must contain the patterns.
 # Escape hatch for a reviewed false positive: add `no-secrets-ok` on the same line.
 # Install as a pre-commit hook:
 #   printf '#!/bin/sh\nexec scripts/check_no_secrets.sh --staged\n' > .git/hooks/pre-commit
@@ -36,8 +37,8 @@ scan() { # <extended-regex> [case-insensitive]
   local flags=(-nIE)
   [[ -n "$icase" ]] && flags=(-nIiE)
   case "$mode" in
-    staged)   git grep --cached "${flags[@]}" -e "$pat" -- . ':!:external/proto-ru/**' ':!:scripts/check_no_secrets.sh' 2>/dev/null || true ;;
-    tracked)  git grep "${flags[@]}" -e "$pat" -- . ':!:external/proto-ru/**' ':!:scripts/check_no_secrets.sh' 2>/dev/null || true ;;
+    staged)   git grep --cached "${flags[@]}" -e "$pat" -- . ':!:external/proto-ru/**' ':!:scripts/check_no_secrets.sh' ':!:tools/bench/test_check_no_secrets.py' 2>/dev/null || true ;;
+    tracked)  git grep "${flags[@]}" -e "$pat" -- . ':!:external/proto-ru/**' ':!:scripts/check_no_secrets.sh' ':!:tools/bench/test_check_no_secrets.py' 2>/dev/null || true ;;
     explicit) grep "${flags[@]}" -e "$pat" -- "${paths[@]}" 2>/dev/null || true ;;
   esac | grep -v 'no-secrets-ok' || true
 }
