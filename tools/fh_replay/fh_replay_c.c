@@ -272,9 +272,12 @@ int main(int argc, char** argv) {
     sll.sll_ifindex = (int)if_nametoindex(iface);
     if (!sll.sll_ifindex) { perror(iface); return 2; }
     if (bind(sock, (struct sockaddr*)&sll, sizeof(sll)) < 0) { perror("bind"); return 2; }
+    // The 40/100 MHz slot bursts (~200-460 KiB) overflow the default AF_PACKET sndbuf (~208 KiB) and block the
+    // sender for milliseconds; the blocking frames cross the next C-plane and the RU mislabels them. Enlarge it.
     int sndbuf = 8 * 1024 * 1024;
-    if (setsockopt(sock, SOL_SOCKET, 32 /* SO_SNDBUFFORCE */, &sndbuf, sizeof(sndbuf)) < 0)
+    if (setsockopt(sock, SOL_SOCKET, 32 /* SO_SNDBUFFORCE */, &sndbuf, sizeof(sndbuf)) < 0) {
       setsockopt(sock, SOL_SOCKET, SO_SNDBUF, &sndbuf, sizeof(sndbuf));
+    }
   }
 
   int64_t now_rt = now_ns(CLOCK_REALTIME);
