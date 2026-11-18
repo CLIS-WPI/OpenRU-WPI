@@ -31,7 +31,7 @@ endif
 
 .PHONY: help preflight gpu-check build build-core build-protoru down logs \
         smoke smoke-fh smoke-core fetch-golden replay-golden compare-plmn capture \
-        bench-preflight up
+        bench-preflight up bench-release bench-ship
 
 help:
 	@echo "OpenRU targets (GPU: $$(test -f $(ROOT)/docker/lab.env && echo set || echo 'lab.env MISSING'))"
@@ -70,6 +70,18 @@ build-protoru: preflight
 	$(COMPOSE) --profile build build ocudu
 
 build: build-core build-protoru
+
+# Repeatable bench-image release (artifacts outside the repo; see docs/BENCH_BUNDLE.md).
+OPENRU_ARTIFACTS_DIR ?= /home/tanglab/openru-artifacts
+BENCH_RELEASE_KEEP ?= 5
+bench-release:
+	@OPENRU_ARTIFACTS_DIR=$(OPENRU_ARTIFACTS_DIR) BENCH_RELEASE_KEEP=$(BENCH_RELEASE_KEEP) \
+	  $(ROOT)/scripts/bench_release.sh
+
+bench-ship:
+	@test -n "$(HOST)" || { echo "usage: make bench-ship HOST=<ssh-host> [RELEASE=<dir>]"; exit 2; }; \
+	HOST="$(HOST)" RELEASE="$(RELEASE)" OPENRU_ARTIFACTS_DIR=$(OPENRU_ARTIFACTS_DIR) \
+	  $(ROOT)/scripts/bench_ship.sh
 
 UP_PROFILE ?= fh
 up:

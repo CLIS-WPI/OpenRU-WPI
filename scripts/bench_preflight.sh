@@ -270,7 +270,17 @@ if docker image inspect "$IMG" >/dev/null 2>&1; then
 else
   fail "image ${IMG} not found (build with UHD ${BENCH_UHD_VERSION:-4.11.0.0}: make BENCH=1 build-protoru)"
 fi
-docker image inspect openru/core:m0 >/dev/null 2>&1 || warn "openru/core:m0 not found (needed for smoke-core)"
+# Release provenance: is the running image built from the checked-out commit?
+IMG_COMMIT="$(docker image inspect "$IMG" --format '{{index .Config.Labels "org.openru.git.commit"}}' 2>/dev/null || true)"
+REPO_COMMIT="$(git -C "$ROOT" rev-parse HEAD 2>/dev/null || true)"
+if [[ -z "$IMG_COMMIT" || "$IMG_COMMIT" == "unknown" || "$IMG_COMMIT" == "<no value>" ]]; then
+  warn "image ${IMG} carries no org.openru.git.commit label (pre-release build)"
+elif [[ -n "$REPO_COMMIT" && "$IMG_COMMIT" != "$REPO_COMMIT" ]]; then
+  warn "image commit ${IMG_COMMIT:0:12} != repo HEAD ${REPO_COMMIT:0:12} (expected when the checkout moved past the release)"
+else
+  ok "image commit matches repo HEAD (${REPO_COMMIT:0:12})"
+fi
+docker image inspect openru/core:${OPENRU_TAG} >/dev/null 2>&1 || warn "openru/core:${OPENRU_TAG} not found (load the release: scripts/bench_load.sh <dir>)"
 
 echo
 if [[ "$FAIL" -eq 0 ]]; then
