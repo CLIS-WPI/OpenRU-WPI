@@ -70,15 +70,14 @@ def _cplane_slot(buf) -> int | None:
 
 
 STARTUP_MARGIN_SLOTS = 100  # 50 ms so the first frames have future deadlines
+LEAD_MODES = ("quantized-lead", "exact-lead")
 
 
-def _align_target(slot_mod: int, lead_us: float) -> float:
-    """Monotonic perf deadline of the DL C-plane for `slot_mod`, exactly `lead_us` before its air slot.
+def _align_target_exact(slot_mod: int, lead_us: float) -> float:
+    """Exact-lead mode: monotonic perf deadline of the DL C-plane, `lead_us` before its air slot.
 
-    The lead is NOT rounded to whole slots: the DU T1a window is ~200 us wide and the U-plane follows the C-plane by
-    ~200 us + the replay U-plane delay. Rounding 2235 us down to 2000 us moved the next C-plane 235 us earlier than
-    the U-plane burst tail and the RU mislabelled the tail into the next slot (+1 slot). The caller offsets the first
-    frame from this deadline.
+    The lead is NOT rounded to whole slots (the DU T1a window is ~200 us wide; the U-plane follows the C-plane by
+    ~200 us + the replay delay). This is the 92e62e5 alignment.
     """
     now_gps_ns = time.time_ns() - GPS_EPOCH_OFFSET_NS
     now_slot = now_gps_ns // SLOT_NS
@@ -88,6 +87,20 @@ def _align_target(slot_mod: int, lead_us: float) -> float:
     air_unix_ns = (now_slot + delta) * SLOT_NS + GPS_EPOCH_OFFSET_NS
     target_unix_ns = air_unix_ns - int(round(lead_us * 1000.0))
     return time.perf_counter() + (target_unix_ns - time.time_ns()) * 1e-9
+
+
+def _align_target_quantized(t_rel: float, slot_mod: int, lead_us: float, rate: float) -> float:
+    """Quantized-lead mode (the previous slot-rounded alignment): the C-plane is put on the whole-slot boundary
+    `slot_mod - round(lead_us / 500)`, and `t_rel` is subtracted here (the caller subtracts it again); this is the
+    alignment that produced the stored quantized-lead goldens. Kept for replaying them, with their known +1-tail
+    residual, not as a general default.
+    """
+    lead_slots = int(round(lead_us / 500.0)) % OFH_PERIOD
+    now_gps_ns = time.time_ns() - GPS_EPOCH_OFFSET_NS
+    now_slot = now_gps_ns // SLOT_NS
+    delta = ((slot_mod - lead_slots) - (now_slot % OFH_PERIOD)) % OFH_PERIOD
+    target_unix_ns = (now_slot + delta) * SLOT_NS + GPS_EPOCH_OFFSET_NS
+    return time.perf_counter() + (target_unix_ns - time.time_ns()) * 1e-9 - t_rel / rate
 
 
 def main() -> int:
@@ -116,6 +129,12 @@ def main() -> int:
         default=0.0,
         help="Send each frame this many microseconds ahead of its pcap time "
         "(compensates replay socket/bridge latency; keeps relative timing).",
+    )
+    ap.add_argument(
+        "--lead-mode",
+        required=True,
+        choices=LEAD_MODES,
+        help="Alignment mode recorded in the golden MANIFEST.json; the replay must use the golden's mode.",
     )
     ap.add_argument(
         "--align-cplane-lead-us",
@@ -193,7 +212,12 @@ def main() -> int:
                     break
             frames = itertools.chain(head, frames)
             if cplane_slot is not None:
-                cplane_perf = _align_target(cplane_slot, args.align_cplane_lead_us)
+                if args.lead_mode == "quantized-lead":
+                    cplane_perf = _align_target_quantized(
+                        cplane_t - t_first, cplane_slot, args.align_cplane_lead_us, args.rate
+                    )
+                else:
+                    cplane_perf = _align_target_exact(cplane_slot, args.align_cplane_lead_us)
 
         for t, buf in frames:
             if args.count and n >= args.count:

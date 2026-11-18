@@ -9,6 +9,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 TAG="${OPENRU_TAG:?set OPENRU_TAG to the candidate image tag}"
 export OPENRU_REPLAY_SENDER="${OPENRU_REPLAY_SENDER:-python}"
+export OPENRU_LEAD_MODE="${OPENRU_LEAD_MODE:-exact-lead}"
 RAW="${ROOT}/docs/reports/raw/gen-golden"
 mkdir -p "$RAW"
 
@@ -54,7 +55,7 @@ for prof in baseline b40 b100; do
   python3 "${ROOT}/tools/golden/manifest.py" \
     --dump "$dst" --profile "$prof" --profile-yaml "${ROOT}/profiles/${prof}/protoru-null.yml" \
     --window-json "$dst/window.json" --pcap "testdata/pcap/${prof}.pcapng" \
-    --tag "$tag" --sender "$OPENRU_REPLAY_SENDER" --mtu 9000 --check-json "${RAW}/${prof}-1.check.json" \
+    --tag "$tag" --sender "$OPENRU_REPLAY_SENDER" --lead-mode "$OPENRU_LEAD_MODE" --mtu 9000 --check-json "${RAW}/${prof}-1.check.json" \
     --out-dir "$dst" --root "$ROOT"
 done
 echo "[gen-golden] done: baseline b40 b100 regenerated with $TAG"

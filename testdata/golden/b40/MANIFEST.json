@@ -726,5 +726,10 @@
     "last_du_slot": 19
   },
   "lead_mode": "quantized-lead",
-  "replay_reliability": "Stored golden is the deterministic two-cold quantized-lead pair. Fresh exact-lead Python replays are unreliable on this shared host (jitter drops late U-plane); b40 requires the bench host's isolated cores per docs/BENCH_BUNDLE.md."
+  "replay_reliability": "Stored golden is the deterministic two-cold quantized-lead pair. Fresh exact-lead Python replays are unreliable on this shared host (jitter drops late U-plane); b40 requires the bench host's isolated cores per docs/BENCH_BUNDLE.md.",
+  "host_limited": {
+    "passes": 4,
+    "runs": 5,
+    "reason": "quantized-lead replay (the stored golden's recorded mode): 4/5 cold replay-golden runs PASS on this shared host; run 1 showed the known +1-tail shift (194 differing slots, 150 UL-slot leaks) from the Python sender jitter. Consistently clean needs the bench host's isolated cores (docs/BENCH_BUNDLE.md); no tolerance was widened."
+  }
 }

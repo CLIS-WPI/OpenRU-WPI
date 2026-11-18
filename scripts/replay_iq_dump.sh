@@ -45,6 +45,7 @@ if [[ -z "${T2A_US}" ]]; then echo "ERROR: profile has no t2a_min_cp_dl; cannot 
 WINDOW=$(sed -n 's/.*max_dump_slots=\([0-9][0-9]*\).*/\1/p' "$BASE_RU_YML" | head -1)
 if [[ -z "${WINDOW}" ]]; then echo "ERROR: profile has no max_dump_slots; cannot derive the dump window" >&2; exit 2; fi
 WIN_JSON="${OPENRU_WINDOW_JSON:-${PCAP_ABS%.*}.window.json}"
+LEAD_MODE="${OPENRU_LEAD_MODE:?set OPENRU_LEAD_MODE to the golden MANIFEST lead_mode (quantized-lead|exact-lead)}"
 
 if [[ -n "${OPENRU_WINDOW_JSON:-}" ]]; then
   # The golden's tracked window: never recompute or overwrite it, so a changed pcap fails the check instead.
@@ -133,6 +134,7 @@ docker exec openru-fh-replay bash -lc \
     --lead-us ${OPENRU_REPLAY_LEAD_US:-0} \
     --uplane-delay-us ${OPENRU_REPLAY_UPLANE_DELAY_US:-${UPLANE_DELAY_US:-0}} \
     --align-cplane-lead-us ${OPENRU_REPLAY_ALIGN_LEAD_US:-${LEAD_US}} \
+    --lead-mode ${LEAD_MODE} \
     --report-send-errors \
     --start-marker ${MARKER_REPLAY}"
 

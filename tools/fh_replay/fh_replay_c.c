@@ -14,6 +14,7 @@
 #include <linux/if_ether.h>
 #include <net/if.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -187,14 +188,16 @@ static int cmp_i64(const void* a, const void* b) {
 
 int main(int argc, char** argv) {
   const char* pcap = NULL, *iface = NULL, *only_dst_s = NULL, *src_s = NULL, *dst_s = NULL, *marker = NULL;
+  const char* lead_mode = NULL;
   double rate = 1.0, lead_us = 0.0, uplane_delay_us = 0.0, align_lead_us = 0.0;
-  int vlan = -1, report = 0, count = 0, dry = 0, align_set = 0;
+  int vlan = -1, report = 0, count = 0, dry = 0, align_set = 0, mode_set = 0;
   static struct option opts[] = {
       {"pcap", required_argument, 0, 'p'}, {"iface", required_argument, 0, 'i'},
       {"only-dst-mac", required_argument, 0, 'o'}, {"src-mac", required_argument, 0, 's'},
       {"dst-mac", required_argument, 0, 'd'}, {"vlan", required_argument, 0, 'v'},
       {"rate", required_argument, 0, 'r'}, {"lead-us", required_argument, 0, 'l'},
       {"uplane-delay-us", required_argument, 0, 'u'}, {"align-cplane-lead-us", required_argument, 0, 'a'},
+      {"lead-mode", required_argument, 0, 'M'},
       {"start-marker", required_argument, 0, 'm'}, {"report-send-errors", no_argument, 0, 'R'},
       {"count", required_argument, 0, 'c'}, {"dry-run", no_argument, 0, 'n'}, {0, 0, 0, 0}};
   int c;
@@ -210,6 +213,7 @@ int main(int argc, char** argv) {
       case 'l': lead_us = atof(optarg); break;
       case 'u': uplane_delay_us = atof(optarg); break;
       case 'a': align_lead_us = atof(optarg); align_set = 1; break;
+      case 'M': lead_mode = optarg; mode_set = 1; break;
       case 'm': marker = optarg; break;
       case 'R': report = 1; break;
       case 'c': count = atoi(optarg); break;
@@ -217,10 +221,16 @@ int main(int argc, char** argv) {
       default: return 2;
     }
   }
-  if (!pcap || !iface || !align_set) {
-    fprintf(stderr, "usage: %s --pcap P --iface I --align-cplane-lead-us US [...]\n"
-                    "  --align-cplane-lead-us is required (use the RU profile t2a_min_cp_dl via the window JSON)\n",
+  if (!pcap || !iface || !align_set || !mode_set) {
+    fprintf(stderr, "usage: %s --pcap P --iface I --align-cplane-lead-us US --lead-mode {quantized-lead|exact-lead} [...]\n"
+                    "  both are required (use the RU profile t2a_min_cp_dl and the golden MANIFEST lead_mode)\n",
             argv[0]);
+    return 2;
+  }
+  const bool quantized = (strcmp(lead_mode, "quantized-lead") == 0);
+  const bool exact     = (strcmp(lead_mode, "exact-lead") == 0);
+  if (!quantized && !exact) {
+    fprintf(stderr, "fh_replay_c: unknown --lead-mode %s; expected quantized-lead or exact-lead\n", lead_mode);
     return 2;
   }
 
@@ -284,12 +294,24 @@ int main(int argc, char** argv) {
   int64_t now_mono = now_ns(CLOCK_MONOTONIC);
   int64_t now_gps = now_rt - GPS_EPOCH_OFF_NS;
   int64_t now_slot = now_gps / SLOT_NS;
-  int64_t delta = (cplane_slot_v - (now_slot % OFH_PERIOD) + OFH_PERIOD) % OFH_PERIOD;
-  if (delta < STARTUP_MARGIN_SLOTS) delta += OFH_PERIOD;
-  int64_t air_rt = (now_slot + delta) * SLOT_NS + GPS_EPOCH_OFF_NS;
-  int64_t cplane_rt = air_rt - (int64_t)llround(align_lead_us * 1000.0);
-  int64_t cplane_mono = now_mono + (cplane_rt - now_rt);
-  int64_t t0_mono = cplane_mono - (int64_t)llround((double)(cplane_t - t_first) / rate);
+  const int64_t t_rel_ns = (int64_t)llround((double)(cplane_t - t_first) / rate);
+  int64_t cplane_rt;
+  int64_t t0_mono;
+  if (quantized) {
+    // Previous slot-rounded alignment: C-plane on the slot_mod - round(lead_us/500) boundary, t_rel subtracted twice
+    // exactly as the old Python mode that produced the stored goldens.
+    int64_t lead_slots = (int64_t)llround(align_lead_us / 500.0) % OFH_PERIOD;
+    int64_t delta = (cplane_slot_v - lead_slots - (now_slot % OFH_PERIOD) + OFH_PERIOD) % OFH_PERIOD;
+    cplane_rt = (now_slot + delta) * SLOT_NS + GPS_EPOCH_OFF_NS;
+    t0_mono = now_mono + (cplane_rt - now_rt) - 2 * t_rel_ns;
+  } else {
+    // 92e62e5 exact lead.
+    int64_t delta = (cplane_slot_v - (now_slot % OFH_PERIOD) + OFH_PERIOD) % OFH_PERIOD;
+    if (delta < STARTUP_MARGIN_SLOTS) delta += OFH_PERIOD;
+    int64_t air_rt = (now_slot + delta) * SLOT_NS + GPS_EPOCH_OFF_NS;
+    cplane_rt = air_rt - (int64_t)llround(align_lead_us * 1000.0);
+    t0_mono = now_mono + (cplane_rt - now_rt) - t_rel_ns;
+  }
   int64_t lead_ns = (int64_t)llround(lead_us * 1000.0);
   int64_t up_ns = (int64_t)llround(uplane_delay_us * 1000.0);
 

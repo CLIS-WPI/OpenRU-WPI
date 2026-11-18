@@ -158,3 +158,29 @@ baseline and 18/256 b40 missing, beyond the check tolerance, and the five runs d
 Decision: **keep the stored goldens** and mark them `lead_mode: quantized-lead` in their MANIFESTs (they are the
 deterministic two-cold quantized-lead pair). **b40 replay reliability requires the bench host's isolated cores**
 (`docs/BENCH_BUNDLE.md`); no tolerance was widened and no run was retried to green.
+
+
+## Reviewer follow-up — replay uses the golden's mode; 5x reliability (2026-11-17)
+
+**Mode plumbing.** `tools/golden/manifest_mode.py` is the single reader of `lead_mode`, `lead_us`, `sender`; the
+Makefile passes them as `OPENRU_LEAD_MODE`, `OPENRU_REPLAY_ALIGN_LEAD_US`, `OPENRU_REPLAY_SENDER`;
+`fh_replay.py` and `fh_replay_c.c` implement both modes (`quantized-lead` = the previous slot-rounded alignment,
+`exact-lead` = 92e62e5) and fail closed if the mode is missing/unknown. `tools/golden/test_lead_mode.py` asserts the
+reader returns each MANIFEST's own mode (a mode mismatch is impossible by construction) and rejects missing/unknown
+modes.
+
+**5 consecutive cold `make replay-golden` runs** with the corrected replay in the recorded `quantized-lead` mode,
+quiet host (`quiet_host` offenders 0 before/after):
+
+| Run | baseline | b40 |
+|---|---|---|
+| 1 | PASS | **FAIL** (+1 tail: 194 differing, 150 UL-slot leaks) |
+| 2 | PASS | PASS |
+| 3 | PASS | PASS |
+| 4 | PASS | PASS |
+| 5 | PASS | PASS |
+
+- **baseline 5/5 PASS** → stays in the default `replay-golden` suite.
+- **b40 4/5 PASS** → marked `host_limited` in `testdata/golden/b40/MANIFEST.json` (passes 4 / runs 5 + reason);
+  skipped by default with `[replay-golden] b40 SKIPPED (host_limited: ...)`, runnable with `RUN_HOST_LIMITED=1`.
+  No tolerance was widened and the failure is not silently dropped.

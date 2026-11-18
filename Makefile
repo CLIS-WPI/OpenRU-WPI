@@ -200,10 +200,19 @@ replay-golden: preflight
 	    test -s testdata/pcap/$$prof.pcapng || { echo "FAIL: missing pcap for $$prof"; exit 1; }; \
 	    test -s testdata/golden/$$prof/port0.cf32 || { \
 	      echo "FAIL: missing golden IQ for $$prof — run make fetch-golden"; exit 1; }; \
+	    if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if d.get("host_limited") else 1)' testdata/golden/$$prof/MANIFEST.json; then \
+	      if [ "$${RUN_HOST_LIMITED:-0}" != "1" ]; then \
+	        reason=$$(python3 -c 'import json,sys; h=json.load(open(sys.argv[1]))["host_limited"]; print("{} / {} runs passed: {}".format(h.get("passes"), h.get("runs"), h.get("reason")))' testdata/golden/$$prof/MANIFEST.json); \
+	        echo "[replay-golden] $$prof SKIPPED (host_limited: $$reason)"; continue; \
+	      fi; \
+	      echo "[replay-golden] $$prof host_limited but RUN_HOST_LIMITED=1 — running on demand"; \
+	    fi; \
+	    mode=$$(python3 $(ROOT)/tools/golden/manifest_mode.py --manifest testdata/golden/$$prof/MANIFEST.json --field lead_mode); \
+	    lead=$$(python3 $(ROOT)/tools/golden/manifest_mode.py --manifest testdata/golden/$$prof/MANIFEST.json --field lead_us); \
+	    sender=$$(python3 $(ROOT)/tools/golden/manifest_mode.py --manifest testdata/golden/$$prof/MANIFEST.json --field sender); \
 	    tag=$$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1])).get("image") or "")' testdata/golden/$$prof/MANIFEST.json); \
-	    sender=$$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1])).get("sender") or "c")' testdata/golden/$$prof/MANIFEST.json); \
 	    OPENRU_WINDOW_JSON=testdata/golden/$$prof/window.json OPENRU_TAG=$${tag:-$${OPENRU_TAG:-m1}} \
-	      OPENRU_REPLAY_SENDER=$$sender \
+	      OPENRU_REPLAY_SENDER=$$sender OPENRU_LEAD_MODE=$$mode OPENRU_REPLAY_ALIGN_LEAD_US=$$lead \
 	      $(ROOT)/scripts/replay_iq_dump.sh $$prof testdata/pcap/$$prof.pcapng \
 	      $(REPORTS)/replay-golden-$$prof 1.0; \
 	    python3 $(ROOT)/tools/golden/check.py \
