@@ -70,6 +70,9 @@ consistently clean even at 40 MHz**. b100 r1 fails catastrophically: the generic
 | v1-candidate | 2/2 PASS; **0.0 / 5.4e-07** late; DU UL 0 | 2/2 PASS on the RU gate (4.76e-06 / 8.09e-06); **DU UL 3.1e-05 / 2.3e-04 (fails 1e-5)** |
 | m2 (generic) | 1/2 PASS (0.0); **r2 2.188e-05 FAIL**; DU UL 0 / 1.1e-05 | **0/2 FAIL** (5.0e-05 / 9.6e-05); **DU UL 99.7% / 99.8%** |
 
-**v1 is not locked** under the strict per-plane/per-direction rule: the failing profile/direction is **b100, UL at the
-DU**. The v1 candidate is nevertheless clearly required for b100 (the generic RU cannot deliver the 122.88 MHz UL),
-and **b40 (the Stage 2 primary) is clean with the candidate (2/2, 0 late on every plane and direction)**.
+**v1 CPU configuration — LOCKED (human decision, 2026-11-17) with scope: 20 MHz (baseline) and 40 MHz (b40)
+validated; 100 MHz NOT validated on this host.** The failing profile/direction is **b100, UL at the DU**
+(`ul_rx_late` 3.1e-05/2.3e-04); this is likely host scheduling without isolated cores and is unproven. The
+candidate is required for b100 (the generic RU cannot deliver the 122.88 MHz UL), and **b40 (the Stage 2
+primary) is clean with the candidate (2/2, 0 late on every plane and direction)**. The v1 golden set remains
+baseline + b40; the b100 golden is deferred.

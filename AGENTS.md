@@ -39,6 +39,7 @@ make gpu-check && make down
 - `smoke-fh` exits 0 on pass and non-zero on fail. There is no soft-fail state; exit code 2
   is removed. A failure blocks the milestone until explained in the report.
 - **M1 `replay-golden` / CPU-vs-CPU:** 0 differing samples (bit-exact IQ).
+- **v1 CPU configuration — LOCKED (2026-11-17, human decision).** Configuration: `openru/protoru:v1-candidate` (`d22439c6267a`; FFTW + `x86-64-v4`/AVX-512 + ESTIMATE; submodule `d8d2097894`). **Scope: validated for 20 MHz (baseline) and 40 MHz (b40).** **100 MHz is NOT validated on this host:** the UL arrives late at the DU (candidate `ul_rx_late` 290/2,085 = 3.1e-05/2.3e-04; generic 99.7%); this is likely host scheduling without isolated cores and is unproven. The v1 golden set is baseline + b40; the b100 golden remains deferred. Do not present b100 as v1-validated.
 - **M2 `replay-cuda` (human-approved):** CUDA vs CPU golden passes if BFP output is
   byte-identical and OFDM modulator `ci16` output has max \|diff\| ≤ 1 LSB with error
   power ≤ −60 dB relative to signal power, per port per slot. Gate profile is `b40`
@@ -56,7 +57,7 @@ make gpu-check && make down
 
 - Emulator mode (no `sdr:` block, `profiles/baseline/protoru.yml`) is M0-only: it does not run low-PHY or produce golden IQ. M1 uses `protoru-null.yml` with `sdr.device_driver: null`, `tx_dump=/dev/shm/...`, `pace=realtime`.
 - Null radio advances its clock only in `receive()`; `pace=free` is throughput-only and must be labeled as such. Dumps are per-port `portN.cf32` plus `iq_meta.json` and `tx_index.jsonl`.
-- Goldens start at DU SFN 0, slot 0, after 100 stable slots; window length per profile is in `testdata/golden/<profile>/MANIFEST.json` (baseline 4000, b40 2000, b100 800 slots).
+- Goldens are anchored to pcap content: `start_du` is the first frame boundary at least two frames after the first DL C-plane (baseline 124.0, b40 146.0), stored in `window.json`/`MANIFEST.json`; the dump gate waits for that wire slot after the 100-stable-slot settle. Window length per profile is in `testdata/golden/<profile>/MANIFEST.json` (baseline 4000, b40 2000; b100 800 but its golden is deferred).
 - Compose chooses configs via `DU_CONFIG_PATH` / `PROTORU_CONFIG_PATH`. Add a new `profiles/<name>/` for new work; never edit `profiles/baseline/`.
 - `baseline` is 20 MHz 2x2 (frozen, M0 reference). `b40` (40 MHz 2x2) and `b100`
   (100 MHz 2x2) are added in M1 with their own CPU golden and late-ratio baseline.
