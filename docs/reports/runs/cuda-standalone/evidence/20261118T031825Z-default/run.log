@@ -1,0 +1,97 @@
+[cuda-standalone] gpu=GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058
+[cuda] building build/ocudu (targets: ocuduvec ocudu_ran ocudu_support ocudu_support_math ocudulog ocudu_instrumentation fmt ocudu_dft ocudu_phy_support ocudu_ofh_compression ocudu_lower_phy_modulation ocudu_yaml_util)
+[  0%] Built target fmt
+[ 50%] Built target ocudulog
+[100%] Built target ocuduvec
+[  0%] Built target fmt
+[ 20%] Built target ocudulog
+[100%] Built target ocudu_ran
+[  0%] Built target fmt
+[ 33%] Built target ocudulog
+[100%] Built target ocudu_support
+[  0%] Built target fmt
+[ 50%] Built target ocudulog
+[100%] Built target ocuduvec
+[100%] Built target ocudu_support_math
+[  0%] Built target fmt
+[100%] Built target ocudulog
+[  0%] Built target fmt
+[ 25%] Built target ocudulog
+[ 50%] Built target ocuduvec
+[100%] Built target ocudu_support
+[100%] Built target ocudu_support_math
+[100%] Built target ocudu_instrumentation
+Built target fmt
+[  0%] Built target fmt
+[ 33%] Built target ocudulog
+[ 66%] Built target ocuduvec
+[100%] Built target ocudu_dft
+[  0%] Built target fmt
+[ 11%] Built target ocudulog
+[ 22%] Built target ocuduvec
+[ 44%] Built target ocudu_support
+[ 88%] Built target ocudu_ran
+[ 88%] Built target ocudu_support_math
+[ 88%] Built target ocudu_instrumentation
+[100%] Built target ocudu_phy_support
+[  0%] Built target fmt
+[ 33%] Built target ocudulog
+[ 66%] Built target ocuduvec
+[100%] Built target ocudu_ofh_compression
+[  0%] Built target fmt
+[ 12%] Built target ocudulog
+[ 25%] Built target ocuduvec
+[ 50%] Built target ocudu_support
+[100%] Built target ocudu_ran
+[100%] Built target ocudu_support_math
+[100%] Built target ocudu_lower_phy_modulation
+Built target ocudu_yaml_util
+[cuda] building build/ocudu-fair (targets: ocuduvec ocudu_ran ocudu_support ocudu_support_math ocudulog ocudu_instrumentation fmt ocudu_dft ocudu_phy_support ocudu_ofh_compression ocudu_lower_phy_modulation ocudu_yaml_util ocudu_channel_precoder)
+[  0%] Built target fmt
+[ 50%] Built target ocudulog
+[100%] Built target ocuduvec
+[  0%] Built target fmt
+[ 20%] Built target ocudulog
+[100%] Built target ocudu_ran
+[  0%] Built target fmt
+[ 33%] Built target ocudulog
+[100%] Built target ocudu_support
+[  0%] Built target fmt
+[ 50%] Built target ocudulog
+[100%] Built target ocuduvec
+[100%] Built target ocudu_support_math
+[  0%] Built target fmt
+[100%] Built target ocudulog
+[  0%] Built target fmt
+[ 25%] Built target ocudulog
+[ 50%] Built target ocuduvec
+[100%] Built target ocudu_support
+[100%] Built target ocudu_support_math
+[100%] Built target ocudu_instrumentation
+Built target fmt
+[  0%] Built target fmt
+[ 33%] Built target ocudulog
+[ 66%] Built target ocuduvec
+[100%] Built target ocudu_dft
+[  0%] Built target fmt
+[ 11%] Built target ocudulog
+[ 22%] Built target ocuduvec
+[ 44%] Built target ocudu_support
+[ 88%] Built target ocudu_ran
+[ 88%] Built target ocudu_support_math
+[ 88%] Built target ocudu_instrumentation
+[100%] Built target ocudu_phy_support
+[  0%] Built target fmt
+[ 33%] Built target ocudulog
+[ 66%] Built target ocuduvec
+[100%] Built target ocudu_ofh_compression
+[  0%] Built target fmt
+[ 12%] Built target ocudulog
+[ 25%] Built target ocuduvec
+[ 50%] Built target ocudu_support
+[ 50%] Built target ocudu_support_math
+[100%] Built target ocudu_ran
+[100%] Built target ocudu_lower_phy_modulation
+Built target ocudu_yaml_util
+Built target ocudu_channel_precoder
+[cuda-standalone] running test_lowphy --iters 30

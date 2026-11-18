@@ -1,0 +1,46 @@
+make: Entering directory '/home/tanglab/Desktop/OpenRU-WPI/openru-sw'
+OK: lab.env loaded; GPU GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058; cpusets protoru=32-47 du=48-55
+NOTE: containers must use --gpus device=GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058 (never --gpus all).
+Forbidden UUID: GPU-96b18ccc-7894-5e31-0ad6-a74b5b79ac28
+WARNING: DU/RU cores not fully isolated: missing [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55]; isolcpus=[] nohz_full=[] rcu_nocbs=[]. See docs/BENCH_BUNDLE.md.
+make: Leaving directory '/home/tanglab/Desktop/OpenRU-WPI/openru-sw'
+[replay-golden] running make replay-golden REPLAY_PROFILES=baseline (timeout 2400s)
+make: Entering directory '/home/tanglab/Desktop/OpenRU-WPI/openru-sw'
+OK: lab.env loaded; GPU GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058; cpusets protoru=32-47 du=48-55
+NOTE: containers must use --gpus device=GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058 (never --gpus all).
+Forbidden UUID: GPU-96b18ccc-7894-5e31-0ad6-a74b5b79ac28
+WARNING: DU/RU cores not fully isolated: missing [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55]; isolcpus=[] nohz_full=[] rcu_nocbs=[]. See docs/BENCH_BUNDLE.md.
+[replay-golden] profiles=baseline (OPENRU_TAG=m2)
+[replay-golden] baseline
+prep-config: /tmp/protoru-replay-baseline-829118.yml window=4000 start_du=2480 lead_us=2235.0
+ Network openru_fh Creating 
+ Network openru_fh Created 
+ Container openru-protoru-1 Creating 
+ Container openru-protoru-1 Created 
+ Container openru-protoru-1 Starting 
+ Container openru-protoru-1 Started 
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+[replay] iface=eth0 profile=baseline rate=1.0 window=4000 start_du=2480 lead_us=2235.0
+fh_replay: send_error_us n=109790 min=4.5 p50=72.7 p90=260.9 p99=383.1 max=707.0 late>200us=16446 late>500us=527 late>1ms=0
+fh_replay: sent=109790 skipped=183466 pcap=/work/testdata/pcap/baseline.pcapng iface=eth0 rate=1.0 lead_us=0 engine=dpkt dry_run=False align_slot=2440 align_lead_us=2235
+[replay] dump stopped
+total 704M
+drwxr-xr-x  2 tanglab tanglab 4.0K Nov 17 22:39 .
+drwxr-xr-x 17 tanglab tanglab 4.0K Nov 17 22:39 ..
+-rw-r--r--  1 tanglab tanglab 1.3K Nov 17 22:39 iq_meta.json
+-rw-r--r--  1 tanglab tanglab 352M Nov 17 22:39 port0.cf32
+-rw-r--r--  1 tanglab tanglab 352M Nov 17 22:39 port1.cf32
+-rw-r--r--  1 tanglab tanglab 557K Nov 17 22:39 tx_index.jsonl
+[replay] wrote /home/tanglab/Desktop/OpenRU-WPI/openru-sw/docs/reports/raw/replay-golden-baseline
+golden-check: PASS replay-golden-baseline: 513/513 expected DL slots non-empty (+/-11); per-port energy ok (p0:513, p1:100); silent ports none zero; no UL leakage
+du_align: offset=0 slots (0 samples) golden=[124.0..67.19] (4000 slots) dut=[124.0..67.19] (4000 slots)
+du_overlap: 4000 slots (min required 4000) lo=(124, 0)
+port0.cf32: all 4000 overlapping DU slots PASS (n=46080000)
+port1.cf32: all 4000 overlapping DU slots PASS (n=46080000)
+[replay-golden] PASS
+make: Leaving directory '/home/tanglab/Desktop/OpenRU-WPI/openru-sw'
+golden-check: PASS replay-golden-baseline: 513/513 expected DL slots non-empty (+/-11); per-port energy ok (p0:513, p1:100); silent ports none zero; no UL leakage
+du_align: offset=0 slots (0 samples) golden=[124.0..67.19] (4000 slots) dut=[124.0..67.19] (4000 slots)
+du_overlap: 4000 slots (min required 4000) lo=(124, 0)
+port0.cf32: all 4000 overlapping DU slots PASS (n=46080000)
+port1.cf32: all 4000 overlapping DU slots PASS (n=46080000)

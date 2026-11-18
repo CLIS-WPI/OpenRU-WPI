@@ -1,0 +1,595 @@
+===== compose logs: protoru =====
+protoru-1  | GPU 0: NVIDIA H100 NVL (UUID: GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058)
+protoru-1  | Available radio types: uhd and null.
+protoru-1  | Running. Waiting for incoming packets...
+protoru-1  | [1m|   TIME   | ID  |  RX_TOTAL   | RX_ON_TIME  |  RX_EARLY   |   RX_LATE   |   RX_SEQ_ERR    | RX_ON_TIME_C  |  RX_EARLY_C   |   RX_LATE_C   |  RX_SEQ_ERR_C   | RX_ON_TIME_C_U |  RX_EARLY_C_U  |  RX_LATE_C_U   | RX_SEQ_ERR_C_U  | RX_SEQ_ERR_PRACH | RX_CORRUPT  | RX_ERR_DROP |  TX_TOTAL   |
+protoru-1  | [0m| 02:54:42 |  0  |    6212     |    4628     |      0      |      0      |       0/0       |      350      |       0       |       0       |       0/0       |      1234      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |      0      |
+protoru-1  | | 02:54:43 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    14692    |
+protoru-1  | | 02:54:44 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:54:45 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 02:54:46 |  0  |    9080     |    6766     |      2      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:54:47 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:54:48 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 02:54:49 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:54:50 |  0  |    9081     |    6767     |      1      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1801      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:54:51 |  0  |    9083     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1803      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 02:54:52 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:54:53 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 02:54:54 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:54:55 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:54:56 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 02:54:57 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:54:58 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15180    |
+protoru-1  | | 02:54:59 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15212    |
+protoru-1  | | 02:55:00 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15212    |
+protoru-1  | | 02:55:01 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15188    |
+protoru-1  | [1m|   TIME   | ID  |  RX_TOTAL   | RX_ON_TIME  |  RX_EARLY   |   RX_LATE   |   RX_SEQ_ERR    | RX_ON_TIME_C  |  RX_EARLY_C   |   RX_LATE_C   |  RX_SEQ_ERR_C   | RX_ON_TIME_C_U |  RX_EARLY_C_U  |  RX_LATE_C_U   | RX_SEQ_ERR_C_U  | RX_SEQ_ERR_PRACH | RX_CORRUPT  | RX_ERR_DROP |  TX_TOTAL   |
+protoru-1  | [0m| 02:55:02 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15214    |
+protoru-1  | | 02:55:03 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15178    |
+protoru-1  | | 02:55:04 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:55:05 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:55:06 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 02:55:07 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:55:08 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:55:09 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 02:55:10 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:55:11 |  0  |    9080     |    6766     |      2      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 02:55:12 |  0  |    9080     |    6767     |      1      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:55:13 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:55:14 |  0  |    9084     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1804      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 02:55:15 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:55:16 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 02:55:17 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:55:18 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:55:19 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15178    |
+protoru-1  | | 02:55:20 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15206    |
+protoru-1  | | 02:55:21 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15180    |
+protoru-1  | [1m|   TIME   | ID  |  RX_TOTAL   | RX_ON_TIME  |  RX_EARLY   |   RX_LATE   |   RX_SEQ_ERR    | RX_ON_TIME_C  |  RX_EARLY_C   |   RX_LATE_C   |  RX_SEQ_ERR_C   | RX_ON_TIME_C_U |  RX_EARLY_C_U  |  RX_LATE_C_U   | RX_SEQ_ERR_C_U  | RX_SEQ_ERR_PRACH | RX_CORRUPT  | RX_ERR_DROP |  TX_TOTAL   |
+protoru-1  | [0m| 02:55:22 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15210    |
+protoru-1  | | 02:55:23 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15206    |
+protoru-1  | | 02:55:24 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15180    |
+protoru-1  | | 02:55:25 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:55:26 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 02:55:27 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:55:28 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:55:29 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 02:55:30 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:55:31 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:55:32 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    12932    |
+protoru-1  | | 02:55:33 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:55:34 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 02:55:35 |  0  |    9084     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1804      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:55:36 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:55:37 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 02:55:38 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:55:39 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+protoru-1  | | 02:55:40 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:55:41 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | [1m|   TIME   | ID  |  RX_TOTAL   | RX_ON_TIME  |  RX_EARLY   |   RX_LATE   |   RX_SEQ_ERR    | RX_ON_TIME_C  |  RX_EARLY_C   |   RX_LATE_C   |  RX_SEQ_ERR_C   | RX_ON_TIME_C_U |  RX_EARLY_C_U  |  RX_LATE_C_U   | RX_SEQ_ERR_C_U  | RX_SEQ_ERR_PRACH | RX_CORRUPT  | RX_ERR_DROP |  TX_TOTAL   |
+protoru-1  | [0m| 02:55:42 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15182    |
+protoru-1  | | 02:55:43 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15208    |
+protoru-1  | | 02:55:44 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15184    |
+protoru-1  | | 02:55:45 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15204    |
+protoru-1  | | 02:55:46 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15206    |
+protoru-1  | | 02:55:47 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15176    |
+===== /tmp/proto-ru.log =====
+2026-11-18T02:54:41.569159 [CONFIG  ] [I] Input configuration (all values): 
+log:
+  filename: /tmp/proto-ru.log
+  level: info
+ru_emu:
+  timing_cpus: [32]
+  cells:
+    - network_interface: eth0
+      ru_mac_addr: 02:00:00:00:00:20
+      du_mac_addr: 02:00:00:00:00:10
+      enable_promiscuous: true
+      bandwidth: 20
+      common_scs: 30
+      dl_arfcn: 628032
+      band: 78
+      dl_port_id: [0, 1]
+      ul_port_id: [0, 1]
+      prach_port_id: [4, 5]
+      prach_format: short
+      compr_method_ul: bfp
+      compr_bitwidth_ul: 9
+      compr_method_dl: bfp
+      compr_bitwidth_dl: 9
+      compr_method_prach: bfp
+      compr_bitwidth_prach: 9
+      is_ul_static_compr_hdr: true
+      is_dl_static_compr_hdr: true
+      iq_scaling: 1
+      t2a_max_cp_dl: 2435
+      t2a_min_cp_dl: 2235
+      t2a_max_cp_ul: 2435
+      t2a_min_cp_ul: 2235
+      t2a_max_up: 2215
+      t2a_min_up: 2015
+      ta3_max_up: 1200
+      ta3_min_up: 800
+      ofh_cpus: [33, 34]
+      sdr:
+        device_driver: "null"
+        device_args: tx_dump=/dev/shm/openru_iq,rx_feed=,pace=realtime,scs_khz=30,max_dump_slots=4000,dump_start_stable_slots=100
+        srate: 23.039999999999999
+        tx_gain: 60
+        rx_gain: 60
+        center_freq_offset: 0
+        calibrate_clock_ppm: 0
+        lo_offset: 0
+        transmission_mode: continuous
+        power_ramping: 0
+        gain_backoff: 12
+        power_ceiling: -0.100000001
+        enable_clipping: false
+        otw_format: default
+        clock_source: default
+        sync_source: default
+        max_proc_delay: 2
+        execution_profile: auto
+        pinning_policy: mask
+2026-11-18T02:54:41.573951 [ALL     ] [I] Task worker "ru_rx_#0" started...
+2026-11-18T02:54:41.574087 [ALL     ] [I] Task worker "ru_emu_#0" started...
+2026-11-18T02:54:41.574117 [ALL     ] [I] Task worker "ru_ofh_tx_#0" started...
+2026-11-18T02:54:41.574207 [ALL     ] [I] Task worker "ru_radio_#0" started...
+2026-11-18T02:54:41.574407 [ALL     ] [I] Task worker "ru_phy_hp_#0" started...
+2026-11-18T02:54:41.574454 [ALL     ] [I] Task worker "ru_phy_tx_#0" started...
+2026-11-18T02:54:41.574539 [ALL     ] [I] Task worker "ru_phy_rx_#0" started...
+2026-11-18T02:54:41.574794 [ALL     ] [I] Task worker "ru_timing" started...
+2026-11-18T02:54:41.574798 [ALL     ] [I] Task worker "ru_phy_ul_#0" started...
+2026-11-18T02:54:41.597385 [RU_EMU  ] [I] Opened successfully the NIC interface 'eth0' (fd = '3') used by the Ethernet receiver
+2026-11-18T02:54:41.597402 [RU_EMU  ] [I] Opened successfully the NIC interface 'eth0' (fd = '5') used by the Ethernet transmitter
+2026-11-18T02:54:41.689183 [RADIO   ] [I] null radio ready: tx_dump='/dev/shm/openru_iq' rx_feed='' pace=realtime tx_ports=2 rx_ports=2 srate=23040000.00Hz samples_per_slot=11520 max_dump_slots=4000 max_dump_bytes=0 dump_start_stable_slots=100 dump_start_du_slot=-1 marker='' align_cplane_lead_us=0
+2026-11-18T02:54:41.708473 [RU_EMU  ] [I] Starting the realtime timing notifier
+2026-11-18T02:54:41.708501 [RU_EMU  ] [I] Started the realtime timing worker
+2026-11-18T02:54:41.708576 [RU_EMU  ] [I] Starting the ethernet frame receiver
+2026-11-18T02:54:41.708604 [RU_EMU  ] [I] Started the ethernet frame receiver with fd = '3'
+2026-11-18T02:54:42.227560 [RU_EMU  ] [I] RU emulator timing worker woke up late, skipped '4' symbols
+2026-11-18T02:54:42.708056 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=2000 ul_capture_req=2000 dl_tx=0 prach_capture_req=0 (slot=110.3 ofh=110.3)
+2026-11-18T02:54:42.708546 [RADIO   ] [I] null_pace wall_s=1794970482.708546 radio_ts=25344000
+2026-11-18T02:54:42.740046 [RU_EMU  ] [I] Aligned the radio slot numbering to the GPS wire numbering: slot offset '2097'. Tracking the radio clock drift against the host clock; keep the host clock GPS/NTP-synchronized.
+2026-11-18T02:54:43.119096 [RADIO   ] [I] null radio: dump start at DU slot 0.0 after 2822 stable slots (delta=2297)
+2026-11-18T02:54:43.252507 [RU_EMU  ] [I] RU emulator timing worker woke up late, skipped '3' symbols
+2026-11-18T02:54:43.708061 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=4000 ul_capture_req=4000 dl_tx=247 prach_capture_req=95 (slot=210.3 ofh=59.0)
+2026-11-18T02:54:43.708546 [RADIO   ] [I] null_pace wall_s=1794970483.708546 radio_ts=48384000
+2026-11-18T02:54:44.211577 [RU_EMU  ] [I] RU emulator timing worker woke up late, skipped '5' symbols
+2026-11-18T02:54:44.708056 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=6000 ul_capture_req=6000 dl_tx=503 prach_capture_req=195 (slot=310.3 ofh=159.0)
+2026-11-18T02:54:44.708549 [RADIO   ] [I] null_pace wall_s=1794970484.708549 radio_ts=71424000
+2026-11-18T02:54:45.118739 [RADIO   ] [W] null radio: dump stop — max_dump_slots reached at DU slot 199.19 (bytes=737280000 slots=4000 dropped=0)
+2026-11-18T02:54:45.235507 [RU_EMU  ] [I] RU emulator timing worker woke up late, skipped '2' symbols
+2026-11-18T02:54:45.708060 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=8000 ul_capture_req=8000 dl_tx=760 prach_capture_req=294 (slot=410.3 ofh=3.0)
+2026-11-18T02:54:45.708549 [RADIO   ] [I] null_pace wall_s=1794970485.708549 radio_ts=94464000
+2026-11-18T02:54:46.260524 [RU_EMU  ] [I] RU emulator timing worker woke up late, skipped '2' symbols
+2026-11-18T02:54:46.708049 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=10000 ul_capture_req=10000 dl_tx=1016 prach_capture_req=394 (slot=510.3 ofh=103.0)
+2026-11-18T02:54:46.708545 [RADIO   ] [I] null_pace wall_s=1794970486.708544 radio_ts=117504000
+2026-11-18T02:54:47.708053 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=12000 ul_capture_req=12000 dl_tx=1272 prach_capture_req=494 (slot=610.3 ofh=203.0)
+2026-11-18T02:54:47.708545 [RADIO   ] [I] null_pace wall_s=1794970487.708545 radio_ts=140544000
+2026-11-18T02:54:48.243508 [RU_EMU  ] [I] RU emulator timing worker woke up late, skipped '3' symbols
+2026-11-18T02:54:48.708051 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=14000 ul_capture_req=14000 dl_tx=1528 prach_capture_req=593 (slot=710.3 ofh=47.0)
+2026-11-18T02:54:48.708543 [RADIO   ] [I] null_pace wall_s=1794970488.708543 radio_ts=163584000
+2026-11-18T02:54:49.708043 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=16000 ul_capture_req=16000 dl_tx=1785 prach_capture_req=693 (slot=810.3 ofh=147.0)
+2026-11-18T02:54:49.708546 [RADIO   ] [I] null_pace wall_s=1794970489.708545 radio_ts=186624000
+2026-11-18T02:54:50.708053 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=18000 ul_capture_req=18000 dl_tx=2041 prach_capture_req=793 (slot=910.3 ofh=247.0)
+2026-11-18T02:54:50.708545 [RADIO   ] [I] null_pace wall_s=1794970490.708545 radio_ts=209664000
+2026-11-18T02:54:51.708061 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=20000 ul_capture_req=20000 dl_tx=2297 prach_capture_req=892 (slot=1010.3 ofh=91.0)
+2026-11-18T02:54:51.708545 [RADIO   ] [I] null_pace wall_s=1794970491.708545 radio_ts=232704000
+2026-11-18T02:54:52.708043 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=22000 ul_capture_req=22000 dl_tx=2553 prach_capture_req=992 (slot=86.3 ofh=191.0)
+2026-11-18T02:54:52.708546 [RADIO   ] [I] null_pace wall_s=1794970492.708546 radio_ts=255744000
+2026-11-18T02:54:53.708051 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=24000 ul_capture_req=24000 dl_tx=2810 prach_capture_req=1091 (slot=186.3 ofh=35.0)
+2026-11-18T02:54:53.708547 [RADIO   ] [I] null_pace wall_s=1794970493.708547 radio_ts=278784000
+2026-11-18T02:54:54.708047 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=26000 ul_capture_req=26000 dl_tx=3066 prach_capture_req=1191 (slot=286.3 ofh=135.0)
+2026-11-18T02:54:54.708546 [RADIO   ] [I] null_pace wall_s=1794970494.708546 radio_ts=301824000
+2026-11-18T02:54:55.708055 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=28000 ul_capture_req=28000 dl_tx=3322 prach_capture_req=1291 (slot=386.3 ofh=235.0)
+2026-11-18T02:54:55.708546 [RADIO   ] [I] null_pace wall_s=1794970495.708546 radio_ts=324864000
+2026-11-18T02:54:56.708052 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=30000 ul_capture_req=30000 dl_tx=3578 prach_capture_req=1390 (slot=486.3 ofh=79.0)
+2026-11-18T02:54:56.708544 [RADIO   ] [I] null_pace wall_s=1794970496.708544 radio_ts=347904000
+2026-11-18T02:54:57.708054 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=32000 ul_capture_req=32000 dl_tx=3835 prach_capture_req=1490 (slot=586.3 ofh=179.0)
+2026-11-18T02:54:57.708549 [RADIO   ] [I] null_pace wall_s=1794970497.708549 radio_ts=370944000
+2026-11-18T02:54:58.708051 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=34000 ul_capture_req=34000 dl_tx=4091 prach_capture_req=1589 (slot=686.3 ofh=23.0)
+2026-11-18T02:54:58.708548 [RADIO   ] [I] null_pace wall_s=1794970498.708547 radio_ts=393984000
+2026-11-18T02:54:59.708057 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=36000 ul_capture_req=36000 dl_tx=4347 prach_capture_req=1689 (slot=786.3 ofh=123.0)
+2026-11-18T02:54:59.708547 [RADIO   ] [I] null_pace wall_s=1794970499.708547 radio_ts=417024000
+2026-11-18T02:55:00.708055 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=38000 ul_capture_req=38000 dl_tx=4603 prach_capture_req=1789 (slot=886.3 ofh=223.0)
+2026-11-18T02:55:00.708548 [RADIO   ] [I] null_pace wall_s=1794970500.708547 radio_ts=440064000
+2026-11-18T02:55:01.708064 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=40000 ul_capture_req=40000 dl_tx=4860 prach_capture_req=1888 (slot=986.3 ofh=67.0)
+2026-11-18T02:55:01.708548 [RADIO   ] [I] null_pace wall_s=1794970501.708548 radio_ts=463104000
+2026-11-18T02:55:02.708053 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=42000 ul_capture_req=42000 dl_tx=5116 prach_capture_req=1988 (slot=62.3 ofh=167.0)
+2026-11-18T02:55:02.708543 [RADIO   ] [I] null_pace wall_s=1794970502.708543 radio_ts=486144000
+2026-11-18T02:55:03.708049 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=44000 ul_capture_req=44000 dl_tx=5372 prach_capture_req=2087 (slot=162.3 ofh=11.0)
+2026-11-18T02:55:03.708546 [RADIO   ] [I] null_pace wall_s=1794970503.708546 radio_ts=509184000
+2026-11-18T02:55:04.708054 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=46000 ul_capture_req=46000 dl_tx=5628 prach_capture_req=2187 (slot=262.3 ofh=111.0)
+2026-11-18T02:55:04.708548 [RADIO   ] [I] null_pace wall_s=1794970504.708547 radio_ts=532224000
+2026-11-18T02:55:05.708050 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=48000 ul_capture_req=48000 dl_tx=5885 prach_capture_req=2287 (slot=362.3 ofh=211.0)
+2026-11-18T02:55:05.708546 [RADIO   ] [I] null_pace wall_s=1794970505.708546 radio_ts=555264000
+2026-11-18T02:55:06.708048 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=50000 ul_capture_req=50000 dl_tx=6141 prach_capture_req=2386 (slot=462.3 ofh=55.0)
+2026-11-18T02:55:06.708542 [RADIO   ] [I] null_pace wall_s=1794970506.708542 radio_ts=578304000
+2026-11-18T02:55:07.708058 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=52000 ul_capture_req=52000 dl_tx=6397 prach_capture_req=2486 (slot=562.3 ofh=155.0)
+2026-11-18T02:55:07.708552 [RADIO   ] [I] null_pace wall_s=1794970507.708551 radio_ts=601344000
+2026-11-18T02:55:08.708049 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=54000 ul_capture_req=54000 dl_tx=6653 prach_capture_req=2586 (slot=662.3 ofh=255.0)
+2026-11-18T02:55:08.708550 [RADIO   ] [I] null_pace wall_s=1794970508.708550 radio_ts=624384000
+2026-11-18T02:55:09.708060 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=56000 ul_capture_req=56000 dl_tx=6910 prach_capture_req=2685 (slot=762.3 ofh=99.0)
+2026-11-18T02:55:09.708551 [RADIO   ] [I] null_pace wall_s=1794970509.708551 radio_ts=647424000
+2026-11-18T02:55:10.708043 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=58000 ul_capture_req=58000 dl_tx=7166 prach_capture_req=2785 (slot=862.3 ofh=199.0)
+2026-11-18T02:55:10.708545 [RADIO   ] [I] null_pace wall_s=1794970510.708545 radio_ts=670464000
+2026-11-18T02:55:11.708052 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=60000 ul_capture_req=60000 dl_tx=7422 prach_capture_req=2884 (slot=962.3 ofh=43.0)
+2026-11-18T02:55:11.708547 [RADIO   ] [I] null_pace wall_s=1794970511.708547 radio_ts=693504000
+2026-11-18T02:55:12.708053 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=62000 ul_capture_req=62000 dl_tx=7678 prach_capture_req=2984 (slot=38.3 ofh=143.0)
+2026-11-18T02:55:12.708553 [RADIO   ] [I] null_pace wall_s=1794970512.708552 radio_ts=716544000
+2026-11-18T02:55:13.708059 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=64000 ul_capture_req=64000 dl_tx=7935 prach_capture_req=3084 (slot=138.3 ofh=243.0)
+2026-11-18T02:55:13.708550 [RADIO   ] [I] null_pace wall_s=1794970513.708550 radio_ts=739584000
+2026-11-18T02:55:14.708059 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=66000 ul_capture_req=66000 dl_tx=8191 prach_capture_req=3183 (slot=238.3 ofh=87.0)
+2026-11-18T02:55:14.708548 [RADIO   ] [I] null_pace wall_s=1794970514.708548 radio_ts=762624000
+2026-11-18T02:55:15.708053 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=68000 ul_capture_req=68000 dl_tx=8447 prach_capture_req=3283 (slot=338.3 ofh=187.0)
+2026-11-18T02:55:15.708545 [RADIO   ] [I] null_pace wall_s=1794970515.708545 radio_ts=785664000
+2026-11-18T02:55:16.708051 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=70000 ul_capture_req=70000 dl_tx=8703 prach_capture_req=3382 (slot=438.3 ofh=31.0)
+2026-11-18T02:55:16.708545 [RADIO   ] [I] null_pace wall_s=1794970516.708544 radio_ts=808704000
+2026-11-18T02:55:17.708053 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=72000 ul_capture_req=72000 dl_tx=8960 prach_capture_req=3482 (slot=538.3 ofh=131.0)
+2026-11-18T02:55:17.708545 [RADIO   ] [I] null_pace wall_s=1794970517.708545 radio_ts=831744000
+2026-11-18T02:55:18.708052 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=74000 ul_capture_req=74000 dl_tx=9216 prach_capture_req=3582 (slot=638.3 ofh=231.0)
+2026-11-18T02:55:18.708547 [RADIO   ] [I] null_pace wall_s=1794970518.708547 radio_ts=854784000
+2026-11-18T02:55:19.708054 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=76000 ul_capture_req=76000 dl_tx=9472 prach_capture_req=3681 (slot=738.3 ofh=75.0)
+2026-11-18T02:55:19.708544 [RADIO   ] [I] null_pace wall_s=1794970519.708544 radio_ts=877824000
+2026-11-18T02:55:20.708051 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=78000 ul_capture_req=78000 dl_tx=9728 prach_capture_req=3781 (slot=838.3 ofh=175.0)
+2026-11-18T02:55:20.708547 [RADIO   ] [I] null_pace wall_s=1794970520.708547 radio_ts=900864000
+2026-11-18T02:55:21.708049 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=80000 ul_capture_req=80000 dl_tx=9985 prach_capture_req=3880 (slot=938.3 ofh=19.0)
+2026-11-18T02:55:21.708543 [RADIO   ] [I] null_pace wall_s=1794970521.708543 radio_ts=923904000
+2026-11-18T02:55:22.708052 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=82000 ul_capture_req=82000 dl_tx=10241 prach_capture_req=3980 (slot=14.3 ofh=119.0)
+2026-11-18T02:55:22.708546 [RADIO   ] [I] null_pace wall_s=1794970522.708546 radio_ts=946944000
+2026-11-18T02:55:23.708051 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=84000 ul_capture_req=84000 dl_tx=10497 prach_capture_req=4080 (slot=114.3 ofh=219.0)
+2026-11-18T02:55:23.708544 [RADIO   ] [I] null_pace wall_s=1794970523.708544 radio_ts=969984000
+2026-11-18T02:55:24.708042 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=86000 ul_capture_req=86000 dl_tx=10753 prach_capture_req=4179 (slot=214.3 ofh=63.0)
+2026-11-18T02:55:24.708545 [RADIO   ] [I] null_pace wall_s=1794970524.708545 radio_ts=993024000
+2026-11-18T02:55:25.708060 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=88000 ul_capture_req=88000 dl_tx=11010 prach_capture_req=4279 (slot=314.3 ofh=163.0)
+2026-11-18T02:55:25.708548 [RADIO   ] [I] null_pace wall_s=1794970525.708547 radio_ts=1016064000
+2026-11-18T02:55:26.708055 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=90000 ul_capture_req=90000 dl_tx=11266 prach_capture_req=4378 (slot=414.3 ofh=7.0)
+2026-11-18T02:55:26.708545 [RADIO   ] [I] null_pace wall_s=1794970526.708544 radio_ts=1039104000
+2026-11-18T02:55:27.708052 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=92000 ul_capture_req=92000 dl_tx=11522 prach_capture_req=4478 (slot=514.3 ofh=107.0)
+2026-11-18T02:55:27.708548 [RADIO   ] [I] null_pace wall_s=1794970527.708547 radio_ts=1062144000
+2026-11-18T02:55:28.708054 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=94000 ul_capture_req=94000 dl_tx=11778 prach_capture_req=4578 (slot=614.3 ofh=207.0)
+2026-11-18T02:55:28.708545 [RADIO   ] [I] null_pace wall_s=1794970528.708545 radio_ts=1085184000
+2026-11-18T02:55:29.708056 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=96000 ul_capture_req=96000 dl_tx=12035 prach_capture_req=4677 (slot=714.3 ofh=51.0)
+2026-11-18T02:55:29.708544 [RADIO   ] [I] null_pace wall_s=1794970529.708544 radio_ts=1108224000
+2026-11-18T02:55:30.708048 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=98000 ul_capture_req=98000 dl_tx=12291 prach_capture_req=4777 (slot=814.3 ofh=151.0)
+2026-11-18T02:55:30.708545 [RADIO   ] [I] null_pace wall_s=1794970530.708544 radio_ts=1131264000
+2026-11-18T02:55:31.708057 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=100000 ul_capture_req=100000 dl_tx=12547 prach_capture_req=4877 (slot=914.3 ofh=251.0)
+2026-11-18T02:55:31.708544 [RADIO   ] [I] null_pace wall_s=1794970531.708544 radio_ts=1154304000
+2026-11-18T02:55:32.099624 [PHY     ] [W] [  951.17] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 951.17.
+2026-11-18T02:55:32.100640 [PHY     ] [W] [  951.18] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 951.18.
+2026-11-18T02:55:32.101658 [PHY     ] [W] [  951.19] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 951.19.
+2026-11-18T02:55:32.102676 [PHY     ] [W] [   952.0] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 952.0.
+2026-11-18T02:55:32.103696 [PHY     ] [W] [   952.1] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 952.1.
+2026-11-18T02:55:32.104712 [PHY     ] [W] [   952.2] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 952.2.
+2026-11-18T02:55:32.105728 [PHY     ] [W] [   952.3] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 952.3.
+2026-11-18T02:55:32.106737 [PHY     ] [W] [   952.4] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 952.4.
+2026-11-18T02:55:32.107759 [PHY     ] [W] [   952.5] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 952.5.
+2026-11-18T02:55:32.108773 [PHY     ] [W] [   952.6] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 952.6.
+2026-11-18T02:55:32.109791 [PHY     ] [W] [   952.7] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 952.7.
+2026-11-18T02:55:32.110802 [PHY     ] [W] [   952.8] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 952.8.
+2026-11-18T02:55:32.111823 [PHY     ] [W] [   952.9] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 952.9.
+2026-11-18T02:55:32.112866 [PHY     ] [W] [  952.10] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 952.10.
+2026-11-18T02:55:32.113873 [PHY     ] [W] [  952.11] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 952.11.
+2026-11-18T02:55:32.114915 [PHY     ] [W] [  952.12] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 952.12.
+2026-11-18T02:55:32.115954 [PHY     ] [W] [  952.13] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 952.13.
+2026-11-18T02:55:32.115955 [PHY     ] [W] [   954.3] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 954.3.
+2026-11-18T02:55:32.116965 [PHY     ] [W] [  952.14] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 952.14.
+2026-11-18T02:55:32.118016 [PHY     ] [W] [  952.15] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 952.15.
+2026-11-18T02:55:32.119026 [PHY     ] [W] [  952.16] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 952.16.
+2026-11-18T02:55:32.120043 [PHY     ] [W] [  952.17] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 952.17.
+2026-11-18T02:55:32.120044 [PHY     ] [W] [   955.3] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 955.3.
+2026-11-18T02:55:32.121054 [PHY     ] [W] [  952.18] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 952.18.
+2026-11-18T02:55:32.122062 [PHY     ] [W] [  952.19] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 952.19.
+2026-11-18T02:55:32.122063 [PHY     ] [W] [   955.5] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 955.5.
+2026-11-18T02:55:32.123077 [PHY     ] [W] [   953.0] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 953.0.
+2026-11-18T02:55:32.123078 [PHY     ] [W] [   955.6] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 955.6.
+2026-11-18T02:55:32.124101 [PHY     ] [W] [   953.1] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 953.1.
+2026-11-18T02:55:32.125120 [PHY     ] [W] [   953.2] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 953.2.
+2026-11-18T02:55:32.125121 [PHY     ] [W] [   955.8] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 955.8.
+2026-11-18T02:55:32.126132 [PHY     ] [W] [   953.3] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 953.3.
+2026-11-18T02:55:32.127152 [PHY     ] [W] [   953.4] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 953.4.
+2026-11-18T02:55:32.128162 [PHY     ] [W] [   953.5] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 953.5.
+2026-11-18T02:55:32.129169 [PHY     ] [W] [   953.6] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 953.6.
+2026-11-18T02:55:32.130187 [PHY     ] [W] [   953.7] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 953.7.
+2026-11-18T02:55:32.131200 [PHY     ] [W] [   953.8] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 953.8.
+2026-11-18T02:55:32.132214 [PHY     ] [W] [   953.9] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 953.9.
+2026-11-18T02:55:32.133228 [PHY     ] [W] [  953.10] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 953.10.
+2026-11-18T02:55:32.134237 [PHY     ] [W] [  953.11] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 953.11.
+2026-11-18T02:55:32.135251 [PHY     ] [W] [  953.12] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 953.12.
+2026-11-18T02:55:32.136270 [PHY     ] [W] [  953.13] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 953.13.
+2026-11-18T02:55:32.137289 [PHY     ] [W] [  953.14] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 953.14.
+2026-11-18T02:55:32.138312 [PHY     ] [W] [  953.15] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 953.15.
+2026-11-18T02:55:32.139332 [PHY     ] [W] [  953.16] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 953.16.
+2026-11-18T02:55:32.140343 [PHY     ] [W] [  953.17] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 953.17.
+2026-11-18T02:55:32.140344 [PHY     ] [W] [   956.3] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 956.3.
+2026-11-18T02:55:32.141350 [PHY     ] [W] [  953.18] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 953.18.
+2026-11-18T02:55:32.142364 [PHY     ] [W] [  953.19] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 953.19.
+2026-11-18T02:55:32.143385 [PHY     ] [W] [   954.0] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 954.0.
+2026-11-18T02:55:32.144397 [PHY     ] [W] [   954.1] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 954.1.
+2026-11-18T02:55:32.144398 [PHY     ] [W] [   957.3] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 957.3.
+2026-11-18T02:55:32.145412 [PHY     ] [W] [   954.2] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 954.2.
+2026-11-18T02:55:32.146426 [PHY     ] [W] [   954.3] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 954.3.
+2026-11-18T02:55:32.146427 [PHY     ] [W] [   957.5] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 957.5.
+2026-11-18T02:55:32.147433 [PHY     ] [W] [   954.4] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 954.4.
+2026-11-18T02:55:32.147434 [PHY     ] [W] [   957.6] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 957.6.
+2026-11-18T02:55:32.148445 [PHY     ] [W] [   954.5] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 954.5.
+2026-11-18T02:55:32.149456 [PHY     ] [W] [   954.6] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 954.6.
+2026-11-18T02:55:32.149457 [PHY     ] [W] [   957.8] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 957.8.
+2026-11-18T02:55:32.150471 [PHY     ] [W] [   954.7] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 954.7.
+2026-11-18T02:55:32.151486 [PHY     ] [W] [   954.8] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 954.8.
+2026-11-18T02:55:32.152495 [PHY     ] [W] [   954.9] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 954.9.
+2026-11-18T02:55:32.153506 [PHY     ] [W] [  954.10] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 954.10.
+2026-11-18T02:55:32.154515 [PHY     ] [W] [  954.11] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 954.11.
+2026-11-18T02:55:32.155524 [PHY     ] [W] [  954.12] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 954.12.
+2026-11-18T02:55:32.156540 [PHY     ] [W] [  954.13] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 954.13.
+2026-11-18T02:55:32.157177 [PHY     ] [W] [   955.1] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 955.1.
+2026-11-18T02:55:32.157196 [PHY     ] [W] [   955.2] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 955.2.
+2026-11-18T02:55:32.157210 [PHY     ] [W] [   955.3] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 955.3.
+2026-11-18T02:55:32.157224 [PHY     ] [W] [   955.4] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 955.4.
+2026-11-18T02:55:32.157277 [PHY     ] [W] [   955.5] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 955.5.
+2026-11-18T02:55:32.157326 [PHY     ] [W] [   955.6] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 955.6.
+2026-11-18T02:55:32.157368 [PHY     ] [W] [   955.7] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 955.7.
+2026-11-18T02:55:32.157553 [PHY     ] [W] [   955.8] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 955.8.
+2026-11-18T02:55:32.157559 [PHY     ] [W] [  954.14] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 954.14.
+2026-11-18T02:55:32.157573 [PHY     ] [W] [   955.9] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 955.9.
+2026-11-18T02:55:32.157588 [PHY     ] [W] [  955.10] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 955.10.
+2026-11-18T02:55:32.157602 [PHY     ] [W] [  954.15] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 954.15.
+2026-11-18T02:55:32.157632 [PHY     ] [W] [  954.16] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 954.16.
+2026-11-18T02:55:32.157679 [PHY     ] [W] [  954.17] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 954.17.
+2026-11-18T02:55:32.157728 [PHY     ] [W] [  954.18] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 954.18.
+2026-11-18T02:55:32.157774 [PHY     ] [W] [  954.19] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 954.19.
+2026-11-18T02:55:32.157821 [PHY     ] [W] [   955.0] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 955.0.
+2026-11-18T02:55:32.158986 [PHY     ] [W] [  955.11] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 955.11.
+2026-11-18T02:55:32.159682 [PHY     ] [W] [  955.12] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 955.12.
+2026-11-18T02:55:32.160342 [PHY     ] [W] [   958.3] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 958.3.
+2026-11-18T02:55:32.160521 [PHY     ] [W] [   959.3] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 959.3.
+2026-11-18T02:55:32.160956 [PHY     ] [W] [   959.5] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 959.5.
+2026-11-18T02:55:32.160962 [PHY     ] [W] [   959.6] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 959.6.
+2026-11-18T02:55:32.162138 [PHY     ] [W] [  956.12] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 956.12.
+2026-11-18T02:55:32.162182 [PHY     ] [W] [  956.13] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 956.13.
+2026-11-18T02:55:32.162212 [PHY     ] [W] [  956.14] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 956.14.
+2026-11-18T02:55:32.162256 [PHY     ] [W] [  956.15] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 956.15.
+2026-11-18T02:55:32.201105 [PHY     ] [W] [   959.8] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 959.8.
+2026-11-18T02:55:32.208605 [PHY     ] [W] [   960.3] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 960.3.
+2026-11-18T02:55:32.218571 [PHY     ] [W] [   961.3] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 961.3.
+2026-11-18T02:55:32.219569 [PHY     ] [W] [   961.5] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 961.5.
+2026-11-18T02:55:32.220074 [PHY     ] [W] [   961.6] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 961.6.
+2026-11-18T02:55:32.221064 [PHY     ] [W] [   961.8] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 961.8.
+2026-11-18T02:55:32.228583 [PHY     ] [W] [   962.3] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 962.3.
+2026-11-18T02:55:32.231507 [PHY     ] [W] [   963.8] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 963.8.
+2026-11-18T02:55:32.231717 [PHY     ] [W] [   965.3] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 965.3.
+2026-11-18T02:55:32.231743 [PHY     ] [W] [   965.5] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 965.5.
+2026-11-18T02:55:32.231758 [PHY     ] [W] [   965.6] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 965.6.
+2026-11-18T02:55:32.231772 [PHY     ] [W] [   966.3] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 966.3.
+2026-11-18T02:55:32.231785 [PHY     ] [W] [   965.8] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 965.8.
+2026-11-18T02:55:32.231822 [PHY     ] [W] [   963.3] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 963.3.
+2026-11-18T02:55:32.231849 [PHY     ] [W] [   963.5] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 963.5.
+2026-11-18T02:55:32.231864 [PHY     ] [W] [   963.6] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 963.6.
+2026-11-18T02:55:32.231876 [PHY     ] [W] [   964.3] Real-time failure in lower PHY: Downlink data late for sector 0 and slot 964.3.
+2026-11-18T02:55:32.231891 [PHY     ] [W] [   957.2] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 957.2.
+2026-11-18T02:55:32.231909 [PHY     ] [W] [   957.3] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 957.3.
+2026-11-18T02:55:32.231929 [PHY     ] [W] [   957.4] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 957.4.
+2026-11-18T02:55:32.231945 [PHY     ] [W] [   957.5] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 957.5.
+2026-11-18T02:55:32.231964 [PHY     ] [W] [   957.6] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 957.6.
+2026-11-18T02:55:32.231986 [PHY     ] [W] [   957.7] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 957.7.
+2026-11-18T02:55:32.232003 [PHY     ] [W] [   957.8] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 957.8.
+2026-11-18T02:55:32.232023 [PHY     ] [W] [   957.9] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 957.9.
+2026-11-18T02:55:32.232042 [PHY     ] [W] [  957.10] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 957.10.
+2026-11-18T02:55:32.232061 [PHY     ] [W] [  957.11] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 957.11.
+2026-11-18T02:55:32.232061 [PHY     ] [W] [   958.6] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 958.6.
+2026-11-18T02:55:32.232083 [PHY     ] [W] [  957.12] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 957.12.
+2026-11-18T02:55:32.232099 [PHY     ] [W] [  957.13] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 957.13.
+2026-11-18T02:55:32.232119 [PHY     ] [W] [  957.14] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 957.14.
+2026-11-18T02:55:32.232135 [PHY     ] [W] [  957.15] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 957.15.
+2026-11-18T02:55:32.232155 [PHY     ] [W] [  957.16] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 957.16.
+2026-11-18T02:55:32.232171 [PHY     ] [W] [  957.17] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 957.17.
+2026-11-18T02:55:32.232193 [PHY     ] [W] [  957.18] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 957.18.
+2026-11-18T02:55:32.232209 [PHY     ] [W] [  957.19] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 957.19.
+2026-11-18T02:55:32.232229 [PHY     ] [W] [   958.0] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 958.0.
+2026-11-18T02:55:32.232246 [PHY     ] [W] [   958.1] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 958.1.
+2026-11-18T02:55:32.232265 [PHY     ] [W] [   958.2] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 958.2.
+2026-11-18T02:55:32.232284 [PHY     ] [W] [   958.3] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 958.3.
+2026-11-18T02:55:32.232300 [PHY     ] [W] [   958.4] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 958.4.
+2026-11-18T02:55:32.232318 [PHY     ] [W] [   958.5] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 958.5.
+2026-11-18T02:55:32.232346 [PHY     ] [W] [   958.7] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 958.7.
+2026-11-18T02:55:32.232365 [PHY     ] [W] [   958.8] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 958.8.
+2026-11-18T02:55:32.232389 [PHY     ] [W] [   958.9] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 958.9.
+2026-11-18T02:55:32.232409 [PHY     ] [W] [  958.10] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 958.10.
+2026-11-18T02:55:32.232425 [PHY     ] [W] [  958.11] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 958.11.
+2026-11-18T02:55:32.232444 [PHY     ] [W] [  958.12] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 958.12.
+2026-11-18T02:55:32.232461 [PHY     ] [W] [  958.13] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 958.13.
+2026-11-18T02:55:32.232478 [PHY     ] [W] [  958.14] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 958.14.
+2026-11-18T02:55:32.232494 [PHY     ] [W] [  958.15] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 958.15.
+2026-11-18T02:55:32.232514 [PHY     ] [W] [  958.16] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 958.16.
+2026-11-18T02:55:32.232530 [PHY     ] [W] [  958.17] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 958.17.
+2026-11-18T02:55:32.232549 [PHY     ] [W] [  958.18] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 958.18.
+2026-11-18T02:55:32.232555 [PHY     ] [W] [   959.3] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 959.3.
+2026-11-18T02:55:32.232566 [PHY     ] [W] [  958.19] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 958.19.
+2026-11-18T02:55:32.232586 [PHY     ] [W] [   959.0] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 959.0.
+2026-11-18T02:55:32.232603 [PHY     ] [W] [   959.1] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 959.1.
+2026-11-18T02:55:32.232624 [PHY     ] [W] [   959.2] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 959.2.
+2026-11-18T02:55:32.232648 [PHY     ] [W] [   959.4] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 959.4.
+2026-11-18T02:55:32.232662 [PHY     ] [W] [   959.5] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 959.5.
+2026-11-18T02:55:32.232674 [PHY     ] [W] [   959.6] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 959.6.
+2026-11-18T02:55:32.232688 [PHY     ] [W] [   959.7] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 959.7.
+2026-11-18T02:55:32.232700 [PHY     ] [W] [   959.8] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 959.8.
+2026-11-18T02:55:32.232714 [PHY     ] [W] [   959.9] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 959.9.
+2026-11-18T02:55:32.232726 [PHY     ] [W] [  959.10] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 959.10.
+2026-11-18T02:55:32.232741 [PHY     ] [W] [  959.11] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 959.11.
+2026-11-18T02:55:32.232752 [PHY     ] [W] [  959.12] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 959.12.
+2026-11-18T02:55:32.232767 [PHY     ] [W] [  959.13] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 959.13.
+2026-11-18T02:55:32.232779 [PHY     ] [W] [  959.14] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 959.14.
+2026-11-18T02:55:32.232794 [PHY     ] [W] [  959.15] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 959.15.
+2026-11-18T02:55:32.232809 [PHY     ] [W] [  959.16] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 959.16.
+2026-11-18T02:55:32.232821 [PHY     ] [W] [  959.17] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 959.17.
+2026-11-18T02:55:32.232835 [PHY     ] [W] [  959.18] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 959.18.
+2026-11-18T02:55:32.232847 [PHY     ] [W] [  959.19] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 959.19.
+2026-11-18T02:55:32.232862 [PHY     ] [W] [   960.0] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 960.0.
+2026-11-18T02:55:32.232874 [PHY     ] [W] [   960.1] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 960.1.
+2026-11-18T02:55:32.232888 [PHY     ] [W] [   960.2] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 960.2.
+2026-11-18T02:55:32.232900 [PHY     ] [W] [   960.3] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 960.3.
+2026-11-18T02:55:32.232915 [PHY     ] [W] [   960.4] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 960.4.
+2026-11-18T02:55:32.232926 [PHY     ] [W] [   960.5] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 960.5.
+2026-11-18T02:55:32.232941 [PHY     ] [W] [   960.6] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 960.6.
+2026-11-18T02:55:32.232953 [PHY     ] [W] [   960.7] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 960.7.
+2026-11-18T02:55:32.232968 [PHY     ] [W] [   960.8] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 960.8.
+2026-11-18T02:55:32.232980 [PHY     ] [W] [   960.9] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 960.9.
+2026-11-18T02:55:32.232994 [PHY     ] [W] [  960.10] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 960.10.
+2026-11-18T02:55:32.233010 [PHY     ] [W] [  960.11] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 960.11.
+2026-11-18T02:55:32.233022 [PHY     ] [W] [  960.12] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 960.12.
+2026-11-18T02:55:32.233036 [PHY     ] [W] [  960.13] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 960.13.
+2026-11-18T02:55:32.233048 [PHY     ] [W] [  960.14] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 960.14.
+2026-11-18T02:55:32.233062 [PHY     ] [W] [  960.16] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 960.16.
+2026-11-18T02:55:32.233063 [PHY     ] [W] [  960.15] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 960.15.
+2026-11-18T02:55:32.233089 [PHY     ] [W] [  960.17] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 960.17.
+2026-11-18T02:55:32.233101 [PHY     ] [W] [  960.18] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 960.18.
+2026-11-18T02:55:32.233116 [PHY     ] [W] [  960.19] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 960.19.
+2026-11-18T02:55:32.233128 [PHY     ] [W] [   961.0] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 961.0.
+2026-11-18T02:55:32.233143 [PHY     ] [W] [   961.1] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 961.1.
+2026-11-18T02:55:32.233155 [PHY     ] [W] [   961.2] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 961.2.
+2026-11-18T02:55:32.233170 [PHY     ] [W] [   961.3] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 961.3.
+2026-11-18T02:55:32.233182 [PHY     ] [W] [   961.4] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 961.4.
+2026-11-18T02:55:32.233197 [PHY     ] [W] [   961.5] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 961.5.
+2026-11-18T02:55:32.233208 [PHY     ] [W] [   961.6] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 961.6.
+2026-11-18T02:55:32.233222 [PHY     ] [W] [   961.7] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 961.7.
+2026-11-18T02:55:32.233237 [PHY     ] [W] [   961.8] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 961.8.
+2026-11-18T02:55:32.233249 [PHY     ] [W] [   961.9] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 961.9.
+2026-11-18T02:55:32.233263 [PHY     ] [W] [  961.10] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 961.10.
+2026-11-18T02:55:32.233275 [PHY     ] [W] [  961.11] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 961.11.
+2026-11-18T02:55:32.233289 [PHY     ] [W] [  961.12] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 961.12.
+2026-11-18T02:55:32.233301 [PHY     ] [W] [  961.13] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 961.13.
+2026-11-18T02:55:32.233316 [PHY     ] [W] [  961.14] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 961.14.
+2026-11-18T02:55:32.233328 [PHY     ] [W] [  961.15] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 961.15.
+2026-11-18T02:55:32.233343 [PHY     ] [W] [  961.16] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 961.16.
+2026-11-18T02:55:32.233355 [PHY     ] [W] [  961.17] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 961.17.
+2026-11-18T02:55:32.233377 [PHY     ] [W] [  961.18] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 961.18.
+2026-11-18T02:55:32.233389 [PHY     ] [W] [  961.19] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 961.19.
+2026-11-18T02:55:32.233404 [PHY     ] [W] [   962.0] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 962.0.
+2026-11-18T02:55:32.233416 [PHY     ] [W] [   962.1] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 962.1.
+2026-11-18T02:55:32.233430 [PHY     ] [W] [   962.2] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 962.2.
+2026-11-18T02:55:32.233445 [PHY     ] [W] [   962.3] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 962.3.
+2026-11-18T02:55:32.233457 [PHY     ] [W] [   962.4] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 962.4.
+2026-11-18T02:55:32.233471 [PHY     ] [W] [   962.5] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 962.5.
+2026-11-18T02:55:32.233483 [PHY     ] [W] [   962.6] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 962.6.
+2026-11-18T02:55:32.233498 [PHY     ] [W] [   962.7] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 962.7.
+2026-11-18T02:55:32.233510 [PHY     ] [W] [   962.8] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 962.8.
+2026-11-18T02:55:32.233525 [PHY     ] [W] [   962.9] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 962.9.
+2026-11-18T02:55:32.233537 [PHY     ] [W] [  962.10] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 962.10.
+2026-11-18T02:55:32.233551 [PHY     ] [W] [  962.11] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 962.11.
+2026-11-18T02:55:32.233559 [PHY     ] [W] [   963.5] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 963.5.
+2026-11-18T02:55:32.233566 [PHY     ] [W] [  962.12] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 962.12.
+2026-11-18T02:55:32.233578 [PHY     ] [W] [  962.13] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 962.13.
+2026-11-18T02:55:32.233593 [PHY     ] [W] [  962.14] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 962.14.
+2026-11-18T02:55:32.233605 [PHY     ] [W] [  962.15] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 962.15.
+2026-11-18T02:55:32.233620 [PHY     ] [W] [  962.16] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 962.16.
+2026-11-18T02:55:32.233631 [PHY     ] [W] [  962.17] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 962.17.
+2026-11-18T02:55:32.233646 [PHY     ] [W] [  962.18] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 962.18.
+2026-11-18T02:55:32.233661 [PHY     ] [W] [  962.19] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 962.19.
+2026-11-18T02:55:32.233672 [PHY     ] [W] [   963.0] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 963.0.
+2026-11-18T02:55:32.233687 [PHY     ] [W] [   963.1] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 963.1.
+2026-11-18T02:55:32.233699 [PHY     ] [W] [   963.2] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 963.2.
+2026-11-18T02:55:32.233714 [PHY     ] [W] [   963.3] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 963.3.
+2026-11-18T02:55:32.233726 [PHY     ] [W] [   963.4] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 963.4.
+2026-11-18T02:55:32.233752 [PHY     ] [W] [   963.6] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 963.6.
+2026-11-18T02:55:32.233764 [PHY     ] [W] [   963.7] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 963.7.
+2026-11-18T02:55:32.233778 [PHY     ] [W] [   963.8] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 963.8.
+2026-11-18T02:55:32.233790 [PHY     ] [W] [   963.9] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 963.9.
+2026-11-18T02:55:32.233804 [PHY     ] [W] [  963.10] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 963.10.
+2026-11-18T02:55:32.233816 [PHY     ] [W] [  963.11] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 963.11.
+2026-11-18T02:55:32.233830 [PHY     ] [W] [  963.12] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 963.12.
+2026-11-18T02:55:32.233842 [PHY     ] [W] [  963.13] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 963.13.
+2026-11-18T02:55:32.233856 [PHY     ] [W] [  963.14] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 963.14.
+2026-11-18T02:55:32.233871 [PHY     ] [W] [  963.15] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 963.15.
+2026-11-18T02:55:32.233883 [PHY     ] [W] [  963.16] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 963.16.
+2026-11-18T02:55:32.233898 [PHY     ] [W] [  963.17] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 963.17.
+2026-11-18T02:55:32.233910 [PHY     ] [W] [  963.18] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 963.18.
+2026-11-18T02:55:32.233925 [PHY     ] [W] [  963.19] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 963.19.
+2026-11-18T02:55:32.233937 [PHY     ] [W] [   964.0] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 964.0.
+2026-11-18T02:55:32.233951 [PHY     ] [W] [   964.1] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 964.1.
+2026-11-18T02:55:32.233963 [PHY     ] [W] [   964.2] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 964.2.
+2026-11-18T02:55:32.233977 [PHY     ] [W] [   964.3] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 964.3.
+2026-11-18T02:55:32.233989 [PHY     ] [W] [   964.4] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 964.4.
+2026-11-18T02:55:32.234004 [PHY     ] [W] [   964.5] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 964.5.
+2026-11-18T02:55:32.234016 [PHY     ] [W] [   964.6] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 964.6.
+2026-11-18T02:55:32.234030 [PHY     ] [W] [   964.7] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 964.7.
+2026-11-18T02:55:32.234042 [PHY     ] [W] [   964.8] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 964.8.
+2026-11-18T02:55:32.234062 [PHY     ] [W] [   964.9] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 964.9.
+2026-11-18T02:55:32.234062 [PHY     ] [W] [   965.2] Real-time failure in lower PHY: PRACH request late for sector 0, slot 965.2 and start symbol 0.
+2026-11-18T02:55:32.234065 [PHY     ] [W] [  964.18] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 964.18.
+2026-11-18T02:55:32.234077 [PHY     ] [W] [  964.10] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 964.10.
+2026-11-18T02:55:32.234089 [PHY     ] [W] [  964.11] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 964.11.
+2026-11-18T02:55:32.234104 [PHY     ] [W] [  964.12] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 964.12.
+2026-11-18T02:55:32.234116 [PHY     ] [W] [  964.13] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 964.13.
+2026-11-18T02:55:32.234130 [PHY     ] [W] [  964.14] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 964.14.
+2026-11-18T02:55:32.234142 [PHY     ] [W] [  964.15] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 964.15.
+2026-11-18T02:55:32.234157 [PHY     ] [W] [  964.16] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 964.16.
+2026-11-18T02:55:32.234169 [PHY     ] [W] [  964.17] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 964.17.
+2026-11-18T02:55:32.234195 [PHY     ] [W] [  964.19] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 964.19.
+2026-11-18T02:55:32.234207 [PHY     ] [W] [   965.0] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 965.0.
+2026-11-18T02:55:32.234221 [PHY     ] [W] [   965.1] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 965.1.
+2026-11-18T02:55:32.234233 [PHY     ] [W] [   965.2] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 965.2.
+2026-11-18T02:55:32.234247 [PHY     ] [W] [   965.3] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 965.3.
+2026-11-18T02:55:32.234259 [PHY     ] [W] [   965.4] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 965.4.
+2026-11-18T02:55:32.234274 [PHY     ] [W] [   965.5] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 965.5.
+2026-11-18T02:55:32.234288 [PHY     ] [W] [   965.6] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 965.6.
+2026-11-18T02:55:32.234300 [PHY     ] [W] [   965.7] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 965.7.
+2026-11-18T02:55:32.234315 [PHY     ] [W] [   965.8] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 965.8.
+2026-11-18T02:55:32.234327 [PHY     ] [W] [   965.9] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 965.9.
+2026-11-18T02:55:32.234342 [PHY     ] [W] [  965.10] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 965.10.
+2026-11-18T02:55:32.234353 [PHY     ] [W] [  965.11] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 965.11.
+2026-11-18T02:55:32.234368 [PHY     ] [W] [  965.12] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 965.12.
+2026-11-18T02:55:32.234385 [PHY     ] [W] [  965.13] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 965.13.
+2026-11-18T02:55:32.234399 [PHY     ] [W] [  965.14] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 965.14.
+2026-11-18T02:55:32.234411 [PHY     ] [W] [  965.15] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 965.15.
+2026-11-18T02:55:32.234425 [PHY     ] [W] [  965.16] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 965.16.
+2026-11-18T02:55:32.234437 [PHY     ] [W] [  965.17] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 965.17.
+2026-11-18T02:55:32.234452 [PHY     ] [W] [  965.18] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 965.18.
+2026-11-18T02:55:32.234464 [PHY     ] [W] [  965.19] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 965.19.
+2026-11-18T02:55:32.234555 [PHY     ] [W] [   966.2] Real-time failure in lower PHY: PRACH request late for sector 0, slot 966.2 and start symbol 0.
+2026-11-18T02:55:32.234571 [PHY     ] [W] [   966.0] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 966.0.
+2026-11-18T02:55:32.235063 [PHY     ] [W] [   966.1] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 966.1.
+2026-11-18T02:55:32.235555 [PHY     ] [W] [   966.2] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 966.2.
+2026-11-18T02:55:32.236053 [PHY     ] [W] [   966.3] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 966.3.
+2026-11-18T02:55:32.236548 [PHY     ] [W] [   966.4] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 966.4.
+2026-11-18T02:55:32.237055 [PHY     ] [W] [   966.5] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 966.5.
+2026-11-18T02:55:32.237552 [PHY     ] [W] [   966.6] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 966.6.
+2026-11-18T02:55:32.238042 [PHY     ] [W] [   966.7] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 966.7.
+2026-11-18T02:55:32.238551 [PHY     ] [W] [   966.8] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 966.8.
+2026-11-18T02:55:32.239048 [PHY     ] [W] [   966.9] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 966.9.
+2026-11-18T02:55:32.239545 [PHY     ] [W] [  966.10] Real-time failure in lower PHY: PUxCH request late for sector 0, slot 966.10.
+2026-11-18T02:55:32.708045 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=102000 ul_capture_req=102000 dl_tx=12803 prach_capture_req=4965 (slot=1014.3 ofh=95.0)
+2026-11-18T02:55:32.708559 [RADIO   ] [I] null_pace wall_s=1794970532.708550 radio_ts=1177344000
+2026-11-18T02:55:33.708050 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=104000 ul_capture_req=104000 dl_tx=13060 prach_capture_req=5065 (slot=90.3 ofh=195.0)
+2026-11-18T02:55:33.708556 [RADIO   ] [I] null_pace wall_s=1794970533.708548 radio_ts=1200384000
+2026-11-18T02:55:34.708053 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=106000 ul_capture_req=106000 dl_tx=13316 prach_capture_req=5164 (slot=190.3 ofh=39.0)
+2026-11-18T02:55:34.708558 [RADIO   ] [I] null_pace wall_s=1794970534.708546 radio_ts=1223424000
+2026-11-18T02:55:35.708061 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=108000 ul_capture_req=108000 dl_tx=13572 prach_capture_req=5264 (slot=290.3 ofh=139.0)
+2026-11-18T02:55:35.708553 [RADIO   ] [I] null_pace wall_s=1794970535.708552 radio_ts=1246464000
+2026-11-18T02:55:36.708069 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=110000 ul_capture_req=110000 dl_tx=13828 prach_capture_req=5364 (slot=390.3 ofh=239.0)
+2026-11-18T02:55:36.708549 [RADIO   ] [I] null_pace wall_s=1794970536.708548 radio_ts=1269504000
+2026-11-18T02:55:37.708062 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=112000 ul_capture_req=112000 dl_tx=14085 prach_capture_req=5463 (slot=490.3 ofh=83.0)
+2026-11-18T02:55:37.708551 [RADIO   ] [I] null_pace wall_s=1794970537.708550 radio_ts=1292544000
+2026-11-18T02:55:38.708055 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=114000 ul_capture_req=114000 dl_tx=14341 prach_capture_req=5563 (slot=590.3 ofh=183.0)
+2026-11-18T02:55:38.708545 [RADIO   ] [I] null_pace wall_s=1794970538.708545 radio_ts=1315584000
+2026-11-18T02:55:39.708064 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=116000 ul_capture_req=116000 dl_tx=14597 prach_capture_req=5662 (slot=690.3 ofh=27.0)
+2026-11-18T02:55:39.708547 [RADIO   ] [I] null_pace wall_s=1794970539.708547 radio_ts=1338624000
+2026-11-18T02:55:40.708066 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=118000 ul_capture_req=118000 dl_tx=14853 prach_capture_req=5762 (slot=790.3 ofh=127.0)
+2026-11-18T02:55:40.708541 [RADIO   ] [I] null_pace wall_s=1794970540.708541 radio_ts=1361664000
+2026-11-18T02:55:41.708059 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=120000 ul_capture_req=120000 dl_tx=15110 prach_capture_req=5862 (slot=890.3 ofh=227.0)
+2026-11-18T02:55:41.708547 [RADIO   ] [I] null_pace wall_s=1794970541.708547 radio_ts=1384704000
+2026-11-18T02:55:42.708063 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=122000 ul_capture_req=122000 dl_tx=15366 prach_capture_req=5961 (slot=990.3 ofh=71.0)
+2026-11-18T02:55:42.708546 [RADIO   ] [I] null_pace wall_s=1794970542.708546 radio_ts=1407744000
+2026-11-18T02:55:43.708061 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=124000 ul_capture_req=124000 dl_tx=15622 prach_capture_req=6061 (slot=66.3 ofh=171.0)
+2026-11-18T02:55:43.708547 [RADIO   ] [I] null_pace wall_s=1794970543.708547 radio_ts=1430784000
+2026-11-18T02:55:44.708062 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=126000 ul_capture_req=126000 dl_tx=15878 prach_capture_req=6160 (slot=166.3 ofh=15.0)
+2026-11-18T02:55:44.708556 [RADIO   ] [I] null_pace wall_s=1794970544.708548 radio_ts=1453824000
+2026-11-18T02:55:45.708051 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=128000 ul_capture_req=128000 dl_tx=16135 prach_capture_req=6260 (slot=266.3 ofh=115.0)
+2026-11-18T02:55:45.708553 [RADIO   ] [I] null_pace wall_s=1794970545.708547 radio_ts=1476864000
+2026-11-18T02:55:46.708046 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=130000 ul_capture_req=130000 dl_tx=16391 prach_capture_req=6360 (slot=366.3 ofh=215.0)
+2026-11-18T02:55:46.708559 [RADIO   ] [I] null_pace wall_s=1794970546.708546 radio_ts=1499904000
+2026-11-18T02:55:47.708058 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=132000 ul_capture_req=132000 dl_tx=16647 prach_capture_req=6459 (slot=466.3 ofh=59.0)
+2026-11-18T02:55:47.708555 [RADIO   ] [I] null_pace wall_s=1794970547.708547 radio_ts=1522944000
+2026-11-18T02:55:48.708049 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=134000 ul_capture_req=134000 dl_tx=16903 prach_capture_req=6559 (slot=566.3 ofh=159.0)
+2026-11-18T02:55:48.708555 [RADIO   ] [I] null_pace wall_s=1794970548.708548 radio_ts=1545984000
+2026-11-18T02:55:49.708059 [RU_EMU  ] [I] Sector#0: TTI orchestrator alive: tti=136000 ul_capture_req=136000 dl_tx=17160 prach_capture_req=6658 (slot=666.3 ofh=3.0)
+2026

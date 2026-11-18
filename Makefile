@@ -206,6 +206,9 @@ fetch-golden:
 # profile's dl_port_id and the pcap's non-zero U-plane payload); declared-silent ports are zero; no UL-slot leakage;
 # expected non-empty count within tolerance.
 # The window is tracked in testdata/golden/<profile>/window.json and is reused for the dump gate and the check.
+# REPLAY_PROFILES restricts the loop (tests/replay-golden/run.sh uses one profile per run); the default keeps the
+# historical baseline b40 b100 sweep.
+REPLAY_PROFILES ?= baseline b40 b100
 # Golden tree (image-specific): the v4 goldens live in testdata/golden; a v3
 # set would live in testdata/golden-v3 (see docs/BENCH_BUNDLE.md).
 GOLDEN_ROOT ?= testdata/golden
@@ -213,9 +216,9 @@ GOLDEN_ROOT ?= testdata/golden
 # (cross-image replay: e.g. OPENRU_REPLAY_TAG=v1-candidate-v3).
 replay-golden: preflight
 	@mkdir -p $(REPORTS)
-	@echo "[replay-golden] profiles=baseline b40 b100 (OPENRU_TAG=$${OPENRU_TAG:-m1})"
+	@echo "[replay-golden] profiles=$(REPLAY_PROFILES) (OPENRU_TAG=$${OPENRU_TAG:-m1})"
 	@set -e; \
-	  for prof in baseline b40 b100; do \
+	  for prof in $(REPLAY_PROFILES); do \
 	    echo "[replay-golden] $$prof"; \
 	    test -f $(GOLDEN_ROOT)/$$prof/MANIFEST.json; \
 	    if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if d.get("status")=="deferred" else 1)' $(GOLDEN_ROOT)/$$prof/MANIFEST.json; then \
@@ -257,3 +260,52 @@ replay-golden: preflight
 # install the window, IQ, tx index and MANIFEST into testdata/golden/<profile>/.
 gen-golden: preflight
 	@OPENRU_TAG=$${OPENRU_TAG:-m1} $(ROOT)/scripts/gen_golden.sh
+
+# ---------------------------------------------------------------- tests/ ---
+# Modular test framework (see docs/TESTS.md). `make test` runs one suite/
+# profile through tests/<suite>/run.sh, which wraps the existing targets and
+# writes docs/reports/runs/<suite>/<date>-<profile>.json.
+SUITES := smoke-fh smoke-core replay-golden cuda-standalone cuda-pipeline cuda-scaling
+
+.PHONY: test test-list $(foreach s,$(SUITES),test-$(s))
+
+help-tests:
+	@$(MAKE) --no-print-directory test-list
+
+test-list:
+	@echo "Suites (docs/TESTS.md):"
+	@for s in $(SUITES); do \
+	  profs=""; \
+	  for p in $(ROOT)/tests/$$s/profiles/*/; do \
+	    [ -d "$$p" ] && profs="$$profs $$(basename $$p)"; \
+	  done; \
+	  echo "  $$s:$$profs"; \
+	done
+
+# env -i: the bare `export` above pushes make's own defaults (e.g.
+# PROTORU_PROFILE=emulator) into run.sh, where the profile env files would
+# lose to the "caller environment wins" rule. A clean env keeps profile
+# env files authoritative.
+# `PROFILE ?= baseline` above is the compose/profile default for capture and
+# smoke-fh; for `make test` a PROFILE given by the user (command line or env)
+# selects the suite profile, otherwise the recipe auto-detects default|baseline.
+TEST_PROFILE :=
+ifneq ($(filter command line environment,$(origin PROFILE)),)
+  TEST_PROFILE := $(PROFILE)
+endif
+
+test:
+	@test -n "$(SUITE)" || { echo "usage: make test SUITE=<suite> [PROFILE=<profile>]"; $(MAKE) --no-print-directory test-list; exit 2; }
+	@test -x $(ROOT)/tests/$(SUITE)/run.sh || { echo "FAIL: unknown suite '$(SUITE)' (no tests/$(SUITE)/run.sh)"; exit 2; }
+	@if [ -z "$(TEST_PROFILE)" ]; then \
+	  if [ -d $(ROOT)/tests/$(SUITE)/profiles/default ]; then P=default; \
+	  elif [ -d $(ROOT)/tests/$(SUITE)/profiles/baseline ]; then P=baseline; fi; \
+	else P="$(TEST_PROFILE)"; fi; \
+	[ -n "$${P:-}" ] || { echo "usage: make test SUITE=$(SUITE) PROFILE=<one of:$$(for p in $(ROOT)/tests/$(SUITE)/profiles/*/; do echo -n " $$(basename $$p)"; done)>"; exit 2; }; \
+	echo "[test] SUITE=$(SUITE) PROFILE=$$P"; \
+	env -i PATH="$(PATH)" HOME="$(HOME)" TERM="$(TERM)" LANG="$(LANG)" \
+	  USER="$(USER)" LOGNAME="$(LOGNAME)" SHELL="$(SHELL)" TMPDIR="$${TMPDIR:-/tmp}" \
+	  PROFILE=$$P $(ROOT)/tests/$(SUITE)/run.sh
+
+$(foreach s,$(SUITES),test-$(s)):
+	@$(MAKE) --no-print-directory test SUITE=$(patsubst test-%,%,$@)

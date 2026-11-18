@@ -1,0 +1,5 @@
+# tests/replay-golden profile: baseline (20 MHz 2x2)
+# Replay settings (lead_mode/lead_us/sender) come from the golden MANIFEST;
+# the image tag comes from the MANIFEST unless OPENRU_REPLAY_TAG overrides it.
+TIMEOUT_SECS=2400
+RUN_HOST_LIMITED=0

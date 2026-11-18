@@ -1,0 +1,3 @@
+# tests/cuda-standalone profile: default (all BW profiles, 2/4 ports)
+ITERS=30
+TIMEOUT_SECS=1800

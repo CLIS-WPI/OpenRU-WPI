@@ -1,0 +1,155 @@
+===== compose logs: protoru =====
+protoru-1  | GPU 0: NVIDIA H100 NVL (UUID: GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058)
+protoru-1  | Running. Waiting for incoming packets...
+protoru-1  | [1m|   TIME   | ID  |  RX_TOTAL   | RX_ON_TIME  |  RX_EARLY   |   RX_LATE   |   RX_SEQ_ERR    | RX_ON_TIME_C  |  RX_EARLY_C   |   RX_LATE_C   |  RX_SEQ_ERR_C   | RX_ON_TIME_C_U |  RX_EARLY_C_U  |  RX_LATE_C_U   | RX_SEQ_ERR_C_U  | RX_SEQ_ERR_PRACH | RX_CORRUPT  | RX_ERR_DROP |  TX_TOTAL   |
+protoru-1  | [0m| 02:46:54 |  0  |    6084     |    4544     |      0      |      0      |      10/10      |      344      |       0       |       0       |       1/1       |      1196      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    10032    |
+protoru-1  | | 02:46:55 |  0  |    9080     |    6766     |      2      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:46:56 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:46:57 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15204    |
+protoru-1  | | 02:46:58 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15204    |
+protoru-1  | | 02:46:59 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15208    |
+protoru-1  | | 02:47:00 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15206    |
+protoru-1  | | 02:47:01 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15206    |
+protoru-1  | | 02:47:02 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15204    |
+protoru-1  | | 02:47:03 |  0  |    9080     |    6767     |      1      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:04 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:05 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:06 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:07 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:08 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:09 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:10 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:11 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:12 |  0  |    9084     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1804      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:13 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | [1m|   TIME   | ID  |  RX_TOTAL   | RX_ON_TIME  |  RX_EARLY   |   RX_LATE   |   RX_SEQ_ERR    | RX_ON_TIME_C  |  RX_EARLY_C   |   RX_LATE_C   |  RX_SEQ_ERR_C   | RX_ON_TIME_C_U |  RX_EARLY_C_U  |  RX_LATE_C_U   | RX_SEQ_ERR_C_U  | RX_SEQ_ERR_PRACH | RX_CORRUPT  | RX_ERR_DROP |  TX_TOTAL   |
+protoru-1  | [0m| 02:47:14 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:15 |  0  |    9080     |    6766     |      2      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:16 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:17 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:18 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15208    |
+protoru-1  | | 02:47:19 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15206    |
+protoru-1  | | 02:47:20 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15208    |
+protoru-1  | | 02:47:21 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15208    |
+protoru-1  | | 02:47:22 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15202    |
+protoru-1  | | 02:47:23 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:24 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:25 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:26 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:27 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:28 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:29 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:30 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:31 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:32 |  0  |    9082     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1802      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:33 |  0  |    9084     |    6767     |      1      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1804      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | [1m|   TIME   | ID  |  RX_TOTAL   | RX_ON_TIME  |  RX_EARLY   |   RX_LATE   |   RX_SEQ_ERR    | RX_ON_TIME_C  |  RX_EARLY_C   |   RX_LATE_C   |  RX_SEQ_ERR_C   | RX_ON_TIME_C_U |  RX_EARLY_C_U  |  RX_LATE_C_U   | RX_SEQ_ERR_C_U  | RX_SEQ_ERR_PRACH | RX_CORRUPT  | RX_ERR_DROP |  TX_TOTAL   |
+protoru-1  | [0m| 02:47:34 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:35 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:36 |  0  |    9082     |    6768     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:37 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:38 |  0  |    9112     |    6798     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15206    |
+protoru-1  | | 02:47:39 |  0  |    9086     |    6774     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15206    |
+protoru-1  | | 02:47:40 |  0  |    9088     |    6776     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15208    |
+protoru-1  | | 02:47:41 |  0  |    9086     |    6774     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15204    |
+protoru-1  | | 02:47:42 |  0  |    9116     |    6802     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15208    |
+protoru-1  | | 02:47:43 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:44 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:45 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:46 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:47 |  0  |    9080     |    6767     |      1      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:48 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:49 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:50 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:51 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:52 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:53 |  0  |    9084     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1804      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | [1m|   TIME   | ID  |  RX_TOTAL   | RX_ON_TIME  |  RX_EARLY   |   RX_LATE   |   RX_SEQ_ERR    | RX_ON_TIME_C  |  RX_EARLY_C   |   RX_LATE_C   |  RX_SEQ_ERR_C   | RX_ON_TIME_C_U |  RX_EARLY_C_U  |  RX_LATE_C_U   | RX_SEQ_ERR_C_U  | RX_SEQ_ERR_PRACH | RX_CORRUPT  | RX_ERR_DROP |  TX_TOTAL   |
+protoru-1  | [0m| 02:47:54 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:55 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:56 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:57 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:58 |  0  |    9110     |    6796     |      0      |      0      |       0/0       |      514      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15200    |
+protoru-1  | | 02:47:59 |  0  |    9080     |    6768     |      0      |      0      |       0/0       |      512      |       0       |       0       |       0/0       |      1800      |       0        |       0        |       0/0       |       0/0       |      0      |      0      |    15204    |
+===== /tmp/proto-ru.log =====
+2026-11-18T02:46:53.547603 [CONFIG  ] [I] Input configuration (all values): 
+log:
+  filename: /tmp/proto-ru.log
+  level: info
+ru_emu:
+  timing_cpus: [32]
+  cells:
+    - network_interface: eth0
+      ru_mac_addr: 02:00:00:00:00:20
+      du_mac_addr: 02:00:00:00:00:10
+      enable_promiscuous: true
+      bandwidth: 20
+      common_scs: 30
+      dl_arfcn: 628032
+      band: 78
+      dl_port_id: [0, 1]
+      ul_port_id: [0, 1]
+      prach_port_id: [4, 5]
+      prach_format: short
+      compr_method_ul: bfp
+      compr_bitwidth_ul: 9
+      compr_method_dl: bfp
+      compr_bitwidth_dl: 9
+      compr_method_prach: bfp
+      compr_bitwidth_prach: 9
+      is_ul_static_compr_hdr: true
+      is_dl_static_compr_hdr: true
+      iq_scaling: 1
+      t2a_max_cp_dl: 2435
+      t2a_min_cp_dl: 2235
+      t2a_max_cp_ul: 2435
+      t2a_min_cp_ul: 2235
+      t2a_max_up: 2215
+      t2a_min_up: 2015
+      ta3_max_up: 1200
+      ta3_min_up: 800
+      ofh_cpus: [33, 34]
+2026-11-18T02:46:53.552656 [ALL     ] [I] Task worker "ru_rx_#0" started...
+2026-11-18T02:46:53.552724 [ALL     ] [I] Task worker "ru_emu_#0" started...
+2026-11-18T02:46:53.552802 [ALL     ] [I] Task worker "ru_ofh_tx_#0" started...
+2026-11-18T02:46:53.552823 [ALL     ] [I] Task worker "ru_timing" started...
+2026-11-18T02:46:53.574422 [RU_EMU  ] [I] Opened successfully the NIC interface 'eth0' (fd = '3') used by the Ethernet receiver
+2026-11-18T02:46:53.574465 [RU_EMU  ] [I] Opened successfully the NIC interface 'eth0' (fd = '5') used by the Ethernet transmitter
+2026-11-18T02:46:53.662289 [RU_EMU  ] [I] Starting the realtime timing notifier
+2026-11-18T02:46:53.662301 [RU_EMU  ] [I] Started the realtime timing worker
+2026-11-18T02:46:53.662302 [RU_EMU  ] [I] Starting the ethernet frame receiver
+2026-11-18T02:46:53.662357 [RU_EMU  ] [I] Started the ethernet frame receiver with fd = '3'
+2026-11-18T02:46:53.999102 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '0' in slot '192.3' symbol '0' with sequence identifier '0' from the past; processing it. Last valid slot was '192.2', symbol '0'
+2026-11-18T02:46:53.999104 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '0' with sequence identifier '0' from the past; processing it
+2026-11-18T02:46:53.999114 [RU_EMU  ] [W] Received Open Fronthaul packet for DL CP eAxC value '1' in slot '192.3' symbol '0' with sequence identifier '0' from the past; processing it. Last valid slot was '192.2', symbol '0'
+2026-11-18T02:46:53.999114 [RU_EMU  ] [I] Sector#0: received downlink Control-Plane message for eAxC '1' with sequence identifier '0' from the past; processing it
+2026-11-18T02:46:53.999311 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '192.3' symbol '0' with sequence identifier '0' from the past; processing it. Last valid slot was '192.2', symbol '13'
+2026-11-18T02:46:53.999312 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '0' from the past; processing it
+2026-11-18T02:46:53.999318 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '192.3' symbol '0' with sequence identifier '0' from the past; processing it. Last valid slot was '192.2', symbol '13'
+2026-11-18T02:46:53.999319 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '0' from the past; processing it
+2026-11-18T02:46:53.999351 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '192.3' symbol '1' with sequence identifier '1' from the past; processing it. Last valid slot was '192.2', symbol '13'
+2026-11-18T02:46:53.999352 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '1' from the past; processing it
+2026-11-18T02:46:53.999354 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '192.3' symbol '1' with sequence identifier '1' from the past; processing it. Last valid slot was '192.2', symbol '13'
+2026-11-18T02:46:53.999354 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '1' from the past; processing it
+2026-11-18T02:46:53.999391 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '192.3' symbol '2' with sequence identifier '2' from the past; processing it. Last valid slot was '192.2', symbol '13'
+2026-11-18T02:46:53.999391 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '2' from the past; processing it
+2026-11-18T02:46:53.999393 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '192.3' symbol '2' with sequence identifier '2' from the past; processing it. Last valid slot was '192.2', symbol '13'
+2026-11-18T02:46:53.999393 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '2' from the past; processing it
+2026-11-18T02:46:53.999423 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '192.3' symbol '3' with sequence identifier '3' from the past; processing it. Last valid slot was '192.2', symbol '13'
+2026-11-18T02:46:53.999424 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '3' from the past; processing it
+2026-11-18T02:46:53.999425 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '192.3' symbol '3' with sequence identifier '3' from the past; processing it. Last valid slot was '192.2', symbol '13'
+2026-11-18T02:46:53.999425 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '3' from the past; processing it
+2026-11-18T02:46:53.999471 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '192.3' symbol '4' with sequence identifier '4' from the past; processing it. Last valid slot was '192.2', symbol '13'
+2026-11-18T02:46:53.999472 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '4' from the past; processing it
+2026-11-18T02:46:53.999473 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '192.3' symbol '4' with sequence identifier '4' from the past; processing it. Last valid slot was '192.2', symbol '13'
+2026-11-18T02:46:53.999474 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '4' from the past; processing it
+2026-11-18T02:46:53.999485 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '192.3' symbol '5' with sequence identifier '5' from the past; processing it. Last valid slot was '192.2', symbol '13'
+2026-11-18T02:46:53.999485 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '5' from the past; processing it
+2026-11-18T02:46:53.999490 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '192.3' symbol '5' with sequence identifier '5' from the past; processing it. Last valid slot was '192.2', symbol '13'
+2026-11-18T02:46:53.999491 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '5' from the past; processing it
+2026-11-18T02:46:53.999537 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '192.3' symbol '6' with sequence identifier '6' from the past; processing it. Last valid slot was '192.2', symbol '13'
+2026-11-18T02:46:53.999538 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '6' from the past; processing it
+2026-11-18T02:46:53.999544 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '0' in slot '192.3' symbol '6' with sequence identifier '6' from the past; processing it. Last valid slot was '192.2', symbol '13'
+2026-11-18T02:46:53.999544 [RU_EMU  ] [I] Sector#0: received User-Plane message for eAxC '0' with sequence identifier '6' from the past; processing it
+2026-11-18T02:46:53.999570 [RU_EMU  ] [W] Received Open Fronthaul packet for DL UP eAxC value '1' in slot '192.3' symbol '7' with sequence identifier '7' from the past; processing it. Last valid slot was '192.2', symbol '13'
+2026-11-18T02:46:53.999570 [RU_EMU  ] [I] Sector#0: received User-Plane m

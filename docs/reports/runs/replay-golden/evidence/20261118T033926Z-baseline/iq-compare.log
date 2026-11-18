@@ -1,0 +1,4 @@
+du_align: offset=0 slots (0 samples) golden=[124.0..67.19] (4000 slots) dut=[124.0..67.19] (4000 slots)
+du_overlap: 4000 slots (min required 4000) lo=(124, 0)
+port0.cf32: all 4000 overlapping DU slots PASS (n=46080000)
+port1.cf32: all 4000 overlapping DU slots PASS (n=46080000)

@@ -1,0 +1,75 @@
+{
+  "end": "2026-11-18T03:39:55Z",
+  "evidence": [
+    "docs/reports/raw/replay-golden-baseline",
+    "docs/reports/raw/replay-golden-baseline-check.json",
+    "docs/reports/runs/replay-golden/evidence/20261118T033926Z-baseline/iq-compare.log",
+    "docs/reports/runs/replay-golden/evidence/20261118T033926Z-baseline/run.log"
+  ],
+  "host": {
+    "cpusets": {
+      "du": "48-55",
+      "protoru": "32-47"
+    },
+    "gpu_uuid": "GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058",
+    "hostname": "GPU-server",
+    "kernel": "6.8.0-138-generic"
+  },
+  "image": {
+    "digest": "",
+    "id": "",
+    "tag": "m2"
+  },
+  "isolation": {
+    "isolated": false,
+    "kernel_params": {
+      "isolcpus": [],
+      "nohz_full": [],
+      "rcu_nocbs": []
+    },
+    "missing_cores": [
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55
+    ],
+    "required": false
+  },
+  "metrics": {
+    "differing_slots": 0,
+    "expected_slots": 513,
+    "golden_check_pass": true,
+    "nonempty_slots": 513,
+    "ports_all_slots_pass": 2,
+    "profile": "baseline"
+  },
+  "profile": "baseline",
+  "rc": 0,
+  "repo_commit": "8a3e2c0a93d08ea3c2d598b69eff2e718dc0dc50",
+  "schema": "openru-test-result/1",
+  "skip_reason": null,
+  "start": "2026-11-18T03:39:26Z",
+  "status": "PASS",
+  "submodule_commit": "d8d2097894a622f6390c3daa57c08b0a4ee9d452",
+  "suite": "replay-golden"
+}
