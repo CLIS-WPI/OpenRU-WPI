@@ -1,0 +1,39 @@
+{
+  "dump": "/home/tanglab/Desktop/OpenRU-WPI/openru-sw/docs/reports/raw/replay-golden-baseline",
+  "pcap": "testdata/pcap/baseline.pcapng",
+  "start_du": 2480,
+  "window_slots": 4000,
+  "expected_slots": 513,
+  "nonempty_slots": 513,
+  "missing": [],
+  "extra": [],
+  "tolerance_slots": 11,
+  "tolerance_frac": 0.02,
+  "ports": [
+    "/home/tanglab/Desktop/OpenRU-WPI/openru-sw/docs/reports/raw/replay-golden-baseline/port0.cf32",
+    "/home/tanglab/Desktop/OpenRU-WPI/openru-sw/docs/reports/raw/replay-golden-baseline/port1.cf32"
+  ],
+  "expected_ports": [
+    0,
+    1
+  ],
+  "expected_slots_by_port": {
+    "0": 513,
+    "1": 100
+  },
+  "silent_ports": [],
+  "unexpected_ports": [],
+  "tdd": {
+    "dl_ul_tx_period": 5,
+    "nof_dl_slots": 3,
+    "nof_dl_symbols": 10,
+    "special_slot": 3,
+    "ul_only_slot_indices": [
+      4
+    ]
+  },
+  "zero_energy": [],
+  "silent_leaks": [],
+  "ul_leaks": [],
+  "pass": true
+}

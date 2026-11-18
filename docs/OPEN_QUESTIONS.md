@@ -76,3 +76,20 @@ and N310 ATR cannot drive TDD switching. For the FEM bench: implement `feat/uhd-
 transmission with `power_ramping_time_us >= 2` (prefer 5-10), then rerun
 `replay-golden` and the 600 s null `smoke-fh` to confirm DL IQ and late ratio are
 unchanged by the mode change.
+
+## Bench host: core map + P/E pinning — PROPOSED (human lock)
+
+Bench host measured 2026-11-18: i5-13600KF (6 P-cores with HT = logical 0-11, 8 E-cores = 12-19), no AVX-512,
+X710 `enp5s0f0np0`, kernel 7.0.0-28, USRP `32E0FC4` (N310, address pending). Proposed map, in `docker/bench.env`
+and enforced by `scripts/bench_preflight.sh`: housekeeping/IRQs `0-1,12-19` (`irqaffinity`), Open5GS/core
+`12-19` (`CORE_CPUSET`), ProtO-RU `2-5`, DU `6-11`; kernel cmdline
+`isolcpus=2-11 nohz_full=2-11 rcu_nocbs=2-11 irqaffinity=0-1,12-19`. Images: `x86-64-v3`
+(`openru/protoru:v1-candidate-v3`, FFTW + ESTIMATE), GPU-less via `docker/compose.cpu.yml`.
+Decision needed: lock the map (and the HT-sibling split) before the first bench campaign.
+
+## Bench host: USRP N310 identity — OPEN
+
+Serial `32E0FC4` visible to host UHD; exact model (N310 vs N321), address and MPM/filesystem version pending.
+The container ships UHD 4.7.0.0; preflight fails on an MPM-major mismatch (3.x device needs the MPM/filesystem
+update path, not a downgraded image). Until the address is known, the USRP checks warn
+(`BENCH_USRP_REQUIRED=1` to enforce).

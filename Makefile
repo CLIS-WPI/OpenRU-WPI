@@ -21,7 +21,8 @@ endif
 
 
 .PHONY: help preflight gpu-check build build-core build-protoru down logs \
-        smoke smoke-fh smoke-core fetch-golden replay-golden compare-plmn capture
+        smoke smoke-fh smoke-core fetch-golden replay-golden compare-plmn capture \
+        bench-preflight
 
 help:
 	@echo "OpenRU targets (GPU: $$(test -f $(ROOT)/docker/lab.env && echo set || echo 'lab.env MISSING'))"
@@ -34,6 +35,12 @@ help:
 
 preflight:
 	@$(ROOT)/scripts/gpu1_preflight.sh
+
+# Bench-bundle host preflight (P/E topology, kernel isolation, X710, MTU 9000,
+# hwlatdetect, UHD/N310 MPM match). See docs/BENCH_BUNDLE.md.
+BENCH_ENV ?= docker/bench.env
+bench-preflight:
+	@BENCH_ENV=$(BENCH_ENV) $(ROOT)/scripts/bench_preflight.sh
 
 gpu-check: preflight
 	@docker run --rm \
@@ -186,43 +193,48 @@ fetch-golden:
 # profile's dl_port_id and the pcap's non-zero U-plane payload); declared-silent ports are zero; no UL-slot leakage;
 # expected non-empty count within tolerance.
 # The window is tracked in testdata/golden/<profile>/window.json and is reused for the dump gate and the check.
+# Golden tree (image-specific): the v4 goldens live in testdata/golden; a v3
+# set would live in testdata/golden-v3 (see docs/BENCH_BUNDLE.md).
+GOLDEN_ROOT ?= testdata/golden
+# Force the replay image tag instead of the one recorded in the MANIFEST
+# (cross-image replay: e.g. OPENRU_REPLAY_TAG=v1-candidate-v3).
 replay-golden: preflight
 	@mkdir -p $(REPORTS)
 	@echo "[replay-golden] profiles=baseline b40 b100 (OPENRU_TAG=$${OPENRU_TAG:-m1})"
 	@set -e; \
 	  for prof in baseline b40 b100; do \
 	    echo "[replay-golden] $$prof"; \
-	    test -f testdata/golden/$$prof/MANIFEST.json; \
-	    if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if d.get("status")=="deferred" else 1)' testdata/golden/$$prof/MANIFEST.json; then \
+	    test -f $(GOLDEN_ROOT)/$$prof/MANIFEST.json; \
+	    if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if d.get("status")=="deferred" else 1)' $(GOLDEN_ROOT)/$$prof/MANIFEST.json; then \
 	      echo "[replay-golden] $$prof deferred — skipping"; continue; \
 	    fi; \
-	    test -f testdata/golden/$$prof/window.json || { echo "FAIL: missing golden window for $$prof"; exit 1; }; \
+	    test -f $(GOLDEN_ROOT)/$$prof/window.json || { echo "FAIL: missing golden window for $$prof"; exit 1; }; \
 	    test -s testdata/pcap/$$prof.pcapng || { echo "FAIL: missing pcap for $$prof"; exit 1; }; \
-	    test -s testdata/golden/$$prof/port0.cf32 || { \
+	    test -s $(GOLDEN_ROOT)/$$prof/port0.cf32 || { \
 	      echo "FAIL: missing golden IQ for $$prof — run make fetch-golden"; exit 1; }; \
-	    if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if d.get("host_limited") else 1)' testdata/golden/$$prof/MANIFEST.json; then \
+	    if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if d.get("host_limited") else 1)' $(GOLDEN_ROOT)/$$prof/MANIFEST.json; then \
 	      if [ "$${RUN_HOST_LIMITED:-0}" != "1" ]; then \
-	        reason=$$(python3 -c 'import json,sys; h=json.load(open(sys.argv[1]))["host_limited"]; print("{} / {} runs passed: {}".format(h.get("passes"), h.get("runs"), h.get("reason")))' testdata/golden/$$prof/MANIFEST.json); \
+	        reason=$$(python3 -c 'import json,sys; h=json.load(open(sys.argv[1]))["host_limited"]; print("{} / {} runs passed: {}".format(h.get("passes"), h.get("runs"), h.get("reason")))' $(GOLDEN_ROOT)/$$prof/MANIFEST.json); \
 	        echo "[replay-golden] $$prof SKIPPED (host_limited: $$reason)"; continue; \
 	      fi; \
 	      echo "[replay-golden] $$prof host_limited but RUN_HOST_LIMITED=1 — running on demand"; \
 	    fi; \
-	    mode=$$(python3 $(ROOT)/tools/golden/manifest_mode.py --manifest testdata/golden/$$prof/MANIFEST.json --field lead_mode); \
-	    lead=$$(python3 $(ROOT)/tools/golden/manifest_mode.py --manifest testdata/golden/$$prof/MANIFEST.json --field lead_us); \
-	    sender=$$(python3 $(ROOT)/tools/golden/manifest_mode.py --manifest testdata/golden/$$prof/MANIFEST.json --field sender); \
-	    tag=$$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1])).get("image") or "")' testdata/golden/$$prof/MANIFEST.json); \
-	    OPENRU_WINDOW_JSON=testdata/golden/$$prof/window.json OPENRU_TAG=$${tag:-$${OPENRU_TAG:-m1}} \
+	    mode=$$(python3 $(ROOT)/tools/golden/manifest_mode.py --manifest $(GOLDEN_ROOT)/$$prof/MANIFEST.json --field lead_mode); \
+	    lead=$$(python3 $(ROOT)/tools/golden/manifest_mode.py --manifest $(GOLDEN_ROOT)/$$prof/MANIFEST.json --field lead_us); \
+	    sender=$$(python3 $(ROOT)/tools/golden/manifest_mode.py --manifest $(GOLDEN_ROOT)/$$prof/MANIFEST.json --field sender); \
+	    tag=$$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1])).get("image") or "")' $(GOLDEN_ROOT)/$$prof/MANIFEST.json); \
+	    OPENRU_WINDOW_JSON=$(GOLDEN_ROOT)/$$prof/window.json OPENRU_TAG=$${OPENRU_REPLAY_TAG:-$${tag:-$${OPENRU_TAG:-m1}}} \
 	      OPENRU_REPLAY_SENDER=$$sender OPENRU_LEAD_MODE=$$mode OPENRU_REPLAY_ALIGN_LEAD_US=$$lead \
 	      $(ROOT)/scripts/replay_iq_dump.sh $$prof testdata/pcap/$$prof.pcapng \
 	      $(REPORTS)/replay-golden-$$prof 1.0; \
 	    python3 $(ROOT)/tools/golden/check.py \
 	      --dump $(REPORTS)/replay-golden-$$prof \
-	      --window-json testdata/golden/$$prof/window.json \
+	      --window-json $(GOLDEN_ROOT)/$$prof/window.json \
 	      --du-config profiles/$$prof/du-fh.yml \
 	      --out $(REPORTS)/replay-golden-$$prof-check.json; \
 	    python3 $(ROOT)/tools/iq_compare/iq_compare.py \
 	      --dut $(REPORTS)/replay-golden-$$prof \
-	      --golden testdata/golden/$$prof \
+	      --golden $(GOLDEN_ROOT)/$$prof \
 	      --by-slot --threshold 0; \
 	  done; \
 	  echo "[replay-golden] PASS"

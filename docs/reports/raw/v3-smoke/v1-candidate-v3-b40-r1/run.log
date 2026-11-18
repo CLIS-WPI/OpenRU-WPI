@@ -1,0 +1,62 @@
+bash: /home/tanglab/miniconda3/envs/causal-xai/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/tanglab/miniconda3/envs/causal-xai/lib/libtinfo.so.6: no version information available (required by bash)
+OK: lab.env loaded; GPU GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058; cpusets protoru=32-47 du=48-55
+NOTE: containers must use --gpus device=GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058 (never --gpus all).
+Forbidden UUID: GPU-96b18ccc-7894-5e31-0ad6-a74b5b79ac28
+WARNING: DU/RU cores not fully isolated: missing [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55]; isolcpus=[] nohz_full=[] rcu_nocbs=[]. See docs/BENCH_BUNDLE.md.
+[smoke-fh] DU(no_core)+ProtO-RU null, 600s, GPU GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058
+ Network openru_fh Creating 
+ Network openru_fh Created 
+ Container openru-du-1 Creating 
+ Container openru-du-1 Created 
+ Container openru-protoru-1 Creating 
+ Container openru-protoru-1 Created 
+ Container openru-du-1 Starting 
+ Container openru-du-1 Started 
+ Container openru-protoru-1 Starting 
+ Container openru-protoru-1 Started 
+GPU 0: NVIDIA H100 NVL (UUID: GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058)
+bash: /home/tanglab/miniconda3/envs/causal-xai/lib/libtinfo.so.6: no version information available (required by bash)
+=== verify_caps in 03a16fbfaed914ac6af458a547a440d5e5b7fd566f66b8a8fde7bb813f59c055 (iface=eth0) ===
+CapPrm:	00000000a88475fb
+CapEff:	00000000a88475fb
+CapBnd:	00000000a88475fb
+chrt -f 50 true: OK_CHRT
+OK_AF_PACKET fd=3 iface=eth0
+verify_caps: PASS
+bash: /home/tanglab/miniconda3/envs/causal-xai/lib/libtinfo.so.6: no version information available (required by bash)
+=== verify_caps in ddbb6cb9ba250b6ffd2aaec2072810aaed9d67af17999c1e5161b5aa8a922446 (iface=eth0) ===
+CapPrm:	00000000a88475fb
+CapEff:	00000000a88475fb
+CapBnd:	00000000a88475fb
+chrt -f 50 true: OK_CHRT
+OK_AF_PACKET fd=3 iface=eth0
+verify_caps: PASS
+[smoke-fh] waiting for first ProtO-RU KPI with RX_TOTAL>0...
+[smoke-fh] OFH traffic seen; quiet-host pre-check...
+quiet_host: QUIET loadavg=[2.13037109375, 4.5224609375, 5.2802734375] offenders=0 out=/home/tanglab/Desktop/OpenRU-WPI/openru-sw/docs/reports/raw/smoke-fh-hostcheck-pre.json
+[smoke-fh] measuring 600s with quiet-host monitor...
+=== ProtO-RU KPI / direction ===
+=== FULL WINDOW (incl. warm-up) ===
+kpi_rows=607  DL@RU: U=4111488 C=311016 C_UL=1092358 rx_total=5514862  UL@RU tx_total=9204852  [MEASURED]
+late@RU DL: U=143 C=8 C_UL=26 sum=177  drop=0  [MEASURED]
+late_rate@RU DL-only: 32.0951/M  frac=3.210e-05; all-pkts (RX+TX): 12.0247/M  frac=1.202e-05  [MEASURED]
+lates not start-clustered; warm-up=0
+=== GATE WINDOW (after warm-up=0s) ===
+kpi_rows=607  DL@RU: U=4111488 C=311016 C_UL=1092358 rx_total=5514862  UL@RU tx_total=9204852  [MEASURED]
+late@RU DL: U=143 C=8 C_UL=26 sum=177  drop=0  [MEASURED]
+late_rate@RU DL-only: 32.0951/M  frac=3.210e-05; all-pkts (RX+TX): 12.0247/M  frac=1.202e-05  [MEASURED]
+=== UL at DU (OFH RX from RU) ===
+ofh_metric_samples=616 ul_rx_total=9334901 ul_rx_late=3 ul_past_seq_drops=103  [MEASURED]
+late_rate@DU UL: 0.3214 per million UL packets  [MEASURED]
+du tx_kpis late: dl_rgs=0 ul_req=2 cp_dl=0 up_dl=0 cp_ul=0  [MEASURED]
+=== Per-second late histogram @RU (rel_s: late_up/c/c_u/sum) ===
+  t+  93s: up=10 c=0 c_u=4 sum=14
+  t+ 401s: up=133 c=8 c_u=22 sum=163
+first_120s_late_counts=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+=== DU slot indication ===
+mac_reports=556 detail=556 MAC reports, nof_slots>0, windows advance (SFN-wrap safe)
+first={'start': (868, 8), 'end': (912, 0), 'nof_slots': 872} last={'start': (872, 0), 'end': (972, 0), 'nof_slots': 2000}
+FAIL: late frac 1.202e-05 >= limit 1.0e-05 after warm-up=0s (late=177 all_pkts=14719714)  [MEASURED]
+[smoke-fh] FAIL rc=1
+make: *** [Makefile:100: smoke-fh] Error 1
