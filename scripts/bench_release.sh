@@ -11,14 +11,20 @@
 # needs into OPENRU_ARTIFACTS_DIR (outside the repo) with RELEASE.json +
 # SHA256SUMS. Keeps the last BENCH_RELEASE_KEEP releases (default 5).
 #
-# Env: OPENRU_ARTIFACTS_DIR (default /home/tanglab/openru-artifacts)
+# Env: OPENRU_ARTIFACTS_DIR (docker/bench.local.env or $HOME/openru-artifacts)
 #      BENCH_RELEASE_KEEP (default 5)
 #      BENCH_RELEASE_SKIP_FETCH=1  verify against the cached origin refs
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
+if [[ -f "$ROOT/docker/bench.local.env" ]]; then
+  # shellcheck disable=SC1091
+  set -a
+  source "$ROOT/docker/bench.local.env"
+  set +a
+fi
 
-ART_ROOT="${OPENRU_ARTIFACTS_DIR:-/home/tanglab/openru-artifacts}"
+ART_ROOT="${OPENRU_ARTIFACTS_DIR:-$HOME/openru-artifacts}"
 KEEP="${BENCH_RELEASE_KEEP:-5}"
 LOCK=/tmp/openru-measure.lock
 fail() { echo "[release] FAIL: $*" >&2; exit 1; }

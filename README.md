@@ -62,7 +62,7 @@ built on the development server and never committed.
 
 ```bash
 make bench-release                      # build + smoke + export (server)
-make bench-ship HOST=ran                # rsync; manual copy instructions if unreachable
+make bench-ship                         # HOST from docker/bench.local.env (or HOST=<bench-host>)
 scripts/bench_load.sh bench-<short-sha> # on the bench host
 OPENRU_TAG=bench-latest make BENCH=1 bench-preflight
 ```

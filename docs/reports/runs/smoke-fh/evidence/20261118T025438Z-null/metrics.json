@@ -104,7 +104,7 @@
             62,
             63
           ],
-          "args": "sshd: tanglab@notty",
+          "args": "sshd: <ssh-user>@notty",
           "comm": "sshd",
           "pcpu": 0.4,
           "pid": 394075,
@@ -300,7 +300,7 @@
             62,
             63
           ],
-          "args": "sshd: tanglab@notty",
+          "args": "sshd: <ssh-user>@notty",
           "comm": "sshd",
           "pcpu": 0.3,
           "pid": 394074,
@@ -594,7 +594,7 @@
             62,
             63
           ],
-          "args": "sshd: tanglab@notty",
+          "args": "sshd: <ssh-user>@notty",
           "comm": "sshd",
           "pcpu": 0.2,
           "pid": 394073,
@@ -692,7 +692,7 @@
             62,
             63
           ],
-          "args": "sshd: tanglab@notty",
+          "args": "sshd: <ssh-user>@notty",
           "comm": "sshd",
           "pcpu": 0.2,
           "pid": 394076,
