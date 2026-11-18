@@ -52,9 +52,11 @@ tick and RCU disturb the DU/RU RT threads, which is what made the b100 golden im
 - MTU on the fronthaul port is not 9000;
 - `hwlatdetect` reports ≥ 20 µs over a 60 s window (`BENCH_HWLAT_SECS` to change; `BENCH_SKIP_HWLAT=1` only before
   the cmdline reboot);
-- the container UHD major does not match the N310 MPM/filesystem generation (N310 MPM 3.x ↔ UHD 3.x FS,
-  MPM 4.x ↔ UHD 4.x FS). The images ship UHD 4.7.0.0; a 3.x-MPM N310 must be updated with
-  `uhd_images_downloader` + `usrp_n3xx_fs_updater --type filesystem` (or the image rebuilt) before any run;
+- the container UHD version does not match the N310 MPM generation: the bench image
+  `openru/protoru:v1-candidate-v3-uhd411` ships **UHD 4.11.0.0** for an N310 MPM 4.x/filesystem (MPM 3.x needs
+  UHD 3.x). Preflight reads the container UHD version (must be `4.11.0.0`) and then runs `uhd_usrp_probe`
+  inside the image; an incompatible N310 must be updated with `uhd_images_downloader` +
+  `usrp_n3xx_fs_updater --type filesystem` (or the image rebuilt) before any run;
 - the USRP is not visible to host UHD once `BENCH_USRP_REQUIRED=1` (until the N310 address is known this is a
   warning).
 
@@ -68,9 +70,11 @@ Other required host settings: MTU 9000 on the fronthaul port, `PROTORU_SHM_SIZE`
 
 | Tag | Config | Provenance |
 |---|---|---|
-| `openru/protoru:v1-candidate-v3-uhd411` | FFTW + ESTIMATE, `MARCH=x86-64-v3` (AVX2), **UHD 4.11.0.0** | bench image, built on the dev server 2026-11-18, submodule `d8d2097894`, image `e2e955360db9` |
-| `openru/protoru:v1-candidate-v3` | FFTW + ESTIMATE, `MARCH=x86-64-v3` (AVX2), UHD 4.7.0.0 | built on the dev server 2026-11-18, submodule `d8d2097894`, image `c88dc855d7de` |
-| `openru/protoru:v1-candidate` | FFTW + ESTIMATE, `MARCH=x86-64-v4` (AVX-512) | v1 reference (GPU-server milestone runs) |
+| `openru/protoru:v1-candidate-v3-uhd411` | FFTW + ESTIMATE, `MARCH=x86-64-v3` (AVX2), **UHD 4.11.0.0** | **the bench image** (`docker/bench.env` `OPENRU_TAG`), built on the dev server 2026-11-18, submodule `d8d2097894`, image `e2e955360db9` |
+| `openru/protoru:v1-candidate` | FFTW + ESTIMATE, `MARCH=x86-64-v4` (AVX-512) | v1 reference for the GPU-server milestone runs, not for this host |
+
+The GPU-server-only v3 image (`openru/protoru:v1-candidate-v3`) is documented in
+`docs/reports/V3_CANDIDATE.md`; it is **not** part of the bench bundle — its UHD does not match the N310 MPM.
 
 The AVX-512 kernel variants inside OCUDU (`_avx512` objects) are guarded by runtime CPU-feature selection, so a
 v3 image is safe on a non-AVX-512 host; the reverse is not.

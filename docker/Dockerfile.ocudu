@@ -2,6 +2,7 @@
 # Build context: external/proto-ru
 
 ARG OS_VERSION=24.04
+# GPU-server default; the bench bundle uses UHD_VERSION=4.11.0.0 (docker/bench.env).
 ARG UHD_VERSION=4.7.0.0
 ARG DPDK_VERSION=24.11.2
 ARG MARCH=native

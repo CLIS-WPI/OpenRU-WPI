@@ -5,6 +5,7 @@
 
 ARG CUDA_RUNTIME_IMAGE=nvidia/cuda:12.6.0-runtime-ubuntu24.04
 ARG OS_VERSION=24.04
+# GPU-server default; override with UHD_VERSION=4.11.0.0 for the bench images (docker/bench.env).
 ARG UHD_VERSION=4.7.0.0
 ARG DPDK_VERSION=24.11.2
 ARG MARCH=x86-64-v3

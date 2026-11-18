@@ -39,6 +39,7 @@ services:
       target: runtime
       args:
         OS_VERSION: ${OS_VERSION:-24.04}
+        # Default for GPU-server images; the bench bundle sets UHD_VERSION=4.11.0.0.
         UHD_VERSION: ${UHD_VERSION:-4.7.0.0}
         DPDK_VERSION: ${DPDK_VERSION:-24.11.2}
         CUDA_RUNTIME_IMAGE: ${CUDA_RUNTIME_IMAGE:-nvidia/cuda:12.6.0-runtime-ubuntu24.04}
