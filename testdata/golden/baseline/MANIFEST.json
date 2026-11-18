@@ -34,7 +34,7 @@
   "tx_index_entries": 4000,
   "files": {
     "port0.cf32": {
-      "sha256": "2865be2da741493f7dd520d92c67759993b755393f613d2e4bd0dc9f075c1d3f",
+      "sha256": "7b058ab15397a1e8a8684af3cc1a0bd337fc3ce30bcbb0aa72fa437414890623",
       "bytes": 368640000
     },
     "port1.cf32": {
@@ -42,19 +42,19 @@
       "bytes": 368640000
     },
     "iq_meta.json": {
-      "sha256": "6e5571a812619217e782549734f8146d98ac205644cbc1bafc211897f2d00ee8",
-      "bytes": 1320
+      "sha256": "73738434496138d0ad285548bc150697b3c869a3e32e7c16b207fa27f0a3b8e8",
+      "bytes": 1319
     },
     "tx_index.jsonl": {
-      "sha256": "6cf54954f5970121ac7a8c83bf091792ddac6c33887274208a7a6a38102b285a",
+      "sha256": "53e50788555e4333b6db0be754490fa36d3deebfcaaa7b43306cbcd58fc4fc97",
       "bytes": 569984
     }
   },
   "SHA256": {
-    "port0.cf32": "2865be2da741493f7dd520d92c67759993b755393f613d2e4bd0dc9f075c1d3f",
+    "port0.cf32": "7b058ab15397a1e8a8684af3cc1a0bd337fc3ce30bcbb0aa72fa437414890623",
     "port1.cf32": "5bc351215e44f6a2e174b2d4417beb1e26a1b4d95f5c15e2be6597a1a43852fc",
-    "iq_meta.json": "6e5571a812619217e782549734f8146d98ac205644cbc1bafc211897f2d00ee8",
-    "tx_index.jsonl": "6cf54954f5970121ac7a8c83bf091792ddac6c33887274208a7a6a38102b285a"
+    "iq_meta.json": "73738434496138d0ad285548bc150697b3c869a3e32e7c16b207fa27f0a3b8e8",
+    "tx_index.jsonl": "53e50788555e4333b6db0be754490fa36d3deebfcaaa7b43306cbcd58fc4fc97"
   },
   "pcap": "testdata/pcap/baseline.pcapng",
   "json_window": {
@@ -597,15 +597,15 @@
     ],
     "fits": true
   },
-  "openru_sw_commit": "de5ae4c6f46348eadc3271a2b757feb241d6ba96",
+  "openru_sw_commit": "2f4eaa72aa2528efd79613b20655d77bf7494403",
   "proto_ru_commit": "d8d2097894a622f6390c3daa57c08b0a4ee9d452",
   "proto_ru_branch": "feat/null-radio",
-  "image": "m2",
+  "image": "v1-candidate",
   "sender": "python",
   "network_mtu": 9000,
   "compare_gate": "0 differing samples (CPU vs CPU, two cold replays)",
   "golden_check": {
-    "dump": "/tmp/base-fix1",
+    "dump": "/tmp/v1-baseline-1",
     "pcap": "/home/tanglab/Desktop/OpenRU-WPI/openru-sw/testdata/pcap/baseline.pcapng",
     "start_du": 2480,
     "window_slots": 4000,
@@ -616,8 +616,8 @@
     "tolerance_slots": 11,
     "tolerance_frac": 0.02,
     "ports": [
-      "/tmp/base-fix1/port0.cf32",
-      "/tmp/base-fix1/port1.cf32"
+      "/tmp/v1-baseline-1/port0.cf32",
+      "/tmp/v1-baseline-1/port1.cf32"
     ],
     "expected_ports": [
       0
@@ -650,12 +650,12 @@
     "dump_start_du_slot": 2480,
     "dump_start_marker": "/reports/raw/replay-start.marker",
     "align_cplane_lead_us": 2235,
-    "dump_start_delta": 1635,
-    "prestart_dropped_buffers": 11083,
+    "dump_start_delta": 820,
+    "prestart_dropped_buffers": 11898,
     "first_du_sfn": 124,
     "first_du_slot": 0,
     "first_dump_sample_offset": 0,
-    "first_dump_abs_sample_offset": 127699500,
+    "first_dump_abs_sample_offset": 137088300,
     "last_du_sfn": 67,
     "last_du_slot": 19
   }

@@ -35,3 +35,8 @@ docs/reports/raw/build-*.log
 logs/
 tools/golden/__pycache__/
 tools/fh_replay/fh_replay_c
+docs/reports/raw/v1-smoke/
+docs/reports/raw/gen-golden/
+docs/reports/raw/replay-golden-*
+docs/reports/raw/capture-*
+docs/reports/raw/m2-v1-*

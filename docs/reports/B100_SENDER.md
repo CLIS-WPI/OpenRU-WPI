@@ -65,3 +65,11 @@ State after this step:
 - `testdata/golden/b40` unchanged (image m2, sender python; pcap and golden consistent).
 - `testdata/golden/b100` remains `status: deferred`.
 - `make replay-golden` reads each golden's `image`/`sender` from its MANIFEST and skips deferred profiles.
+
+## b40 golden reproducibility (v1-candidate)
+
+The b40 golden is the pair of two clean cold replays with `v1-candidate` (check 256/256, 0 differing). A fresh
+`make replay-golden` on this host occasionally starts the dump ~194 slots off (the Python sender's pcap-head/parse in
+the first seconds), reported as 194 missing/extra and 150 UL-slot leaks; rerunning the cold pair yields two clean runs
+again. The stored golden is the clean pair; the fresh-run flake is recorded here, not hidden. This is the same
+host-latency limitation, independent of the image.

@@ -6,6 +6,7 @@ Defaults from the Phase 1 brief; update when a human decides.
 - [x] OCUDU ZMQ radio with ProtO-RU's SDR path: use it for M4 only (`ru_emulator_cli11_schema.cpp` accepts `--device_driver zmq`; ProtO-RU README says ZMQ is unsupported). **Do not use in M1/M2/M3.**
 - [ ] Golden storage: Git LFS on GitHub, a WPI file share, or **Zenodo with a DOI**? **Proposal:** Zenodo record *OpenRU Phase 1 golden IQ — M1* (`baseline`, `b40`, `b100`), concept DOI + per-milestone version DOI, `openru-goldens-m1.tar.zst` (~2.11 GiB uncompressed), AGPL-3.0 or CC-BY-4.0, verified against in-tree `MANIFEST.json`/`SHA256SUMS` via `OPENRU_GOLDEN_URL=… make fetch-golden`. **License: AGPL-3.0 (decided 2026-11-17).** Not uploaded yet; a human creates the Zenodo record. See `docs/reports/M1.md` appendix.
 - [x] Hardware week: USRP N310, Quectel RM520N-GL and a programmable SIM are available. The N310 is **not** connected to the server. Bench host is aarch64 (Jetson AGX Orin 64 GB or DGX Spark; choice pending); the bench bundle is built on this server. 10 GbE NIC with PTP timestamping: still open.
+- [ ] **Real-time host:** `isolcpus`/`nohz_full`/`rcu_nocbs` on cores 32-63 would allow the b100 golden here; needs a reboot of the shared server (human/lab decision).
 - [ ] Upstreaming: discuss with ProtO-RU maintainers after Milestone 2 (default) or wait for Milestone 3?
 - [ ] Repository: keep [CLIS-WPI/OpenRU-WPI](https://github.com/CLIS-WPI/OpenRU-WPI) (current) vs rename?
 
