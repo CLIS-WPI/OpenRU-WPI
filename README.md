@@ -1,8 +1,8 @@
 # OpenRU
 
-OpenRU is an open-hardware, GPU-native O-RAN split-7.2 radio unit that plugs into an OCUDU or OAI DU over fronthaul.
+OpenRU is an open O-RAN split-7.2 radio unit built on [ProtO-RU](https://github.com/NUS-CIR/ProtO-RU) (NUS-CIR; AGPLv3; based on OCUDU 26.04), plugging into an OCUDU or OAI DU over fronthaul. See `NOTICE`.
 
-**Phase 1** delivers a GPU-accelerated, 4T4R-capable software stack that runs end to end in Docker on an H100 host (no radio, no physical UE), validated against recorded fronthaul traffic and a software UE. It builds on [ProtO-RU](https://github.com/NUS-CIR/ProtO-RU) (NUS-CIR; AGPLv3; based on OCUDU 26.04) rather than rewriting the O-RU from scratch. See `NOTICE` and `docs/BRIEF_PHASE1.md`.
+The v1 configuration runs the **low PHY on CPU** (FFTW + ESTIMATE) and is validated at 20/40 MHz. A **CUDA low-PHY** exists as an optional backend for higher antenna counts and future in-RU processing. The development/validation host is the **GPU server** (null radio, recorded goldens); the **bench host** runs the real radio (N310). The original H100/GPU-first brief is kept as history in `docs/BRIEF_PHASE1.md`; current plans are in [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 Repository: [CLIS-WPI/OpenRU-WPI](https://github.com/CLIS-WPI/OpenRU-WPI). ProtO-RU fork: [CLIS-WPI/ProtO-RU](https://github.com/CLIS-WPI/ProtO-RU) (`openru/main`).
 
@@ -45,16 +45,29 @@ make smoke-fh       # M0 fronthaul gate (emulator mode)
 make smoke-core     # NG Setup (required before M4)
 ```
 
-## Milestone status
+## Status
 
-| Milestone | Status | Notes |
-| --- | --- | --- |
-| M0 Docker + GPU lane | **closed** | Caps/GPU pin OK; 600 s CPU baseline; smoke-core PASS; ROHC skipped |
-| M1 eCPRI replay | **closed** | Null radio, capture/replay/golden (baseline + b40; b100 deferred); PR #6 |
-| M2 CUDA low-PHY | compute-only results recorded | `docs/reports/M2.md` — not an acceptance (host-load dependent) |
-| M3 4T4R | not started | |
-| M4 virt UE | not started | |
-| M5 M-plane | not started | |
+| Area | State |
+| --- | --- |
+| Milestones (M0–M2) | M0, M1 closed; M2 CUDA results are compute-only (not an acceptance) — see `docs/reports/` |
+| Low PHY (v1) | CPU, FFTW + ESTIMATE, validated at 20/40 MHz; CUDA low-PHY optional backend |
+| Bench | bundle + image-release flow ready; first cabled test pending |
+| Plan | [`docs/ROADMAP.md`](docs/ROADMAP.md) — stages 1–3 and next steps |
+
+## Bench host quickstart
+
+The bench host runs the real radio (N310-10 → RM520N); release artifacts are built on the development server and
+never committed.
+
+```bash
+make bench-release                      # build + smoke + export (server)
+make bench-ship HOST=ran                # rsync; manual copy instructions if unreachable
+scripts/bench_load.sh bench-<short-sha> # on the bench host
+OPENRU_TAG=bench-latest make BENCH=1 bench-preflight
+```
+
+See [`docs/BENCH_BUNDLE.md`](docs/BENCH_BUNDLE.md) for the core map, radio/antenna wiring, kernel isolation and
+the full release → ship → load → preflight flow.
 
 ## License
 
