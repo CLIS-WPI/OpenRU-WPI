@@ -60,7 +60,9 @@ fi
 
 UHD_VERSION="$(sed -n 's/^UHD_VERSION=//p' docker/bench.env | head -1)"
 MARCH="$(sed -n 's/^MARCH=//p' docker/bench.env | head -1)"
+EXPECTED_MARCH="x86-64-v3"
 [[ -n "$UHD_VERSION" && -n "$MARCH" ]] || fail "docker/bench.env must set UHD_VERSION and MARCH"
+[[ "$MARCH" == "$EXPECTED_MARCH" ]] || fail "docker/bench.env MARCH=$MARCH != $EXPECTED_MARCH (the bench host has no AVX-512)"
 
 echo "[release] commit  $SHA ($BRANCH, submodule $SUBMODULE_COMMIT)"
 echo "[release] tag     $IMG (+ bench-latest), core $CORE_TAG"
@@ -68,14 +70,16 @@ echo "[release] config  UHD $UHD_VERSION, MARCH $MARCH, FFTW ESTIMATE, CUDA off"
 echo "[release] dest    $DEST"
 
 # --------------------------------------------------------------------- build --
-step "building $IMG from $SHA (BENCH=1)"
+mkdir -p "$DEST"
+BUILD_LOG="$DEST/build.log"
+step "building $IMG from $SHA (BENCH=1, log: $BUILD_LOG)"
 # Make command-line assignments, not env: the Makefile includes lab.env /
 # versions.env, and makefile assignments override the environment (lab.env has
 # MARCH=x86-64-v4, versions.env has OPENRU_TAG=m2).
 BENCH=1 OPENRU_GIT_COMMIT="$SHA" OPENRU_GIT_SUBMODULE="$SUBMODULE_COMMIT" \
   timeout 7200 make build-protoru OPENRU_TAG="$TAG" UHD_VERSION="$UHD_VERSION" MARCH="$MARCH" \
-    EXTRA_CMAKE_ARGS="-DENABLE_FFTW=ON -DOPENRU_CUDA=OFF -DOPENRU_FFTW_ESTIMATE=ON" \
-  || fail "image build failed"
+    EXTRA_CMAKE_ARGS="-DENABLE_FFTW=ON -DOPENRU_CUDA=OFF -DOPENRU_FFTW_ESTIMATE=ON" 2>&1 \
+  | tee "$BUILD_LOG" || fail "image build failed"
 docker image inspect "$IMG" >/dev/null 2>&1 || fail "build finished but $IMG is missing"
 docker image inspect openru/core:m0 >/dev/null 2>&1 || fail "openru/core:m0 missing (run make build-core)"
 docker tag openru/core:m0 "$CORE_TAG"
@@ -85,6 +89,21 @@ docker tag "$CORE_TAG" openru/core:bench-latest
 # Provenance labels must name this commit (catches a stale tag).
 LABEL_COMMIT="$(docker image inspect "$IMG" --format '{{index .Config.Labels "org.openru.git.commit"}}')"
 [[ "$LABEL_COMMIT" == "$SHA" ]] || fail "image label org.openru.git.commit=$LABEL_COMMIT != $SHA"
+
+# Hard architecture check: the builder log AND the image label must both say
+# x86-64-v3 (the bench host has no AVX-512). On mismatch the freshly made bench
+# tags are removed and the release stops before smoke/export.
+step "check: architecture (builder log -DMARCH and image label org.openru.march)"
+LABEL_MARCH="$(docker image inspect "$IMG" --format '{{index .Config.Labels "org.openru.march"}}')"
+if ! python3 tools/bench/march_check.py --log "$BUILD_LOG" --label "$LABEL_MARCH" \
+     --expect "$EXPECTED_MARCH" --json-out "$DEST/.march.json"; then
+  echo "[release] FAIL: architecture check failed — removing the bench tags" >&2
+  for t in "$IMG" openru/protoru:bench-latest "$CORE_TAG" openru/core:bench-latest; do
+    docker rmi "$t" >/dev/null 2>&1 || true
+  done
+  rm -f "$DEST/.march.json"
+  fail "built image is not $EXPECTED_MARCH (builder log / label mismatch)"
+fi
 
 # -------------------------------------------------------------- smoke checks --
 step "smoke: uhd_config_info in $IMG"
@@ -157,6 +176,7 @@ release = {
         "fftw": "ESTIMATE",
         "cuda": "OFF",
     },
+    "march_check": json.loads((dest / ".march.json").read_text()),
     "smoke": {
         "uhd_config_info": cont_uhd,
         "replay_golden_baseline": "PASS (null radio, 4000 slots, 0 differing)",
@@ -166,6 +186,7 @@ release = {
     "files": files,
 }
 (dest / "RELEASE.json").write_text(json.dumps(release, indent=2) + "\n")
+(dest / ".march.json").unlink()
 (dest / "SHA256SUMS").write_text("".join(f"{f['sha256']}  {f['name']}\n" for f in files))
 (dest / ".files.tmp").unlink()
 print(f"[release] wrote RELEASE.json ({len(files)} tarballs) and SHA256SUMS")

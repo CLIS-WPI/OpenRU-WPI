@@ -13,7 +13,10 @@ REMOTE_DIR="${BENCH_REMOTE_DIR:-openru-artifacts}"
 if [[ -n "${RELEASE:-}" ]]; then
   DIR="$RELEASE"
 else
-  DIR="$(ls -dt "$ART_ROOT"/bench-* 2>/dev/null | head -1 || true)"
+  DIR=""
+  for d in $(ls -dt "$ART_ROOT"/bench-*/ 2>/dev/null); do
+    if [[ -f "$d/RELEASE.json" ]]; then DIR="$d"; break; fi
+  done
 fi
 [[ -n "$DIR" && -f "$DIR/RELEASE.json" ]] || {
   echo "FAIL: no release found (run make bench-release, or pass RELEASE=<dir>)" >&2; exit 1; }

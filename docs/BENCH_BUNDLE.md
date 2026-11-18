@@ -187,6 +187,8 @@ Bench image artifacts live **only on this server** (never in git).
 # 1. release (refuses on a dirty tree or unpushed HEAD; builds from HEAD)
 make bench-release
 #    -> openru/protoru:bench-<short-sha> + bench-latest; openru/core:bench-<short-sha> + bench-latest
+#    -> hard arch check: builder log -DMARCH and image label org.openru.march must both be
+#       x86-64-v3 (mismatch removes the bench tags and stops before smoke/export)
 #    -> smoke: container uhd_config_info == 4.11.0.0; replay-golden baseline PASS (null radio)
 #    -> /home/tanglab/openru-artifacts/bench-<short-sha>/{*.tar.gz,RELEASE.json,SHA256SUMS}
 #    -> keeps the last 5 releases (BENCH_RELEASE_KEEP); never deletes the in-use tag
@@ -203,7 +205,8 @@ OPENRU_TAG=bench-latest BENCH=1 PROFILE=bench-20mhz PROTORU_PROFILE=uhd make smo
 ```
 
 `RELEASE.json` records: git commit (+ branch, short sha), submodule commit, build date/host,
-UHD/MARCH/FFTW/CUDA configuration, smoke results, every image (`repo_tag`, image ID,
+UHD/MARCH/FFTW/CUDA configuration, the `march_check` values (builder log + image label),
+smoke results, every image (`repo_tag`, image ID,
 `RepoDigests`, size), and every tarball (bytes, SHA-256); `SHA256SUMS` covers the tarballs.
 
 `bench_load.sh` prints the release commit and tags `bench-latest` locally. `bench-preflight`
