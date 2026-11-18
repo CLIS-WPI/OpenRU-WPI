@@ -17,14 +17,16 @@ development server may relax host-only items; the bench bundle must fail closed 
 Because the host has no AVX-512, images are built for **`x86-64-v3`** (`v1-candidate-v3`): FFTW + ESTIMATE + AVX2,
 same source/config as `v1-candidate` (`x86-64-v4`), see "Images" below.
 
-## Core map (proposed; the human locks it)
+## Core map (bench map, locked)
 
-Measured: P-core logical CPUs `0-11` (HT siblings 0/1, 2/3, …, 10/11), E-cores `12-19`.
+Measured topology of the i5-13600KF: P-core logical CPUs `0-11` with HT **on**
+(siblings 0/1, 2/3, …, 10/11), E-cores `12-19`. Every isolated core has **both
+HT siblings** inside `isolcpus=2-11`, so no sibling of an RT core is left to
+the scheduler.
 
 | Role | CPUs |
 |---|---|
-| housekeeping, IRQs | `0-1` + `12-19` (irqaffinity) |
-| Open5GS / core containers | `12-19` (`CORE_CPUSET`) |
+| housekeeping, Open5GS, IRQs | `0-1` + `12-19` (`irqaffinity`; core containers `12-19` via `CORE_CPUSET`) |
 | ProtO-RU real-time threads | `2-5` (`PROTORU_CPUSET`) |
 | DU real-time threads | `6-11` (`DU_CPUSET`) |
 
@@ -55,6 +57,9 @@ tick and RCU disturb the DU/RU RT threads, which is what made the b100 golden im
   `uhd_images_downloader` + `usrp_n3xx_fs_updater --type filesystem` (or the image rebuilt) before any run;
 - the USRP is not visible to host UHD once `BENCH_USRP_REQUIRED=1` (until the N310 address is known this is a
   warning).
+
+The hwlatdetect result parser has unit tests with captured pass/fail output:
+`python3 -m unittest discover -s tools/bench -p 'test_*.py' -v`.
 
 Other required host settings: MTU 9000 on the fronthaul port, `PROTORU_SHM_SIZE` ≥ the profile dump size, and
 `tcpdump` on the host for captures (`make capture`).
@@ -97,14 +102,34 @@ Goldens record the image in `testdata/golden/<profile>/MANIFEST.json` (`image`).
 differs from the v4 goldens, a v3 golden set is generated (two cold replays, 0 differing samples) and its MANIFEST
 records `image: v1-candidate-v3`. Never present a v4 golden as validation of the v3 image.
 
+## Antenna map (measured cabling)
+
+| N310 RF port | RM520N port | Role |
+|---|---|---|
+| RF0 | ANT2 | primary n78 TX |
+| RF1 | ANT0 | second TX |
+| RF2 | ANT1 | third TX |
+| RF3 | ANT3 | fourth TX |
+
+2×2 profiles use **RF0–RF1**; 4×4 uses all four ports. `scripts/up.sh` prints this table
+on every bring-up (together with the core map and the image tags).
+
 ## Run order (start → last)
 
 1. 20 MHz 2×2 — `baseline` (the reference profile).
 2. 40 MHz 2×2 — `b40`.
 3. 4×4 at 40/100 MHz — **last** (new profile; not yet created, requires radio config + golden per profile).
 
-For each stage: `make bench-preflight`, then live `smoke-fh` 2×600 s on a quiet host, then `replay-golden`, then
-record the result in the milestone/campaign report with `[MEASURED]` tags.
+For each stage, in this order:
+
+1. `make bench-preflight` (fails closed).
+2. Live `smoke-fh` 2×600 s on a quiet host.
+3. **`make replay-golden OPENRU_REPLAY_TAG=v1-candidate-v3` — mandatory on the bench host** (baseline runs; b40 and
+   b100 skip from their MANIFEST). The v3 image was shown bit-exact against the v4 golden only on the AVX-512 server; FFTW and OCUDU
+   select SIMD paths at runtime, so on the non-AVX-512 bench host the golden equality must be re-confirmed
+   (0 differing samples). If it differs, build the v3 golden set under `GOLDEN_ROOT=testdata/golden-v3` and record
+   `image: v1-candidate-v3` in its MANIFEST.
+4. Record the result in the campaign report with `[MEASURED]` tags.
 
 ## Open items
 

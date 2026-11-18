@@ -31,7 +31,7 @@ endif
 
 .PHONY: help preflight gpu-check build build-core build-protoru down logs \
         smoke smoke-fh smoke-core fetch-golden replay-golden compare-plmn capture \
-        bench-preflight
+        bench-preflight up
 
 help:
 	@echo "OpenRU targets (GPU: $$(test -f $(ROOT)/docker/lab.env && echo set || echo 'lab.env MISSING'))"
@@ -70,6 +70,10 @@ build-protoru: preflight
 	$(COMPOSE) --profile build build ocudu
 
 build: build-core build-protoru
+
+UP_PROFILE ?= fh
+up:
+	@BENCH=$(BENCH) $(ROOT)/scripts/up.sh $(UP_PROFILE)
 
 down:
 	-$(COMPOSE) --profile fh --profile core --profile full down --remove-orphans
@@ -232,6 +236,7 @@ replay-golden: preflight
 	    lead=$$(python3 $(ROOT)/tools/golden/manifest_mode.py --manifest $(GOLDEN_ROOT)/$$prof/MANIFEST.json --field lead_us); \
 	    sender=$$(python3 $(ROOT)/tools/golden/manifest_mode.py --manifest $(GOLDEN_ROOT)/$$prof/MANIFEST.json --field sender); \
 	    tag=$$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1])).get("image") or "")' $(GOLDEN_ROOT)/$$prof/MANIFEST.json); \
+	    echo "[replay-golden] $$prof image=$${OPENRU_REPLAY_TAG:-$${tag:-$${OPENRU_TAG:-m1}}} (golden image: $$tag)"; \
 	    OPENRU_WINDOW_JSON=$(GOLDEN_ROOT)/$$prof/window.json OPENRU_TAG=$${OPENRU_REPLAY_TAG:-$${tag:-$${OPENRU_TAG:-m1}}} \
 	      OPENRU_REPLAY_SENDER=$$sender OPENRU_LEAD_MODE=$$mode OPENRU_REPLAY_ALIGN_LEAD_US=$$lead \
 	      $(ROOT)/scripts/replay_iq_dump.sh $$prof testdata/pcap/$$prof.pcapng \

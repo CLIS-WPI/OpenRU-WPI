@@ -136,9 +136,9 @@ if ip link show "$IFACE" >/dev/null 2>&1; then
   mtu=$(ip -o link show "$IFACE" | sed -n 's/.* mtu \([0-9]*\).*/\1/p')
   speed=$(ethtool "$IFACE" 2>/dev/null | awk -F': ' '/Speed:/{print $2}')
   ok "$IFACE driver=${drv:-?} state=${state:-?} mtu=${mtu:-?} speed=${speed:-?}"
-  [[ "$drv" == "i40e" ]] || warn "$IFACE driver ${drv:-unknown} != i40e (X710 expected)"
+  [[ "$drv" == "i40e" ]] || fail "$IFACE driver ${drv:-unknown} != i40e (X710 required)"
   [[ "$state" == "UP" ]] || fail "$IFACE is not link up"
-  [[ "$speed" == "10000Mb/s" ]] || fail "$IFACE speed ${speed:-unknown} != 10000Mb/s"
+  [[ "$speed" == "10000Mb/s" ]] || fail "$IFACE speed ${speed:-unknown} != 10000Mb/s (10 GbE required)"
   [[ "$mtu" == "9000" ]] || fail "$IFACE mtu ${mtu:-?} != 9000 (set: sudo ip link set $IFACE mtu 9000)"
 else
   fail "interface $IFACE not found (X710 fronthaul port)"
@@ -158,13 +158,17 @@ elif command -v hwlatdetect >/dev/null 2>&1 || command -v hwlatdetect.py >/dev/n
   fi
   if [[ ${#RUN[@]} -gt 0 ]]; then
     OUT="$("${RUN[@]}" 2>&1)"
-    MAXV=$(printf '%s\n' "$OUT" | grep -Eo '[0-9]+(\.[0-9]+)?[[:space:]]*us' | grep -Eo '[0-9]+(\.[0-9]+)?' | sort -g | tail -1)
-    if [[ -z "$MAXV" ]]; then
-      fail "hwlatdetect produced no latency figure (see output)"
-    elif python3 -c "import sys; sys.exit(0 if float('$MAXV') < $HWLAT_LIMIT_US else 1)"; then
-      ok "hwlatdetect max ${MAXV} us < ${HWLAT_LIMIT_US} us over ${HWLAT_SECS}s"
+    # Parse the result line only (parameters also end in "us"): tools/bench/hwlat_parse.py.
+    if MAXV="$(printf '%s\n' "$OUT" | python3 "$ROOT/tools/bench/hwlat_parse.py")"; then
+      if python3 -c "import sys; sys.exit(0 if float('$MAXV') < $HWLAT_LIMIT_US else 1)"; then
+        ok "hwlatdetect max ${MAXV} us < ${HWLAT_LIMIT_US} us over ${HWLAT_SECS}s"
+      else
+        fail "hwlatdetect max ${MAXV} us >= ${HWLAT_LIMIT_US} us over ${HWLAT_SECS}s"
+        printf '%s\n' "$OUT" | tail -5 | sed 's/^/      | /'
+      fi
     else
-      fail "hwlatdetect max ${MAXV} us >= ${HWLAT_LIMIT_US} us over ${HWLAT_SECS}s"
+      fail "hwlatdetect output not parseable (no 'Max Latency: <n>us' line)"
+      printf '%s\n' "$OUT" | tail -8 | sed 's/^/      | /'
     fi
   fi
 else

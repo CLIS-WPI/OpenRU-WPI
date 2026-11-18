@@ -45,18 +45,30 @@ ratio stays ≤3.9e-6 in all four runs. This is the same host-scheduling signatu
 
 ## replay-golden baseline (image-specific goldens)
 
-Replay of `testdata/pcap/baseline.pcapng` with the v3 image against the stored **v4** golden
-(`OPENRU_REPLAY_TAG=v1-candidate-v3`):
+Replay of `testdata/pcap/baseline.pcapng` with **`openru/protoru:v1-candidate-v3` (image `c88dc855d7de`)** against the
+stored **v4** golden (`OPENRU_REPLAY_TAG=v1-candidate-v3`; the run log names the image and its ID):
 
 - dump gate: `golden-check: PASS` — 513/513 expected DL slots non-empty, per-port energy ok (p0: 513, p1: 100), no
   UL leakage; `du_align` offset 0 slots; 4000/4000 slots overlap.
 - bit-exact compare: `port0.cf32: all 4000 overlapping DU slots PASS (n=46,080,000)` and the same for `port1.cf32`
-  — **0 differing samples vs the v4 golden**.
+  — 0 differing samples vs the v4 golden.
 
-**Consequence: no v3 golden set is needed.** The x86-64-v3 image reproduces the v4 golden bit-exactly, so
-`testdata/golden/*/MANIFEST.json` stays as is (it records `v1-candidate`), and the bench bundle evaluates v3 against
-the same goldens. If a future v3/v4 divergence appears, `OPENRU_REPLAY_TAG` + `GOLDEN_ROOT` (Makefile) allow a v3
-set in `testdata/golden-v3/` with its own MANIFEST.
+**Claim, scoped: bit-exact on the AVX-512 server; to be confirmed on the bench host.** This server has AVX-512, and
+both libraries select SIMD paths **at runtime**, not from `MARCH`:
+
+- OCUDU dispatches on CPU features: `cpu_supports_feature(cpu_feature::avx512f/avx512bw/avx2/fma)` in
+  `lib/phy/generic_functions/precoding/precoding_factories.cpp:29-31`,
+  `lib/phy/generic_functions/generic_functions_factories.cpp:137`,
+  `lib/phy/upper/channel_modulation/channel_modulation_factories.cpp` — the `_avx512` objects are compiled on any
+  x86-64 build, so on this server the v3 image still executes AVX-512 paths where they exist.
+- FFTW comes from the distro package (`libfftw3-dev`, Ubuntu 24.04) and picks its codelets (AVX2/AVX-512) from the
+  CPU at plan time — again independent of `MARCH`.
+
+So this run does **not** prove x86-64-v3-image bit-exactness on a non-AVX-512 host; it proves that the v3 build
+configuration did not change the output on this host. `docs/BENCH_BUNDLE.md` therefore makes
+`replay-golden baseline` a **mandatory** bench-host step; only that run can promote the claim. If it differs there,
+build the v3 golden set under `GOLDEN_ROOT=testdata/golden-v3` and record `image: v1-candidate-v3` in its MANIFEST.
+Until then `testdata/golden/*/MANIFEST.json` stays as is (it records `v1-candidate`).
 
 ## Artifacts
 
@@ -68,6 +80,9 @@ Replay: `docs/reports/raw/v3-smoke/replay-golden-baseline/{run.log,check.json}`;
 ## Unverified
 
 - b40 with v3 on isolated P-cores (bench host) — 600 s ×2, required before calling v3 b40-validated.
+- v3-image bit-exactness against the golden on a host **without AVX-512** — `replay-golden baseline` on the bench
+  host (mandatory step in `docs/BENCH_BUNDLE.md`); the AVX-512 server cannot answer this because FFTW/OCUDU dispatch
+  at runtime.
 - 100 MHz with v3 — not run (b100 golden remains deferred; 100 MHz is not validated on this host for v4 either).
 - The N310 MPM/filesystem vs container UHD 4.7.0.0 compatibility — device address/version pending
   (`docs/OPEN_QUESTIONS.md`).
