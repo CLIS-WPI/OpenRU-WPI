@@ -1,0 +1,8 @@
+{
+  "golden_check_pass": true,
+  "expected_slots": 513,
+  "nonempty_slots": 513,
+  "differing_slots": 0,
+  "ports_all_slots_pass": 2,
+  "profile": "baseline"
+}

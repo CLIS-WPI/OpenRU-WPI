@@ -1,0 +1,70 @@
+[smoke-fh] tag=v1-candidate protoru_profile=null secs=60
+make: Entering directory '/home/tanglab/Desktop/OpenRU-WPI/openru-sw'
+OK: lab.env loaded; GPU GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058; cpusets protoru=32-47 du=48-55
+NOTE: containers must use --gpus device=GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058 (never --gpus all).
+Forbidden UUID: GPU-96b18ccc-7894-5e31-0ad6-a74b5b79ac28
+WARNING: DU/RU cores not fully isolated: missing [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55]; isolcpus=[] nohz_full=[] rcu_nocbs=[]. See docs/BENCH_BUNDLE.md.
+make: Leaving directory '/home/tanglab/Desktop/OpenRU-WPI/openru-sw'
+quiet_host: QUIET loadavg=[2.55029296875, 3.05517578125, 3.0693359375] offenders=0 out=/home/tanglab/Desktop/OpenRU-WPI/openru-sw/docs/reports/raw/smoke-fh-hostcheck-pre.json
+[smoke-fh] running make smoke-fh (timeout 900s)
+make: Entering directory '/home/tanglab/Desktop/OpenRU-WPI/openru-sw'
+OK: lab.env loaded; GPU GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058; cpusets protoru=32-47 du=48-55
+NOTE: containers must use --gpus device=GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058 (never --gpus all).
+Forbidden UUID: GPU-96b18ccc-7894-5e31-0ad6-a74b5b79ac28
+WARNING: DU/RU cores not fully isolated: missing [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55]; isolcpus=[] nohz_full=[] rcu_nocbs=[]. See docs/BENCH_BUNDLE.md.
+[smoke-fh] DU(no_core)+ProtO-RU null, 60s, GPU GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058
+ Network openru_fh Creating 
+ Network openru_fh Created 
+ Container openru-du-1 Creating 
+ Container openru-du-1 Created 
+ Container openru-protoru-1 Creating 
+ Container openru-protoru-1 Created 
+ Container openru-du-1 Starting 
+ Container openru-du-1 Started 
+ Container openru-protoru-1 Starting 
+ Container openru-protoru-1 Started 
+GPU 0: NVIDIA H100 NVL (UUID: GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058)
+=== verify_caps in 2595912b926f3fdfcab4b3685977db47ee9fed3ee415765aad291af4d01af82d (iface=eth0) ===
+CapPrm:	00000000a88475fb
+CapEff:	00000000a88475fb
+CapBnd:	00000000a88475fb
+chrt -f 50 true: OK_CHRT
+OK_AF_PACKET fd=3 iface=eth0
+verify_caps: PASS
+=== verify_caps in ecfca87d482ba9a39136ea348ae4a1913091d6f143a8a1db482327eff5a6caca (iface=eth0) ===
+CapPrm:	00000000a88475fb
+CapEff:	00000000a88475fb
+CapBnd:	00000000a88475fb
+chrt -f 50 true: OK_CHRT
+OK_AF_PACKET fd=3 iface=eth0
+verify_caps: PASS
+[smoke-fh] waiting for first ProtO-RU KPI with RX_TOTAL>0...
+[smoke-fh] OFH traffic seen; quiet-host pre-check...
+quiet_host: QUIET loadavg=[4.41552734375, 3.4453125, 3.197265625] offenders=0 out=/home/tanglab/Desktop/OpenRU-WPI/openru-sw/docs/reports/raw/smoke-fh-hostcheck-pre.json
+[smoke-fh] measuring 60s with quiet-host monitor...
+=== ProtO-RU KPI / direction ===
+=== FULL WINDOW (incl. warm-up) ===
+kpi_rows=66  DL@RU: U=444996 C=33662 C_UL=118246 rx_total=596904  UL@RU tx_total=984768  [MEASURED]
+late@RU DL: U=0 C=0 C_UL=0 sum=0  drop=0  [MEASURED]
+late_rate@RU DL-only: 0.0000/M  frac=0.000e+00; all-pkts (RX+TX): 0.0000/M  frac=0.000e+00  [MEASURED]
+no lates; warm-up=0
+=== GATE WINDOW (after warm-up=0s) ===
+kpi_rows=66  DL@RU: U=444996 C=33662 C_UL=118246 rx_total=596904  UL@RU tx_total=984768  [MEASURED]
+late@RU DL: U=0 C=0 C_UL=0 sum=0  drop=0  [MEASURED]
+late_rate@RU DL-only: 0.0000/M  frac=0.000e+00; all-pkts (RX+TX): 0.0000/M  frac=0.000e+00  [MEASURED]
+=== UL at DU (OFH RX from RU) ===
+ofh_metric_samples=75 ul_rx_total=1117542 ul_rx_late=2 ul_past_seq_drops=394  [MEASURED]
+late_rate@DU UL: 1.7896 per million UL packets  [MEASURED]
+du tx_kpis late: dl_rgs=0 ul_req=0 cp_dl=0 up_dl=0 cp_ul=0  [MEASURED]
+=== Per-second late histogram @RU (rel_s: late_up/c/c_u/sum) ===
+(no late seconds)
+=== DU slot indication ===
+mac_reports=69 detail=69 MAC reports, nof_slots>0, windows advance (SFN-wrap safe)
+first={'start': (402, 11), 'end': (448, 0), 'nof_slots': 909} last={'start': (680, 0), 'end': (780, 0), 'nof_slots': 2000}
+PASS: zero late/drop after warm-up=0s
+[smoke-fh] PASS
+make: Leaving directory '/home/tanglab/Desktop/OpenRU-WPI/openru-sw'
+uplane-rate: dl_u_plane_per_s: PASS measured=6742.36/s expected=6784.6/s delta=-0.62%
+uplane-rate: dl_c_plane_per_s: PASS measured=510.03/s expected=513.4/s delta=-0.66%
+uplane-rate: ul_c_plane_at_ru_per_s: PASS measured=1791.61/s expected=1800.0/s delta=-0.47%
+uplane-rate: PASS

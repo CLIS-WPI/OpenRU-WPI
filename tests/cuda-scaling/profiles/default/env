@@ -1,0 +1,4 @@
+# tests/cuda-scaling profile: default (GPU vs FFTW+AVX-512 CPU baseline)
+LATENCY_ITERS=80
+CPU_CORE=10
+TIMEOUT_SECS=1800

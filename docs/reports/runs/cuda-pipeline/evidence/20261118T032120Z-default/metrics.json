@@ -1,0 +1,7 @@
+{
+  "harness": "test_pipeline",
+  "device": "NVIDIA H100 NVL (compute capability 9.0)",
+  "sustained_slots": 4000,
+  "latency_iters": 200,
+  "mismatch_lines": 0
+}

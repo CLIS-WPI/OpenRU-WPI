@@ -1,0 +1,5 @@
+# tests/replay-golden profile: b100 (100 MHz 2x2)
+# The golden MANIFEST marks this golden deferred; the run reports
+# SKIPPED(deferred). Never presented as v1-validated.
+TIMEOUT_SECS=2400
+RUN_HOST_LIMITED=0

@@ -1,0 +1,128 @@
+{
+  "end": "2026-11-18T03:35:55Z",
+  "evidence": [
+    "docs/reports/runs/cuda-scaling/evidence/20261118T033542Z-default/test_scaling.out",
+    "docs/reports/runs/cuda-scaling/evidence/20261118T033542Z-default/scaling_results.csv",
+    "docs/reports/runs/cuda-scaling/evidence/20261118T033542Z-default/run.log"
+  ],
+  "host": {
+    "cpusets": {
+      "du": "48-55",
+      "protoru": "32-47"
+    },
+    "gpu_uuid": "GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058",
+    "hostname": "GPU-server",
+    "kernel": "6.8.0-138-generic"
+  },
+  "image": {
+    "digest": "",
+    "id": "",
+    "tag": "m2"
+  },
+  "isolation": {
+    "isolated": false,
+    "kernel_params": {
+      "isolcpus": [],
+      "nohz_full": [],
+      "rcu_nocbs": []
+    },
+    "missing_cores": [
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55
+    ],
+    "required": false
+  },
+  "metrics": {
+    "csv_head": [
+      {
+        "cpu_dl_max_ms": "0.452627",
+        "cpu_dl_p50_ms": "0.436707",
+        "cpu_dl_p99_ms": "0.452627",
+        "cpu_ul_p50_ms": "0.340708",
+        "gpu_dl_max_ms": "0.064576",
+        "gpu_dl_p50_ms": "0.048544",
+        "gpu_dl_p99_ms": "0.064576",
+        "gpu_ul_max_ms": "0.070336",
+        "gpu_ul_p50_ms": "0.060416",
+        "gpu_ul_p99_ms": "0.070336",
+        "layers": "2",
+        "ports": "2"
+      },
+      {
+        "cpu_dl_max_ms": "0.474957",
+        "cpu_dl_p50_ms": "0.460377",
+        "cpu_dl_p99_ms": "0.474957",
+        "cpu_ul_p50_ms": "0.565456",
+        "gpu_dl_max_ms": "0.074048",
+        "gpu_dl_p50_ms": "0.067232",
+        "gpu_dl_p99_ms": "0.074048",
+        "gpu_ul_max_ms": "0.085472",
+        "gpu_ul_p50_ms": "0.07936",
+        "gpu_ul_p99_ms": "0.085472",
+        "layers": "2",
+        "ports": "4"
+      },
+      {
+        "cpu_dl_max_ms": "0.558306",
+        "cpu_dl_p50_ms": "0.541427",
+        "cpu_dl_p99_ms": "0.558306",
+        "cpu_ul_p50_ms": "0.832945",
+        "gpu_dl_max_ms": "0.086432",
+        "gpu_dl_p50_ms": "0.077472",
+        "gpu_dl_p99_ms": "0.086432",
+        "gpu_ul_max_ms": "0.093856",
+        "gpu_ul_p50_ms": "0.08368",
+        "gpu_ul_p99_ms": "0.093856",
+        "layers": "4",
+        "ports": "4"
+      },
+      {
+        "cpu_dl_max_ms": "0.874234",
+        "cpu_dl_p50_ms": "0.855865",
+        "cpu_dl_p99_ms": "0.874234",
+        "cpu_ul_p50_ms": "1.06689",
+        "gpu_dl_max_ms": "0.09968",
+        "gpu_dl_p50_ms": "0.085824",
+        "gpu_dl_p99_ms": "0.09968",
+        "gpu_ul_max_ms": "0.087552",
+        "gpu_ul_p50_ms": "0.077472",
+        "gpu_ul_p99_ms": "0.087552",
+        "layers": "2",
+        "ports": "8"
+      }
+    ],
+    "harness": "test_scaling",
+    "rows": 10
+  },
+  "profile": "default",
+  "rc": 0,
+  "repo_commit": "8a3e2c0a93d08ea3c2d598b69eff2e718dc0dc50",
+  "schema": "openru-test-result/1",
+  "skip_reason": null,
+  "start": "2026-11-18T03:35:42Z",
+  "status": "PASS",
+  "submodule_commit": "d8d2097894a622f6390c3daa57c08b0a4ee9d452",
+  "suite": "cuda-scaling"
+}

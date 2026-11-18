@@ -1,0 +1,7 @@
+make: Entering directory '/home/tanglab/Desktop/OpenRU-WPI/openru-sw'
+OK: lab.env loaded; GPU GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058; cpusets protoru=32-47 du=48-55
+NOTE: containers must use --gpus device=GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058 (never --gpus all).
+Forbidden UUID: GPU-96b18ccc-7894-5e31-0ad6-a74b5b79ac28
+WARNING: DU/RU cores not fully isolated: missing [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55]; isolcpus=[] nohz_full=[] rcu_nocbs=[]. See docs/BENCH_BUNDLE.md.
+make: Leaving directory '/home/tanglab/Desktop/OpenRU-WPI/openru-sw'
+[replay-golden] b40 SKIPPED (host_limited: 4 / 5 runs passed: quantized-lead replay (the stored golden's recorded mode): 4/5 cold replay-golden runs PASS on this shared host; run 1 showed the known +1-tail shift (194 differing slots, 150 UL-slot leaks) from the Python sender jitter. Consistently clean needs the bench host's isolated cores (docs/BENCH_BUNDLE.md); no tolerance was widened.)
