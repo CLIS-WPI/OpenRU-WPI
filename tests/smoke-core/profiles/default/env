@@ -1,0 +1,3 @@
+# tests/smoke-core profile: default (NG Setup against Open5GS)
+OPENRU_TAG=m0
+TIMEOUT_SECS=900

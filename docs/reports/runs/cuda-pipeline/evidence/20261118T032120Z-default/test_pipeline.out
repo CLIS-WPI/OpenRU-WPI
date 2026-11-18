@@ -1,0 +1,98 @@
+# Device-resident low-PHY pipeline (compute-only)
+
+Device: NVIDIA H100 NVL (compute capability 9.0)
+CPU pin: core 8 (0-15), AVX2 Release OCUDU path, BFP width 9
+Sustained slots: 4000; latency iters: 200
+
+Profile 20 MHz: DFT 768, BW 51 PRB, slot_samples 11520
+  2 ports: DL mismatches=0 UL mismatches=0 [PASS]
+    GPU DL lat p50/p99/max = 0.0315 / 0.0471 / 0.0472 ms
+    GPU UL lat p50/p99/max = 0.0328 / 0.0414 / 0.0425 ms
+    GPU DL sustained wall=0.0198 ms/slot; event p50/p99/max=0.0362/0.0509/0.0595
+    GPU UL sustained wall=0.0198 ms/slot; event p50/p99/max=0.0366/0.0454/0.0572
+    CPU DL p50/p99/max = 0.0643 / 0.1684 / 0.1684 ms
+    CPU UL p50/p99/max = 0.0666 / 0.0742 / 0.0753 ms
+  4 ports: DL mismatches=0 UL mismatches=0 [PASS]
+    GPU DL lat p50/p99/max = 0.0345 / 0.0500 / 0.0501 ms
+    GPU UL lat p50/p99/max = 0.0344 / 0.0522 / 0.0531 ms
+    GPU DL sustained wall=0.0207 ms/slot; event p50/p99/max=0.0389/0.0502/0.0570
+    GPU UL sustained wall=0.0223 ms/slot; event p50/p99/max=0.0404/0.0527/0.0658
+    CPU DL p50/p99/max = 0.1286 / 0.1406 / 0.1420 ms
+    CPU UL p50/p99/max = 0.1313 / 0.1428 / 0.1475 ms
+Profile 40 MHz: DFT 1536, BW 106 PRB, slot_samples 23040
+  2 ports: DL mismatches=0 UL mismatches=0 [PASS]
+    GPU DL lat p50/p99/max = 0.0345 / 0.0500 / 0.0500 ms
+    GPU UL lat p50/p99/max = 0.0412 / 0.0513 / 0.0521 ms
+    GPU DL sustained wall=0.0220 ms/slot; event p50/p99/max=0.0406/0.0573/0.0651
+    GPU UL sustained wall=0.0238 ms/slot; event p50/p99/max=0.0451/0.0524/0.0627
+    CPU DL p50/p99/max = 0.1252 / 0.1342 / 0.1353 ms
+    CPU UL p50/p99/max = 0.1337 / 0.1621 / 0.1685 ms
+  4 ports: DL mismatches=0 UL mismatches=0 [PASS]
+    GPU DL lat p50/p99/max = 0.0457 / 0.0536 / 0.0561 ms
+    GPU UL lat p50/p99/max = 0.0525 / 0.0596 / 0.0597 ms
+    GPU DL sustained wall=0.0269 ms/slot; event p50/p99/max=0.0515/0.0611/0.0772
+    GPU UL sustained wall=0.0274 ms/slot; event p50/p99/max=0.0510/0.0645/0.0749
+    CPU DL p50/p99/max = 0.2523 / 0.2647 / 0.2648 ms
+    CPU UL p50/p99/max = 0.2671 / 0.2838 / 0.2897 ms
+Profile 100 MHz: DFT 4096, BW 273 PRB, slot_samples 61440
+  2 ports: DL mismatches=0 UL mismatches=0 [PASS]
+    GPU DL lat p50/p99/max = 0.0559 / 0.0631 / 0.0633 ms
+    GPU UL lat p50/p99/max = 0.0559 / 0.0708 / 0.0713 ms
+    GPU DL sustained wall=0.0307 ms/slot; event p50/p99/max=0.0585/0.0682/0.0902
+    GPU UL sustained wall=0.0327 ms/slot; event p50/p99/max=0.0628/0.0706/0.0868
+    CPU DL p50/p99/max = 0.3642 / 0.3837 / 0.5601 ms
+    CPU UL p50/p99/max = 0.3903 / 0.4037 / 0.4037 ms
+  4 ports: DL mismatches=0 UL mismatches=0 [PASS]
+    GPU DL lat p50/p99/max = 0.0682 / 0.0815 / 0.0815 ms
+    GPU UL lat p50/p99/max = 0.0752 / 0.0887 / 0.0891 ms
+    GPU DL sustained wall=0.0378 ms/slot; event p50/p99/max=0.0728/0.0794/0.0857
+    GPU UL sustained wall=0.0415 ms/slot; event p50/p99/max=0.0809/0.0872/0.0949
+    CPU DL p50/p99/max = 0.7298 / 0.7420 / 0.7475 ms
+    CPU UL p50/p99/max = 0.7749 / 0.7910 / 0.7911 ms
+
+## Correctness (pipeline vs standalone kernels)
+
+| Profile | DFT | Ports | DL mismatches | UL mismatches | Pass |
+|---|---:|---:|---:|---:|:---:|
+| 20 MHz | 768 | 2 | 0 | 0 | PASS |
+| 20 MHz | 768 | 4 | 0 | 0 | PASS |
+| 40 MHz | 1536 | 2 | 0 | 0 | PASS |
+| 40 MHz | 1536 | 4 | 0 | 0 | PASS |
+| 100 MHz | 4096 | 2 | 0 | 0 | PASS |
+| 100 MHz | 4096 | 4 | 0 | 0 | PASS |
+
+## GPU vs CPU per-slot latency (ms) [MEASURED] compute-only
+
+| Profile | Ports | Dir | GPU p50 | GPU p99 | GPU max | CPU p50 | CPU p99 | CPU max | Speedup (p50) |
+|---|---:|---|---:|---:|---:|---:|---:|---:|---:|
+| 20 MHz | 2 | DL | 0.0315 | 0.0471 | 0.0472 | 0.0643 | 0.1684 | 0.1684 | 2.04x |
+| 20 MHz | 2 | UL | 0.0328 | 0.0414 | 0.0425 | 0.0666 | 0.0742 | 0.0753 | 2.03x |
+| 20 MHz | 4 | DL | 0.0345 | 0.0500 | 0.0501 | 0.1286 | 0.1406 | 0.1420 | 3.73x |
+| 20 MHz | 4 | UL | 0.0344 | 0.0522 | 0.0531 | 0.1313 | 0.1428 | 0.1475 | 3.81x |
+| 40 MHz | 2 | DL | 0.0345 | 0.0500 | 0.0500 | 0.1252 | 0.1342 | 0.1353 | 3.63x |
+| 40 MHz | 2 | UL | 0.0412 | 0.0513 | 0.0521 | 0.1337 | 0.1621 | 0.1685 | 3.24x |
+| 40 MHz | 4 | DL | 0.0457 | 0.0536 | 0.0561 | 0.2523 | 0.2647 | 0.2648 | 5.52x |
+| 40 MHz | 4 | UL | 0.0525 | 0.0596 | 0.0597 | 0.2671 | 0.2838 | 0.2897 | 5.08x |
+| 100 MHz | 2 | DL | 0.0559 | 0.0631 | 0.0633 | 0.3642 | 0.3837 | 0.5601 | 6.51x |
+| 100 MHz | 2 | UL | 0.0559 | 0.0708 | 0.0713 | 0.3903 | 0.4037 | 0.4037 | 6.98x |
+| 100 MHz | 4 | DL | 0.0682 | 0.0815 | 0.0815 | 0.7298 | 0.7420 | 0.7475 | 10.70x |
+| 100 MHz | 4 | UL | 0.0752 | 0.0887 | 0.0891 | 0.7749 | 0.7910 | 0.7911 | 10.30x |
+
+## GPU sustained throughput (4000 slots, 2 streams, double-buffered) [MEASURED]
+
+| Profile | Ports | Dir | Wall ms/slot | Event p50 | Event p99 | Event max |
+|---|---:|---|---:|---:|---:|---:|
+| 20 MHz | 2 | DL | 0.0198 | 0.0362 | 0.0509 | 0.0595 |
+| 20 MHz | 2 | UL | 0.0198 | 0.0366 | 0.0454 | 0.0572 |
+| 20 MHz | 4 | DL | 0.0207 | 0.0389 | 0.0502 | 0.0570 |
+| 20 MHz | 4 | UL | 0.0223 | 0.0404 | 0.0527 | 0.0658 |
+| 40 MHz | 2 | DL | 0.0220 | 0.0406 | 0.0573 | 0.0651 |
+| 40 MHz | 2 | UL | 0.0238 | 0.0451 | 0.0524 | 0.0627 |
+| 40 MHz | 4 | DL | 0.0269 | 0.0515 | 0.0611 | 0.0772 |
+| 40 MHz | 4 | UL | 0.0274 | 0.0510 | 0.0645 | 0.0749 |
+| 100 MHz | 2 | DL | 0.0307 | 0.0585 | 0.0682 | 0.0902 |
+| 100 MHz | 2 | UL | 0.0327 | 0.0628 | 0.0706 | 0.0868 |
+| 100 MHz | 4 | DL | 0.0378 | 0.0728 | 0.0794 | 0.0857 |
+| 100 MHz | 4 | UL | 0.0415 | 0.0809 | 0.0872 | 0.0949 |
+
+Overall: PASS

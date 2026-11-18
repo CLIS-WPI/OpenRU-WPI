@@ -1,0 +1,6 @@
+# tests/smoke-fh profile: null
+OPENRU_TAG=v1-candidate
+PROTORU_PROFILE=null
+DOCKER_PROFILE=baseline
+SMOKE_SECS=60
+TIMEOUT_SECS=900

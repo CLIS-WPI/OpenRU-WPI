@@ -1,0 +1,40 @@
+[smoke-core] tag=m0
+make: Entering directory '/home/tanglab/Desktop/OpenRU-WPI/openru-sw'
+OK: lab.env loaded; GPU GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058; cpusets protoru=32-47 du=48-55
+NOTE: containers must use --gpus device=GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058 (never --gpus all).
+Forbidden UUID: GPU-96b18ccc-7894-5e31-0ad6-a74b5b79ac28
+WARNING: DU/RU cores not fully isolated: missing [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55]; isolcpus=[] nohz_full=[] rcu_nocbs=[]. See docs/BENCH_BUNDLE.md.
+make: Leaving directory '/home/tanglab/Desktop/OpenRU-WPI/openru-sw'
+[smoke-core] running make smoke-core (timeout 900s)
+make: Entering directory '/home/tanglab/Desktop/OpenRU-WPI/openru-sw'
+OK: lab.env loaded; GPU GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058; cpusets protoru=32-47 du=48-55
+NOTE: containers must use --gpus device=GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058 (never --gpus all).
+Forbidden UUID: GPU-96b18ccc-7894-5e31-0ad6-a74b5b79ac28
+WARNING: DU/RU cores not fully isolated: missing [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55]; isolcpus=[] nohz_full=[] rcu_nocbs=[]. See docs/BENCH_BUNDLE.md.
+[smoke-core] NG Setup against Open5GS
+=== PLMN / TAC / slice side-by-side ===
+field        DU               Open5GS AMF     
+------------ ---------------- ----------------
+plmn         00101            00101           
+tac          7                7               
+sst          1                1               
+sd           (none)           (none)          
+
+AMF guami: MCC=001 MNC=01; tai.tac=7; plmn_support S-NSSAI sst=1 sd=(none)
+DU cell_cfg plmn=00101 tac=7; supported_tracking_areas SST=1 SD=(none)
+ALIGN: OK
+ Network openru_core Creating 
+ Network openru_core Created 
+ Container openru-core-1 Creating 
+ Container openru-core-1 Created 
+ Container openru-core-1 Starting 
+ Container openru-core-1 Started 
+[smoke-core] waiting for core healthy...
+ Container openru-du-1 Creating 
+ Container openru-du-1 Created 
+ Container openru-du-1 Starting 
+ Container openru-du-1 Started 
+--- subscriber (IMSI prefix 00101) ---
+SUBSCRIBER_DB=001010123456780,00112233445566778899aabbccddeeff,opc,63bfa50ee6523365ff14c1f45f88737d,8000,9,10.45.1.2
+[smoke-core] PASS
+make: Leaving directory '/home/tanglab/Desktop/OpenRU-WPI/openru-sw'

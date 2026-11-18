@@ -1,0 +1,5 @@
+# tests/cuda-pipeline profile: default (compute-only, H100)
+SUSTAINED=4000
+LATENCY_ITERS=200
+CPU_CORE=8
+TIMEOUT_SECS=1800

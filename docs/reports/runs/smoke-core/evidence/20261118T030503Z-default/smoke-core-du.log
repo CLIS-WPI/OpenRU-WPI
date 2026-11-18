@@ -1,0 +1,297 @@
+2026-11-18T03:05:10.971205 [GNB     ] [I] Built in Release mode using commit  on branch 
+2026-11-18T03:05:10.972265 [CONFIG  ] [I] Input configuration (only non-default values): 
+log:
+  filename: /tmp/gnb.log
+  all_level: info
+cu_cp:
+  amf:
+    no_core: false
+    addrs: 10.53.1.2
+    bind_addrs: 10.53.1.6
+    supported_tracking_areas: "tac: 7\nplmn_list:\n  - plmn: 00101\n    tai_slice_support_list:\n      - sst: 1"
+cell_cfg:
+  pci: 1
+  dl_arfcn: 628032
+  band: 78
+  common_scs: 30
+  channel_bandwidth_MHz: 20
+  nof_antennas_ul: 2
+  nof_antennas_dl: 2
+  plmn: 00101
+  tac: 7
+  prach:
+    prach_config_index: 159
+    prach_root_sequence_index: 1
+    zero_correlation_zone: 0
+    prach_frequency_start: 0
+  tdd_ul_dl_cfg:
+    dl_ul_tx_period: 5
+    nof_dl_slots: 3
+    nof_dl_symbols: 10
+    nof_ul_slots: 1
+    nof_ul_symbols: 2
+expert_phy:
+  max_proc_delay: 10
+  pusch_dec_max_iterations: 15
+  allow_request_on_empty_uplink_slot: true
+ru_ofh:
+  cells: "network_interface: eth0\nru_mac_addr: 02:00:00:00:00:20\ndu_mac_addr: 02:00:00:00:00:10\ndl_port_id: [0, 1]\nul_port_id: [0, 1]\nprach_port_id: [4, 5]"
+  "":
+    ru_bandwidth_MHz: 20
+    t1a_max_cp_dl: 2435
+    t1a_min_cp_dl: 2250
+    t1a_max_cp_ul: 2435
+    t1a_min_cp_ul: 2250
+    t1a_max_up: 2215
+    t1a_min_up: 2050
+    ta4_max: 1480
+    ta4_min: 800
+    is_prach_cp_enabled: true
+    ignore_ecpri_payload_size: true
+    compr_method_ul: bfp
+    compr_bitwidth_ul: 9
+    compr_method_dl: bfp
+    compr_bitwidth_dl: 9
+    compr_method_prach: bfp
+    compr_bitwidth_prach: 9
+    enable_ul_static_compr_hdr: true
+    enable_dl_static_compr_hdr: true
+    iq_scaling: 16
+2026-11-18T03:05:11.964175 [GNB     ] [W] CPU0 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964204 [GNB     ] [W] CPU1 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964226 [GNB     ] [W] CPU2 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964246 [GNB     ] [W] CPU3 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964267 [GNB     ] [W] CPU4 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964289 [GNB     ] [W] CPU5 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964311 [GNB     ] [W] CPU6 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964331 [GNB     ] [W] CPU7 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964352 [GNB     ] [W] CPU8 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964379 [GNB     ] [W] CPU9 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964401 [GNB     ] [W] CPU10 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964424 [GNB     ] [W] CPU11 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964447 [GNB     ] [W] CPU12 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964471 [GNB     ] [W] CPU13 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964492 [GNB     ] [W] CPU14 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964513 [GNB     ] [W] CPU15 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964534 [GNB     ] [W] CPU16 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964555 [GNB     ] [W] CPU17 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964575 [GNB     ] [W] CPU18 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964597 [GNB     ] [W] CPU19 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964618 [GNB     ] [W] CPU20 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964638 [GNB     ] [W] CPU21 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964658 [GNB     ] [W] CPU22 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964679 [GNB     ] [W] CPU23 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964699 [GNB     ] [W] CPU24 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964720 [GNB     ] [W] CPU25 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964740 [GNB     ] [W] CPU26 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964761 [GNB     ] [W] CPU27 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964781 [GNB     ] [W] CPU28 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964801 [GNB     ] [W] CPU29 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964821 [GNB     ] [W] CPU30 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964842 [GNB     ] [W] CPU31 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964864 [GNB     ] [W] CPU32 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964884 [GNB     ] [W] CPU33 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964903 [GNB     ] [W] CPU34 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964922 [GNB     ] [W] CPU35 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964944 [GNB     ] [W] CPU36 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964963 [GNB     ] [W] CPU37 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.964983 [GNB     ] [W] CPU38 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965001 [GNB     ] [W] CPU39 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965021 [GNB     ] [W] CPU40 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965040 [GNB     ] [W] CPU41 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965059 [GNB     ] [W] CPU42 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965079 [GNB     ] [W] CPU43 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965098 [GNB     ] [W] CPU44 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965119 [GNB     ] [W] CPU45 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965140 [GNB     ] [W] CPU46 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965161 [GNB     ] [W] CPU47 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965182 [GNB     ] [W] CPU48 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965201 [GNB     ] [W] CPU49 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965221 [GNB     ] [W] CPU50 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965242 [GNB     ] [W] CPU51 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965261 [GNB     ] [W] CPU52 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965281 [GNB     ] [W] CPU53 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965303 [GNB     ] [W] CPU54 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965324 [GNB     ] [W] CPU55 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965344 [GNB     ] [W] CPU56 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965363 [GNB     ] [W] CPU57 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965389 [GNB     ] [W] CPU58 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965409 [GNB     ] [W] CPU59 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965429 [GNB     ] [W] CPU60 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965449 [GNB     ] [W] CPU61 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965468 [GNB     ] [W] CPU62 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965489 [GNB     ] [W] CPU63 scaling governor is not set to performance, which may hinder performance. You can set it to performance using the "ocudu_performance" script
+2026-11-18T03:05:11.965513 [GNB     ] [W] DRM KMS polling is enabled, which may hinder performance. You can disable it using the "ocudu_performance" script
+2026-11-18T03:05:11.966913 [CONFIG  ] [I] Worker pool "main_pool" instantiated with #workers=5, task_queue_size=2048, backoff_period=50us and priority=96.
+2026-11-18T03:05:11.988981 [GTPU    ] [I] GTP-U demux. queue_size=2046 batch_size=256 warn_on_drop=false test_mode=false
+2026-11-18T03:05:11.989156 [GTPU    ] [I] Tunnel added. teid=0x000000
+2026-11-18T03:05:12.135907 [DU      ] [W] With the given prach_frequency_start=0, the PRACH opportunities overlap with the PUCCH resources/guardband in prbs=[0, 11). Some interference between PUCCH and PRACH should be expected
+2026-11-18T03:05:12.136807 [DU-MNG  ] [I] The upper-bound on the number of UEs supported by cell {pci=1, du_cell_index=0} is 64 (the actual number might be lower than that). This is determined by the lowest of the following limits: SR (64), CSI (64) and SRS (n/a).
+2026-11-18T03:05:12.138324 [DU      ] [I] DU created successfully
+2026-11-18T03:05:12.138332 [DU      ] [I] O-DU created successfully
+2026-11-18T03:05:12.163395 [OFH     ] [I] Opened successfully the NIC interface 'eth0' (fd = '8') used by the Ethernet receiver
+2026-11-18T03:05:12.163494 [OFH     ] [I] Opened successfully the NIC interface 'eth0' (fd = '9') used by the Ethernet transmitter
+2026-11-18T03:05:12.216971 [GNB     ] [I] SSB derived parameters for cell: 1, band: 78, dl_arfcn:628032, nof_crbs: 51 scs:30kHz, ssb_scs:30kHz:
+	 - SSB offset pointA:6 
+	 - k_SSB:12 
+	 - SSB arfcn:627744 
+	 - Coreset index:3 
+	 - Searchspace index:0
+2026-11-18T03:05:12.217040 [IO-EPOLL] [E] fd=0: Failed to register file descriptor. Cause: epoll_ctl failed with "Operation not permitted"
+2026-11-18T03:05:12.217060 [APP     ] [E] Couldn't register stdin handler
+2026-11-18T03:05:12.217062 [GNB     ] [I] Starting CU-CP...
+2026-11-18T03:05:12.217533 [CU-CP   ] [I] N2: Connection to AMF on 10.53.1.2:38412 was established
+2026-11-18T03:05:12.217675 [NGAP    ] [I] Tx PDU: NGSetupRequest
+2026-11-18T03:05:12.226842 [NGAP    ] [I] Rx PDU: NGSetupResponse
+2026-11-18T03:05:12.226879 [CU-CP   ] [I] Connected to AMF. Supported PLMNs: 00101 
+2026-11-18T03:05:12.226893 [GNB     ] [I] CU-CP started successfully
+2026-11-18T03:05:12.226900 [CU-UP   ] [I] CU-UP starting...
+2026-11-18T03:05:12.226967 [CU-CP   ] [I] Added TNL connection to CU-UP 0
+2026-11-18T03:05:12.227076 [CU-UP-E1] [I] Sending E1SetupRequest
+2026-11-18T03:05:12.227089 [CU-UP-E1] [I] Tx PDU tid=0: GNB-CU-UP-E1SetupRequest
+2026-11-18T03:05:12.227097 [CU-CP-E1] [I] Rx PDU tid=0: GNB-CU-UP-E1SetupRequest
+2026-11-18T03:05:12.227110 [CU-CP-E1] [I] Tx PDU tid=0: GNB-CU-UP-E1SetupResponse
+2026-11-18T03:05:12.227124 [CU-UP-E1] [I] Rx PDU tid=0: GNB-CU-UP-E1SetupResponse
+2026-11-18T03:05:12.227129 [CU-UP-E1] [I] "E1AP CU-UP Setup Procedure" finalized
+2026-11-18T03:05:12.227141 [CU-UP   ] [I] CU-UP started successfully
+2026-11-18T03:05:12.227144 [DU      ] [I] Starting DU...
+2026-11-18T03:05:12.227145 [DU      ] [I] Starting DU-High...
+2026-11-18T03:05:12.227228 [CU-CP   ] [I] Added TNL connection to DU 0
+2026-11-18T03:05:12.279728 [DU-MNG  ] [I] SIB1 cell=0: {
+  "cellSelectionInfo": {
+    "q-RxLevMin": -70,
+    "q-QualMin": -20
+  },
+  "cellAccessRelatedInfo": {
+    "plmn-IdentityInfoList": [
+      {
+        "plmn-IdentityList": [
+          {
+            "mcc": [
+              0,
+              0,
+              1
+            ],
+            "mnc": [
+              0,
+              1
+            ]
+          }
+        ],
+        "trackingAreaCode": "000000000000000000000111",
+        "cellIdentity": "000000000000011001101100000000000000",
+        "cellReservedForOperatorUse": "notReserved"
+      }
+    ]
+  },
+  "connEstFailureControl": {
+    "connEstFailCount": "n1",
+    "connEstFailOffsetValidity": "s30",
+    "connEstFailOffset": 1
+  },
+  "servingCellConfigCommon": {
+    "downlinkConfigCommon": {
+      "frequencyInfoDL": {
+        "frequencyBandList": [
+          {
+            "freqBandIndicatorNR": 78
+          }
+        ],
+        "offsetToPointA": 6,
+        "scs-SpecificCarrierList": [
+          {
+            "offsetToCarrier": 0,
+            "subcarrierSpacing": "kHz30",
+            "carrierBandwidth": 51,
+            "txDirectCurrentLocation": 306
+          }
+        ]
+      },
+      "initialDownlinkBWP": {
+        "genericParameters": {
+          "locationAndBandwidth": 13750,
+          "subcarrierSpacing": "kHz30"
+        },
+        "pdcch-ConfigCommon": {
+          {
+            "commonSearchSpaceList": [
+              {
+                "searchSpaceId": 1,
+                "controlResourceSetId": 0,
+                "monitoringSlotPeriodicityAndOffset": {
+                },
+                "monitoringSymbolsWithinSlot": "10000000000000",
+                "nrofCandidates": {
+                  "aggregationLevel1": "n0",
+                  "aggregationLevel2": "n0",
+                  "aggregationLevel4": "n1",
+                  "aggregationLevel8": "n0",
+                  "aggregationLevel16": "n0"
+                },
+                "searchSpaceType": {
+                  "common": {
+                    "dci-Format0-0-AndFormat1-0": {
+                    }
+                  }
+                }
+              }
+            ],
+            "searchSpaceSIB1": 0,
+            "pagingSearchSpace": 1,
+            "ra-SearchSpace": 1
+          }
+        },
+        "pdsch-ConfigCommon": {
+          {
+            "pdsch-TimeDomainAllocationList": [
+              {
+                "mappingType": "typeA",
+                "startSymbolAndLength": 53
+              },
+              {
+                "mappingType": "typeA",
+                "startSymbolAndLength": 100
+              }
+            ]
+          }
+        }
+      },
+      "bcch-Config": {
+        "modificationPeriodCoeff": "n4"
+      },
+      "pcch-Config": {
+        "defaultPagingCycle": "rf128",
+        "nAndPagingFrameOffset": {
+        },
+        "ns": "one"
+      }
+    },
+    "uplinkConfigCommon": {
+      "frequencyInfoUL": {
+        "frequencyBandList": [
+          {
+            "freqBandIndicatorNR": 78
+          }
+        ],
+        "absoluteFrequencyPointA": 627420,
+        "scs-SpecificCarrierList": [
+          {
+            "offsetToCarrier": 0,
+            "subcarrierSpacing": "kHz30",
+            "carrierBandwidth": 51
+          }
+        ]
+      },
+      "initialUplinkBWP": {
+        "genericParameters": {
+          "locationAndBandwidth": 13750,
+          "subcarrierSpacing": "kHz30"
+        },
+        "rach-ConfigCommon": {
+          {
+            "rach-ConfigGeneric": {
+              "prach-ConfigurationIndex": 159,
+              "msg1-FDM": "one",
+              "msg1-FrequencyStart": 0,
+--- subscriber (IMSI prefix 00101) ---
+SUBSCRIBER_DB=001010123456780,00112233445566778899aabbccddeeff,opc,63bfa50ee6523365ff14c1f45f88737d,8000,9,10.45.1.2

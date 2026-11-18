@@ -1,0 +1,6 @@
+# tests/smoke-fh profile: emulator
+OPENRU_TAG=m0
+PROTORU_PROFILE=emulator
+DOCKER_PROFILE=baseline
+SMOKE_SECS=60
+TIMEOUT_SECS=900
