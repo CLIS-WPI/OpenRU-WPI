@@ -27,6 +27,9 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Remote-access leak check
+        run: make check-no-secrets
+
       - name: Fetch golden IQ (if URL configured)
         if: ${{ env.OPENRU_GOLDEN_URL != '' }}
         run: make fetch-golden

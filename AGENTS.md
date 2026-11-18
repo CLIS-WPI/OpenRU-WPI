@@ -8,6 +8,19 @@
 - **Human — merges every PR.** No agent merges. Before merging, **always check the PR base is `main`**
   (`gh pr view <n> --json baseRefName`); a PR still based on a feature branch (stacked PR) must be retargeted first.
 
+## Remote access (do not commit)
+
+Never commit **remote-access details** to GitHub. That includes Tailscale IPs (`100.x.x.x`)  <!-- no-secrets-ok -->
+and tailnet names, SSH usernames and host aliases used for remote access, SSH keys or  <!-- no-secrets-ok -->
+fingerprints, passwords, tokens, and the mapping of which machine reaches which.
+Lab-private radio addresses (`192.168.x.x` for the N310s) may stay because the bench
+documentation needs them.
+
+Host-specific access values (bench SSH target, artifact root) live only in gitignored
+`docker/bench.local.env` (copy from `docker/bench.local.env.example`).
+`scripts/check_no_secrets.sh` (`make check-no-secrets`, also run by `make test-list`) fails
+closed on a match; install it as a pre-commit hook with the one-liner in its header.
+
 ## Repo facts
 
 - The git repo is `openru-sw/`, not the parent directory. Run all git/make commands here.
