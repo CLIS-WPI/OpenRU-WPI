@@ -70,7 +70,8 @@ Other required host settings: MTU 9000 on the fronthaul port, `PROTORU_SHM_SIZE`
 
 | Tag | Config | Provenance |
 |---|---|---|
-| `openru/protoru:v1-candidate-v3-uhd411` | FFTW + ESTIMATE, `MARCH=x86-64-v3` (AVX2), **UHD 4.11.0.0** | **the bench image** (`docker/bench.env` `OPENRU_TAG`), built on the dev server 2026-11-18, submodule `d8d2097894`, image `e2e955360db9` |
+| `openru/protoru:bench-<short-sha>` / `bench-latest` | FFTW + ESTIMATE, `MARCH=x86-64-v3` (AVX2), **UHD 4.11.0.0** | **the bench image**, built by `make bench-release` from a pushed clean commit; provenance labels (`org.openru.git.commit`, `org.openru.git.submodule`, `org.openru.uhd`, `org.openru.march`) |
+| `openru/core:bench-<short-sha>` / `bench-latest` | Open5GS core image | retagged from `openru/core:m0` at release time (built from the recorded submodule) |
 | `openru/protoru:v1-candidate` | FFTW + ESTIMATE, `MARCH=x86-64-v4` (AVX-512) | v1 reference for the GPU-server milestone runs, not for this host |
 
 The GPU-server-only v3 image (`openru/protoru:v1-candidate-v3`) is documented in
@@ -177,6 +178,53 @@ rates and the sample rate an integer divisor of it.
   4×4 DL has two TX chains and four RX chains.
 - 2×2 profiles use **RF0–RF1** (→ ANT2, ANT0 — both bidirectional); 4×4 uses all four.
 - `scripts/up.sh` prints this table on every bring-up (with the core map and image tags).
+
+## Release → ship → load → preflight
+
+Bench image artifacts live **only on this server** (never in git).
+
+```bash
+# 1. release (refuses on a dirty tree or unpushed HEAD; builds from HEAD)
+make bench-release
+#    -> openru/protoru:bench-<short-sha> + bench-latest; openru/core:bench-<short-sha> + bench-latest
+#    -> hard arch check: builder log -DMARCH and image label org.openru.march must both be
+#       x86-64-v3 (mismatch removes the bench tags and stops before smoke/export)
+#    -> smoke: container uhd_config_info == 4.11.0.0; replay-golden baseline PASS (null radio)
+#    -> /home/tanglab/openru-artifacts/bench-<short-sha>/{*.tar.gz,RELEASE.json,SHA256SUMS}
+#    -> keeps the last 5 releases (BENCH_RELEASE_KEEP); never deletes the in-use tag
+
+# 2. ship (rsync over SSH; prints manual steps when unreachable)
+make bench-ship HOST=ran            # or RELEASE=/path/to/bench-<sha>
+
+# 3. load on the bench host (verifies SHA256SUMS, loads, checks IDs vs RELEASE.json)
+scripts/bench_load.sh ~/openru-artifacts/bench-<short-sha>
+
+# 4. run
+OPENRU_TAG=bench-latest make BENCH=1 bench-preflight
+OPENRU_TAG=bench-latest BENCH=1 PROFILE=bench-20mhz PROTORU_PROFILE=uhd make smoke-fh
+```
+
+`RELEASE.json` records: git commit (+ branch, short sha), submodule commit, build date/host,
+UHD/MARCH/FFTW/CUDA configuration, the `march_check` values (builder log + image label),
+smoke results, every image (`repo_tag`, image ID,
+`RepoDigests`, size), and every tarball (bytes, SHA-256); `SHA256SUMS` covers the tarballs.
+
+`bench_load.sh` prints the release commit and tags `bench-latest` locally. `bench-preflight`
+then compares the image's `org.openru.git.commit` label with the checked-out repo HEAD and
+**warns** when they differ (an older release is a supported state; the warning makes it visible).
+
+First end-to-end check (2026-11-18, this server): `make bench-release` produced `bench-a8998ce`
+(commit `a8998ce`, submodule `d8d2097894`; 2.1 GB protoru + 0.79 GB core tarballs, SHA-256 in
+`SHA256SUMS`); the tags were removed and `scripts/bench_load.sh` re-loaded the release with matching
+image IDs (`c72090b0365e`, `d0b9d41bde6d`), and `bench-preflight` reported `ok container UHD 4.11.0.0`
+and `ok image commit matches repo HEAD`. The refusal paths were exercised too (dirty tree, branch with no
+`origin/<branch>`), and `make bench-ship HOST=ran` printed the manual copy steps because `ran` is not
+reachable in SSH batch mode from this server.
+
+`docker/bench.env` uses `OPENRU_TAG=bench-latest`; pin a specific release with
+`OPENRU_TAG=bench-<short-sha>` when a campaign must stay on one image. SSH reachability of the
+bench host (`ran`) is not assumed: `make bench-ship` falls back to printing the manual
+`rsync`/`tar | ssh` copy commands when batch SSH is unavailable.
 
 ## Run order (start → last)
 
