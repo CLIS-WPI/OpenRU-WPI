@@ -59,7 +59,7 @@ else
   fi
   if [[ "$reuse" == 0 ]]; then
     python3 "${ROOT}/tools/golden/window.py" --pcap "$PCAP_ABS" --window-slots "$WINDOW" \
-      --t2a-us "$T2A_US" --json "$WIN_JSON"
+      --t2a-us "$T2A_US" --du-config "$DU_CONFIG_PATH" --json "$WIN_JSON"
   fi
 fi
 read -r START_DU WINDOW LEAD_US UPLANE_DELAY_US < <(python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); print(d["start_du"], d["window_slots"], d["lead_us"], d.get("uplane_delay_us", 0))' "$WIN_JSON")

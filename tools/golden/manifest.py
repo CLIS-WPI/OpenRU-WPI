@@ -39,6 +39,19 @@ def profile_bw(profile_yaml: Path) -> int:
     return int(m.group(1)) if m else 0
 
 
+def first_last_slots(tx: list[dict]) -> tuple[tuple[int, int], tuple[int, int]]:
+    """First and last DU (sfn, slot) in tx_index time order.
+
+    The dump spans an SFN wrap (the DU SFN is 10-bit, the OFH wire SFN is mod 256), so min()/max() on
+    (sfn, slot) is wrong: e.g. a dump 124.0 -> 67.19 has min 0.0 and max 255.19. tx_index.jsonl is written
+    in time order, so the first and last entries are the chronological window edges.
+    """
+    slots = [(int(e["du_sfn"]), int(e["du_slot"])) for e in tx if "du_sfn" in e and "du_slot" in e]
+    if not slots:
+        raise ValueError("no du_sfn/du_slot entries")
+    return slots[0], slots[-1]
+
+
 def load_tx_index(dump: Path) -> list[dict]:
     out = []
     p = dump / "tx_index.jsonl"
@@ -70,10 +83,10 @@ def main() -> int:
     meta = json.loads((args.dump / "iq_meta.json").read_text())
     win = json.loads(args.window_json.read_text())
     tx = load_tx_index(args.dump)
-    slots = [(int(e["du_sfn"]), int(e["du_slot"])) for e in tx if "du_sfn" in e and "du_slot" in e]
-    if not slots:
+    try:
+        first_key, last_key = first_last_slots(tx)
+    except ValueError:
         raise SystemExit("manifest: no tx_index slots")
-    first_key, last_key = min(slots), max(slots)
 
     ports = sorted(args.dump.glob("port*.cf32"))
     files: dict[str, dict] = {}

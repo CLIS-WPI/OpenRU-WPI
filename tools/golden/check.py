@@ -4,7 +4,8 @@
 The expected content is the downlink User-Plane the live O-DU actually sent in the window (recorded by
 tools/golden/window.py as expected_uplane_slots). A golden or fresh replay dump is valid only if:
   1. the dump starts at the window's wire DU slot (start_du),
-  2. every expected slot has non-zero energy on every TX port,
+  2. every expected port has non-zero energy on the slots where its own U-plane payload is non-zero
+     (`expected_slots_by_port`), and declared-silent ports are zero;
   3. no energy leaks into uplink-only slots of the profile's TDD pattern,
   4. the non-empty set matches the expected set within the stated tolerance.
 
@@ -121,6 +122,11 @@ def main() -> int:
         return 1
     memmaps = {i: np.memmap(p, dtype=np.float32, mode="r") for i, p in enumerate(port_files)}
     expected_ports = [int(p) for p in win.get("expected_ports", [])] or sorted(memmaps)
+    expected_by_port = {
+        int(k): sorted(int(v) for v in offs) for k, offs in (win.get("expected_slots_by_port") or {}).items()
+    }
+    silent_ports = [int(p) for p in win.get("silent_ports", [])]
+    unexpected_ports = [int(p) for p in win.get("unexpected_ports", [])]
     bad_ports = [p for p in expected_ports if p not in memmaps]
     if bad_ports:
         print(f"golden-check: FAIL expected ports {bad_ports} but only {sorted(memmaps)} dumped", file=sys.stderr)
@@ -136,15 +142,32 @@ def main() -> int:
     observed = sorted({offset_of(k) for k, v in tx.items() if not v.get("is_empty", True)})
 
     zero_energy = []
+    silent_leaks = []
     ul_leaks = []
-    for off in expected:
-        sfx, sl = divmod((start_du + off) % OFH_PERIOD, SLOTS_PER_FRAME)
-        entry = tx.get((sfx, sl))
-        if not entry or entry.get("is_empty", True):
-            continue
-        energies = slot_energy(memmaps, entry, expected_ports)
-        if any(e <= args.min_abs for e in energies.values()):
-            zero_energy.append({"slot": [sfx, sl], "port_max_abs": energies})
+    # Per-port expectations: a configured DL port may be SSB-only, so check each port on the slots where its
+    # own U-plane payload is non-zero (expected_slots_by_port), not every expected slot on every port.
+    for port in expected_ports:
+        offs = expected_by_port.get(port)
+        if offs is None:
+            offs = expected if not expected_by_port else []
+        for off in offs:
+            sfx, sl = divmod((start_du + off) % OFH_PERIOD, SLOTS_PER_FRAME)
+            entry = tx.get((sfx, sl))
+            if not entry or entry.get("is_empty", True):
+                continue
+            e = slot_energy(memmaps, entry, [port])[port]
+            if e <= args.min_abs:
+                zero_energy.append({"slot": [sfx, sl], "port": port, "port_max_abs": e})
+    # A configured port with no non-zero U-plane payload is declared silent and must stay silent on all DL slots.
+    for port in silent_ports:
+        for off in expected:
+            sfx, sl = divmod((start_du + off) % OFH_PERIOD, SLOTS_PER_FRAME)
+            entry = tx.get((sfx, sl))
+            if not entry or entry.get("is_empty", True):
+                continue
+            e = slot_energy(memmaps, entry, [port])[port]
+            if e > args.min_abs:
+                silent_leaks.append({"slot": [sfx, sl], "port": port, "port_max_abs": e})
     for off in observed:
         sfx, sl = divmod((start_du + off) % OFH_PERIOD, SLOTS_PER_FRAME)
         if period > 0 and (sl % period) in tdd["ul_only_slot_indices"]:
@@ -161,7 +184,11 @@ def main() -> int:
             f"dump starts at DU slot {dump_first_slot % OFH_PERIOD}, window starts at {start_du % OFH_PERIOD}"
         )
     if zero_energy:
-        problems.append(f"{len(zero_energy)} expected slots have a zero-energy port (e.g. {zero_energy[:3]})")
+        problems.append(f"{len(zero_energy)} expected port/slot pairs have zero energy (e.g. {zero_energy[:3]})")
+    if silent_leaks:
+        problems.append(f"{len(silent_leaks)} declared-silent ports carry energy (e.g. {silent_leaks[:3]})")
+    if unexpected_ports:
+        problems.append(f"pcap has DL ports {unexpected_ports} not configured in the profile")
     if ul_leaks:
         problems.append(f"{len(ul_leaks)} non-empty slots fall in uplink-only positions (e.g. {ul_leaks[:5]})")
     if len(missing) + len(extra) > tol:
@@ -183,8 +210,12 @@ def main() -> int:
         "tolerance_frac": args.tolerance_frac,
         "ports": [str(p) for p in port_files],
         "expected_ports": expected_ports,
+        "expected_slots_by_port": {str(p): len(v) for p, v in expected_by_port.items()},
+        "silent_ports": silent_ports,
+        "unexpected_ports": unexpected_ports,
         "tdd": tdd,
         "zero_energy": zero_energy[:50],
+        "silent_leaks": silent_leaks[:50],
         "ul_leaks": ul_leaks[:50],
         "pass": not problems,
     }
@@ -197,7 +228,8 @@ def main() -> int:
         return 1
     print(
         f"golden-check: PASS {args.dump.name}: {len(observed)}/{len(expected)} expected DL slots non-empty "
-        f"(+/-{tol}), all ports non-zero, no UL leakage"
+        f"(+/-{tol}); per-port energy ok ({', '.join(f'p{p}:{len(expected_by_port.get(p, expected))}' for p in expected_ports)}); "
+        f"silent ports {silent_ports or 'none'} zero; no UL leakage"
     )
     return 0
 

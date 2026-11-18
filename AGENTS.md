@@ -26,7 +26,8 @@ make gpu-check && make down
 - Unit tests: `python3 -m unittest discover -s tools/iq_compare -p 'test_*.py' -v` (4 tests: one-slot shift pass, short-overlap fail with `FAIL: DU slot overlap`, min-override pass, mismatched samples). Verification also uses make targets plus `tools/`:
   - `python3 tools/iq_compare/iq_compare.py --dut DIR --golden DIR --by-slot --threshold 0`
   - `scripts/determinism_check.sh DIR_A DIR_B`
-  - `python3 tools/fh_replay/fh_replay.py --pcap ... --iface ... --dst-mac ... --src-mac ... --rate 1.0`
+  - `python3 tools/fh_replay/fh_replay.py --pcap ... --iface ... --dst-mac ... --src-mac ... --rate 1.0\
+    --align-cplane-lead-us <RU t2a_min_cp_dl>` (the flag is required; the scripts pass the window JSON lead)
 - Python tools use the active `python3`; install `numpy` and (for replay) `scapy`—there is no requirements file/venv.
 - `make capture` needs `sudo tcpdump` on the host bridge; it falls back to tcpdump inside the `protoru` container.
 

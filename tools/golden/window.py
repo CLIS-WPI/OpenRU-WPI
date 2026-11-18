@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 
 from ofh_scan import OFH_PERIOD, SLOT_SECONDS, SLOTS_PER_FRAME, cplane, iter_frames, uplane
@@ -27,14 +28,30 @@ def _mac(s: str) -> bytes:
     return bytes.fromhex(s.replace(":", "").replace("-", "").lower())
 
 
-def _uplane_filter_offset(buf: bytes) -> int:
+def parse_dl_ports(du_config: str) -> list[int]:
+    """Return the O-DU's configured downlink ports from ru_ofh.cells[0].dl_port_id."""
+    text = open(du_config).read()
+    m = re.search(r"^\s*dl_port_id\s*:\s*\[([^\]]*)\]", text, re.MULTILINE)
+    if not m:
+        raise ValueError(f"{du_config}: no ru_ofh.cells.dl_port_id")
+    return [int(v) for v in m.group(1).split(",") if v.strip()]
+
+
+def _uplane_header(buf: bytes) -> tuple[int, int]:
+    """Return (radio-app header offset, eAxC) for an OFH User-Plane frame."""
     from ofh_scan import _header
 
-    return _header(buf, 0)[0]
+    rap = _header(buf, 0)[0]
+    return rap, (int(buf[rap - 4]) << 8) | int(buf[rap - 3])
+
+
+def _uplane_payload_nonzero(buf: bytes) -> bool:
+    """True when the User-Plane IQ payload carries energy (zero PDSCH sections are all-zero bytes)."""
+    return any(buf[40:])
 
 
 def analyze(pcap: str, window_slots: int, t2a_us: float, dst_mac: str,
-            uplane_delay_us: float = 250.0) -> dict:
+            uplane_delay_us: float = 250.0, dl_ports: list[int] | None = None) -> dict:
     dst = _mac(dst_mac) if dst_mac else b""
     t_first = None
     t_last = None
@@ -79,8 +96,9 @@ def analyze(pcap: str, window_slots: int, t2a_us: float, dst_mac: str,
     expected_t0 = start_cplane_t
     expected_t1 = start_cplane_t + (window_slots + 2) * SLOT_SECONDS
     fits = (start_off >= 0.0) and (end_send <= t_last + SLOT_SECONDS) and (expected_t1 <= t_last)
-    expected: list[int] = []
-    ports: set[int] = set()
+    expected: set[int] = set()
+    expected_by_port: dict[int, set[int]] = {}
+    ports_seen: set[int] = set()
     last_u_t = None
     for t, buf in iter_frames(pcap):
         if t <= 0 or t < expected_t0 or t > expected_t1 or (dst and buf[:6] != dst):
@@ -89,11 +107,20 @@ def analyze(pcap: str, window_slots: int, t2a_us: float, dst_mac: str,
         if info is None or info[1] != 1:  # downlink only (1 = downlink)
             continue
         off = (info[0] - start_du) % OFH_PERIOD
-        if off < window_slots:
-            expected.append(off)
-            ports.add(buf[_uplane_filter_offset(buf)] & 0x0F)
-            last_u_t = t
-    expected = sorted(set(expected))
+        if off >= window_slots:
+            continue
+        _rap, eaxc = _uplane_header(buf)
+        ports_seen.add(eaxc)
+        last_u_t = t
+        # A configured DL port can be SSB-only (the no-UE cell's PDSCH is single-layer): the port's
+        # expectation is the set of slots whose own U-plane payload is non-zero, not every DL C-plane slot.
+        if _uplane_payload_nonzero(buf):
+            expected.add(off)
+            expected_by_port.setdefault(eaxc, set()).add(off)
+    expected = sorted(expected)
+    configured = sorted(dl_ports) if dl_ports else sorted(ports_seen)
+    silent_ports = [p for p in configured if not expected_by_port.get(p)]
+    unexpected_ports = sorted(ports_seen - set(configured))
 
     return {
         "pcap": pcap,
@@ -116,7 +143,10 @@ def analyze(pcap: str, window_slots: int, t2a_us: float, dst_mac: str,
         "expected_window_s": round(expected_t1 - expected_t0, 6),
         "expected_uplane_slots": expected,
         "expected_uplane_count": len(expected),
-        "expected_ports": sorted(ports),
+        "expected_ports": configured,
+        "expected_slots_by_port": {str(p): sorted(offs) for p, offs in expected_by_port.items() if offs},
+        "silent_ports": silent_ports,
+        "unexpected_ports": unexpected_ports,
         "fits": bool(fits),
     }
 
@@ -127,13 +157,21 @@ def main() -> int:
     ap.add_argument("--window-slots", type=int, required=True)
     ap.add_argument("--t2a-us", type=float, required=True, help="C-plane lead (RU t2a_min_cp_dl)")
     ap.add_argument("--dst-mac", default=RU_MAC, help="Only count frames to this MAC (empty = all)")
+    ap.add_argument("--du-config", required=True, help="O-DU YAML with ru_ofh.cells.dl_port_id")
     ap.add_argument("--uplane-delay-us", type=float, default=250.0,
                     help="Replay sends each U-plane this much later to clear the null radio's C-plane slot-update lag")
     ap.add_argument("--json", default=None, help="Write the result here")
     args = ap.parse_args()
 
     try:
-        info = analyze(args.pcap, args.window_slots, args.t2a_us, args.dst_mac, args.uplane_delay_us)
+        info = analyze(
+            args.pcap,
+            args.window_slots,
+            args.t2a_us,
+            args.dst_mac,
+            args.uplane_delay_us,
+            parse_dl_ports(args.du_config),
+        )
     except Exception as exc:  # noqa: BLE001
         print(f"golden-window: ERROR {exc}", file=sys.stderr)
         return 1

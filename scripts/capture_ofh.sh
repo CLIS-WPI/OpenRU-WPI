@@ -61,7 +61,8 @@ T2A_US="${T2A_US:-2235}"
 WINDOW=$(sed -n 's/.*max_dump_slots=\([0-9][0-9]*\).*/\1/p' "$PROTORU_CONFIG_PATH" | head -1)
 WINDOW="${WINDOW:-4000}"
 WIN_JSON="${OUT%.*}.window.json"
-if ! python3 "${ROOT}/tools/golden/window.py" --pcap "$OUT" --window-slots "$WINDOW" --t2a-us "$T2A_US" --json "$WIN_JSON"; then
+if ! python3 "${ROOT}/tools/golden/window.py" --pcap "$OUT" --window-slots "$WINDOW" --t2a-us "$T2A_US" \
+  --du-config "$DU_CONFIG_PATH" --json "$WIN_JSON"; then
   echo "[capture] FAIL: pcap cannot provide a ${WINDOW}-slot window with DL User-Plane (see message above)." >&2
   echo "[capture] Increase CAPTURE_SECS or check MTU 9000 and the O-DU data path." >&2
   exit 1

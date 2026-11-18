@@ -113,10 +113,10 @@ def main() -> int:
     ap.add_argument(
         "--align-cplane-lead-us",
         type=float,
-        default=2235.0,
-        help="Start the pcap timeline at the wall-clock GPS slot so the first DL C-plane "
-        "arrives this many microseconds before its air slot (matches live T2a). "
-        "Negative disables the aligner.",
+        required=True,
+        help="C-plane lead in microseconds before the air slot, from the RU profile "
+        "t2a_min_cp_dl (scripts pass the window JSON lead); required so no host-specific "
+        "constant is baked in. Negative disables the aligner.",
     )
     ap.add_argument(
         "--start-marker",

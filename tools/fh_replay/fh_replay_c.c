@@ -187,8 +187,8 @@ static int cmp_i64(const void* a, const void* b) {
 
 int main(int argc, char** argv) {
   const char* pcap = NULL, *iface = NULL, *only_dst_s = NULL, *src_s = NULL, *dst_s = NULL, *marker = NULL;
-  double rate = 1.0, lead_us = 0.0, uplane_delay_us = 0.0, align_lead_us = 2235.0;
-  int vlan = -1, report = 0, count = 0, dry = 0;
+  double rate = 1.0, lead_us = 0.0, uplane_delay_us = 0.0, align_lead_us = 0.0;
+  int vlan = -1, report = 0, count = 0, dry = 0, align_set = 0;
   static struct option opts[] = {
       {"pcap", required_argument, 0, 'p'}, {"iface", required_argument, 0, 'i'},
       {"only-dst-mac", required_argument, 0, 'o'}, {"src-mac", required_argument, 0, 's'},
@@ -209,7 +209,7 @@ int main(int argc, char** argv) {
       case 'r': rate = atof(optarg); break;
       case 'l': lead_us = atof(optarg); break;
       case 'u': uplane_delay_us = atof(optarg); break;
-      case 'a': align_lead_us = atof(optarg); break;
+      case 'a': align_lead_us = atof(optarg); align_set = 1; break;
       case 'm': marker = optarg; break;
       case 'R': report = 1; break;
       case 'c': count = atoi(optarg); break;
@@ -217,7 +217,12 @@ int main(int argc, char** argv) {
       default: return 2;
     }
   }
-  if (!pcap || !iface) { fprintf(stderr, "usage: %s --pcap P --iface I [...]\n", argv[0]); return 2; }
+  if (!pcap || !iface || !align_set) {
+    fprintf(stderr, "usage: %s --pcap P --iface I --align-cplane-lead-us US [...]\n"
+                    "  --align-cplane-lead-us is required (use the RU profile t2a_min_cp_dl via the window JSON)\n",
+            argv[0]);
+    return 2;
+  }
 
   FILE* fp = fopen(pcap, "rb");
   if (!fp) { perror(pcap); return 2; }

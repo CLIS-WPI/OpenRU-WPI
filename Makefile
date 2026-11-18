@@ -182,7 +182,9 @@ fetch-golden:
 
 # CPU replay vs stored golden (requires fetched .cf32 under testdata/golden/).
 # Every run also enforces the permanent golden checks: dump starts at the golden's window slot, all expected DL
-# User-Plane slots have non-zero energy on every port, no UL-slot leakage, expected non-empty count within tolerance.
+# User-Plane slots have non-zero energy on their expected ports (`expected_slots_by_port`, derived from the
+# profile's dl_port_id and the pcap's non-zero U-plane payload); declared-silent ports are zero; no UL-slot leakage;
+# expected non-empty count within tolerance.
 # The window is tracked in testdata/golden/<profile>/window.json and is reused for the dump gate and the check.
 replay-golden: preflight
 	@mkdir -p $(REPORTS)
