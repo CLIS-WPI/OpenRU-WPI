@@ -1,13 +1,25 @@
 #!/usr/bin/env bash
 # Copy one bench release to the bench host over SSH (rsync).
 #
-#   make bench-ship HOST=ran [RELEASE=/path/to/bench-<sha>]
+#   make bench-ship [HOST=<ssh-host>] [RELEASE=/path/to/bench-<sha>]
 #
-# If the host is not reachable in batch mode, prints the manual copy steps.
+# HOST defaults from docker/bench.local.env (gitignored). Do not put Tailscale
+# IPs or lab host aliases in git. If the host is not reachable in batch mode,
+# prints the manual copy steps.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-HOST="${HOST:?usage: HOST=<ssh-host> scripts/bench_ship.sh (or make bench-ship HOST=...)}"
-ART_ROOT="${OPENRU_ARTIFACTS_DIR:-/home/tanglab/openru-artifacts}"
+if [[ -f "$ROOT/docker/bench.local.env" ]]; then
+  # shellcheck disable=SC1091
+  set -a
+  # HOST already in the environment (make command line) wins over the file.
+  _host_from_cli="${HOST-}"
+  source "$ROOT/docker/bench.local.env"
+  if [[ -n "$_host_from_cli" ]]; then HOST="$_host_from_cli"; fi
+  set +a
+  unset _host_from_cli
+fi
+HOST="${HOST:?usage: HOST=<ssh-host> scripts/bench_ship.sh (or make bench-ship HOST=...; or docker/bench.local.env)}"
+ART_ROOT="${OPENRU_ARTIFACTS_DIR:-$HOME/openru-artifacts}"
 REMOTE_DIR="${BENCH_REMOTE_DIR:-openru-artifacts}"
 
 if [[ -n "${RELEASE:-}" ]]; then

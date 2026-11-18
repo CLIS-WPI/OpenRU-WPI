@@ -6,6 +6,7 @@ __pycache__/
 *.pyc
 .env
 docker/lab.env
+docker/bench.local.env
 .DS_Store
 
 # Large IQ / pcap blobs — never plain-git. Use `make fetch-golden` + MANIFEST SHA256.

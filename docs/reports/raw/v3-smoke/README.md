@@ -5,14 +5,16 @@ The raw artifacts of the `v1-candidate-v3` verification (4×600 s `smoke-fh` run
 (~8.3 MB / ~40k lines). They live on the build server at:
 
 ```
-/home/tanglab/openru-artifacts/v3-smoke-evidence/docs/reports/raw/v3-smoke/
+<artifact-root>/v3-smoke-evidence/docs/reports/raw/v3-smoke/
 ```
+
+(`<artifact-root>` is `OPENRU_ARTIFACTS_DIR` in gitignored `docker/bench.local.env`.)
 
 `MANIFEST.sha256` lists every file with its SHA-256 and the same repo-relative path, so the
 artifact tree is verifiable against this directory:
 
 ```bash
-cd /home/tanglab/openru-artifacts/v3-smoke-evidence
+cd <artifact-root>/v3-smoke-evidence
 sha256sum -c /path/to/openru-sw/docs/reports/raw/v3-smoke/MANIFEST.sha256
 ```
 

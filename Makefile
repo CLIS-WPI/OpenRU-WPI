@@ -31,7 +31,7 @@ endif
 
 .PHONY: help preflight gpu-check build build-core build-protoru down logs \
         smoke smoke-fh smoke-core fetch-golden replay-golden compare-plmn capture \
-        bench-preflight up bench-release bench-ship
+        bench-preflight up bench-release bench-ship check-no-secrets
 
 help:
 	@echo "OpenRU targets (GPU: $$(test -f $(ROOT)/docker/lab.env && echo set || echo 'lab.env MISSING'))"
@@ -72,15 +72,18 @@ build-protoru: preflight
 build: build-core build-protoru
 
 # Repeatable bench-image release (artifacts outside the repo; see docs/BENCH_BUNDLE.md).
-OPENRU_ARTIFACTS_DIR ?= /home/tanglab/openru-artifacts
+# Artifact root: command line, docker/bench.local.env (gitignored), or $HOME/openru-artifacts.
+OPENRU_ARTIFACTS_DIR ?=
 BENCH_RELEASE_KEEP ?= 5
 bench-release:
-	@OPENRU_ARTIFACTS_DIR=$(OPENRU_ARTIFACTS_DIR) BENCH_RELEASE_KEEP=$(BENCH_RELEASE_KEEP) \
+	@$(if $(OPENRU_ARTIFACTS_DIR),OPENRU_ARTIFACTS_DIR="$(OPENRU_ARTIFACTS_DIR)") \
+	  BENCH_RELEASE_KEEP=$(BENCH_RELEASE_KEEP) \
 	  $(ROOT)/scripts/bench_release.sh
 
+# HOST from command line or docker/bench.local.env — never a committed hostname.
 bench-ship:
-	@test -n "$(HOST)" || { echo "usage: make bench-ship HOST=<ssh-host> [RELEASE=<dir>]"; exit 2; }; \
-	HOST="$(HOST)" RELEASE="$(RELEASE)" OPENRU_ARTIFACTS_DIR=$(OPENRU_ARTIFACTS_DIR) \
+	@$(if $(OPENRU_ARTIFACTS_DIR),OPENRU_ARTIFACTS_DIR="$(OPENRU_ARTIFACTS_DIR)") \
+	  HOST="$(HOST)" RELEASE="$(RELEASE)" \
 	  $(ROOT)/scripts/bench_ship.sh
 
 UP_PROFILE ?= fh
@@ -284,7 +287,10 @@ SUITES := smoke-fh smoke-core replay-golden cuda-standalone cuda-pipeline cuda-s
 help-tests:
 	@$(MAKE) --no-print-directory test-list
 
-test-list:
+check-no-secrets:
+	@$(ROOT)/scripts/check_no_secrets.sh
+
+test-list: check-no-secrets
 	@echo "Suites (docs/TESTS.md):"
 	@for s in $(SUITES); do \
 	  profs=""; \

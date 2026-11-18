@@ -72,8 +72,9 @@ Until then `testdata/golden/*/MANIFEST.json` stays as is (it records `v1-candida
 
 ## Artifacts
 
-Raw evidence is **not committed** (~8.3 MB of logs/KPI dumps): it lives on the build server at
-`/home/tanglab/openru-artifacts/v3-smoke-evidence/docs/reports/raw/v3-smoke/` with checksums in
+Raw evidence is **not committed** (~8.3 MB of logs/KPI dumps): it lives under the local
+artifact root (`OPENRU_ARTIFACTS_DIR` in gitignored `docker/bench.local.env`) at
+`<artifact-root>/v3-smoke-evidence/docs/reports/raw/v3-smoke/` with checksums in
 `docs/reports/raw/v3-smoke/MANIFEST.sha256` (verify with `cd <that dir> && sha256sum -c <repo>/docs/reports/raw/v3-smoke/MANIFEST.sha256`).
 Layout: `v1-candidate-v3-{baseline,b40}-r{1,2}/` with `run.log`, `smoke-fh-kpi.json`,
 `smoke-fh-late-hist.csv`, `smoke-fh-du.log`, `smoke-fh-ru.log`, `smoke-fh-hostcheck{,-pre}.json`;

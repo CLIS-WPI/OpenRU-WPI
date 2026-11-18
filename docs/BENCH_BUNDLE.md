@@ -190,11 +190,12 @@ make bench-release
 #    -> hard arch check: builder log -DMARCH and image label org.openru.march must both be
 #       x86-64-v3 (mismatch removes the bench tags and stops before smoke/export)
 #    -> smoke: container uhd_config_info == 4.11.0.0; replay-golden baseline PASS (null radio)
-#    -> /home/tanglab/openru-artifacts/bench-<short-sha>/{*.tar.gz,RELEASE.json,SHA256SUMS}
+#    -> <artifact-root>/bench-<short-sha>/{*.tar.gz,RELEASE.json,SHA256SUMS}
+#       (<artifact-root> is OPENRU_ARTIFACTS_DIR in gitignored docker/bench.local.env)
 #    -> keeps the last 5 releases (BENCH_RELEASE_KEEP); never deletes the in-use tag
 
 # 2. ship (rsync over SSH; prints manual steps when unreachable)
-make bench-ship HOST=ran            # or RELEASE=/path/to/bench-<sha>
+make bench-ship                     # HOST from docker/bench.local.env, or HOST=<bench-host>
 
 # 3. load on the bench host (verifies SHA256SUMS, loads, checks IDs vs RELEASE.json)
 scripts/bench_load.sh ~/openru-artifacts/bench-<short-sha>
@@ -218,13 +219,14 @@ First end-to-end check (2026-11-18, this server): `make bench-release` produced 
 `SHA256SUMS`); the tags were removed and `scripts/bench_load.sh` re-loaded the release with matching
 image IDs (`c72090b0365e`, `d0b9d41bde6d`), and `bench-preflight` reported `ok container UHD 4.11.0.0`
 and `ok image commit matches repo HEAD`. The refusal paths were exercised too (dirty tree, branch with no
-`origin/<branch>`), and `make bench-ship HOST=ran` printed the manual copy steps because `ran` is not
-reachable in SSH batch mode from this server.
+`origin/<branch>`), and `make bench-ship` printed the manual copy steps when the bench host
+was not reachable in SSH batch mode from the build server.
 
 `docker/bench.env` uses `OPENRU_TAG=bench-latest`; pin a specific release with
-`OPENRU_TAG=bench-<short-sha>` when a campaign must stay on one image. SSH reachability of the
-bench host (`ran`) is not assumed: `make bench-ship` falls back to printing the manual
-`rsync`/`tar | ssh` copy commands when batch SSH is unavailable.
+`OPENRU_TAG=bench-<short-sha>` when a campaign must stay on one image. The bench SSH target
+lives in gitignored `docker/bench.local.env` (see `docker/bench.local.env.example`).
+`make bench-ship` falls back to printing the manual `rsync`/`tar | ssh` copy commands when
+batch SSH is unavailable.
 
 ## Run order (start → last)
 
