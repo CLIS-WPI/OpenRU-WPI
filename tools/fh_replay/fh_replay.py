@@ -69,18 +69,25 @@ def _cplane_slot(buf) -> int | None:
     return (sfn * SLOTS_PER_FRAME + subframe * 2 + slot_id) % OFH_PERIOD
 
 
-def _align_target(t_rel: float, slot_mod: int, lead_us: float, rate: float) -> float:
-    """Monotonic perf deadline for the first frame so the C-plane is sent `lead_us` before its air slot.
+STARTUP_MARGIN_SLOTS = 100  # 50 ms so the first frames have future deadlines
 
-    The lead is rounded to whole OFH slots: the RU labels getaway blocks on the GPS slot grid, and the proven
-    slot-exact mapping (dump du_slot == wire slot) needs the C-plane on a slot boundary. 2235 us -> 4 slots.
+
+def _align_target(slot_mod: int, lead_us: float) -> float:
+    """Monotonic perf deadline of the DL C-plane for `slot_mod`, exactly `lead_us` before its air slot.
+
+    The lead is NOT rounded to whole slots: the DU T1a window is ~200 us wide and the U-plane follows the C-plane by
+    ~200 us + the replay U-plane delay. Rounding 2235 us down to 2000 us moved the next C-plane 235 us earlier than
+    the U-plane burst tail and the RU mislabelled the tail into the next slot (+1 slot). The caller offsets the first
+    frame from this deadline.
     """
-    lead_slots = int(round(lead_us / 500.0)) % OFH_PERIOD
     now_gps_ns = time.time_ns() - GPS_EPOCH_OFFSET_NS
     now_slot = now_gps_ns // SLOT_NS
-    delta = ((slot_mod - lead_slots) - (now_slot % OFH_PERIOD)) % OFH_PERIOD
-    target_unix_ns = (now_slot + delta) * SLOT_NS + GPS_EPOCH_OFFSET_NS
-    return time.perf_counter() + (target_unix_ns - time.time_ns()) * 1e-9 - t_rel / rate
+    delta = (slot_mod - (now_slot % OFH_PERIOD)) % OFH_PERIOD
+    if delta < STARTUP_MARGIN_SLOTS:
+        delta += OFH_PERIOD
+    air_unix_ns = (now_slot + delta) * SLOT_NS + GPS_EPOCH_OFFSET_NS
+    target_unix_ns = air_unix_ns - int(round(lead_us * 1000.0))
+    return time.perf_counter() + (target_unix_ns - time.time_ns()) * 1e-9
 
 
 def main() -> int:
@@ -186,7 +193,7 @@ def main() -> int:
                     break
             frames = itertools.chain(head, frames)
             if cplane_slot is not None:
-                cplane_perf = _align_target(cplane_t - t_first, cplane_slot, args.align_cplane_lead_us, args.rate)
+                cplane_perf = _align_target(cplane_slot, args.align_cplane_lead_us)
 
         for t, buf in frames:
             if args.count and n >= args.count:

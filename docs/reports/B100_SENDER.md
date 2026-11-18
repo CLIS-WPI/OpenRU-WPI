@@ -73,3 +73,34 @@ The b40 golden is the pair of two clean cold replays with `v1-candidate` (check 
 the first seconds), reported as 194 missing/extra and 150 UL-slot leaks; rerunning the cold pair yields two clean runs
 again. The stored golden is the clean pair; the fresh-run flake is recorded here, not hidden. This is the same
 host-latency limitation, independent of the image.
+
+## b40 fresh-replay +1 slot: root cause and host limit (2026-11-17)
+
+**Mechanism (evidence, item 2a).** The failing Python b40 replay starts the dump at the correct DU slot
+(`first_du=146.0`, `dump_start_du_slot=2920`; the check's start test passes), but its first **non-empty** slot is
+`146.1` (window offset **+1**) while the pcap window expects offset 0; the check reports 194 missing/extra because
+the whole expected set is shifted by exactly one slot (`expected ∩ (expected+1)` differs by 194 of 256), not because
+the dump started 194 slots late.
+
+Two Python-sender effects cause it:
+1. `_align_target` rounded the 2235 us C-plane lead to 4 whole slots (2000 us). That puts the **next** C-plane
+   235 us earlier than the DU's T1a, and
+2. the Python per-frame send jitter (p99 ~710 us at b40) pushes the tail of the U-plane burst across that next
+   C-plane; the RU then labels the tail U-plane into the next slot (+1).
+
+The baseline's +/-11-slot tolerance hides the same +1; b40's +/-6 exposes it. The C sender uses the exact lead and
+its first non-empty slot is `146.0` (offset 0; check PASS). Its 6 differing slots vs the stored Python golden are the
+exact-vs-quantized C-plane/U-plane timing, not a slot shift.
+
+**Fix at the cause (item 2b).** `fh_replay.py:_align_target` no longer rounds the lead: it returns the exact C-plane
+deadline (`air - lead_us`, with a 50 ms startup margin) and the caller offsets the first frame from it. The C sender
+already did this. The b40 Python path now starts at offset 0 (with the residual jitter still possible on a loaded
+host). Goldens were **not** regenerated: the C sender's two cold baseline replays differ at **59** DU slots and b40
+at **26** send events >1 ms (p99 232 us, max 1.5 ms) on this host, so the "two cold, 0 differing" bar is not met.
+
+**Host limit (item 2c).** `quiet_host.py` reports no foreign offenders, but the replay core still takes
+softirq/scheduler preemptions; the residual is the host, not the alignment or the sender code. **The requested 5x0
+consecutive PASS for baseline and b40 is not achieved on this shared host**; it needs the bench host's isolated
+`isolcpus`/`nohz_full`/`rcu_nocbs` cores (`docs/BENCH_BUNDLE.md`, `docs/OPEN_QUESTIONS.md`). No tolerance was widened
+and no run was retried to green. The stored baseline/b40 goldens remain the previously validated Python two-cold
+pairs; no new golden was installed.
