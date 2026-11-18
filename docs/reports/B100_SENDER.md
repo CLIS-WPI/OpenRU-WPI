@@ -104,3 +104,29 @@ consecutive PASS for baseline and b40 is not achieved on this shared host**; it 
 `isolcpus`/`nohz_full`/`rcu_nocbs` cores (`docs/BENCH_BUNDLE.md`, `docs/OPEN_QUESTIONS.md`). No tolerance was widened
 and no run was retried to green. The stored baseline/b40 goldens remain the previously validated Python two-cold
 pairs; no new golden was installed.
+
+## Item 2 — late U-plane tail labelling (verdict: dump label, open item)
+
+The earlier audit note "the RU correctly drops late DL grids; no wrong-slot writes" (b100) and the later "the RU labels
+the tail into the next slot" (b40) describe **different components**, not a contradiction in the RU:
+
+- **U-plane → grid uses the U-plane header's slot.** `external/proto-ru/lib/ofh/receiver/ofh_ru_rx_uplane_data_flow.cpp:26-34`
+  decodes the message and calls the writer; `external/proto-ru/lib/ofh/receiver/ofh_uplane_rx_symbol_data_flow_writer.cpp:17`
+  uses `slot = results.params.slot` (the radio-app frame/subframe/slot) and drops the message when no grid exists for
+  that slot. The b100 behaviour (late grid dropped) is this path.
+- **The dump label uses the radio tx sample clock.**
+  `external/proto-ru/lib/radio/null/radio_null_session.cpp:79` `blk.ts = md.ts`; `:150` `md.ts = ts` (the free-running
+  `current_time`, advanced only in `receive()`); `:234-245` `slot_of_du(ts)` maps that timestamp to GPS wall time and
+  OFH slot; `:353` writes it as `du_sfn/du_slot` in `tx_index.jsonl`/`iq_meta.json`.
+
+So a correctly written grid for slot N transmitted at air time N+1 is labelled N+1: the **content is grid N**, only
+the **label** is N+1. That is **(b)** — the null-radio dump attribution — not (a) an RU grid-write bug.
+
+**Minimal reproduction.** (1) A U-plane tail delayed past the next C-plane but still inside the slot's grid window:
+grid = header slot N, dump label N+1, content N (the +1). (2) Extreme delay
+`OPENRU_REPLAY_UPLANE_DELAY_US=1500` on b40: all 2000 slots empty (0/256 expected non-empty, check FAIL) — the RU
+**dropped** the U-plane; it did not place it in the next grid.
+
+**Open item (not changed here).** The dump label should be taken from the grid/upper-PHY `tx_request` slot rather than
+only the radio air timestamp. The null-radio dump is a fork component, so this needs its own reviewed change; it was
+not modified in this pass.
