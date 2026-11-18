@@ -3,10 +3,14 @@
 ## Roles
 
 - **DeepSeek — primary, this server.** Runs builds, compose, measurements and git (branches, PRs). Never merges.
-- **Cursor — reviewer and hardware docs.** Reviews PRs; maintains the bench/radio documentation
-  (`docs/BENCH_BUNDLE.md`, bench profiles, `docs/OPEN_QUESTIONS.md` entries). Does not merge or commit to `main`.
+- **Cursor — reviewer and hardware docs.** In `CLIS-WPI/OpenRU-WPI` Cursor only reviews and comments (no commits,
+  no PRs) unless the human explicitly asks otherwise. Hardware-documentation PRs belong to Cursor in
+  `CLIS-WPI/OpenRU`.
 - **Human — merges every PR.** No agent merges. Before merging, **always check the PR base is `main`**
   (`gh pr view <n> --json baseRefName`); a PR still based on a feature branch (stacked PR) must be retargeted first.
+
+**Before opening any PR:** run `gh pr list --state open` and read the titles. If an open PR already covers the
+same topic, comment on that PR (or ask the human) — never open a second PR for the same work.
 
 ## Repo facts
 

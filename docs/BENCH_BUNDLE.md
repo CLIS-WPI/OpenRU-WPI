@@ -58,6 +58,25 @@ change. If it stays above 20 µs after the cmdline is applied, check these BIOS 
 The cmdline arguments are listed for the operator; `bench-preflight` enforces the isolation trio and `irqaffinity`
 but does not fail on the `*_max_cstate` values (a BIOS that disables C-states makes them redundant).
 
+### Kernel NMI watchdog (measured on the bench host)
+
+`hwlatdetect` reported **42 µs events** that were traced to the **kernel NMI watchdog**, not to SMIs: the SMI
+count was unchanged (**324 → 324 over 60 s**), while disabling the watchdog removed the events. With
+`kernel.nmi_watchdog=0` the bench host shows **0 samples above 10 µs over 120 s and 0 SMIs**. The 20 µs gate
+stays.
+
+Make it persistent on the bench host (root):
+
+```bash
+printf '%s\n' '# OpenRU bench real-time profile: the NMI watchdog adds ~40 us hwlatdetect' \
+  '# events (it is not an SMI; the SMI counter does not move).' \
+  'kernel.nmi_watchdog = 0' > /etc/sysctl.d/90-openru-rt.conf
+sysctl --system
+```
+
+`make bench-preflight` fails if `/proc/sys/kernel/nmi_watchdog` is not `0` and records the kernel version
+(`uname -r`) in its log, because the hwlatdetect figures are only comparable per kernel.
+
 `scripts/bench_preflight.sh` (via `make bench-preflight`) fails closed when:
 
 - the P/E classification does not match 12 P + 8 E, or `PROTORU_CPUSET`/`DU_CPUSET` are not P-core-only;
