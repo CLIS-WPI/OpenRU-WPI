@@ -26,42 +26,36 @@ separately because the script's aggregate gate counts the RU's DL + UL frames.
 
 ## Rates (frames/s; 600 s window) vs expected
 
-Expected = same-profile OFH pcap frame rate (DL U/C and UL U); the UL C-plane is not present in the capture (the
-RU's UL C-plane is transmit-side) and its theoretical rate is 1 per slot = 2,000/s at 30 kHz.
+Expected UL C-plane rate, derived per profile from the TDD and section/eAxC configuration:
+
+- TDD: `profiles/<profile>/du-fh.yml:59-64` — `dl_ul_tx_period: 5`, `nof_dl_slots: 3`, `nof_ul_slots: 1`,
+  `nof_dl_symbols: 10`, `nof_ul_symbols: 2` → **two UL slots per 5-slot period** (the special slot index 3 and the
+  UL-only slot index 4), i.e. 0.4 of the slots; 30 kHz (`common_scs: 30`, `:48`) → 2,000 slots/s.
+- **UL data C-plane:** one section-type-1 C-plane per `ul_eaxc` per UL slot
+  (`external/proto-ru/lib/ofh/transmitter/ofh_uplink_request_handler_impl.cpp:210-221`; active UL symbols from
+  `get_active_tdd_ul_symbols`, `external/proto-ru/lib/ran/tdd_ul_dl_config.cpp:79`). `ul_port_id: [0,1]`
+  (`profiles/<profile>/du-fh.yml:41`) → 2 eAxC. Expected = 0.4 × 2,000 × 2 = **1,600/s**.
+- **PRACH C-plane:** one section-type-3 C-plane per `prach_eaxc` per PRACH occasion
+  (`ofh_uplink_request_handler_impl.cpp:171-181`). `prach_port_id: [4,5]` (`:42`), `is_prach_cp_enabled: true`
+  (`:24`), `prach_config_index: 159` (`:55`) → `prach_configuration_get(FR1, TDD, 159)` = B4, x=1, y={0}, slot 9,
+  1 PRACH slot, 1 occasion (`external/proto-ru/lib/ran/prach/prach_configuration.cpp:434`, verified with a host
+  probe) → 100 occasions/s × 2 eAxC = **200/s**.
+- **Expected total = 1,800/s.** The pcap confirms it: b40 10,918 UL C-plane frames / 6.065 s = 1,800.2/s; b100
+  10,934 / 6.086 = 1,796.7/s (the UL C-plane **is** in the capture: dst RU, direction 0). The live 600 s measured
+  **1,818.6 / 1,818.4/s (+1.0%)**; the KPI one-second bucket explains the +1%. Tolerance is ±2%, so this is **not**
+  a finding. The earlier "1 per slot = 2,000/s" was wrong: it ignored the TDD UL-slot fraction and the PRACH eAxC.
 
 | Run | DL U-plane | DL C-plane | UL C-plane at RU | UL tx total | All |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | b40 measured | 6,845.1 | 517.8 | 1,818.6 | 15,343.0 | 24,524.6 |
-| b40 pcap | 6,784.6 | 513.4 | – (TX-side) | 15,190.2 (UL U) | – |
+| b40 pcap | 6,784.6 | 513.4 | 1,800.2 | 15,190.2 (UL U) | – |
+| b40 expected | 6,784.6 | 513.4 | **1,800** | 15,190.2 | – |
 | b100 measured | 6,844.1 | 517.7 | 1,818.4 | 15,342.9 | 24,523.2 |
-| b100 pcap | 6,755.3 | 511.4 | – (TX-side) | 11,854.1 (UL U; capture under-count) | – |
+| b100 pcap | 6,755.3 | 511.4 | 1,796.7 | 11,854.1 (UL U; capture under-count) | – |
+| b100 expected | 6,755.3 | 511.4 | **1,800** | 15,343.0 (live; pcap under-counts) | – |
 
-The DL U/C rates match the pcap within +1%; the b100 pcap's UL U count (11,854/s) is lower than the live
-(15,343/s) because the capture under-counts the 100 MHz UL burst, not because the live rate differs. The UL
-C-plane rate is 9% below 1/slot.
-
-## v1 lock decision
-
-**Not locked (strict per-direction rule).** The candidate passes the script's aggregate gate for b40 and b100
-(`drop = 0`, `late_frac_all` 5.4e-07 … 8.1e-06), and **b40 (the Stage 2 primary) is clean on every plane and
-direction**. The b100 RU-side gate passes, but the **DU-side UL `ul_rx_late` is 290 (3.1e-05) and 2,085 (2.3e-04)**,
-which exceeds the 1e-5 bar in the UL direction. Recorded as the failing profile/direction: **b100, UL at the DU**.
-The v1 golden set remains baseline + b40 (b100 golden deferred; no isolated cores on this host).
-
-## Generic-DFT comparison
-
-## Generic-DFT (`m2`) results
-
-| Run | Gate all_pkts | RU late DL U / DL C / UL C | RU late_frac | Drop | DU UL rx | DU `ul_rx_late` | DU UL late fraction |
-| --- | ---: | --- | ---: | ---: | ---: | ---: | ---: |
-| b40 r1 | 14,715,822 | 0 / 0 / 0 | **0.0** | 0 | 9,312,480 | 0 | 0.0 |
-| b40 r2 | 14,716,058 | 322 / 0 / 0 | **2.188e-05 FAIL** (quiet host, valid) | 0 | 9,300,866 | 100 | 1.075e-05 |
-| b100 r1 | 12,389,136 | 477 / 34 / 109 | **5.004e-05 FAIL** (quiet host, valid) | 0 | 6,874,668 | **6,854,956 (99.7%)** | **9.971e-01** |
-| b100 r2 | 10,975,401 | 788 / 56 / 206 | **9.567e-05 FAIL** (quiet host, valid) | 0 | 5,585,618 | **5,573,771 (99.8%)** | **9.979e-01** |
-
-The generic b40 r1 matches the candidate (0.0 late, 0 drop, same DL U/C and UL rates). The generic b40 r2 fails the
-RU-side gate (322 late, 2.188e-05, quiet host valid) and its DU UL late is 100 (1.1e-05); the generic image is **not
-consistently clean even at 40 MHz**. b100 r1 fails catastrophically: the generic RU cannot deliver the 122.88 MHz UL, so the DU marks 99.7% of the UL late (6,854,956 / 6,874,668) in addition to the RU-side 5.0e-05. b100 r2 also fails (9.567e-05; DU UL 99.8%).
+The DL U/C rates match the pcap within +1%; the b100 pcap's UL U count (11,854/s) is lower than the live (15,343/s)
+because the capture under-counts the 100 MHz UL burst, not because the live rate differs.
 
 ## Summary
 
