@@ -3,11 +3,14 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-LAB_ENV="${ROOT}/docker/lab.env"
+# GPU hosts use docker/lab.env; the GPU-less bench host passes its own env file
+# (OPENRU_PREFLIGHT_ENV=docker/bench.env, or `make ... BENCH=1`).
+LAB_ENV="${OPENRU_PREFLIGHT_ENV:-${ROOT}/docker/lab.env}"
 if [[ ! -f "${LAB_ENV}" ]]; then
-  echo "FAIL: docker/lab.env is missing."
-  echo "Copy docker/lab.env.example to docker/lab.env and set GPU UUID + cpusets for this host."
+  echo "FAIL: ${LAB_ENV} is missing."
+  echo "GPU host: copy docker/lab.env.example to docker/lab.env and set GPU UUID + cpusets."
   echo "  cp ${ROOT}/docker/lab.env.example ${ROOT}/docker/lab.env"
+  echo "Bench host (no GPU): make ... BENCH=1 (uses docker/bench.env), see docs/BENCH_BUNDLE.md."
   exit 1
 fi
 
@@ -16,26 +19,33 @@ source "${ROOT}/docker/versions.env"
 # shellcheck disable=SC1091
 source "${LAB_ENV}"
 
-: "${OPENRU_GPU_UUID:?OPENRU_GPU_UUID must be set in docker/lab.env}"
-: "${OPENRU_FORBIDDEN_GPU_UUID:?OPENRU_FORBIDDEN_GPU_UUID must be set in docker/lab.env}"
-: "${PROTORU_CPUSET:?PROTORU_CPUSET must be set in docker/lab.env}"
-: "${DU_CPUSET:?DU_CPUSET must be set in docker/lab.env}"
+: "${PROTORU_CPUSET:?PROTORU_CPUSET must be set in ${LAB_ENV}}"
+: "${DU_CPUSET:?DU_CPUSET must be set in ${LAB_ENV}}"
 
-if ! command -v nvidia-smi >/dev/null 2>&1; then
-  echo "FAIL: nvidia-smi not found on host."
-  exit 1
+# CPU-only hosts (bench bundle) run the v1 CPU configuration: no GPU pin.
+CPU_ONLY=0
+if [[ "${OPENRU_GPU_UUID:-}" == "cpu-only" || "${OPENRU_GPU_UUID:-}" == "none" || -z "${OPENRU_GPU_UUID:-}" ]]; then
+  CPU_ONLY=1
 fi
 
-LIST="$(nvidia-smi -L 2>/dev/null || true)"
-if ! grep -q "${OPENRU_GPU_UUID}" <<<"${LIST}"; then
-  echo "FAIL: authorized GPU UUID ${OPENRU_GPU_UUID} not visible on host."
-  echo "${LIST}"
-  exit 1
+if [[ "${CPU_ONLY}" == "0" ]]; then
+  : "${OPENRU_FORBIDDEN_GPU_UUID:?OPENRU_FORBIDDEN_GPU_UUID must be set in ${LAB_ENV}}"
+  if ! command -v nvidia-smi >/dev/null 2>&1; then
+    echo "FAIL: nvidia-smi not found on host."
+    exit 1
+  fi
+  LIST="$(nvidia-smi -L 2>/dev/null || true)"
+  if ! grep -q "${OPENRU_GPU_UUID}" <<<"${LIST}"; then
+    echo "FAIL: authorized GPU UUID ${OPENRU_GPU_UUID} not visible on host."
+    echo "${LIST}"
+    exit 1
+  fi
+  echo "OK: ${LAB_ENV##*/} loaded; GPU ${OPENRU_GPU_UUID}; cpusets protoru=${PROTORU_CPUSET} du=${DU_CPUSET}"
+  echo "NOTE: containers must use --gpus device=${OPENRU_GPU_UUID} (never --gpus all)."
+  echo "Forbidden UUID: ${OPENRU_FORBIDDEN_GPU_UUID}"
+else
+  echo "OK: ${LAB_ENV##*/} loaded; CPU-only host (no GPU pin); cpusets protoru=${PROTORU_CPUSET} du=${DU_CPUSET}"
 fi
-
-echo "OK: lab.env loaded; GPU ${OPENRU_GPU_UUID}; cpusets protoru=${PROTORU_CPUSET} du=${DU_CPUSET}"
-echo "NOTE: containers must use --gpus device=${OPENRU_GPU_UUID} (never --gpus all)."
-echo "Forbidden UUID: ${OPENRU_FORBIDDEN_GPU_UUID}"
 
 # Real-time core isolation (bench requirement; DEV warns). The bench host must boot with isolcpus/nohz_full/rcu_nocbs
 # covering the DU/RU cpusets. See docs/BENCH_BUNDLE.md and docs/OPEN_QUESTIONS.md.

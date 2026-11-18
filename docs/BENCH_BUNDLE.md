@@ -73,9 +73,23 @@ v3 image is safe on a non-AVX-512 host; the reverse is not.
 `nvidia-smi` precheck and the NVIDIA env vars, and pins core containers to `CORE_CPUSET`.
 
 ```bash
+# one switch for every make target (compose env file + CPU overlay + preflight)
+make BENCH=1 smoke-fh            # live 60 s gate (SMOKE_SECS=600 for the campaign)
+make BENCH=1 replay-golden
+BENCH=1 make bench-preflight
+```
+
+`BENCH=1` makes the Makefile use `docker/bench.env`, add `docker/compose.cpu.yml`, and
+point `preflight` at the bench env (CPU-only mode skips the GPU check). Equivalent raw
+compose form:
+
+```bash
 docker compose --env-file docker/bench.env \
   -f docker/compose.yml -f docker/compose.cpu.yml --profile fh up -d
 ```
+
+Transfer the image from the build server once: `docker save openru/protoru:v1-candidate-v3 |
+ssh bench docker load` (and `openru/core:m0` for `smoke-core`).
 
 ## Goldens are image-specific
 

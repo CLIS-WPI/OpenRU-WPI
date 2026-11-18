@@ -1,12 +1,21 @@
 # OpenRU — Phase 1
 ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 include $(ROOT)/docker/versions.env
+# Bench-bundle host (no GPU): BENCH=1 selects docker/bench.env and the CPU
+# overlay, and points preflight at the bench env (docs/BENCH_BUNDLE.md).
+ifeq ($(BENCH),1)
+  include $(ROOT)/docker/bench.env
+  COMPOSE_ENV_FILE := $(ROOT)/docker/bench.env
+  COMPOSE_OVERLAY := -f $(ROOT)/docker/compose.cpu.yml
+  OPENRU_PREFLIGHT_ENV := $(ROOT)/docker/bench.env
+endif
 # lab.env is required for runtime GPU/cpuset; preflight enforces it.
 -include $(ROOT)/docker/lab.env
 export
 
 COMPOSE := docker compose --env-file $(ROOT)/docker/versions.env \
-	$(if $(wildcard $(ROOT)/docker/lab.env),--env-file $(ROOT)/docker/lab.env,) \
+	$(if $(COMPOSE_ENV_FILE),--env-file $(COMPOSE_ENV_FILE),$(if $(wildcard $(ROOT)/docker/lab.env),--env-file $(ROOT)/docker/lab.env,)) \
+	$(COMPOSE_OVERLAY) \
 	-f $(ROOT)/docker/compose.yml
 COMPOSE_CORE := $(COMPOSE) -f $(ROOT)/docker/compose.core.yml
 SMOKE_SECS ?= 60
