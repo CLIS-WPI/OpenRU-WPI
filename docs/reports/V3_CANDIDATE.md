@@ -72,9 +72,12 @@ Until then `testdata/golden/*/MANIFEST.json` stays as is (it records `v1-candida
 
 ## Artifacts
 
-`docs/reports/raw/v3-smoke/v1-candidate-v3-{baseline,b40}-r{1,2}/`: `run.log`, `smoke-fh-kpi.json`,
-`smoke-fh-late-hist.csv`, `smoke-fh-du.log`, `smoke-fh-ru.log`, `smoke-fh-hostcheck{,-pre}.json`.
-Replay: `docs/reports/raw/v3-smoke/replay-golden-baseline/{run.log,check.json}`; the 704 MB IQ dump stays in
+Raw evidence is **not committed** (~8.3 MB of logs/KPI dumps): it lives on the build server at
+`/home/tanglab/openru-artifacts/v3-smoke-evidence/docs/reports/raw/v3-smoke/` with checksums in
+`docs/reports/raw/v3-smoke/MANIFEST.sha256` (verify with `cd <that dir> && sha256sum -c <repo>/docs/reports/raw/v3-smoke/MANIFEST.sha256`).
+Layout: `v1-candidate-v3-{baseline,b40}-r{1,2}/` with `run.log`, `smoke-fh-kpi.json`,
+`smoke-fh-late-hist.csv`, `smoke-fh-du.log`, `smoke-fh-ru.log`, `smoke-fh-hostcheck{,-pre}.json`;
+`replay-golden-baseline/{run.log,check.json}`. The 704 MB IQ dump stays in
 `docs/reports/raw/replay-golden-baseline/` (gitignored).
 
 ## Unverified
