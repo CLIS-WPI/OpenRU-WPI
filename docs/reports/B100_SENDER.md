@@ -130,3 +130,31 @@ grid = header slot N, dump label N+1, content N (the +1). (2) Extreme delay
 **Open item (not changed here).** The dump label should be taken from the grid/upper-PHY `tx_request` slot rather than
 only the radio air timestamp. The null-radio dump is a fork component, so this needs its own reviewed change; it was
 not modified in this pass.
+
+
+## Item 3 — exact-lead Python 5x cold reliability (2026-11-17)
+
+Five consecutive cold replays per profile with the exact lead (`92e62e5`), quiet host (`quiet_host` offenders 0
+before and after). Each run: `replay_iq_dump.sh` (fresh containers) + `check.py` (per-port) + `iq_compare` vs the
+stored golden and vs run 1.
+
+| Profile | Run | check | non-empty/expected | vs stored | vs run1 | p50 / p99 us |
+|---|---|---:|---:|---|---|---:|
+| baseline | 1 | FAIL | 487/513 | DIFF | REF | 79.9 / 388.7 |
+| baseline | 2 | FAIL | 487/513 | DIFF | DIFF | 78.7 / 391.4 |
+| baseline | 3 | FAIL | 487/513 | DIFF | DIFF | 80.9 / 406.1 |
+| baseline | 4 | FAIL | 487/513 | DIFF | DIFF | 75.3 / 378.0 |
+| baseline | 5 | FAIL | 487/513 | DIFF | DIFF | 81.6 / 417.0 |
+| b40 | 1 | FAIL | 238/256 | DIFF | REF | 131.9 / 665.7 |
+| b40 | 2 | FAIL | 238/256 | DIFF | DIFF | 132.2 / 663.4 |
+| b40 | 3 | FAIL | 238/256 | DIFF | DIFF | 138.2 / 686.5 |
+| b40 | 4 | FAIL | 238/256 | DIFF | DIFF | 139.5 / 688.6 |
+| b40 | 5 | FAIL | 238/256 | DIFF | DIFF | 139.7 / 697.4 |
+
+The exact lead fixes the systematic **+1** (first non-empty offset is 0 for both profiles), but the Python per-frame
+jitter (p99 389/666 us; 16k/18k frames >200 us; up to 54/16 frames >1 ms) still drops late U-plane frames: 26/513
+baseline and 18/256 b40 missing, beyond the check tolerance, and the five runs differ. **Not reliable.**
+
+Decision: **keep the stored goldens** and mark them `lead_mode: quantized-lead` in their MANIFESTs (they are the
+deterministic two-cold quantized-lead pair). **b40 replay reliability requires the bench host's isolated cores**
+(`docs/BENCH_BUNDLE.md`); no tolerance was widened and no run was retried to green.

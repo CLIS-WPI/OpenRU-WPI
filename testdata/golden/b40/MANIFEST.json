@@ -724,5 +724,7 @@
     "first_dump_abs_sample_offset": 291802200,
     "last_du_sfn": 245,
     "last_du_slot": 19
-  }
+  },
+  "lead_mode": "quantized-lead",
+  "replay_reliability": "Stored golden is the deterministic two-cold quantized-lead pair. Fresh exact-lead Python replays are unreliable on this shared host (jitter drops late U-plane); b40 requires the bench host's isolated cores per docs/BENCH_BUNDLE.md."
 }
