@@ -80,7 +80,8 @@ unchanged by the mode change.
 ## Bench host: core map + P/E pinning — LOCKED
 
 Bench host measured 2026-11-18: i5-13600KF (6 P-cores with HT = logical 0-11, 8 E-cores = 12-19), no AVX-512,
-X710 `enp5s0f0np0`, kernel 7.0.0-28, USRP `32E0FC4` (N310, address pending). Bench map, in `docker/bench.env`
+X710 `enp5s0f1np1` (`192.168.10.1/24`, MTU 9000), kernel 7.0.0-28, N310-10 serial `33A6E56` at
+`192.168.10.2` (MPM 4.11.0.0-g0d7ed3b1). Bench map, in `docker/bench.env`
 and enforced by `scripts/bench_preflight.sh`: housekeeping/Open5GS/IRQs `0-1,12-19` (`irqaffinity`), ProtO-RU
 `2-5`, DU `6-11`; HT on, both siblings of each isolated core inside `isolcpus`; kernel cmdline
 `isolcpus=2-11 nohz_full=2-11 rcu_nocbs=2-11 irqaffinity=0-1,12-19`. Images: `x86-64-v3`

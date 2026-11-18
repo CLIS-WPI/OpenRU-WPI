@@ -27,7 +27,7 @@ warn() { echo "WARN  $*"; }
 
 [[ -f "$BENCH_ENV" ]] || { echo "FAIL: $BENCH_ENV missing (bench host env file)" >&2; exit 1; }
 set -a; . "$BENCH_ENV"; set +a
-IFACE="${IFACE:-${BENCH_FH_IFACE:-enp5s0f0np0}}"
+IFACE="${IFACE:-${BENCH_FH_IFACE:-enp5s0f1np1}}"
 USRP_SERIAL="${USRP_SERIAL:-${BENCH_USRP_SERIAL:-}}"
 : "${PROTORU_CPUSET:?bench.env must set PROTORU_CPUSET}"
 : "${DU_CPUSET:?bench.env must set DU_CPUSET}"
@@ -181,6 +181,52 @@ elif command -v hwlatdetect >/dev/null 2>&1 || command -v hwlatdetect.py >/dev/n
 else
   fail "hwlatdetect not installed (apt-get install rt-tests)"
 fi
+
+# ------------------------------------------------ radio profile (MCR / srate) --
+# The N310 only supports master clock rates 122.88, 125.0 and 153.6 MHz, and the
+# sample rate must be an integer divisor of the MCR (Ettus KB "N300/N310" and the
+# N300/N310/N320/N321 Getting Started Guide; even decimation preferred).
+PROFILE_DIR="${BENCH_PROFILE_DIR:-$ROOT/profiles}"
+mapfile -t RADIO_PROFILES < <(ls -d "$PROFILE_DIR"/bench-*/protoru.yml 2>/dev/null)
+if [[ ${#RADIO_PROFILES[@]} -eq 0 ]]; then
+  fail "no bench radio profiles found under $PROFILE_DIR/bench-*/protoru.yml"
+fi
+for prof in "${RADIO_PROFILES[@]}"; do
+  OUT="$(python3 - "$prof" <<'PY'
+import sys
+import yaml
+
+SUPPORTED_MCR_HZ = {122.88e6: "122.88", 125.0e6: "125.0", 153.6e6: "153.6"}
+path = sys.argv[1]
+cell = yaml.safe_load(open(path))["ru_emu"]["cells"][0]
+sdr = cell["sdr"]
+args = dict(part.split("=", 1) for part in sdr["device_args"].split(",") if "=" in part)
+mcr = float(args.get("master_clock_rate", "nan"))
+srate = float(sdr["srate"]) * 1e6
+scs = float(cell["common_scs"]) * 1e3
+print(path.split("/")[-2])
+if mcr not in SUPPORTED_MCR_HZ:
+    print("FAIL mcr {} MHz is not an N310 rate (122.88 / 125.0 / 153.6)".format(mcr / 1e6))
+    sys.exit(0)
+ratio = mcr / srate
+if abs(ratio - round(ratio)) > 1e-9 or round(ratio) < 1 or round(ratio) > 1024:
+    print("FAIL srate {} Msps is not an integer divisor of MCR {} MHz".format(srate / 1e6, SUPPORTED_MCR_HZ[mcr]))
+    sys.exit(0)
+fft = srate / scs
+kind = "even" if round(ratio) % 2 == 0 else "ODD (CIC roll-off)"
+print("OK mcr={} MHz srate={} Msps decim={} ({}), fft={}".format(
+    SUPPORTED_MCR_HZ[mcr], round(srate / 1e6, 3), round(ratio), kind,
+    round(fft) if abs(fft - round(fft)) < 1e-9 else "non-integer"))
+PY
+)"
+  name="$(printf '%s' "$OUT" | head -1)"
+  detail="$(printf '%s' "$OUT" | tail -1)"
+  case "$detail" in
+    OK*)   ok "radio profile ${name}: ${detail#OK }" ;;
+    FAIL*) fail "radio profile ${name}: ${detail#FAIL }" ;;
+    *)     fail "radio profile ${prof##*/}: unreadable sdr block" ;;
+  esac
+done
 
 # --------------------------------------------------------------- UHD / N310 --
 # The bench container must not depend on host UHD: the image ships UHD matching

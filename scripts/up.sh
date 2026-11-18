@@ -30,11 +30,13 @@ printf '  ProtO-RU real-time : %s\n' "${PROTORU_CPUSET:-?}"
 printf '  DU real-time       : %s\n' "${DU_CPUSET:-?}"
 printf '  housekeeping/IRQs  : 0-1,12-19 (bench); core containers: %s\n' "${CORE_CPUSET:-n/a}"
 echo
-echo "== antenna map (N310 RF -> RM520N) =="
-printf '  RF0 -> ANT2  primary n78 TX\n'
-printf '  RF1 -> ANT0  second TX\n'
-printf '  RF2 -> ANT1  third TX\n'
-printf '  RF3 -> ANT3  fourth TX\n'
+echo "== antenna map (measured cabling) =="
+printf '  N310 side: RF0-RF3 all TX and RX (4x4 DL uses all four)\n'
+printf '  UE side (RM520N, n78): ANT2/ANT0 TX and RX, ANT1/ANT3 RX only\n'
+printf '  RF0 -> ANT2  (bidirectional, primary n78 TX)\n'
+printf '  RF1 -> ANT0  (bidirectional, second TX)\n'
+printf '  RF2 -> ANT1  (UE RX only)\n'
+printf '  RF3 -> ANT3  (UE RX only)\n'
 printf '  2x2 profiles use RF0-RF1; 4x4 uses all four ports\n'
 echo
 
