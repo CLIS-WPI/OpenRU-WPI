@@ -15,7 +15,8 @@ Repository: [CLIS-WPI/OpenRU-WPI](https://github.com/CLIS-WPI/OpenRU-WPI). ProtO
   `status: deferred`, never presented as validated).
 - **Bench bundle and image-release flow ready** — x86-64-v3 bench image (UHD 4.11.0.0), `docker/compose.cpu.yml`,
   fail-closed `make bench-preflight`, and `make bench-release` → ship → load → preflight.
-- **Next: the first cabled bench test** on the bench host (N310-10 → RM520N), starting at 20 MHz 2×2.
+- **Next: Stage 1a** — first cabled bench test on the bench host: **N310-10 → attenuators → RM520N (no FEM)**,
+  starting at 20 MHz 2×2. Stage 1b (N310 + OpenRU FEM) follows after G-PA-1 — see [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 Documentation: [`docs/TESTS.md`](docs/TESTS.md) (test catalogue, `make test SUITE=…`),
 [`docs/BENCH_BUNDLE.md`](docs/BENCH_BUNDLE.md) (bench host, radio, release flow),
@@ -51,13 +52,13 @@ make smoke-core     # NG Setup (required before M4)
 | --- | --- |
 | Milestones (M0–M2) | M0, M1 closed; M2 CUDA results are compute-only (not an acceptance) — see `docs/reports/` |
 | Low PHY (v1) | CPU, FFTW + ESTIMATE, validated at 20/40 MHz; CUDA low-PHY optional backend |
-| Bench | bundle + image-release flow ready; first cabled test pending |
-| Plan | [`docs/ROADMAP.md`](docs/ROADMAP.md) — stages 1–3 and next steps |
+| Bench | bundle + image-release flow ready; **Stage 1a** (N310 direct → RM520N, no FEM) pending |
+| Plan | [`docs/ROADMAP.md`](docs/ROADMAP.md) — stages 1a/1b–3 and next steps |
 
 ## Bench host quickstart
 
-The bench host runs the real radio (N310-10 → RM520N); release artifacts are built on the development server and
-never committed.
+The bench host runs the real radio for **Stage 1a** (N310-10 → attenuators → RM520N, no FEM); release artifacts are
+built on the development server and never committed.
 
 ```bash
 make bench-release                      # build + smoke + export (server)
