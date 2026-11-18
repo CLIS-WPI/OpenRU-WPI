@@ -1,0 +1,5 @@
+# tests/replay-golden profile: b40 (40 MHz 2x2)
+# The golden MANIFEST marks this golden host_limited; the run reports
+# SKIPPED(host_limited) unless RUN_HOST_LIMITED=1.
+TIMEOUT_SECS=2400
+RUN_HOST_LIMITED=0
