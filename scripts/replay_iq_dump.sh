@@ -41,9 +41,9 @@ PCAP_IN_CT="/work/${PCAP_ABS#${ROOT}/}"
 
 # C-plane lead (t2a_min_cp_dl) and dump window (max_dump_slots) from the RU profile.
 T2A_US=$(sed -n 's/^[[:space:]]*t2a_min_cp_dl:[[:space:]]*\([0-9][0-9]*\).*/\1/p' "$BASE_RU_YML" | head -1)
-T2A_US="${T2A_US:-2235}"
+if [[ -z "${T2A_US}" ]]; then echo "ERROR: profile has no t2a_min_cp_dl; cannot derive the C-plane lead" >&2; exit 2; fi
 WINDOW=$(sed -n 's/.*max_dump_slots=\([0-9][0-9]*\).*/\1/p' "$BASE_RU_YML" | head -1)
-WINDOW="${WINDOW:-4000}"
+if [[ -z "${WINDOW}" ]]; then echo "ERROR: profile has no max_dump_slots; cannot derive the dump window" >&2; exit 2; fi
 WIN_JSON="${OPENRU_WINDOW_JSON:-${PCAP_ABS%.*}.window.json}"
 
 if [[ -n "${OPENRU_WINDOW_JSON:-}" ]]; then

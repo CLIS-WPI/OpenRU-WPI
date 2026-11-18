@@ -61,8 +61,8 @@ neither.
 
 State after this step:
 - `testdata/golden/baseline` regenerated from the new MTU-9000 capture with the Python sender: 513/513 expected
-  slots, two cold replays 0 differing, MANIFEST `image=m2`, `sender=python`.
-- `testdata/golden/b40` unchanged (image m2, sender python; pcap and golden consistent).
+  slots, two cold replays 0 differing, MANIFEST `image=v1-candidate`, `sender=python`.
+- `testdata/golden/b40` (image v1-candidate, sender python; pcap and golden consistent).
 - `testdata/golden/b100` remains `status: deferred`.
 - `make replay-golden` reads each golden's `image`/`sender` from its MANIFEST and skips deferred profiles.
 

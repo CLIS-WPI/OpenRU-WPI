@@ -15,7 +15,9 @@ separately because the script's aggregate gate counts the RU's DL + UL frames.
 | b40 r1 | 0 s | 14,714,738 | 0 / 0 / 8 | 5.437e-07 | 5.437e-07 | 0 |
 | b40 r2 | 0 s | 14,715,610 | 0 / 0 / 0 | **0.0** | **0.0** | 0 |
 | b100 r1 | 0 s | 14,713,488 | 48 / 4 / 18 | 4.758e-06 | 4.758e-06 | 0 |
-| b100 r2 | 57 s | 13,281,602 | 36 / 0 / 6 | 3.162e-06 | 8.087e-06 | 0 |
+| b100 r2 | 60 s | 13,281,602 | 36 / 0 / 6 | 3.162e-06 | 8.087e-06 | 0 |
+
+Per-run KPI artifacts: `docs/reports/raw/v1-smoke/v1-candidate-b{40,100}-r{1,2}/smoke-fh-kpi.json` and `m2-b{40,100}-r{1,2}/smoke-fh-kpi.json`; each directory also holds `du.log`, `ru.log`, `late-hist.csv` and the hostcheck. b100-r2 `warmup_s` = 60 (KPI).
 
 | Run | DU UL rx | DU `ul_rx_late` | DU UL late fraction | DU `nof_late_cp_dl/up_dl/cp_ul` |
 | --- | ---: | ---: | ---: | --- |

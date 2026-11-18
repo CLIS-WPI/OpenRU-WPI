@@ -57,9 +57,9 @@ test -s "$OUT"
 
 # Window guard: anchor the window to the pcap's first DL C-plane and require the expected User-Plane content.
 T2A_US=$(sed -n 's/^[[:space:]]*t2a_min_cp_dl:[[:space:]]*\([0-9][0-9]*\).*/\1/p' "$PROTORU_CONFIG_PATH" | head -1)
-T2A_US="${T2A_US:-2235}"
+if [[ -z "${T2A_US}" ]]; then echo "ERROR: profile has no t2a_min_cp_dl; cannot derive the C-plane lead" >&2; exit 2; fi
 WINDOW=$(sed -n 's/.*max_dump_slots=\([0-9][0-9]*\).*/\1/p' "$PROTORU_CONFIG_PATH" | head -1)
-WINDOW="${WINDOW:-4000}"
+if [[ -z "${WINDOW}" ]]; then echo "ERROR: profile has no max_dump_slots; cannot derive the dump window" >&2; exit 2; fi
 WIN_JSON="${OUT%.*}.window.json"
 if ! python3 "${ROOT}/tools/golden/window.py" --pcap "$OUT" --window-slots "$WINDOW" --t2a-us "$T2A_US" \
   --du-config "$DU_CONFIG_PATH" --json "$WIN_JSON"; then
