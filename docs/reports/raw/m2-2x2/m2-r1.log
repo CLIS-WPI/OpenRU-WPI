@@ -1,0 +1,58 @@
+bash: /home/tanglab/miniconda3/envs/causal-xai/lib/libtinfo.so.6: no version information available (required by bash)
+OK: lab.env loaded; GPU GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058; cpusets protoru=32-47 du=48-55
+NOTE: containers must use --gpus device=GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058 (never --gpus all).
+Forbidden UUID: GPU-96b18ccc-7894-5e31-0ad6-a74b5b79ac28
+[smoke-fh] DU(no_core)+ProtO-RU null, 600s, GPU GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058
+ Network openru_fh Creating 
+ Network openru_fh Created 
+ Container openru-du-1 Creating 
+ Container openru-du-1 Created 
+ Container openru-protoru-1 Creating 
+ Container openru-protoru-1 Created 
+ Container openru-du-1 Starting 
+ Container openru-du-1 Started 
+ Container openru-protoru-1 Starting 
+ Container openru-protoru-1 Started 
+GPU 0: NVIDIA H100 NVL (UUID: GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058)
+bash: /home/tanglab/miniconda3/envs/causal-xai/lib/libtinfo.so.6: no version information available (required by bash)
+=== verify_caps in de1ae8e787dbdcf17fbb594b3c252875483807a1e96b1508773f721c8368eefa (iface=eth0) ===
+CapPrm:	00000000a88475fb
+CapEff:	00000000a88475fb
+CapBnd:	00000000a88475fb
+chrt -f 50 true: OK_CHRT
+OK_AF_PACKET fd=3 iface=eth0
+verify_caps: PASS
+bash: /home/tanglab/miniconda3/envs/causal-xai/lib/libtinfo.so.6: no version information available (required by bash)
+=== verify_caps in 198c190e9eb89775cb621bae203603d379970b90be659d8aaf342dacb3325bad (iface=eth0) ===
+CapPrm:	00000000a88475fb
+CapEff:	00000000a88475fb
+CapBnd:	00000000a88475fb
+chrt -f 50 true: OK_CHRT
+OK_AF_PACKET fd=3 iface=eth0
+verify_caps: PASS
+[smoke-fh] waiting for first ProtO-RU KPI with RX_TOTAL>0...
+[smoke-fh] OFH traffic seen; quiet-host pre-check...
+quiet_host: QUIET loadavg=[8.830078125, 8.90087890625, 7.79345703125] offenders=0 out=/home/tanglab/Desktop/OpenRU-WPI/openru-sw/docs/reports/smoke-fh-hostcheck-pre.json
+[smoke-fh] measuring 600s with quiet-host monitor...
+=== ProtO-RU KPI / direction ===
+=== FULL WINDOW (incl. warm-up) ===
+kpi_rows=607  DL@RU: U=4112911 C=311126 C_UL=1092740 rx_total=5516777  UL@RU tx_total=9206032  [MEASURED]
+late@RU DL: U=83 C=8 C_UL=18 sum=109  drop=0  [MEASURED]
+late_rate@RU DL-only: 19.7579/M  frac=1.976e-05; all-pkts (RX+TX): 7.4035/M  frac=7.403e-06  [MEASURED]
+start-cluster: 109/109 lates in first 5s (dens 21.8000/s vs rest 0.0000/s); warm-up=1s
+=== GATE WINDOW (after warm-up=1s) ===
+kpi_rows=606  DL@RU: U=4106060 C=310606 C_UL=1090922 rx_total=5507588  UL@RU tx_total=9206032  [MEASURED]
+late@RU DL: U=0 C=0 C_UL=0 sum=0  drop=0  [MEASURED]
+late_rate@RU DL-only: 0.0000/M  frac=0.000e+00; all-pkts (RX+TX): 0.0000/M  frac=0.000e+00  [MEASURED]
+=== UL at DU (OFH RX from RU) ===
+ofh_metric_samples=617 ul_rx_total=9343760 ul_rx_late=0 ul_past_seq_drops=0  [MEASURED]
+late_rate@DU UL: 0.0000 per million UL packets  [MEASURED]
+du tx_kpis late: dl_rgs=0 ul_req=0 cp_dl=0 up_dl=0 cp_ul=0  [MEASURED]
+=== Per-second late histogram @RU (rel_s: late_up/c/c_u/sum) ===
+  t+   0s: up=83 c=8 c_u=18 sum=109 <warm-up
+first_120s_late_counts=[109,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+=== DU slot indication ===
+mac_reports=557 detail=557 MAC reports, nof_slots>0, windows advance (SFN-wrap safe)
+first={'start': (509, 9), 'end': (584, 0), 'nof_slots': 1491} last={'start': (644, 0), 'end': (744, 0), 'nof_slots': 2000}
+PASS: zero late/drop after warm-up=1s
+[smoke-fh] PASS

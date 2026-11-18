@@ -1,0 +1,10 @@
+=== PRE RUN2 2026-11-14T16:28:46-05:00 ===
+ 405059  37  126 nr-uesoftmodem  /opt/oai-nr-ue/bin/nr-uesoftmodem -O /opt/oai-nr-ue/etc/uicc.conf --rfsim -r 51 --numerology 1 --band 78 -C 3609120000 --ssb 234 --rfsimulator.[0].serveraddr test-1-xb4f8192-rfsim-gnb --rfsimulator.[0].options chanmod
+ 432255  50  168 nr-softmodem    /opt/oai-gnb/bin/nr-softmodem -O /opt/oai-gnb/etc/gnb.conf --rfsim --gNBs.[0].min_rxtxtime 6
+3270191  55 53.6 nr-uesoftmodem  /opt/oai-nr-ue/bin/nr-uesoftmodem -O /opt/oai-nr-ue/etc/uicc.conf --rfsim -r 51 --numerology 1 --band 78 -C 3609120000 --ssb 234 --rfsimulator.serveraddr test-1-xb4f8192-rfsim-gnb
+3473785  34  4.0 dockerd         /usr/bin/dockerd -H tcp://0.0.0.0:2376 -H fd:// --containerd=/run/containerd/containerd.sock -H unix:///var/run/docker.sock --default-ulimit=nofile=1048576:1048576 --tlsverify --tlscacert /etc/docker/ca.pem --tlscert /etc/docker/server.pem --tlskey /etc/docker/server-key.pem --label provider=docker --insecure-registry 10.96.0.0/12
+3474247  35  2.7 cri-dockerd     /usr/bin/cri-dockerd --container-runtime-endpoint fd:// --pod-infra-container-image=registry.k8s.io/pause:3.9 --network-plugin=cni --hairpin-mode=hairpin-veth
+3577466  46  1.4 claude          claude
+index, utilization.gpu [%], memory.used [MiB]
+0, 0 %, 841 MiB
+1, 0 %, 17 MiB

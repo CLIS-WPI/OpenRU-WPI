@@ -1,0 +1,23 @@
+=== POST R1 2026-11-14T16:28:46-05:00 ===
+KPI gate late_frac=2.2145746182576054e-05
+--- host csv head/tail ---
+118 logs/hostload/m1-r1-host.csv
+ts,gpu0_util,gpu1_util,gpu0_mem,gpu1_mem,load1,c46_comm,c50_comm,c55_comm,containers
+2026-11-14T16:17:36-05:00,0,0,841,17,6.38,nr-uesoftmodem(129),nr-softmodem(168),nr-uesoftmodem(53.6),"paperbanana-api ollama ngsi-dev-1 harmony-dev-proxy minikube "
+2026-11-14T16:17:41-05:00,0,0,841,17,6.67,nr-uesoftmodem(129),nr-softmodem(168),nr-uesoftmodem(53.6),"openru-protoru-1 openru-du-1 paperbanana-api ollama ngsi-dev-1 harmony-dev-proxy minikube "
+2026-11-14T16:27:31-05:00,0,0,841,17,12.56,nr-uesoftmodem(129),nr-softmodem(168),nr-uesoftmodem(53.6),"openru-protoru-1 openru-du-1 paperbanana-api ollama ngsi-dev-1 harmony-dev-proxy minikube "
+2026-11-14T16:27:36-05:00,0,0,841,17,12.84,nr-uesoftmodem(129),nr-softmodem(168),nr-uesoftmodem(53.6),"openru-protoru-1 openru-du-1 paperbanana-api ollama ngsi-dev-1 harmony-dev-proxy minikube "
+2026-11-14T16:27:41-05:00,0,0,841,17,13.01,nr-uesoftmodem(129),nr-softmodem(168),nr-uesoftmodem(53.6),"openru-protoru-1 openru-du-1 paperbanana-api ollama ngsi-dev-1 harmony-dev-proxy minikube "
+2026-11-14T16:27:47-05:00,0,0,841,17,12.61,nr-uesoftmodem(129),nr-softmodem(168),gnb(197),"openru-protoru-1 openru-du-1 paperbanana-api ollama ngsi-dev-1 harmony-dev-proxy minikube "
+2026-11-14T16:27:52-05:00,0,0,841,17,12.16,none,nr-softmodem(168),gnb(197),"openru-protoru-1 openru-du-1 paperbanana-api ollama ngsi-dev-1 harmony-dev-proxy minikube "
+--- unique pin offenders seen ---
+     73 nr-uesoftmodem(129),nr-softmodem(168),nr-uesoftmodem(53.6)
+      7 nr-uesoftmodem(129),nr-softmodem(168),gnb(197)
+      7 nr-uesoftmodem(129),gnb(197),nr-uesoftmodem(53.6)
+      5 nr-uesoftmodem(129),nr-softmodem(168),gnb(196)
+      4 ru_emulator(320),nr-softmodem(168),nr-uesoftmodem(53.6)
+      4 ru_emulator(319),nr-softmodem(168),nr-uesoftmodem(53.6)
+      3 ru_emulator(314),nr-softmodem(168),nr-uesoftmodem(53.6)
+      2 ru_emulator(312),nr-softmodem(168),nr-uesoftmodem(53.6)
+      1 ru_emulator(320),nr-softmodem(168),gnb(197)
+      1 ru_emulator(320),gnb(197),nr-uesoftmodem(53.6)

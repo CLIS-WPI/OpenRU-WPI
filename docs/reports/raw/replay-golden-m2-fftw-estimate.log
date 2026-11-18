@@ -1,0 +1,81 @@
+bash: /home/tanglab/miniconda3/envs/causal-xai/lib/libtinfo.so.6: no version information available (required by bash)
+OK: lab.env loaded; GPU GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058; cpusets protoru=32-47 du=48-55
+NOTE: containers must use --gpus device=GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058 (never --gpus all).
+Forbidden UUID: GPU-96b18ccc-7894-5e31-0ad6-a74b5b79ac28
+[replay-golden] profiles=baseline b40 b100 (OPENRU_TAG=m2-fftw-estimate)
+[replay-golden] baseline
+bash: /home/tanglab/miniconda3/envs/causal-xai/lib/libtinfo.so.6: no version information available (required by bash)
+ Network openru_fh Creating 
+ Network openru_fh Created 
+ Container openru-protoru-1 Creating 
+ Container openru-protoru-1 Created 
+ Container openru-protoru-1 Starting 
+ Container openru-protoru-1 Started 
+20e8294369efc12247e32f32c5ef8185561f22a4df62eaf0eef8f550c7494729
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+[replay] iface=eth0 profile=baseline rate=1.0
+fh_replay: sent=91632 skipped=153136 pcap=/work/testdata/pcap/baseline.pcapng iface=eth0 rate=1.0 dry_run=False
+[replay] dump stopped
+total 704M
+drwxr-xr-x  2 tanglab tanglab 4.0K Nov 17 13:49 .
+drwxr-xr-x 13 tanglab tanglab 4.0K Nov 17 13:49 ..
+-rw-r--r--  1 tanglab tanglab 1.2K Nov 17 13:49 iq_meta.json
+-rw-r--r--  1 tanglab tanglab 352M Nov 17 13:49 port0.cf32
+-rw-r--r--  1 tanglab tanglab 352M Nov 17 13:49 port1.cf32
+-rw-r--r--  1 tanglab tanglab 545K Nov 17 13:49 tx_index.jsonl
+[replay] wrote /home/tanglab/Desktop/OpenRU-WPI/openru-sw/docs/reports/raw/replay-golden-baseline
+du_align: offset=0 slots (0 samples) golden=[0.0..199.19] (4000 slots) dut=[0.0..199.19] (4000 slots)
+du_overlap: 4000 slots (min required 4000) lo=(0, 0)
+port0.cf32: all 4000 overlapping DU slots PASS (n=46080000)
+port1.cf32: all 4000 overlapping DU slots PASS (n=46080000)
+[replay-golden] b40
+bash: /home/tanglab/miniconda3/envs/causal-xai/lib/libtinfo.so.6: no version information available (required by bash)
+ Network openru_fh Creating 
+ Network openru_fh Created 
+ Container openru-protoru-1 Creating 
+ Container openru-protoru-1 Created 
+ Container openru-protoru-1 Starting 
+ Container openru-protoru-1 Started 
+29c715426baff367718f37621164144d02f0013dad3b79c41158fa490cc65435
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+[replay] iface=eth0 profile=b40 rate=1.0
+fh_replay: sent=8095 skipped=53152 pcap=/work/testdata/pcap/b40_3s.pcapng iface=eth0 rate=1.0 dry_run=False
+[replay] dump stopped
+total 704M
+drwxr-xr-x  2 tanglab tanglab 4.0K Nov 17 13:50 .
+drwxr-xr-x 14 tanglab tanglab 4.0K Nov 17 13:50 ..
+-rw-r--r--  1 tanglab tanglab 1.2K Nov 17 13:50 iq_meta.json
+-rw-r--r--  1 tanglab tanglab 352M Nov 17 13:50 port0.cf32
+-rw-r--r--  1 tanglab tanglab 352M Nov 17 13:50 port1.cf32
+-rw-r--r--  1 tanglab tanglab 273K Nov 17 13:50 tx_index.jsonl
+[replay] wrote /home/tanglab/Desktop/OpenRU-WPI/openru-sw/docs/reports/raw/replay-golden-b40
+du_align: offset=0 slots (0 samples) golden=[0.0..99.19] (2000 slots) dut=[0.0..99.19] (2000 slots)
+du_overlap: 2000 slots (min required 2000) lo=(0, 0)
+port0.cf32: all 2000 overlapping DU slots PASS (n=46080000)
+port1.cf32: all 2000 overlapping DU slots PASS (n=46080000)
+[replay-golden] b100
+bash: /home/tanglab/miniconda3/envs/causal-xai/lib/libtinfo.so.6: no version information available (required by bash)
+ Network openru_fh Creating 
+ Network openru_fh Created 
+ Container openru-protoru-1 Creating 
+ Container openru-protoru-1 Created 
+ Container openru-protoru-1 Starting 
+ Container openru-protoru-1 Started 
+5905b2bca5244d92b088add787b1e9a229916db213c6da0e50fbcdd35b64ef6b
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+[replay] iface=eth0 profile=b100 rate=1.0
+fh_replay: sent=8096 skipped=53200 pcap=/work/testdata/pcap/b100_3s.pcapng iface=eth0 rate=1.0 dry_run=False
+[replay] dump stopped
+total 751M
+drwxr-xr-x  2 tanglab tanglab 4.0K Nov 17 13:51 .
+drwxr-xr-x 15 tanglab tanglab 4.0K Nov 17 13:51 ..
+-rw-r--r--  1 tanglab tanglab 1.2K Nov 17 13:51 iq_meta.json
+-rw-r--r--  1 tanglab tanglab 375M Nov 17 13:51 port0.cf32
+-rw-r--r--  1 tanglab tanglab 375M Nov 17 13:51 port1.cf32
+-rw-r--r--  1 tanglab tanglab 105K Nov 17 13:51 tx_index.jsonl
+[replay] wrote /home/tanglab/Desktop/OpenRU-WPI/openru-sw/docs/reports/raw/replay-golden-b100
+du_align: offset=0 slots (0 samples) golden=[0.0..39.19] (800 slots) dut=[0.0..39.19] (800 slots)
+du_overlap: 800 slots (min required 800) lo=(0, 0)
+port0.cf32: all 800 overlapping DU slots PASS (n=49152000)
+port1.cf32: all 800 overlapping DU slots PASS (n=49152000)
+[replay-golden] PASS

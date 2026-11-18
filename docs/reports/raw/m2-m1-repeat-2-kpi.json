@@ -1,0 +1,150 @@
+{
+  "secs": 600.0,
+  "warmup_s": 0,
+  "warmup_note": "lates not start-clustered; warm-up=0",
+  "late_frac_limit": 1e-05,
+  "full": {
+    "label": "FULL WINDOW (incl. warm-up)",
+    "kpi_rows": 607,
+    "dl_u_plane_pkts": 4112882,
+    "dl_c_plane_pkts": 311124,
+    "ul_c_plane_pkts_at_ru": 1092700,
+    "dl_rx_total": 5516706,
+    "ul_tx_total": 9204064,
+    "late_dl_u_at_ru": 348,
+    "late_dl_c_at_ru": 10,
+    "late_ul_c_at_ru": 26,
+    "late_dl_sum_at_ru": 384,
+    "drop_at_ru": 0,
+    "late_per_M_dl": 69.60675446543644,
+    "late_frac_dl": 6.960675446543644e-05,
+    "all_pkts": 14720770,
+    "late_per_M_all": 26.085591990092908,
+    "late_frac_all": 2.608559199009291e-05
+  },
+  "gate": {
+    "label": "GATE WINDOW (after warm-up=0s)",
+    "kpi_rows": 607,
+    "dl_u_plane_pkts": 4112882,
+    "dl_c_plane_pkts": 311124,
+    "ul_c_plane_pkts_at_ru": 1092700,
+    "dl_rx_total": 5516706,
+    "ul_tx_total": 9204064,
+    "late_dl_u_at_ru": 348,
+    "late_dl_c_at_ru": 10,
+    "late_ul_c_at_ru": 26,
+    "late_dl_sum_at_ru": 384,
+    "drop_at_ru": 0,
+    "late_per_M_dl": 69.60675446543644,
+    "late_frac_dl": 6.960675446543644e-05,
+    "all_pkts": 14720770,
+    "late_per_M_all": 26.085591990092908,
+    "late_frac_all": 2.608559199009291e-05
+  },
+  "du_ofh": {
+    "ofh_metric_samples": 613,
+    "ul_rx_total": 9269113,
+    "ul_rx_late": 171,
+    "ul_past_seq_drops": 871,
+    "nof_late_dl_rgs": 0,
+    "nof_late_ul_req": 0,
+    "nof_late_cp_dl": 0,
+    "nof_late_up_dl": 0,
+    "nof_late_cp_ul": 0
+  },
+  "hist_nonzero": [
+    {
+      "rel_s": 0,
+      "late_up": 82,
+      "late_c": 8,
+      "late_c_u": 20,
+      "late_sum": 110
+    },
+    {
+      "rel_s": 115,
+      "late_up": 24,
+      "late_c": 0,
+      "late_c_u": 4,
+      "late_sum": 28
+    },
+    {
+      "rel_s": 329,
+      "late_up": 24,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 24
+    },
+    {
+      "rel_s": 330,
+      "late_up": 31,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 31
+    },
+    {
+      "rel_s": 331,
+      "late_up": 20,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 20
+    },
+    {
+      "rel_s": 332,
+      "late_up": 37,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 37
+    },
+    {
+      "rel_s": 333,
+      "late_up": 19,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 19
+    },
+    {
+      "rel_s": 394,
+      "late_up": 0,
+      "late_c": 0,
+      "late_c_u": 2,
+      "late_sum": 2
+    },
+    {
+      "rel_s": 452,
+      "late_up": 5,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 5
+    },
+    {
+      "rel_s": 492,
+      "late_up": 18,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 18
+    },
+    {
+      "rel_s": 527,
+      "late_up": 0,
+      "late_c": 2,
+      "late_c_u": 0,
+      "late_sum": 2
+    },
+    {
+      "rel_s": 579,
+      "late_up": 2,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 2
+    },
+    {
+      "rel_s": 597,
+      "late_up": 86,
+      "late_c": 0,
+      "late_c_u": 0,
+      "late_sum": 86
+    }
+  ],
+  "slot_ok": true,
+  "slot_msg": "554 MAC reports, nof_slots>0, windows advance (SFN-wrap safe)"
+}

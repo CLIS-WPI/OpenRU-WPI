@@ -1,0 +1,35 @@
+=== MID R1 2026-11-14T16:18:10-05:00 ===
+Cpus_allowed_list:	32-47
+    PID PSR %CPU COMMAND
+      1  44  307 ru_emulator
+     55  40 40.0 bash
+     64  39  0.0 ps
+     65  38  0.0 head
+--- host threads of container cgroup ---
+ 360960  361110  32 49.2 ru_timing
+ 360960  361102  34 45.4 ru_rx_#0
+ 360960  361103  34 43.6 ru_emu_#0
+ 360960  361109  38 42.8 ru_phy_ul_#0
+ 360960  361104  34 39.7 ru_ofh_tx_#0
+ 360960  361106  44 37.4 ru_phy_hp_#0
+ 360960  361107  47 36.0 ru_phy_tx_#0
+ 360960  361108  35  9.3 ru_phy_rx_#0
+ 360960  361105  42  3.6 ru_radio_#0
+ 360960  360960  44  3.6 ru_emulator
+ 360960  361101  37  2.6 ru_emulator
+ 360960  361115  43  1.0 ru_emulator
+    PID     TID PSR %CPU COMMAND
+=== MID2 R1 2026-11-14T16:19:41-05:00 ===
+ 360960  361110  32 49.1 ru_timing
+ 360960  361102  34 45.4 ru_rx_#0
+ 360960  361109  40 43.4 ru_phy_ul_#0
+ 360960  361103  34 43.4 ru_emu_#0
+ 360960  361104  33 39.5 ru_ofh_tx_#0
+ 360960  361106  45 37.7 ru_phy_hp_#0
+ 360960  361107  33 36.9 ru_phy_tx_#0
+ 360960  361108  38  8.7 ru_phy_rx_#0
+ 360960  361105  41  3.7 ru_radio_#0
+ 360960  361101  43  2.6 ru_emulator
+ 360960  360960  47  1.0 ru_emulator
+ 360960  361115  43  0.2 ru_emulator
+    PID     TID PSR %CPU COMMAND

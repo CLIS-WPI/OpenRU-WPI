@@ -1,0 +1,61 @@
+make: Entering directory '/home/tanglab/Desktop/OpenRU-WPI/openru-sw'
+bash: /home/tanglab/miniconda3/envs/causal-xai/lib/libtinfo.so.6: no version information available (required by bash)
+OK: lab.env loaded; GPU GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058; cpusets protoru=32-47 du=48-55
+NOTE: containers must use --gpus device=GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058 (never --gpus all).
+Forbidden UUID: GPU-96b18ccc-7894-5e31-0ad6-a74b5b79ac28
+[smoke-fh] DU(no_core)+ProtO-RU null, 600s, GPU GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058
+ Network openru_fh Creating 
+ Network openru_fh Created 
+ Container openru-du-1 Creating 
+ Container openru-du-1 Created 
+ Container openru-protoru-1 Creating 
+ Container openru-protoru-1 Created 
+ Container openru-du-1 Starting 
+ Container openru-du-1 Started 
+ Container openru-protoru-1 Starting 
+ Container openru-protoru-1 Started 
+GPU 0: NVIDIA H100 NVL (UUID: GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058)
+bash: /home/tanglab/miniconda3/envs/causal-xai/lib/libtinfo.so.6: no version information available (required by bash)
+=== verify_caps in 37964feb6c73cdddd084d84239d7dc589310d2c75e5fce7ea449c1b383f3efdc (iface=eth0) ===
+CapPrm:	00000000a88475fb
+CapEff:	00000000a88475fb
+CapBnd:	00000000a88475fb
+chrt -f 50 true: OK_CHRT
+OK_AF_PACKET fd=3 iface=eth0
+verify_caps: PASS
+bash: /home/tanglab/miniconda3/envs/causal-xai/lib/libtinfo.so.6: no version information available (required by bash)
+=== verify_caps in 727f157d06b2b5b84e710536cf7ff6e6d11407fc062c6fae188483a8a0fa7c96 (iface=eth0) ===
+CapPrm:	00000000a88475fb
+CapEff:	00000000a88475fb
+CapBnd:	00000000a88475fb
+chrt -f 50 true: OK_CHRT
+OK_AF_PACKET fd=3 iface=eth0
+verify_caps: PASS
+[smoke-fh] waiting for first ProtO-RU KPI with RX_TOTAL>0...
+[smoke-fh] OFH traffic seen; quiet-host pre-check...
+quiet_host: QUIET loadavg=[3.9296875, 2.02490234375, 2.00390625] offenders=0 out=/home/tanglab/Desktop/OpenRU-WPI/openru-sw/docs/reports/smoke-fh-hostcheck-pre.json
+[smoke-fh] measuring 600s with quiet-host monitor...
+=== ProtO-RU KPI / direction ===
+=== FULL WINDOW (incl. warm-up) ===
+kpi_rows=607  DL@RU: U=0 C=310912 C_UL=1091988 rx_total=1402900  UL@RU tx_total=7155175  [MEASURED]
+late@RU DL: U=0 C=20 C_UL=79 sum=99  drop=0  [MEASURED]
+late_rate@RU DL-only: 70.5681/M  frac=7.057e-05; all-pkts (RX+TX): 11.5680/M  frac=1.157e-05  [MEASURED]
+lates not start-clustered; warm-up=0
+=== GATE WINDOW (after warm-up=0s) ===
+kpi_rows=607  DL@RU: U=0 C=310912 C_UL=1091988 rx_total=1402900  UL@RU tx_total=7155175  [MEASURED]
+late@RU DL: U=0 C=20 C_UL=79 sum=99  drop=0  [MEASURED]
+late_rate@RU DL-only: 70.5681/M  frac=7.057e-05; all-pkts (RX+TX): 11.5680/M  frac=1.157e-05  [MEASURED]
+=== UL at DU (OFH RX from RU) ===
+ofh_metric_samples=618 ul_rx_total=1117784 ul_rx_late=1117546 ul_past_seq_drops=148  [MEASURED]
+late_rate@DU UL: 999787.0787 per million UL packets  [MEASURED]
+du tx_kpis late: dl_rgs=0 ul_req=0 cp_dl=0 up_dl=0 cp_ul=0  [MEASURED]
+=== Per-second late histogram @RU (rel_s: late_up/c/c_u/sum) ===
+  t+ 224s: up=0 c=20 c_u=79 sum=99
+first_120s_late_counts=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+=== DU slot indication ===
+mac_reports=558 detail=558 MAC reports, nof_slots>0, windows advance (SFN-wrap safe)
+first={'start': (132, 15), 'end': (172, 0), 'nof_slots': 785} last={'start': (332, 0), 'end': (432, 0), 'nof_slots': 2000}
+FAIL: late frac 1.157e-05 >= limit 1.0e-05 after warm-up=0s (late=99 all_pkts=8558075)  [MEASURED]
+[smoke-fh] FAIL rc=1
+make: *** [Makefile:93: smoke-fh] Error 1
+make: Leaving directory '/home/tanglab/Desktop/OpenRU-WPI/openru-sw'

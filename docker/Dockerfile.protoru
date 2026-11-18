@@ -101,5 +101,9 @@ RUN /usr/local/etc/install_ocudu_dependencies.sh run && \
     /usr/local/etc/install_dpdk_dependencies.sh run && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends curl ntpdate iproute2 iputils-ping tcpdump && \
     apt-get autoremove && apt-get clean && rm -rf /var/lib/apt/lists/*
+# Build-time FFTW wisdom for the OCUDU DFT sizes (768/1536/4096, 1D c2c float).
+# The runtime dft_processor_fftw_impl imports ~/.ocudu_fftwisdom, so the
+# FFTW_MEASURE plan creation at startup reuses the precomputed plans.
+RUN fftwf-wisdom -v -o /root/.ocudu_fftwisdom 768 1536 4096
 LABEL openru.gpu.lane="lab.env" \
       openru.build.cache="scripts-first+ccache"

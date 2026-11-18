@@ -10,9 +10,9 @@ COMPOSE := docker compose --env-file $(ROOT)/docker/versions.env \
 	-f $(ROOT)/docker/compose.yml
 COMPOSE_CORE := $(COMPOSE) -f $(ROOT)/docker/compose.core.yml
 SMOKE_SECS ?= 60
-REPORTS := $(ROOT)/docs/reports
+REPORTS := $(ROOT)/docs/reports/raw
 
-CAPTURE_SECS ?= 10
+CAPTURE_SECS ?= 12
 PROFILE ?= baseline
 # Prefer lab.env MARCH; else versions.env MARCH_DEFAULT; else x86-64-v3.
 ifeq ($(origin MARCH),undefined)
@@ -70,14 +70,14 @@ smoke: smoke-fh
 
 # PROTORU_PROFILE=emulator (M0) | null (M1+). Default emulator for backward compat.
 PROTORU_PROFILE ?= emulator
-PROTORU_YML := $(if $(filter null,$(PROTORU_PROFILE)),$(ROOT)/profiles/baseline/protoru-null.yml,$(ROOT)/profiles/baseline/protoru.yml)
+PROTORU_YML := $(if $(filter null,$(PROTORU_PROFILE)),$(ROOT)/profiles/$(PROFILE)/protoru-null.yml,$(ROOT)/profiles/$(PROFILE)/protoru.yml)
 
 smoke-fh: preflight
 	@mkdir -p $(REPORTS)
 	@rm -f $(REPORTS)/caps-protoru.md $(REPORTS)/caps-du.md
 	@echo "[smoke-fh] DU(no_core)+ProtO-RU $(PROTORU_PROFILE), $(SMOKE_SECS)s, GPU $(OPENRU_GPU_UUID)"
 	@$(COMPOSE) --profile fh --profile core --profile full down --remove-orphans >/dev/null 2>&1 || true
-	@DU_CONFIG_PATH=$(ROOT)/profiles/baseline/du-fh.yml \
+	@DU_CONFIG_PATH=$(ROOT)/profiles/$(PROFILE)/du-fh.yml \
 	  PROTORU_CONFIG_PATH=$(PROTORU_YML) \
 	  $(COMPOSE) --profile fh up -d du protoru
 	@sleep 4
@@ -102,8 +102,20 @@ smoke-fh: preflight
 	  done; \
 	  if [ $$ready -ne 1 ]; then echo "FAIL: no OFH RX in ProtO-RU KPI within 45s"; \
 	    $(COMPOSE) --profile fh logs --no-color --tail=40 protoru du; exit 1; fi
-	@echo "[smoke-fh] OFH traffic seen; measuring $(SMOKE_SECS)s..."
+	@echo "[smoke-fh] OFH traffic seen; quiet-host pre-check..."
+	@python3 $(ROOT)/scripts/quiet_host.py --once \
+	   --reserved "$(PROTORU_CPUSET),$(DU_CPUSET)" \
+	   --containers openru-protoru-1,openru-du-1 \
+	   --out $(REPORTS)/smoke-fh-hostcheck-pre.json || \
+	   { echo "[smoke-fh] INVALID: busy host before measurement (see $(REPORTS)/smoke-fh-hostcheck-pre.json)"; \
+	     $(COMPOSE) --profile fh down --remove-orphans >/dev/null 2>&1; exit 3; }
+	@echo "[smoke-fh] measuring $(SMOKE_SECS)s with quiet-host monitor..."
+	@nohup python3 $(ROOT)/scripts/quiet_host.py --monitor --interval 30 \
+	   --reserved "$(PROTORU_CPUSET),$(DU_CPUSET)" \
+	   --containers openru-protoru-1,openru-du-1 \
+	   --out $(REPORTS)/smoke-fh-hostcheck.json >/dev/null 2>&1 & echo $$! > /tmp/openru-hostcheck.pid
 	@sleep $(SMOKE_SECS)
+	@kill $$(cat /tmp/openru-hostcheck.pid) 2>/dev/null || true; rm -f /tmp/openru-hostcheck.pid; sleep 1
 	@cid_ru=$$($(COMPOSE) --profile fh ps -q protoru); \
 	  cid_du=$$($(COMPOSE) --profile fh ps -q du); \
 	  { echo "===== compose logs: du ====="; $(COMPOSE) --profile fh logs --no-color du 2>&1; \
@@ -112,13 +124,17 @@ smoke-fh: preflight
 	  { echo "===== compose logs: protoru ====="; $(COMPOSE) --profile fh logs --no-color protoru 2>&1; \
 	    echo "===== /tmp/proto-ru.log ====="; docker exec $$cid_ru cat /tmp/proto-ru.log 2>/dev/null || true; \
 	  } > $(REPORTS)/smoke-fh-ru.log
+	@python3 -c "import json,sys; d=json.load(open('$(REPORTS)/smoke-fh-hostcheck.json')); sys.exit(0 if d.get('valid') else 3)" || \
+	   { echo "[smoke-fh] INVALID: busy host during measurement (see $(REPORTS)/smoke-fh-hostcheck.json)"; \
+	     $(COMPOSE) --profile fh down --remove-orphans >/dev/null 2>&1; exit 3; }
 	@set +e; \
 	  python3 $(ROOT)/scripts/parse_smoke_fh.py \
 	    --du-log $(REPORTS)/smoke-fh-du.log \
 	    --ru-log $(REPORTS)/smoke-fh-ru.log \
 	    --secs $(SMOKE_SECS) \
 	    --json-out $(REPORTS)/smoke-fh-kpi.json \
-	    --hist-out $(REPORTS)/smoke-fh-late-hist.csv; \
+	    --hist-out $(REPORTS)/smoke-fh-late-hist.csv \
+	    --hostcheck $(REPORTS)/smoke-fh-hostcheck.json; \
 	  rc=$$?; \
 	  $(COMPOSE) --profile fh down --remove-orphans >/dev/null 2>&1; \
 	  if [ $$rc -ne 0 ]; then echo "[smoke-fh] FAIL rc=$$rc"; exit $$rc; fi; \
@@ -165,9 +181,11 @@ fetch-golden:
 	@$(ROOT)/scripts/fetch_golden.sh
 
 # CPU replay vs stored golden (requires fetched .cf32 under testdata/golden/).
-# Replays each profile twice offline when generating goldens; CI verifies the
-# on-disk golden still matches a fresh replay dump. baseline uses the full 10 s
-# pcap so the SFN-0 window has 4000 slots; b40/b100 fit in their _3s slices.
+# Every run also enforces the permanent golden checks: dump starts at the golden's window slot, all expected DL
+# User-Plane slots have non-zero energy on their expected ports (`expected_slots_by_port`, derived from the
+# profile's dl_port_id and the pcap's non-zero U-plane payload); declared-silent ports are zero; no UL-slot leakage;
+# expected non-empty count within tolerance.
+# The window is tracked in testdata/golden/<profile>/window.json and is reused for the dump gate and the check.
 replay-golden: preflight
 	@mkdir -p $(REPORTS)
 	@echo "[replay-golden] profiles=baseline b40 b100 (OPENRU_TAG=$${OPENRU_TAG:-m1})"
@@ -175,15 +193,41 @@ replay-golden: preflight
 	  for prof in baseline b40 b100; do \
 	    echo "[replay-golden] $$prof"; \
 	    test -f testdata/golden/$$prof/MANIFEST.json; \
+	    if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if d.get("status")=="deferred" else 1)' testdata/golden/$$prof/MANIFEST.json; then \
+	      echo "[replay-golden] $$prof deferred — skipping"; continue; \
+	    fi; \
+	    test -f testdata/golden/$$prof/window.json || { echo "FAIL: missing golden window for $$prof"; exit 1; }; \
+	    test -s testdata/pcap/$$prof.pcapng || { echo "FAIL: missing pcap for $$prof"; exit 1; }; \
 	    test -s testdata/golden/$$prof/port0.cf32 || { \
 	      echo "FAIL: missing golden IQ for $$prof — run make fetch-golden"; exit 1; }; \
-	    pcap=testdata/pcap/$${prof}_3s.pcapng; \
-	    if [ "$$prof" = "baseline" ]; then pcap=testdata/pcap/baseline.pcapng; fi; \
-	    $(ROOT)/scripts/replay_iq_dump.sh $$prof $$pcap \
+	    if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if d.get("host_limited") else 1)' testdata/golden/$$prof/MANIFEST.json; then \
+	      if [ "$${RUN_HOST_LIMITED:-0}" != "1" ]; then \
+	        reason=$$(python3 -c 'import json,sys; h=json.load(open(sys.argv[1]))["host_limited"]; print("{} / {} runs passed: {}".format(h.get("passes"), h.get("runs"), h.get("reason")))' testdata/golden/$$prof/MANIFEST.json); \
+	        echo "[replay-golden] $$prof SKIPPED (host_limited: $$reason)"; continue; \
+	      fi; \
+	      echo "[replay-golden] $$prof host_limited but RUN_HOST_LIMITED=1 — running on demand"; \
+	    fi; \
+	    mode=$$(python3 $(ROOT)/tools/golden/manifest_mode.py --manifest testdata/golden/$$prof/MANIFEST.json --field lead_mode); \
+	    lead=$$(python3 $(ROOT)/tools/golden/manifest_mode.py --manifest testdata/golden/$$prof/MANIFEST.json --field lead_us); \
+	    sender=$$(python3 $(ROOT)/tools/golden/manifest_mode.py --manifest testdata/golden/$$prof/MANIFEST.json --field sender); \
+	    tag=$$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1])).get("image") or "")' testdata/golden/$$prof/MANIFEST.json); \
+	    OPENRU_WINDOW_JSON=testdata/golden/$$prof/window.json OPENRU_TAG=$${tag:-$${OPENRU_TAG:-m1}} \
+	      OPENRU_REPLAY_SENDER=$$sender OPENRU_LEAD_MODE=$$mode OPENRU_REPLAY_ALIGN_LEAD_US=$$lead \
+	      $(ROOT)/scripts/replay_iq_dump.sh $$prof testdata/pcap/$$prof.pcapng \
 	      $(REPORTS)/replay-golden-$$prof 1.0; \
+	    python3 $(ROOT)/tools/golden/check.py \
+	      --dump $(REPORTS)/replay-golden-$$prof \
+	      --window-json testdata/golden/$$prof/window.json \
+	      --du-config profiles/$$prof/du-fh.yml \
+	      --out $(REPORTS)/replay-golden-$$prof-check.json; \
 	    python3 $(ROOT)/tools/iq_compare/iq_compare.py \
 	      --dut $(REPORTS)/replay-golden-$$prof \
 	      --golden testdata/golden/$$prof \
 	      --by-slot --threshold 0; \
 	  done; \
 	  echo "[replay-golden] PASS"
+
+# Regenerate the three CPU goldens from fresh MTU-9000 captures: two cold replays each (0 differing samples), then
+# install the window, IQ, tx index and MANIFEST into testdata/golden/<profile>/.
+gen-golden: preflight
+	@OPENRU_TAG=$${OPENRU_TAG:-m1} $(ROOT)/scripts/gen_golden.sh
