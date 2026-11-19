@@ -29,7 +29,7 @@ Evidence tags follow `docs/BRIEF_PHASE1.md`; every number below is `[MEASURED]`,
 | 2 | Ring validation (`1 + extra <= repo_size - 2`) with `report_error` | done (`774837ebc4`, merged in `a91c9917b5`) |
 | 3 | 600 s null-radio gate on this server; record value + RU reply delay | recorded: clean windows 0/0 at extra=0; 600 s INVALID (host-stall bursts); server value 0 |
 | 4 | Bench profiles: server value + margin, `[UNVERIFIED]` on UHD, measurement mode | done: `prach_rx_extra_slots: 20`, normal `log.level: info`, bounded `prach-timing` mode |
-| 5 | OpenRU-WPI PR with submodule bump, profiles and gate evidence | open from `feat/prach-rx-extra-slots` (see PR body) |
+| 5 | OpenRU-WPI PR with submodule bump, profiles and gate evidence | open: https://github.com/CLIS-WPI/OpenRU-WPI/pull/28 |
 | 6 | Tag `v0.1.6-bench` + `make bench-release` (after human merge) | pending |
 
 ## Item 1-2 design (fork)
@@ -98,7 +98,7 @@ non-zero value. The 600 s result is reported as INVALID, not as a value failure.
 
 - ProtO-RU `feat/null-radio` head is `a91c9917b5`; `docker/versions.env` pins `PROTORU_GIT_COMMIT=a91c9917b5` and
   the submodule pointer is at the same merge commit.
-- The OpenRU-WPI PR (base `main`) carries the submodule bump, profiles, bounded mode, gate evidence and this
+- OpenRU-WPI PR #28 (base `main`) carries the submodule bump, profiles, bounded mode, gate evidence and this
   report. After the human merge: `git tag v0.1.6-bench` and `make bench-release`; report the release directory and
   `SHA256SUMS`.
 - Gate caveat: this GPU server is not a quiet real-time host. The 600 s null-radio runs are `INVALID_HOST_STALLS`;
