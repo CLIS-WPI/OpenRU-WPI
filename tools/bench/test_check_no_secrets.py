@@ -15,6 +15,8 @@ HOST=<bench-host>
 LAB_IP=192.168.10.2
 passwordless sudo is fine
 GITHUB_TOKEN is read-only
+k=<32 hex digits>
+opc=<32 hex digits>
 """
 
 CASES = {
@@ -26,6 +28,10 @@ CASES = {
     "host_alias": "make bench-ship HOST=benchbox\n",
     "ssh_userhost": "ssh deploy@benchbox true\n",
     "credential": "DB_PASSWORD=hunter2hunter2\n",
+    "sim_key_assign_k": "k=00112233445566778899aabbccddeeff\n",
+    "sim_key_assign_opc": "OPc: 63bfa50ee6523365ff14c1f45f88737d\n",
+    "sim_key_assign_adm": "ADM = 00112233445566778899aabbccddeeff\n",
+    "sim_key_bare_hex32": "the value 00112233445566778899aabbccddeeff is a key\n",
 }
 
 
