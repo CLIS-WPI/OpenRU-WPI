@@ -68,19 +68,22 @@ stays.
 Make it persistent on the bench host (root):
 
 ```bash
-printf '%s\n' '# OpenRU bench real-time profile: the NMI watchdog adds ~40 us hwlatdetect' \
-  '# events (it is not an SMI; the SMI counter does not move).' \
-  'kernel.nmi_watchdog = 0
-# UHD socket buffers for 30.72 Msps at MTU 9000. RAISE-ONLY: never lower an
-# existing higher value (the bench host already runs rmem_max=50000000). Check
-# with `sysctl -n` first; write max(current, 33554432), e.g.
-#   for k in net.core.wmem_max net.core.rmem_max; do
-#     cur=$(sysctl -n $k); [ "$cur" -lt 33554432 ] && echo "$k = 33554432"; done \
-#     >> /etc/sysctl.d/90-openru-rt.conf
-net.core.wmem_max = 33554432
-net.core.rmem_max = 33554432' > /etc/sysctl.d/90-openru-rt.conf
+cd <openru-sw checkout>   # the snippet needs scripts/sysctl_raise.sh
+{
+  printf '%s\n' \
+    '# OpenRU bench real-time profile: the NMI watchdog adds ~40 us hwlatdetect' \
+    '# events (it is not an SMI; the SMI counter does not move).' \
+    'kernel.nmi_watchdog = 0' \
+    '# UHD socket buffers for 30.72 Msps at MTU 9000. RAISE-ONLY: each line is' \
+    '# max(current, 33554432), so the host rmem_max=50000000 is preserved.'
+  scripts/sysctl_raise.sh net.core.wmem_max net.core.rmem_max
+} > /etc/sysctl.d/90-openru-rt.conf
 sysctl --system
 ```
+
+`scripts/sysctl_raise.sh` reads each key with `sysctl -n` and writes **`max(current, 33554432)`**, so re-running it
+never lowers a value the host already has. `tests/sysctl-raise/test.sh` checks the above-floor and below-floor cases
+with a fake current value (`SYSCTL_RAISE_CURRENT`).
 
 `make bench-preflight` fails if `/proc/sys/kernel/nmi_watchdog` is not `0` and records the kernel version
 (`uname -r`) in its log, because the hwlatdetect figures are only comparable per kernel. It also **fails when
