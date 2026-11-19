@@ -91,3 +91,16 @@ metrics:
 log:
   filename: /tmp/gnb.log
   all_level: info
+
+# DU_CPUSET=6-11 is isolcpus on the bench host: the kernel never migrates
+# threads there, so unpinned RT threads (ru_timing, ru_txrx) stayed on CPU 6
+# with the SCHED_OTHER main thread and starved O-DU construction (no NG Setup).
+# CPU 6 is left to the non-RT threads (main, logger); RT threads get their own.
+# [UNVERIFIED] Pins measured on hardware only with bench-20mhz/du-core.yml;
+# not yet tested with this file.
+expert_execution:
+  affinities:
+    main_pool_cpus: 9-11
+    ofh:
+      timing_cpu: 7
+      txrx_cpus: [8]
