@@ -26,7 +26,11 @@ fi
 
 start=$SECONDS
 while :; do
-  logs="$("${COMPOSE[@]}" logs --no-color --since "$SINCE" core 2>/dev/null || true)"
+  if [[ -n "${NG_LOG_FILE:-}" ]]; then
+    logs="$(cat "$NG_LOG_FILE")"
+  else
+    logs="$("${COMPOSE[@]}" logs --no-color --since "$SINCE" core 2>/dev/null || true)"
+  fi
   if grep -Eiq 'gNB-N2 accepted|NGSetupResponse|NG Setup (Procedure )?Response|Connected to AMF' <<<"$logs"; then
     echo "[ng] AMF accepted the DU NG Setup after $((SECONDS - start))s"
     exit 0
