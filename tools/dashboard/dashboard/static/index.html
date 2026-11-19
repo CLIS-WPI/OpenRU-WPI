@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <title>OpenRU bench · read-only</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <script id="bootstrap" type="application/json">__BOOTSTRAP__</script>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">◈</span>
+        <div>
+          <div class="brand-name">OpenRU <span>bench</span></div>
+          <div class="brand-sub">live status · no controls</div>
+        </div>
+        <span class="chip chip-ro">READ-ONLY</span>
+        <span class="chip chip-replay" id="chip-replay" hidden>REPLAY</span>
+      </div>
+      <div class="release" id="release">
+        <span class="chip" id="chip-tag">tag —</span>
+        <span class="chip" id="chip-commit">commit —</span>
+        <span class="chip" id="chip-profile">profile —</span>
+        <span class="chip" id="chip-gain">gain —</span>
+      </div>
+      <div class="top-actions">
+        <span class="conn" id="conn"><span class="dot"></span><span id="conn-text">connecting</span></span>
+        <button class="icon-btn" id="theme-toggle" type="button" title="Toggle light/dark" aria-label="Toggle light/dark">◐</button>
+        <form action="/logout" method="post" id="logout-form">
+          <button class="icon-btn" type="submit" title="Sign out" aria-label="Sign out">⏻</button>
+        </form>
+      </div>
+    </header>
+
+    <div class="banner" id="auth-banner" hidden>
+      Authentication is disabled for this local screenshot run. Do not expose this instance.
+    </div>
+    <div class="banner banner-replay" id="replay-banner" hidden>
+      Replay of captured null-radio logs — not a live bench.
+    </div>
+
+    <section class="status-strip" id="status-strip" aria-label="Bench status"></section>
+
+    <main class="grid">
+      <section class="card span-7" aria-labelledby="ofh-title">
+        <div class="card-head">
+          <div>
+            <h2 id="ofh-title">RF / Open Fronthaul</h2>
+            <p class="card-sub">ProtO-RU per-second counters</p>
+          </div>
+          <span class="badge" id="ru-badge">waiting</span>
+        </div>
+        <div class="kpi-row" id="ru-kpis">
+          <div class="kpi"><span class="kpi-label">RX total</span><span class="kpi-value" id="kpi-rx">—</span><span class="kpi-unit">pkt/s</span></div>
+          <div class="kpi"><span class="kpi-label">TX total</span><span class="kpi-value" id="kpi-tx">—</span><span class="kpi-unit">pkt/s</span></div>
+          <div class="kpi"><span class="kpi-label">On time</span><span class="kpi-value" id="kpi-ontime">—</span><span class="kpi-unit">%</span></div>
+          <div class="kpi"><span class="kpi-label">Late</span><span class="kpi-value" id="kpi-late">—</span><span class="kpi-unit">pkt/s</span></div>
+          <div class="kpi"><span class="kpi-label">Early</span><span class="kpi-value" id="kpi-early">—</span><span class="kpi-unit">pkt/s</span></div>
+          <div class="kpi"><span class="kpi-label">Seq err</span><span class="kpi-value" id="kpi-seq">—</span><span class="kpi-unit">/s</span></div>
+        </div>
+        <div class="chart-block">
+          <div class="chart-legend" id="legend-ofh"></div>
+          <div class="chart-wrap"><canvas id="chart-ofh" role="img" aria-label="ProtO-RU RX and TX counters over time"></canvas></div>
+        </div>
+      </section>
+
+      <section class="card span-5" aria-labelledby="du-title">
+        <div class="card-head">
+          <div>
+            <h2 id="du-title">DU / cell</h2>
+            <p class="card-sub" id="du-sub">PCI — · band — · ARFCN —</p>
+          </div>
+          <span class="badge" id="du-badge">unknown</span>
+        </div>
+        <div class="mini-grid" id="du-stats">
+          <div class="mini"><span>Wall avg</span><strong id="du-wall-avg">—</strong></div>
+          <div class="mini"><span>Wall max</span><strong id="du-wall-max">—</strong></div>
+          <div class="mini"><span>DL slots</span><strong id="du-slots">—</strong></div>
+          <div class="mini"><span>Invol. CS</span><strong id="du-cs">—</strong></div>
+          <div class="mini"><span>UEs</span><strong id="du-ues">—</strong></div>
+          <div class="mini"><span>OFH rx</span><strong id="du-ofh-rx">—</strong></div>
+        </div>
+        <div class="chart-block">
+          <div class="chart-legend" id="legend-latency"></div>
+          <div class="chart-wrap"><canvas id="chart-latency" role="img" aria-label="DU wall clock latency"></canvas></div>
+        </div>
+      </section>
+
+      <section class="card span-7" aria-labelledby="err-title">
+        <div class="card-head">
+          <div>
+            <h2 id="err-title">OFH errors</h2>
+            <p class="card-sub">rolling 60 s window · counted from DU log</p>
+          </div>
+          <span class="badge" id="err-badge">0 / min</span>
+        </div>
+        <div class="error-row" id="error-kpis">
+          <div class="mini"><span>Sequence past</span><strong id="err-seq">—</strong><em id="err-seq-total">total —</em></div>
+          <div class="mini"><span>Missed PRACH</span><strong id="err-prach">—</strong><em id="err-prach-total">total —</em></div>
+          <div class="mini"><span>Late PRACH</span><strong id="err-late">—</strong><em id="err-late-total">total —</em></div>
+        </div>
+        <div class="chart-block">
+          <div class="chart-legend" id="legend-errors"></div>
+          <div class="chart-wrap"><canvas id="chart-errors" role="img" aria-label="OFH error counts per minute"></canvas></div>
+        </div>
+      </section>
+
+      <section class="card span-5" aria-labelledby="modem-title">
+        <div class="card-head">
+          <div>
+            <h2 id="modem-title">Modems</h2>
+            <p class="card-sub">read-only AT queries · every 5 s</p>
+          </div>
+          <span class="badge" id="modem-badge">—</span>
+        </div>
+        <div class="modem-stack" id="modem-cards"></div>
+        <div class="chart-block">
+          <div class="chart-legend" id="legend-rsrp"></div>
+          <div class="chart-wrap short"><canvas id="chart-rsrp" role="img" aria-label="Modem RSRP over time"></canvas></div>
+        </div>
+      </section>
+
+      <section class="card span-6" aria-labelledby="core-title">
+        <div class="card-head">
+          <div>
+            <h2 id="core-title">5G core</h2>
+            <p class="card-sub">Open5GS AMF / SMF · info-level view</p>
+          </div>
+          <span class="badge" id="core-badge">waiting</span>
+        </div>
+        <div class="count-row" id="core-counts">
+          <div class="mini"><span>gNB</span><strong id="core-gnb">—</strong></div>
+          <div class="mini"><span>UEs</span><strong id="core-ues">—</strong></div>
+          <div class="mini"><span>Reg accepted</span><strong id="core-accepted">—</strong></div>
+          <div class="mini"><span>Reg rejected</span><strong id="core-rejected">—</strong></div>
+          <div class="mini"><span>Auth fail</span><strong id="core-authfail">—</strong></div>
+          <div class="mini"><span>PDU</span><strong id="core-pdu">—</strong></div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table" id="ue-table">
+            <thead><tr><th>SUPI</th><th>State</th><th>DNN</th><th>IPv4</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="reject-list" id="reject-list"></div>
+      </section>
+
+      <section class="card span-6" aria-labelledby="host-title">
+        <div class="card-head">
+          <div>
+            <h2 id="host-title">Host &amp; isolation</h2>
+            <p class="card-sub" id="host-sub">kernel — · — CPUs</p>
+          </div>
+          <span class="badge" id="host-badge">—</span>
+        </div>
+        <div class="mini-grid" id="host-stats">
+          <div class="mini"><span>Load 1m</span><strong id="host-load">—</strong></div>
+          <div class="mini"><span>Memory</span><strong id="host-mem">—</strong></div>
+          <div class="mini"><span>Disk</span><strong id="host-disk">—</strong></div>
+          <div class="mini"><span>hwlat max</span><strong id="host-hwlat">—</strong></div>
+        </div>
+        <div class="iso-row" id="host-iso"></div>
+        <div class="nic-list" id="host-nics"></div>
+        <div class="stack-list" id="stack-list"></div>
+      </section>
+
+      <section class="card span-12 logs-card" aria-labelledby="logs-title">
+        <div class="card-head log-head">
+          <div>
+            <h2 id="logs-title">Live log</h2>
+            <p class="card-sub"><span id="log-count">0</span> lines · redacted before render</p>
+          </div>
+          <div class="log-controls">
+            <select id="log-source" aria-label="Log source">
+              <option value="all">all sources</option>
+              <option value="ru">ProtO-RU</option>
+              <option value="du">DU</option>
+              <option value="core">core</option>
+            </select>
+            <select id="log-level" aria-label="Log level">
+              <option value="all">all levels</option>
+              <option value="info">info+</option>
+              <option value="warn">warn+</option>
+              <option value="error">error</option>
+            </select>
+            <input id="log-search" type="search" placeholder="filter text" autocomplete="off" spellcheck="false" aria-label="Filter log text">
+            <label class="check"><input id="log-pause" type="checkbox"> pause</label>
+            <button class="btn" id="log-clear" type="button">clear</button>
+          </div>
+        </div>
+        <div class="log-list" id="log-list" role="log" aria-live="off"></div>
+        <div class="log-empty" id="log-empty">Waiting for log lines…</div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>OpenRU bench dashboard v0 · strictly read-only</span>
+      <span id="footer-release">—</span>
+      <span>bind: localhost / private VPN only · token auth</span>
+    </footer>
+  </div>
+  <noscript>This dashboard needs JavaScript. It is read-only and never controls the bench.</noscript>
+  <script src="/static/app.js"></script>
+</body>
+</html>
