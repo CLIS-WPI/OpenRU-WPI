@@ -1,0 +1,139 @@
+{
+  "schema": "openru-test-result/1",
+  "suite": "bench-e2e",
+  "profile": "bench-20mhz-null",
+  "status": "PASS",
+  "skip_reason": null,
+  "image": {
+    "tag": "m2",
+    "digest": null
+  },
+  "submodule_commit": "8290ad500ef5c8edf6a76abb33ddda6179f283dd",
+  "repo_commit": "33574051b23b5203b111743d953ec3ecd3466ae3",
+  "host": "GPU-server",
+  "isolation": {
+    "measure_lock": "held during the 60 s window",
+    "quiet_host": "not enforced (dry run on the shared GPU server)"
+  },
+  "start": null,
+  "end": null,
+  "metrics": {
+    "stack": "core + DU (bench-20mhz/du-core.yml) + ProtO-RU (bench-20mhz/protoru-null.yml)",
+    "networking": {
+      "core_bridge": "10.53.1.0/24 (DU 10.53.1.6 <-> AMF 10.53.1.2)",
+      "fh_bridge": "10.54.1.0/24 MTU 9000 (DU 10.54.1.10 <-> RU 10.54.1.20)",
+      "radio": "null (no macvlan; UHD stack uses compose.radio.yml)"
+    },
+    "ng_setup_response": true,
+    "amf_plmns": "00101",
+    "cell": {
+      "pci": 1,
+      "bw_MHz": 20,
+      "nof_antennas": "2T2R",
+      "dl_arfcn": 628032,
+      "band": 78
+    },
+    "window_s": 60,
+    "kpi": {
+      "secs": 60.0,
+      "warmup_s": 0,
+      "warmup_note": "no lates; warm-up=0",
+      "late_frac_limit": 1e-05,
+      "valid": null,
+      "hostcheck": {},
+      "full": {
+        "label": "FULL WINDOW (incl. warm-up)",
+        "kpi_rows": 54,
+        "dl_u_plane_pkts": 365836,
+        "dl_c_plane_pkts": 27674,
+        "ul_c_plane_pkts_at_ru": 97208,
+        "dl_rx_total": 490718,
+        "ul_tx_total": 820360,
+        "late_dl_u_at_ru": 0,
+        "late_dl_c_at_ru": 0,
+        "late_ul_c_at_ru": 0,
+        "late_dl_sum_at_ru": 0,
+        "drop_at_ru": 0,
+        "late_per_M_dl": 0.0,
+        "late_frac_dl": 0.0,
+        "all_pkts": 1311078,
+        "late_per_M_all": 0.0,
+        "late_frac_all": 0.0
+      },
+      "gate": {
+        "label": "GATE WINDOW (after warm-up=0s)",
+        "kpi_rows": 54,
+        "dl_u_plane_pkts": 365836,
+        "dl_c_plane_pkts": 27674,
+        "ul_c_plane_pkts_at_ru": 97208,
+        "dl_rx_total": 490718,
+        "ul_tx_total": 820360,
+        "late_dl_u_at_ru": 0,
+        "late_dl_c_at_ru": 0,
+        "late_ul_c_at_ru": 0,
+        "late_dl_sum_at_ru": 0,
+        "drop_at_ru": 0,
+        "late_per_M_dl": 0.0,
+        "late_frac_dl": 0.0,
+        "all_pkts": 1311078,
+        "late_per_M_all": 0.0,
+        "late_frac_all": 0.0
+      },
+      "du_ofh": {
+        "ofh_metric_samples": 140,
+        "ul_rx_total": 2120564,
+        "ul_rx_late": 0,
+        "ul_past_seq_drops": 0,
+        "nof_late_dl_rgs": 0,
+        "nof_late_ul_req": 0,
+        "nof_late_cp_dl": 0,
+        "nof_late_up_dl": 0,
+        "nof_late_cp_ul": 0
+      },
+      "hist_nonzero": [],
+      "slot_ok": true,
+      "slot_msg": "126 MAC reports, nof_slots>0, windows advance (SFN-wrap safe)"
+    },
+    "uplane_rate_check": {
+      "pass": true,
+      "tolerance": 0.02,
+      "rates": [
+        {
+          "rate": "dl_u_plane_per_s",
+          "status": "PASS",
+          "measured_per_s": 6774.74,
+          "expected_per_s": 6784.6,
+          "delta_frac": -0.0015,
+          "tolerance": 0.02
+        },
+        {
+          "rate": "dl_c_plane_per_s",
+          "status": "PASS",
+          "measured_per_s": 512.48,
+          "expected_per_s": 513.4,
+          "delta_frac": -0.0018,
+          "tolerance": 0.02
+        },
+        {
+          "rate": "ul_c_plane_at_ru_per_s",
+          "status": "PASS",
+          "measured_per_s": 1800.15,
+          "expected_per_s": 1800.0,
+          "delta_frac": 0.0001,
+          "tolerance": 0.02
+        }
+      ]
+    },
+    "ru_only_restart": {
+      "du_restarted": false,
+      "cell_stayed_up": true,
+      "ng_connection_kept": true,
+      "kpi_resumed": true
+    }
+  },
+  "evidence": [
+    "docs/reports/runs/bench-e2e/evidence/20261119T021918Z-bench-20mhz-null/kpi.json",
+    "docs/reports/runs/bench-e2e/evidence/20261119T021918Z-bench-20mhz-null/late-hist.csv",
+    "docs/reports/runs/bench-e2e/evidence/20261119T021918Z-bench-20mhz-null/uplane-rate.json"
+  ]
+}

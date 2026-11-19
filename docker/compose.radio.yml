@@ -1,0 +1,24 @@
+# Bench radio network (UHD only): a macvlan interface for ProtO-RU on the N310
+# subnet, parent is the fronthaul NIC from docker/bench.env.
+#
+# Why macvlan: the RU needs L2 reach to 192.168.10.2 (UHD UDP, MTU 9000) on the
+# same /24 without NAT, while remaining on the `fh` bridge for Open Fronthaul.
+# Host networking would drop the fh bridge; a routed/NATed bridge would break
+# the address plan and add latency. mtus: `radio` and `fh` are both MTU 9000.
+networks:
+  radio:
+    name: openru_radio
+    driver: macvlan
+    driver_opts:
+      parent: ${BENCH_FH_IFACE:?Set BENCH_FH_IFACE in docker/bench.env}
+      com.docker.network.driver.mtu: "9000"
+    ipam:
+      config:
+        - subnet: ${BENCH_RADIO_SUBNET:-192.168.10.0/24}
+          gateway: ${BENCH_RADIO_GATEWAY:-192.168.10.1}
+
+services:
+  protoru:
+    networks:
+      radio:
+        ipv4_address: ${BENCH_RU_IP:-192.168.10.3}
