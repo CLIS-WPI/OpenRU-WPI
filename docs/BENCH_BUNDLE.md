@@ -246,6 +246,49 @@ null radio at the golden rates, so the goldens remain valid for the same image.
 `make bench-preflight` checks every `profiles/bench-*/protoru.yml`: the MCR must be one of the three N310
 rates and the sample rate an integer divisor of it.
 
+### Startup timeline and the NG Setup gate (2026-11-19)
+
+From `~/openru-artifacts/du-slow-start-20261119/gnb-first5min.log`:
+
+| Time | Event |
+|---|---|
+| `16:48:59.668` | `Built in Release mode` (first log) |
+| `16:49:01.693` | last pre-DU log: `GTP-U Tunnel added. teid=0` |
+| `16:51:30.592` | first DU log (PRACH/PUCCH overlap warning) |
+| `16:51:30.596` | `DU created successfully` |
+| `16:51:30.630` | OFH interfaces `ofh0` opened |
+| `16:51:30.715` | `Starting CU-CP...` |
+| `16:51:30.722` | `Rx PDU: NGSetupResponse` |
+
+That is **151.1 s** from `Built` to NG Setup; the gap from GTP-U setup to the first DU log is **148.9 s**.
+The gap is inside `create_flexible_o_du_unit` (`apps/gnb/gnb.cpp:517`), at
+`flexible_o_du_factory.cpp:247` (`odu_low_factory.create`), before the first DU-high/O-DU-low log. The
+`ru_txrx` thread is an idle 1 µs executor (`worker_manager.cpp:472-480`) and `ru_timing` is idle, so this is
+not OFH/RF work and not an AMF wait: the CU-CP is not started until after DU construction. The exact inner
+O-DU-low/upper-PHY call is not visible in the log; do not change that path blind. The operational rule is
+what matters: **never judge OFH before NG Setup**.
+
+`make BENCH=1 up STACK=e2e` now starts the core, starts the DU, polls the AMF log for `gNB-N2 accepted` (6 min
+timeout, progress every 30 s), and only then starts ProtO-RU and reports the stack up. `STACK=core` does the
+same. `restart-ru` waits after `RESTART_DU=1`; an RU-only restart keeps the existing NG association. The
+same rule is repeated in `docs/reports/PRACH_FIRSTLIGHT.md`.
+
+### External-reference runs (2026-11-19)
+
+| Run | Configuration | Verdict |
+|---|---|---|
+| 10 MHz-only | `clock_source=external`, `time_source=internal`, OctoClock lock true | **judged too early**. RX/TX zero was sampled before the DU reached NG Setup; it is not evidence of an external-clock failure. Repeat after NG Setup. |
+| clock+time external (PPS) | `clock_source=external`, `time_source=external` | **MEASURED FAIL**: waited 8 minutes, still RX_TOTAL=0 / TX_TOTAL=0. PPS time remains unsupported; see `reports/REF_EXTERNAL_10MHZ.md`. |
+
+The bench profiles stay at `REF=internal` until the bench confirms external 10 MHz after NG Setup.
+
+### Evidence redaction
+
+Bench evidence collectors pipe logs through `scripts/redact_secrets.sh` (smoke-fh, smoke-core, capture,
+replay, batch copies); the Open5GS entrypoint also prints `SUBSCRIBER_DB=<redacted>` instead of the
+credential. Dashboard and replay redaction masks the same value before rendering. Do not copy raw
+`SUBSCRIBER_DB` lines into `docs/reports/**`.
+
 ## Antenna map (divider cabling, on the bench now)
 
 Two RM520N modems (A and B), four 4-way dividers. Each N310 port goes through

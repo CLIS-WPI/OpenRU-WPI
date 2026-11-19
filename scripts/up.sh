@@ -150,9 +150,21 @@ wait_healthy() { # <service> <seconds>
 case "$STACK" in
   fh)   "${COMPOSE[@]}" --profile fh up -d du protoru ;;
   core) "${COMPOSE[@]}" --profile core up -d core; wait_healthy core || exit 1
-        "${COMPOSE[@]}" --profile core up -d du ;;
+        NG_SINCE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+        "${COMPOSE[@]}" --profile core up -d du
+        BENCH="${BENCH:-0}" SINCE="$NG_SINCE" "$ROOT/scripts/wait_ng_setup.sh" || {
+          echo "[up] FAIL: DU did not reach AMF NG Setup" >&2
+          "${COMPOSE[@]}" --profile core down --remove-orphans >/dev/null 2>&1
+          exit 1
+        } ;;
   e2e)  "${COMPOSE[@]}" --profile core --profile fh up -d core; wait_healthy core || exit 1
+        NG_SINCE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
         "${COMPOSE[@]}" --profile core --profile fh up -d du; sleep 2
+        BENCH="${BENCH:-0}" SINCE="$NG_SINCE" "$ROOT/scripts/wait_ng_setup.sh" || {
+          echo "[up] FAIL: DU did not reach AMF NG Setup" >&2
+          "${COMPOSE[@]}" --profile core --profile fh down --remove-orphans >/dev/null 2>&1
+          exit 1
+        }
         du_cid="$("${COMPOSE[@]}" ps -q du | head -1)"
         check_iface "$du_cid" ofh0 10.54.1. "DU" || { "${COMPOSE[@]}" --profile core --profile fh down --remove-orphans >/dev/null 2>&1; exit 1; }
         check_iface "$du_cid" n2 10.53.1. "DU" || { "${COMPOSE[@]}" --profile core --profile fh down --remove-orphans >/dev/null 2>&1; exit 1; }

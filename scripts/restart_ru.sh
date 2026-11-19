@@ -17,7 +17,8 @@
 # while the old one still holds it. Timeout: RU_RELEASE_TIMEOUT (default 60 s).
 #
 # The DU tolerates an O-RU-only restart (cell and NG stay up; OFH resumes), so
-# only protoru is recreated unless RESTART_DU=1.
+# only protoru is recreated unless RESTART_DU=1. With RESTART_DU=1, wait for
+# the AMF NG Setup before reporting done; never judge OFH before that.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
@@ -95,7 +96,9 @@ fi
 # 3. Start ProtO-RU (and optionally the DU) with the local profile.
 "${COMPOSE[@]}" --profile fh --profile core up -d --no-deps --force-recreate protoru
 if [[ "$RESTART_DU" == "1" ]]; then
+  NG_SINCE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   "${COMPOSE[@]}" --profile fh --profile core up -d --no-deps --force-recreate du
-  echo "restart-ru: DU recreated too"
+  echo "restart-ru: DU recreated too; waiting for AMF NG Setup"
+  BENCH="${BENCH:-0}" SINCE="$NG_SINCE" "$ROOT/scripts/wait_ng_setup.sh"
 fi
-echo "restart-ru: done (tx_gain=${TX_GAIN}, ref=${REF}; external=10 MHz only); watch: docker compose logs -f protoru du; then modem RSRP (target -80..-90 dBm)."
+echo "restart-ru: done (tx_gain=${TX_GAIN}, ref=${REF}; external=10 MHz only); waiting for NG Setup before judging OFH; watch: docker compose logs -f protoru du; then modem RSRP (target -80..-90 dBm)."

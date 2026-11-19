@@ -188,10 +188,10 @@ smoke-fh: preflight
 	  cid_du=$$($(COMPOSE) --profile fh ps -q du); \
 	  { echo "===== compose logs: du ====="; $(COMPOSE) --profile fh logs --no-color du 2>&1; \
 	    echo "===== /tmp/gnb.log ====="; docker exec $$cid_du cat /tmp/gnb.log 2>/dev/null || true; \
-	  } > $(REPORTS)/smoke-fh-du.log; \
+	  } | $(ROOT)/scripts/redact_secrets.sh > $(REPORTS)/smoke-fh-du.log; \
 	  { echo "===== compose logs: protoru ====="; $(COMPOSE) --profile fh logs --no-color protoru 2>&1; \
 	    echo "===== /tmp/proto-ru.log ====="; docker exec $$cid_ru cat /tmp/proto-ru.log 2>/dev/null || true; \
-	  } > $(REPORTS)/smoke-fh-ru.log
+	  } | $(ROOT)/scripts/redact_secrets.sh > $(REPORTS)/smoke-fh-ru.log
 	@python3 -c "import json,sys; d=json.load(open('$(REPORTS)/smoke-fh-hostcheck.json')); sys.exit(0 if d.get('valid') else 3)" || \
 	   { echo "[smoke-fh] INVALID: busy host during measurement (see $(REPORTS)/smoke-fh-hostcheck.json)"; \
 	     if [ "$$(cat $(REPORTS)/smoke-fh-started-by-us 2>/dev/null || echo 0)" = 1 ]; then \
@@ -241,8 +241,10 @@ smoke-core: preflight
 	    fi; \
 	    sleep 1; \
 	  done; \
+	  $(ROOT)/scripts/redact_secrets.sh < $(REPORTS)/smoke-core-du.log > $(REPORTS)/smoke-core-du.log.tmp && \
+	    mv $(REPORTS)/smoke-core-du.log.tmp $(REPORTS)/smoke-core-du.log; \
 	  echo "--- subscriber (IMSI prefix 00101) ---" | tee -a $(REPORTS)/smoke-core-du.log; \
-	  grep SUBSCRIBER $(ROOT)/external/proto-ru/docker/open5gs/open5gs.env | tee -a $(REPORTS)/smoke-core-du.log; \
+	  grep SUBSCRIBER $(ROOT)/external/proto-ru/docker/open5gs/open5gs.env | $(ROOT)/scripts/redact_secrets.sh | tee -a $(REPORTS)/smoke-core-du.log; \
 	  if [ "$$(cat $(REPORTS)/smoke-core-started-by-us 2>/dev/null || echo 0)" = 1 ]; then \
 	    $(COMPOSE_CORE) --profile core down --remove-orphans >/dev/null 2>&1; \
 	  else echo "[smoke-core] keeping the stack we did not start"; fi; \
