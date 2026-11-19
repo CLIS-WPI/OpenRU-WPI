@@ -33,34 +33,16 @@ USRP_SERIAL="${USRP_SERIAL:-${BENCH_USRP_SERIAL:-}}"
 : "${DU_CPUSET:?bench.env must set DU_CPUSET}"
 : "${OPENRU_TAG:?bench.env must set OPENRU_TAG}"
 
-# cpuset_expand <list> → space-separated CPU numbers ("2-5,8" → "2 3 4 5 8").
-cpuset_expand() {
-  python3 - "$1" <<'PY'
-import sys
-out = []
-for part in sys.argv[1].split(","):
-    part = part.strip()
-    if not part:
-        continue
-    if "-" in part:
-        a, b = part.split("-", 1)
-        out.extend(range(int(a), int(b) + 1))
-    else:
-        out.append(int(part))
-print(" ".join(map(str, out)))
-PY
-}
-in_set() { # in_set <cpu> <list>
-  local c="$1"; shift
-  [[ " $(cpuset_expand "$1") " == *" $c "* ]]
-}
-subset() { # subset <a-list> <b-list>
-  local c
-  for c in $(cpuset_expand "$1"); do in_set "$c" "$2" || return 1; done
-  return 0
-}
+# CPU lists are parsed by tools/bench/cpulist.py (ranges, commas, spaces, mixed;
+# sysfs/lscpu output is space-separated, cmdline is comma-separated).
+CPULIST="python3 $ROOT/tools/bench/cpulist.py"
+cpuset_expand() { $CPULIST expand "$1"; }
+in_set() { $CPULIST contains "$1" "$2"; }
+subset() { $CPULIST check "$1" "$2" 2>/dev/null; }
+
 
 echo "== bench preflight ($BENCH_ENV) =="
+echo "    host=$(hostname -s 2>/dev/null || echo '?') kernel=$(uname -r) arch=$(uname -m) date=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 echo "    protoru=${PROTORU_CPUSET} du=${DU_CPUSET} tag=${OPENRU_TAG} iface=${IFACE}"
 
 # ---------------------------------------------------------------- topology --
@@ -151,6 +133,21 @@ else
   fail "interface $IFACE not found (X710 fronthaul port)"
 fi
 
+# ------------------------------------------------------------ NMI watchdog --
+# The kernel NMI watchdog fires hwlatdetect events of ~40 us on the bench host
+# (the SMI counter does not move). It must be off for a meaningful measurement.
+NMI_PATH=/proc/sys/kernel/nmi_watchdog
+if [[ -r "$NMI_PATH" ]]; then
+  NMI_VALUE="$(cat "$NMI_PATH")"
+  if [[ "$NMI_VALUE" == "0" ]]; then
+    ok "kernel.nmi_watchdog=0 (no NMI-watchdog latency in hwlatdetect)"
+  else
+    fail "kernel.nmi_watchdog=$NMI_VALUE != 0 (persist kernel.nmi_watchdog=0 in /etc/sysctl.d/90-openru-rt.conf; it adds ~40 us hwlatdetect events)"
+  fi
+else
+  fail "cannot read $NMI_PATH (kernel NMI watchdog state unknown)"
+fi
+
 # -------------------------------------------------------------- hwlatdetect --
 if [[ "${BENCH_SKIP_HWLAT:-0}" == "1" ]]; then
   warn "hwlatdetect skipped (BENCH_SKIP_HWLAT=1)"
@@ -168,7 +165,7 @@ elif command -v hwlatdetect >/dev/null 2>&1 || command -v hwlatdetect.py >/dev/n
     # Parse the result line only (parameters also end in "us"): tools/bench/hwlat_parse.py.
     if MAXV="$(printf '%s\n' "$OUT" | python3 "$ROOT/tools/bench/hwlat_parse.py")"; then
       if python3 -c "import sys; sys.exit(0 if float('$MAXV') < $HWLAT_LIMIT_US else 1)"; then
-        ok "hwlatdetect max ${MAXV} us < ${HWLAT_LIMIT_US} us over ${HWLAT_SECS}s"
+        ok "hwlatdetect max ${MAXV} us < ${HWLAT_LIMIT_US} us over ${HWLAT_SECS}s (gate ${HWLAT_LIMIT_US} us; kernel $(uname -r))"
       else
         fail "hwlatdetect max ${MAXV} us >= ${HWLAT_LIMIT_US} us over ${HWLAT_SECS}s"
         printf '%s\n' "$OUT" | tail -5 | sed 's/^/      | /'
