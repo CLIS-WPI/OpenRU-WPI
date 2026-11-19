@@ -6,7 +6,7 @@
 #   scripts/check_no_secrets.sh --paths F… # explicit files (unit tests)
 #
 # Rules (see AGENTS.md "Remote access (do not commit)"):
-#   * Tailscale/CGNAT IPv4 100.x.x.x, tailnet names, the tailnet id fragment
+#   * Tailscale/CGNAT IPv4 100.x.x.x, tailnet names (*.ts.net), the tailnet id fragment
 #   * SSH key material (BEGIN OPENSSH / ssh-ed25519 / ssh-rsa)
 #   * literal SSH targets: `HOST=<alias>` (placeholders like <bench-host>, $HOST and
 #     quoted values are fine) and `ssh|scp|rsync … user@host`
@@ -56,7 +56,7 @@ report() { # <label> <matches>
 }
 
 report "Tailscale/CGNAT IPv4 (100.x.x.x)" "$(scan '(^|[^0-9])100\.[0-9]+\.[0-9]+\.[0-9]+([^0-9]|$)')"
-report "tailscale/tailnet/ece107"          "$(scan 'tailscale|tailnet|ece107' i)"
+report "tailscale/tailnet/ts.net/ece107"   "$(scan 'tailscale|tailnet|ece107|\.ts\.net([^A-Za-z0-9.-]|$)' i)"
 report "SSH key material"                  "$(scan 'BEGIN OPENSSH|ssh-ed25519 |ssh-rsa ')"
 report "SSH user@host"                     "$(scan '(^|[^[:alnum:]_])(ssh|scp|rsync)[^|;]*[[:space:]][A-Za-z0-9._-]+@[A-Za-z0-9.-]+')"
 report "credential assignment"             "$(scan '(password|passwd|secret|token|api[_-]?key)[[:space:]]*=[[:space:]]*[^$<"'"'"'[:space:]]' i)"

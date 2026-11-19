@@ -146,9 +146,9 @@ for img_tag in "$IMG" "$CORE_TAG"; do
   printf '%s\n' "$name" >> "$DEST/.files.tmp"
 done
 
-HOSTNAME_FQ="$(hostname -f 2>/dev/null || hostname)"
+HOSTNAME_SHORT="$(hostname -s 2>/dev/null || hostname)"
 python3 - "$DEST" "$SHA" "$SHORT" "$BRANCH" "$SUBMODULE_COMMIT" "$TAG" \
-  "$UHD_VERSION" "$MARCH" "$BUILT_AT" "$HOSTNAME_FQ" "$CONT_UHD" "$ROOT" <<'PY'
+  "$UHD_VERSION" "$MARCH" "$BUILT_AT" "$HOSTNAME_SHORT" "$CONT_UHD" "$ROOT" <<'PY'
 import hashlib, json, os, pathlib, subprocess, sys
 
 dest = pathlib.Path(sys.argv[1])

@@ -15,7 +15,7 @@ same topic, comment on that PR (or ask the human) — never open a second PR for
 ## Remote access (do not commit)
 
 Never commit **remote-access details** to GitHub. That includes Tailscale IPs (`100.x.x.x`)  <!-- no-secrets-ok -->
-and tailnet names, SSH usernames and host aliases used for remote access, SSH keys or  <!-- no-secrets-ok -->
+and tailnet names (including `*.ts.net` hostnames), SSH usernames and host aliases used for remote access, SSH keys or  <!-- no-secrets-ok -->
 fingerprints, passwords, tokens, and the mapping of which machine reaches which.
 Lab-private radio addresses (`192.168.x.x` for the N310s) may stay because the bench
 documentation needs them.
