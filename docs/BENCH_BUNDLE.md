@@ -263,6 +263,15 @@ Kept for the record. This is **not** what is on the bench now.
 - On a single UE, only ANT2 and ANT0 transmit in n78; ANT1 and ANT3 receive only.
 - 2×2 on that layout used RF0–RF1 (→ ANT2, ANT0).
 
+## Subscribers (Open5GS)
+
+Bench SIM credentials live only in a local, owner-only file
+(`~/Desktop/OpenRU/secrets/subscribers.env`, gitignored by convention and
+refused by the script if group/world-readable). `scripts/add_subscriber.sh`
+provisions them (IMSI, K, OPc, optional AMF/SST/DNN) into the running core and
+never prints the keys; IMSIs, DNN/SST checks and the SQN/AUTS notes are in
+[`docs/BENCH_SUBSCRIBERS.md`](BENCH_SUBSCRIBERS.md).
+
 ## Release → ship → load → preflight
 
 Bench image artifacts live **only on this server** (never in git).

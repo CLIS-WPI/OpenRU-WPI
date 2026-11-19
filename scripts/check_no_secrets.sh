@@ -11,6 +11,8 @@
 #   * literal SSH targets: `HOST=<alias>` (placeholders like <bench-host>, $HOST and
 #     quoted values are fine) and `ssh|scp|rsync … user@host`
 #   * credential assignments: password=/passwd=/secret=/token=/api_key=
+#   * 32-hex values assigned to K/Ki/key/OPc/OP/ADM-like names, and any bare
+#     32-hex literal (SIM key length) — placeholders like <32 hex digits> are fine
 # Lab-private radio addresses (192.168.x.x) are allowed.
 #
 # The checker's own fixture file is skipped: it must contain the patterns.
@@ -58,6 +60,8 @@ report "tailscale/tailnet/ece107"          "$(scan 'tailscale|tailnet|ece107' i)
 report "SSH key material"                  "$(scan 'BEGIN OPENSSH|ssh-ed25519 |ssh-rsa ')"
 report "SSH user@host"                     "$(scan '(^|[^[:alnum:]_])(ssh|scp|rsync)[^|;]*[[:space:]][A-Za-z0-9._-]+@[A-Za-z0-9.-]+')"
 report "credential assignment"             "$(scan '(password|passwd|secret|token|api[_-]?key)[[:space:]]*=[[:space:]]*[^$<"'"'"'[:space:]]' i)"
+report "32-hex SIM key (K/Ki/OPc/OP/ADM)"  "$(scan '(^|[^A-Za-z0-9_])(k|ki|key|opc|op|adm)[[:space:]]*[=:][[:space:]]*[0-9a-fA-F]{32}([^0-9a-fA-F]|$)' i)"
+report "32-hex literal (SIM key length)"   "$(scan '(^|[^0-9a-fA-F])[0-9a-fA-F]{32}([^0-9a-fA-F]|$)')"
 report "literal HOST=<alias>"              "$(scan 'HOST=[A-Za-z0-9._-]+')"
 
 if [[ "$fail" -ne 0 ]]; then

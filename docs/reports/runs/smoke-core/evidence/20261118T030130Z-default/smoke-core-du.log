@@ -294,4 +294,4 @@ ru_ofh:
               "msg1-FDM": "one",
               "msg1-FrequencyStart": 0,
 --- subscriber (IMSI prefix 00101) ---
-SUBSCRIBER_DB=001010123456780,00112233445566778899aabbccddeeff,opc,63bfa50ee6523365ff14c1f45f88737d,8000,9,10.45.1.2
+SUBSCRIBER_DB=<redacted: local secrets only>
