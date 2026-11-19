@@ -32,7 +32,12 @@ PROFILE_DIR="$ROOT/profiles/$PROFILE"
 
 case "$RADIO" in
   uhd)  RU_YML="$PROFILE_DIR/protoru.yml"; [[ "${BENCH:-0}" == "1" ]] || {
-          echo "[up] FAIL: RADIO=uhd is the bench path (BENCH=1); use RADIO=null here" >&2; exit 2; } ;;
+          echo "[up] FAIL: RADIO=uhd is the bench path (BENCH=1); use RADIO=null here" >&2; exit 2; }
+        if [[ -n "${TX_GAIN:-}" ]]; then
+          # Start at the chosen gain without a restart: local copy, never the
+          # committed profile (gitignored build/local-profiles/).
+          RU_YML="$("$ROOT/scripts/local_profile.sh" "$PROFILE" "$TX_GAIN" | tail -1)"
+        fi ;;
   null) RU_YML="$PROFILE_DIR/protoru-null.yml" ;;
   *) echo "[up] FAIL: RADIO must be uhd or null" >&2; exit 2 ;;
 esac

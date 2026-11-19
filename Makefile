@@ -91,10 +91,12 @@ bench-ship:
 	  $(ROOT)/scripts/bench_ship.sh
 
 # Stack/profile/radio: make BENCH=1 up STACK=e2e PROFILE=bench-20mhz [RADIO=null]
+# [TX_GAIN=<0..65, 0.5 step>] (starts at that TX gain via a local profile copy)
 STACK ?= fh
 UP_RADIO ?= $(if $(filter 1,$(BENCH)),uhd,null)
 up:
-	@BENCH=$(BENCH) STACK=$(STACK) PROFILE=$(PROFILE) RADIO=$(UP_RADIO) $(ROOT)/scripts/up.sh
+	@BENCH=$(BENCH) STACK=$(STACK) PROFILE=$(PROFILE) RADIO=$(UP_RADIO) TX_GAIN=$(TX_GAIN) \
+	  $(ROOT)/scripts/up.sh
 
 # TX gain step-up: edit a LOCAL copy of the profile (never the committed file)
 # and restart ProtO-RU only. Example:

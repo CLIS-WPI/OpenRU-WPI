@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
-# TX gain step-up: update a LOCAL copy of the profile and restart ProtO-RU only.
+# TX gain step-up / RU restart for the bench stack.
 #
 #   make BENCH=1 restart-ru PROFILE=bench-20mhz TX_GAIN=5
 #   make BENCH=1 restart-ru PROFILE=bench-20mhz TX_GAIN=10 RESTART_DU=1
 #
 # The committed profile is never modified: the copy lives in build/local-profiles/
-# (gitignored) and is passed to compose as PROTORU_CONFIG_PATH. Only `protoru` is
-# recreated (RESTART_DU=1 also recreates the DU).
+# (gitignored) and is passed to compose as PROTORU_CONFIG_PATH.
 #
-# The DU tolerates an O-RU-only restart: the cell stays up and the OFH link
-# recovers, but expect a short burst of late/missing U-plane packets while the RU
-# is down (verified in the null-radio dry run). Restart both only if the DU logs
-# OFH timing errors or drops the cell.
+# Before recreating ProtO-RU the old container is fully stopped and the N310 must
+# report claimed=False (UHD only) — otherwise the new container opens the device
+# while the old one still holds it. Timeout: RU_RELEASE_TIMEOUT (default 60 s).
+#
+# The DU tolerates an O-RU-only restart (cell and NG stay up; OFH resumes), so
+# only protoru is recreated unless RESTART_DU=1.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
@@ -19,33 +20,10 @@ PROFILE="${PROFILE:?set PROFILE=<profiles/…>}"
 TX_GAIN="${TX_GAIN:?set TX_GAIN=<value>}"
 RADIO="${RADIO:-uhd}"
 RESTART_DU="${RESTART_DU:-0}"
+RELEASE_TIMEOUT="${RU_RELEASE_TIMEOUT:-60}"
 
-python3 - "$PROFILE" "$TX_GAIN" <<'PY'
-import sys, yaml
-profile, value = sys.argv[1], float(sys.argv[2])
-if not (0.0 <= value <= 65.0) or abs(value * 2 - round(value * 2)) > 1e-9:
-    sys.exit(f"restart-ru: TX_GAIN={value:g} outside 0..65 dB or off the 0.5 dB step")
-PY
-
-if [[ "$RADIO" == "null" ]]; then
-  SRC="profiles/$PROFILE/protoru-null.yml"
-else
-  [[ "${BENCH:-0}" == "1" ]] || { echo "restart-ru: RADIO=uhd needs BENCH=1" >&2; exit 2; }
-  SRC="profiles/$PROFILE/protoru.yml"
-fi
-OUT="build/local-profiles/$PROFILE/protoru.yml"
-mkdir -p "build/local-profiles/$PROFILE"
-cp "$SRC" "$OUT"
-python3 - "$OUT" "$TX_GAIN" <<'PY'
-import re, sys
-path, value = sys.argv[1], float(sys.argv[2])
-text = open(path).read()
-new = re.sub(r"(?m)^(\s*)tx_gain:.*$", lambda m: f"{m.group(1)}tx_gain: {value:g}", text, count=1)
-if new == text:
-    sys.exit("restart-ru: no tx_gain line in the profile")
-open(path, "w").write(new)
-print(f"restart-ru: {path} tx_gain={value:g}")
-PY
+OUT="$("$ROOT/scripts/local_profile.sh" "$PROFILE" "$TX_GAIN" | tail -1)"
+export PROTORU_CONFIG_PATH="$ROOT/$OUT"
 
 if [[ "${BENCH:-0}" == "1" ]]; then
   ENV_FILE="docker/bench.env"
@@ -58,11 +36,48 @@ else
 fi
 [[ -f "$ENV_FILE" ]] || { echo "restart-ru: FAIL: $ENV_FILE missing" >&2; exit 1; }
 COMPOSE+=(-f docker/compose.e2e.yml)
+set -a; . "$ENV_FILE"; set +a
 
-export PROTORU_CONFIG_PATH="$ROOT/$OUT"
+# 1. Stop the old ProtO-RU and wait until it is really down.
+OLD_CID="$("${COMPOSE[@]}" ps -q protoru 2>/dev/null | head -1 || true)"
+RU_IMAGE="openru/protoru:${OPENRU_TAG:-bench-latest}"
+if [[ -n "$OLD_CID" ]]; then
+  RU_IMAGE="$(docker inspect -f '{{.Config.Image}}' "$OLD_CID" 2>/dev/null || echo "$RU_IMAGE")"
+  echo "restart-ru: stopping $OLD_CID"
+  docker stop "$OLD_CID" >/dev/null 2>&1 || true
+  for _ in $(seq 1 30); do
+    [[ "$(docker inspect -f '{{.State.Running}}' "$OLD_CID" 2>/dev/null || echo false)" == "false" ]] && break
+    sleep 1
+  done
+  if [[ "$(docker inspect -f '{{.State.Running}}' "$OLD_CID" 2>/dev/null || echo false)" != "false" ]]; then
+    echo "restart-ru: FAIL: the old ProtO-RU container did not stop" >&2; exit 1
+  fi
+fi
+
+# 2. Wait until the N310 is released (UHD only): uhd_find_devices must report
+#    claimed=False. A throw-away container on the radio macvlan network probes it.
+if [[ "$RADIO" == "uhd" ]]; then
+  [[ -n "${BENCH_USRP_ADDR:-}" ]] || { echo "restart-ru: FAIL: BENCH_USRP_ADDR missing" >&2; exit 1; }
+  released=0
+  for _ in $(seq 1 "$RELEASE_TIMEOUT"); do
+    probe="$(timeout 15 docker run --rm --network openru_radio --entrypoint /bin/bash "$RU_IMAGE" \
+               -lc "uhd_find_devices --args addr=${BENCH_USRP_ADDR} 2>&1" 2>&1 || true)"
+    if printf '%s' "$probe" | grep -qiE 'claimed: *false'; then released=1; break; fi
+    if printf '%s' "$probe" | grep -qiE 'claimed: *true'; then sleep 1; continue; fi
+    sleep 1
+  done
+  if [[ "$released" != 1 ]]; then
+    echo "restart-ru: FAIL: N310 ${BENCH_USRP_ADDR} not released (claimed=False) within ${RELEASE_TIMEOUT}s" >&2
+    printf '%s\n' "$probe" | tail -5 | sed 's/^/      | /' >&2
+    exit 1
+  fi
+  echo "restart-ru: N310 ${BENCH_USRP_ADDR} released (claimed=False)"
+fi
+
+# 3. Start ProtO-RU (and optionally the DU) with the local profile.
 "${COMPOSE[@]}" --profile fh --profile core up -d --no-deps --force-recreate protoru
 if [[ "$RESTART_DU" == "1" ]]; then
   "${COMPOSE[@]}" --profile fh --profile core up -d --no-deps --force-recreate du
   echo "restart-ru: DU recreated too"
 fi
-echo "restart-ru: done. Watch: docker compose logs -f protoru du; then modem RSRP (target -80..-90 dBm)."
+echo "restart-ru: done (tx_gain=${TX_GAIN}); watch: docker compose logs -f protoru du; then modem RSRP (target -80..-90 dBm)."
