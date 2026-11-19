@@ -35,7 +35,7 @@ ru_ofh:
   enable_dl_static_compr_hdr: true
   iq_scaling: 16
   cells:
-    - network_interface: eth0
+    - network_interface: n2
       ru_mac_addr: 02:00:00:00:00:20
       du_mac_addr: 02:00:00:00:00:10
       dl_port_id: [0, 1]

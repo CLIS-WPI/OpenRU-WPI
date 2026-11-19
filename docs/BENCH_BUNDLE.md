@@ -317,10 +317,16 @@ profiles; DNN `internet` comes from the subscriber (see
 | `openru_fh` 10.54.1.0/24, MTU 9000 | bridge | DU 10.54.1.10, ProtO-RU 10.54.1.20 (fixed MACs from the profiles) | Open Fronthaul eCPRI/U-plane needs jumbo frames; the fixed MACs in `du-core.yml`/`protoru.yml` live on this bridge |
 | `openru_radio` 192.168.10.0/24, MTU 9000 | **macvlan** on `enp5s0f1np1` | ProtO-RU 192.168.10.3 | UHD reaches the N310 (`192.168.10.2`) at L2 with no NAT, while the RU keeps its `fh` interface; host networking would remove the `fh` bridge, and a routed bridge would add NAT/latency |
 
-No container uses host networking. The DU has `eth0` = `fh` and `eth1` = `core`
-(`docker/compose.e2e.yml` lists `fh` first; `ru_ofh.cells[].network_interface` is
-`eth0`). CPU pinning comes from `docker/bench.env`: ProtO-RU `2-5`, DU `6-11`,
-core on `CORE_CPUSET` `12-19`, housekeeping/IRQs on `0-1,12-19`.
+No container uses host networking. **Interface names are pinned** with compose
+`interface_name` — `ofh0` (fh), `n2` (core), `radio0` (macvlan) — and the
+profiles reference `ofh0` in `ru_ofh.cells[].network_interface`; nothing depends
+on Docker's network-attachment order (Docker 29 does not guarantee `eth0`/`eth1`
+ordering for multi-network containers). `scripts/up.sh` verifies inside each
+container that `ofh0` carries the fh subnet and `n2` the core subnet (and
+`radio0` the radio subnet when UHD is used) and **fails before starting the
+radio** if a name is missing or on the wrong subnet, tearing the stack down.
+CPU pinning comes from `docker/bench.env`: ProtO-RU `2-5`, DU `6-11`, core on
+`CORE_CPUSET` `12-19`, housekeeping/IRQs on `0-1,12-19`.
 
 ### Dry run (GPU server, null radio in place of UHD) — 2026-11-19
 
@@ -335,6 +341,12 @@ indication advancing; rates DL U 6774.7/s, DL C 512.5/s, UL C 1800.2/s
 Also verified in the same dry run: an **O-RU-only restart** keeps the DU up, the
 cell active and the NG connection established, and OFH KPIs resume (no DU
 restart needed).
+
+Re-run after the interface-name pinning (2026-11-19, second dry run):
+`ofh0`/`n2`/`radio0` present in both containers (DU `ofh0 10.54.1.10`,
+`n2 10.53.1.6`; RU `ofh0 10.54.1.20`), NG Setup + cell up, 60 s zero late/drop,
+rates 6775.4/512.5/1800.2/s (−0.14/−0.17/+0.01 %); result JSON
+`docs/reports/runs/bench-e2e/20261119T023953Z-bench-20mhz-null.json`.
 
 ### TX gain step-up (YAML only, RU restart)
 

@@ -144,8 +144,8 @@ smoke-fh: preflight
 	  else \
 	    echo "[smoke-fh] CPU-only host: skipping the GPU check"; \
 	  fi; \
-	  $(ROOT)/scripts/verify_caps.sh $$cid_ru eth0 $(REPORTS)/caps-protoru.md; \
-	  $(ROOT)/scripts/verify_caps.sh $$cid_du eth0 $(REPORTS)/caps-du.md
+	  $(ROOT)/scripts/verify_caps.sh $$cid_ru ofh0 $(REPORTS)/caps-protoru.md; \
+	  $(ROOT)/scripts/verify_caps.sh $$cid_du ofh0 $(REPORTS)/caps-du.md
 	@echo "[smoke-fh] waiting for first ProtO-RU KPI with RX_TOTAL>0..."
 	@ready=0; \
 	  for i in $$(seq 1 45); do \

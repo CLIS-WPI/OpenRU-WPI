@@ -10,7 +10,7 @@ ru_emu:
   # Host CPUs inside PROTORU_CPUSET (lab.env; this host: 32-47 on NUMA1).
   timing_cpus: [32]
   cells:
-    - network_interface: eth0
+    - network_interface: ofh0
       ru_mac_addr: 02:00:00:00:00:20
       du_mac_addr: 02:00:00:00:00:10
       # No vlan_tag on docker bridge (AF_PACKET); both sides untagged.
