@@ -30,14 +30,14 @@ printf '  ProtO-RU real-time : %s\n' "${PROTORU_CPUSET:-?}"
 printf '  DU real-time       : %s\n' "${DU_CPUSET:-?}"
 printf '  housekeeping/IRQs  : 0-1,12-19 (bench); core containers: %s\n' "${CORE_CPUSET:-n/a}"
 echo
-echo "== antenna map (measured cabling) =="
-printf '  N310 side: RF0-RF3 all TX and RX (4x4 DL uses all four)\n'
-printf '  UE side (RM520N, n78): ANT2/ANT0 TX and RX, ANT1/ANT3 RX only\n'
-printf '  RF0 -> ANT2  (bidirectional, primary n78 TX)\n'
-printf '  RF1 -> ANT0  (bidirectional, second TX)\n'
-printf '  RF2 -> ANT1  (UE RX only)\n'
-printf '  RF3 -> ANT3  (UE RX only)\n'
-printf '  2x2 profiles use RF0-RF1; 4x4 uses all four ports\n'
+echo "== antenna map (divider cabling; docs/BENCH_BUNDLE.md) =="
+printf '  Four 4-way dividers; each N310 port through 30 dB into its own divider.\n'
+printf '  Out1 -> modem A +20 dB; Out2 -> modem B +20 dB; Out3/Out4 -> 50 ohm.\n'
+printf '  RF0 TX/RX -> ANT0   (DL layer 0)\n'
+printf '  RF1 TX/RX -> ANT1   (DL layer 1)\n'
+printf '  RF0 RX2   <- ANT2   (modem main TX / UL)\n'
+printf '  RF1 RX2   <- ANT3\n'
+printf '  ~57 dB per path. UHD names: tx_antenna=TX/RX, rx_antenna=RX2.\n'
 echo
 
 case "$WHAT" in

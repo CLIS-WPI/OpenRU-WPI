@@ -51,6 +51,10 @@ cell_cfg:
   pci: 1
   nof_antennas_dl: 2
   nof_antennas_ul: 2
+  # UE p-Max in SIB (dBm). Conducted divider path is ~57 dB; keep the modem
+  # well below 23 dBm until the first TX power check.
+  ul_common:
+    p_max: 10
   prach:
     prach_config_index: 159
     prach_root_sequence_index: 1

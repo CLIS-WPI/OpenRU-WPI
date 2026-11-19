@@ -93,7 +93,9 @@ sysctl --system
 - the USRP is not visible to host UHD once `BENCH_USRP_REQUIRED=1` (until the N310 address is known this is a
   warning).
 
-The hwlatdetect result parser has unit tests with captured pass/fail output:
+The hwlatdetect result parser has unit tests with captured pass/fail output,
+including `Max Latency: Below threshold` with 0 samples (treated as 0 us, a PASS
+under the 20 µs gate):
 `python3 -m unittest discover -s tools/bench -p 'test_*.py' -v`.
 
 Other required host settings: MTU 9000 on the fronthaul port, `PROTORU_SHM_SIZE` ≥ the profile dump size, and
@@ -103,8 +105,8 @@ Other required host settings: MTU 9000 on the fronthaul port, `PROTORU_SHM_SIZE`
 
 | Tag | Config | Provenance |
 |---|---|---|
-| `openru/protoru:bench-<short-sha>` / `bench-latest` | FFTW + ESTIMATE, `MARCH=x86-64-v3` (AVX2), **UHD 4.11.0.0** | **the bench image**, built by `make bench-release` from a pushed clean commit; provenance labels (`org.openru.git.commit`, `org.openru.git.submodule`, `org.openru.uhd`, `org.openru.march`) |
-| `openru/core:bench-<short-sha>` / `bench-latest` | Open5GS core image | retagged from `openru/core:m0` at release time (built from the recorded submodule) |
+| `openru/protoru:bench-<short-sha>` / `bench-latest` | FFTW + ESTIMATE, `MARCH=x86-64-v3` (AVX2), **UHD 4.11.0.0** | **the bench image**, built by `make bench-release` from a pushed clean commit; provenance labels (`org.openru.git.commit`, `org.openru.git.submodule`, `org.openru.build.date`, `org.openru.uhd`, `org.openru.march`) |
+| `openru/core:bench-<short-sha>` / `bench-latest` | Open5GS core image | rebuilt at release time with the same `org.openru.git.commit` / `git.submodule` / `build.date` labels as ProtO-RU |
 | `openru/protoru:v1-candidate` | FFTW + ESTIMATE, `MARCH=x86-64-v4` (AVX-512) | v1 reference for the GPU-server milestone runs, not for this host |
 
 The GPU-server-only v3 image (`openru/protoru:v1-candidate-v3`) is documented in
@@ -197,7 +199,39 @@ null radio at the golden rates, so the goldens remain valid for the same image.
 `make bench-preflight` checks every `profiles/bench-*/protoru.yml`: the MCR must be one of the three N310
 rates and the sample rate an integer divisor of it.
 
-## Antenna map (measured cabling)
+## Antenna map (divider cabling, on the bench now)
+
+Four Mini-Circuits-style 4-way dividers. Each of the four N310 ports goes through
+**30 dB** into its own divider. Divider **Out1** to modem A through **20 dB**,
+**Out2** to modem B through **20 dB**, **Out3** and **Out4** terminated in 50 Ω.
+About **57 dB** per path (30 + ~7 divider + 20).
+
+| N310 port | UHD name | Direction | UE (RM520N) |
+|---|---|---|---|
+| RF0 TX/RX | `TX/RX` | DL layer 0 (gNB TX) | ANT0 |
+| RF1 TX/RX | `TX/RX` | DL layer 1 (gNB TX) | ANT1 |
+| RF0 RX2 | `RX2` | UL (modem main TX) | ANT2 |
+| RF1 RX2 | `RX2` | UL | ANT3 |
+
+2×2 profiles (`bench-20mhz`, `bench-40mhz`) use **RF0 and RF1 only**: two DL
+layers on the TX/RX ports, uplink from RX2. Do not set `transmission_mode: same-port`
+(that would copy TX/RX onto the RX chain).
+
+ProtO-RU applies the UHD names from the YAML `sdr.tx_antenna` / `sdr.rx_antenna`
+fields in `lib/radio/uhd/radio_uhd_impl.cpp` (`set_tx_antenna` at line 351,
+`set_rx_antenna` at line 414). `same_port` mode at lines 424–450 copies the
+selected TX antenna onto RX. The UHD wrappers are
+`lib/radio/uhd/radio_uhd_device.h` lines 199–217 (`get_rx_antennas`,
+`set_rx_antenna`, `get_selected_tx_antenna`, `set_tx_antenna`).
+
+Initial `tx_gain: 15` targets about **0 dBm at the N310 TX/RX port**
+[ASSUMPTION] (Ettus N310 typical max ~+10..+18 dBm [DATASHEET]; 15 dB is well
+below the UBX max). UE `cell_cfg.ul_common.p_max: 10` dBm. Measure at the port
+before raising either.
+
+`scripts/up.sh` prints this map on every bring-up.
+
+### Alternative: direct cabling (not the current bench)
 
 | | N310 side (all TX **and** RX) | Cabling | UE side (RM520N, n78) |
 |---|---|---|---|
@@ -206,11 +240,10 @@ rates and the sample rate an integer divisor of it.
 | Pair 3 | RF2 | → | ANT1 — **RX only** |
 | Pair 4 | RF3 | → | ANT3 — **RX only** |
 
-- N310 RF0–RF3 are all bidirectional (TX and RX); the 4×4 DL uses all four.
-- On the UE side only ANT2 and ANT0 transmit in n78; ANT1 and ANT3 receive only, so a
-  4×4 DL has two TX chains and four RX chains.
-- 2×2 profiles use **RF0–RF1** (→ ANT2, ANT0 — both bidirectional); 4×4 uses all four.
-- `scripts/up.sh` prints this table on every bring-up (with the core map and image tags).
+- N310 RF0–RF3 are all bidirectional; a 4×4 DL would use all four.
+- On the UE, only ANT2 and ANT0 transmit in n78; ANT1 and ANT3 receive only.
+- 2×2 on that layout used RF0–RF1 (→ ANT2, ANT0). The divider map above is
+  what is cabled now.
 
 ## Release → ship → load → preflight
 

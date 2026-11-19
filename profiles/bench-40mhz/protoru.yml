@@ -1,6 +1,6 @@
 # bench-40mhz ProtO-RU — UHD radio (N310-10), 40 MHz 2x2, stage 2 of the bench
-# campaign (docs/BENCH_BUNDLE.md). Cabling: RF0 -> RM520N ANT2, RF1 -> ANT0
-# (both TX/RX); ANT1/ANT3 are RX-only on the UE side.
+# campaign (docs/BENCH_BUNDLE.md). Divider cabling: RF0 TX/RX -> ANT0,
+# RF1 TX/RX -> ANT1, RF0 RX2 <- ANT2, RF1 RX2 <- ANT3. DL 2 layers; UL from RX2.
 #
 # Sample rate 61.44 Msps = MCR 122.88 MHz / 2 (integer, even decimation), FFT
 # 2048 = 61.44e6 / 30 kHz. The null-radio b40 golden runs 46.08 Msps; the DU
@@ -54,9 +54,14 @@ ru_emu:
         # 61.44 Msps; 122.88 is the N310's lowest supported MCR.
         device_args: "type=n3xx,addr=192.168.10.2,mgmt_addr=192.168.10.2,clock_source=internal,time_source=internal,master_clock_rate=122.88e6"
         srate: 61.44
-        # Day-1 placeholder gains (N310 range -30..25 dB); lock after the first
-        # conducted RF check with the RM520N.
-        tx_gain: 10
+        # N310 antennas: see radio_uhd_impl.cpp set_tx_antenna ~351 / set_rx_antenna
+        # ~414; same-port at ~424 copies TX onto RX (not this cabling).
+        # Wrappers: radio_uhd_device.h:199-217.
+        tx_antenna: "TX/RX"
+        rx_antenna: "RX2"
+        transmission_mode: continuous
+        # First-TX gain: ~0 dBm at the N310 TX/RX port [ASSUMPTION]; see bench-20mhz.
+        tx_gain: 15
         rx_gain: 10
         clock_source: internal
         sync_source: internal

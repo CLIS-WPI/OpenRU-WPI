@@ -17,6 +17,9 @@ services:
       args:
         OS_VERSION: "22.04"
         OPEN5GS_VERSION: ${OPEN5GS_VERSION:-v2.7.6}
+        OPENRU_GIT_COMMIT: ${OPENRU_GIT_COMMIT:-unknown}
+        OPENRU_GIT_SUBMODULE: ${OPENRU_GIT_SUBMODULE:-unknown}
+        OPENRU_BUILD_DATE: ${OPENRU_BUILD_DATE:-unknown}
     env_file:
       - ../external/proto-ru/docker/open5gs/open5gs.env
     privileged: true
@@ -49,6 +52,7 @@ services:
         EXTRA_CMAKE_ARGS: ${EXTRA_CMAKE_ARGS:--DOPENRU_CUDA=OFF}
         OPENRU_GIT_COMMIT: ${OPENRU_GIT_COMMIT:-unknown}
         OPENRU_GIT_SUBMODULE: ${OPENRU_GIT_SUBMODULE:-unknown}
+        OPENRU_BUILD_DATE: ${OPENRU_BUILD_DATE:-unknown}
     profiles: ["build"]
     command: ["true"]
 

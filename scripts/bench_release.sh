@@ -70,6 +70,7 @@ EXPECTED_MARCH="x86-64-v3"
 [[ -n "$UHD_VERSION" && -n "$MARCH" ]] || fail "docker/bench.env must set UHD_VERSION and MARCH"
 [[ "$MARCH" == "$EXPECTED_MARCH" ]] || fail "docker/bench.env MARCH=$MARCH != $EXPECTED_MARCH (the bench host has no AVX-512)"
 
+BUILT_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 echo "[release] commit  $SHA ($BRANCH, submodule $SUBMODULE_COMMIT)"
 echo "[release] tag     $IMG (+ bench-latest), core $CORE_TAG"
 echo "[release] config  UHD $UHD_VERSION, MARCH $MARCH, FFTW ESTIMATE, CUDA off"
@@ -82,19 +83,24 @@ step "building $IMG from $SHA (BENCH=1, log: $BUILD_LOG)"
 # Make command-line assignments, not env: the Makefile includes lab.env /
 # versions.env, and makefile assignments override the environment (lab.env has
 # MARCH=x86-64-v4, versions.env has OPENRU_TAG=m2).
-BENCH=1 OPENRU_GIT_COMMIT="$SHA" OPENRU_GIT_SUBMODULE="$SUBMODULE_COMMIT" \
+BENCH=1 OPENRU_GIT_COMMIT="$SHA" OPENRU_GIT_SUBMODULE="$SUBMODULE_COMMIT" OPENRU_BUILD_DATE="$BUILT_AT" \
   timeout 7200 make build-protoru OPENRU_TAG="$TAG" UHD_VERSION="$UHD_VERSION" MARCH="$MARCH" \
     EXTRA_CMAKE_ARGS="-DENABLE_FFTW=ON -DOPENRU_CUDA=OFF -DOPENRU_FFTW_ESTIMATE=ON" 2>&1 \
   | tee "$BUILD_LOG" || fail "image build failed"
 docker image inspect "$IMG" >/dev/null 2>&1 || fail "build finished but $IMG is missing"
-docker image inspect openru/core:m0 >/dev/null 2>&1 || fail "openru/core:m0 missing (run make build-core)"
-docker tag openru/core:m0 "$CORE_TAG"
+
+step "building $CORE_TAG (Open5GS + provenance labels)"
+BENCH=1 OPENRU_GIT_COMMIT="$SHA" OPENRU_GIT_SUBMODULE="$SUBMODULE_COMMIT" OPENRU_BUILD_DATE="$BUILT_AT" \
+  timeout 1800 make build-core OPENRU_TAG="$TAG" 2>&1 | tee -a "$BUILD_LOG" || fail "core image build failed"
+docker image inspect "$CORE_TAG" >/dev/null 2>&1 || fail "build finished but $CORE_TAG is missing"
 docker tag "$IMG" openru/protoru:bench-latest
 docker tag "$CORE_TAG" openru/core:bench-latest
 
 # Provenance labels must name this commit (catches a stale tag).
 LABEL_COMMIT="$(docker image inspect "$IMG" --format '{{index .Config.Labels "org.openru.git.commit"}}')"
 [[ "$LABEL_COMMIT" == "$SHA" ]] || fail "image label org.openru.git.commit=$LABEL_COMMIT != $SHA"
+CORE_LABEL_COMMIT="$(docker image inspect "$CORE_TAG" --format '{{index .Config.Labels "org.openru.git.commit"}}')"
+[[ "$CORE_LABEL_COMMIT" == "$SHA" ]] || fail "core label org.openru.git.commit=$CORE_LABEL_COMMIT != $SHA"
 
 # Hard architecture check: the builder log AND the image label must both say
 # x86-64-v3 (the bench host has no AVX-512). On mismatch the freshly made bench
@@ -140,7 +146,6 @@ for img_tag in "$IMG" "$CORE_TAG"; do
   printf '%s\n' "$name" >> "$DEST/.files.tmp"
 done
 
-BUILT_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 HOSTNAME_FQ="$(hostname -f 2>/dev/null || hostname)"
 python3 - "$DEST" "$SHA" "$SHORT" "$BRANCH" "$SUBMODULE_COMMIT" "$TAG" \
   "$UHD_VERSION" "$MARCH" "$BUILT_AT" "$HOSTNAME_FQ" "$CONT_UHD" "$ROOT" <<'PY'
