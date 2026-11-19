@@ -111,7 +111,8 @@ for i, b in enumerate(blocks, 1):
                 "qos": {"index": qci, "arp": {"priority_level": 8,
                                               "pre_emption_capability": 1,
                                               "pre_emption_vulnerability": 1}},
-                "ue": {"ipv4": ""},
+                # No "ue" key: the SMF pool assigns the address. An empty
+                # "ue.ipv4" makes Open5GS reject the UE (cause 7, "Cannot find SUPI").
             }],
         }],
         "schema_version": 1,
