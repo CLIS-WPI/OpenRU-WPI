@@ -25,6 +25,10 @@ _PATTERNS = (
         r"\1\2" + REDACTED,
     ),
     (
+        re.compile(r"(?i)\bSUBSCRIBER_DB\s*=\s*[^\s\"'<>]+"),
+        "SUBSCRIBER_DB=" + REDACTED,
+    ),
+    (
         re.compile(r"(?i)\b(k|ki|key|opc|op|adm)(\s*[=:]\s*)[0-9a-f]{32}\b"),
         r"\1\2" + REDACTED,
     ),

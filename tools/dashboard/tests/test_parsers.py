@@ -188,13 +188,16 @@ class RedactionTests(unittest.TestCase):
     def test_secret_patterns(self):
         text = (
             "reach 100.101.102.103 via host.tailnet.ts.net token=supersecret "  # no-secrets-ok
-            "K=00112233445566778899aabbccddeeff ssh root@example.invalid"  # no-secrets-ok
+            "K=00112233445566778899aabbccddeeff ssh root@example.invalid "  # no-secrets-ok
+            "SUBSCRIBER_DB=001010123456780,00112233445566778899aabbccddeeff,opc,63bfa50ee6523365ff14c1f45f88737d"
         )
         clean = redact_text(text, mask_imsis=False)
         self.assertNotIn("100.101.102.103", clean)  # no-secrets-ok
         self.assertNotIn("supersecret", clean)
         self.assertNotIn("00112233445566778899aabbccddeeff", clean)  # no-secrets-ok
         self.assertNotIn("root@example.invalid", clean)
+        self.assertNotIn("SUBSCRIBER_DB=001010123456780", clean)
+        self.assertIn("SUBSCRIBER_DB=[redacted]", clean)
         self.assertIn("[redacted]", clean)
 
     def test_imsi_masking(self):
