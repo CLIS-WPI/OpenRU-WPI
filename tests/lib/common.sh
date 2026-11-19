@@ -137,10 +137,36 @@ test_common_init() {
   echo "[test:$SUITE/$PROFILE] started $(test_now_iso) host=$(hostname -s)"
 }
 
+
+# Redact a captured text log in place before it becomes evidence.
+test_redact_file() {
+  local p="${1:-}" tmp
+  [[ -n "$p" && -f "$p" ]] || return 0
+  tmp="$(mktemp)"
+  if "$ROOT/scripts/redact_secrets.sh" < "$p" > "$tmp"; then
+    mv "$tmp" "$p"
+  else
+    rm -f "$tmp"
+  fi
+}
+
+# Copy captured evidence into the run directory through the redactor.
+test_copy_evidence() {
+  local src="${1:-}" dst="${2:-}"
+  [[ -n "$src" && -n "$dst" && -f "$src" ]] || return 0
+  "$ROOT/scripts/save_evidence_log.sh" "$src" "$dst"
+}
+
 # Finish the run: write the result JSON and exit with the contract code.
 # Env: TEST_STATUS, TEST_SKIP_REASON, TEST_RC. Args: <metrics.json|-> <evidence...>
 test_finish() {
   local metrics="$1" && shift || true
+  local ev
+  for ev in "$@"; do
+    case "$ev" in
+      *.log) test_redact_file "$ev" ;;
+    esac
+  done
   TEST_END_ISO="$(test_now_iso)"
   [[ "$metrics" == "-" ]] && metrics=""
   local code

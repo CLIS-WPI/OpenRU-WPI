@@ -7,29 +7,22 @@
 # and sends NGSetupRequest. Do not judge OFH or call the stack "up" before this
 # returns. Polling is on the Open5GS AMF log, every 30 s, timeout 6 min.
 set -euo pipefail
-ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-BENCH="${BENCH:-0}"
 TIMEOUT="${NG_SETUP_TIMEOUT:-360}"
 INTERVAL="${NG_SETUP_INTERVAL:-30}"
 SINCE="${SINCE:-$(date -u +%Y-%m-%dT%H:%M:%SZ)}"
-
-if [[ "$BENCH" == "1" ]]; then
-  ENV_FILE="$ROOT/docker/bench.env"
-  COMPOSE=(docker compose --env-file "$ROOT/docker/versions.env" --env-file "$ENV_FILE"
-           -f "$ROOT/docker/compose.yml" -f "$ROOT/docker/compose.cpu.yml")
-else
-  ENV_FILE="$ROOT/docker/lab.env"
-  COMPOSE=(docker compose --env-file "$ROOT/docker/versions.env" --env-file "$ENV_FILE"
-           -f "$ROOT/docker/compose.yml")
-fi
-[[ -f "$ENV_FILE" ]] || { echo "[ng] FAIL: $ENV_FILE missing" >&2; exit 1; }
 
 start=$SECONDS
 while :; do
   if [[ -n "${NG_LOG_FILE:-}" ]]; then
     logs="$(cat "$NG_LOG_FILE")"
   else
-    logs="$("${COMPOSE[@]}" logs --no-color --since "$SINCE" core 2>/dev/null || true)"
+    core_cid="$(docker ps -q --filter label=com.docker.compose.project=openru \
+      --filter label=com.docker.compose.service=core --filter status=running 2>/dev/null | head -1 || true)"
+    if [[ -z "$core_cid" ]]; then
+      echo "[ng] FAIL: no running core container (compose service 'core'); start core/up first" >&2
+      exit 1
+    fi
+    logs="$(docker logs --since "$SINCE" "$core_cid" 2>&1 || true)"
   fi
   if grep -Eiq 'gNB-N2 accepted|NGSetupResponse|NG Setup (Procedure )?Response|Connected to AMF' <<<"$logs"; then
     echo "[ng] AMF accepted the DU NG Setup after $((SECONDS - start))s"
