@@ -39,17 +39,22 @@ quiet_once() {
     --out "$out"
 }
 
+redact_copy() {
+  local src="$1" dst="$2"
+  "${ROOT}/scripts/redact_secrets.sh" < "$src" > "$dst" 2>/dev/null || true
+}
+
 save_attempt() {
   local tag="$1" round="$2" attempt="$3" log="$4"
-  cp "$log" "${OUT}/${tag}-r${round}-a${attempt}.log" 2>/dev/null || true
+  redact_copy "$log" "${OUT}/${tag}-r${round}-a${attempt}.log"
   cp "${RAW}/smoke-fh-hostcheck.json" \
      "${OUT}/${tag}-r${round}-a${attempt}-hostcheck.json" 2>/dev/null || true
   cp "${RAW}/smoke-fh-hostcheck-pre.json" \
      "${OUT}/${tag}-r${round}-a${attempt}-hostcheck-pre.json" 2>/dev/null || true
-  cp "${RAW}/smoke-fh-du.log" \
-     "${OUT}/${tag}-r${round}-a${attempt}-du.log" 2>/dev/null || true
-  cp "${RAW}/smoke-fh-ru.log" \
-     "${OUT}/${tag}-r${round}-a${attempt}-ru.log" 2>/dev/null || true
+  redact_copy "${RAW}/smoke-fh-du.log" \
+     "${OUT}/${tag}-r${round}-a${attempt}-du.log"
+  redact_copy "${RAW}/smoke-fh-ru.log" \
+     "${OUT}/${tag}-r${round}-a${attempt}-ru.log"
   cp "${RAW}/caps-protoru.md" \
      "${OUT}/${tag}-r${round}-a${attempt}-caps-protoru.md" 2>/dev/null || true
   cp "${RAW}/caps-du.md" \

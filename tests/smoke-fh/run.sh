@@ -58,7 +58,7 @@ timeout "${TIMEOUT_SECS:-900}" make -C "$ROOT" smoke-fh \
   PROTORU_PROFILE="${PROTORU_PROFILE}" PROFILE="${DOCKER_PROFILE:-baseline}" \
   SMOKE_SECS="${SMOKE_SECS}" OPENRU_TAG="${OPENRU_TAG}" >>"$LOG" 2>&1 || RC=$?
 
-cp -f "${EV_FILES[@]/#/$RAW/}" "$EVDIR/" 2>/dev/null || true
+for f in "${EV_FILES[@]}"; do test_copy_evidence "$RAW/$f" "$EVDIR/$f"; done
 
 # 5. Map the outcome.
 if [[ "$RC" -eq 3 ]]; then

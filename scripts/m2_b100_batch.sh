@@ -27,9 +27,14 @@ quiet_once() {
     --out "$out"
 }
 
+redact_copy() {
+  local src="$1" dst="$2"
+  "${ROOT}/scripts/redact_secrets.sh" < "$src" > "$dst" 2>/dev/null || true
+}
+
 save_attempt() {
   local tag="$1" round="$2" attempt="$3" log="$4"
-  cp "$log" "${OUT}/${tag}-r${round}-a${attempt}.log" 2>/dev/null || true
+  redact_copy "$log" "${OUT}/${tag}-r${round}-a${attempt}.log"
   cp "${ROOT}/docs/reports/smoke-fh-hostcheck.json" \
      "${OUT}/${tag}-r${round}-a${attempt}-hostcheck.json" 2>/dev/null || true
   cp "${ROOT}/docs/reports/smoke-fh-hostcheck-pre.json" \

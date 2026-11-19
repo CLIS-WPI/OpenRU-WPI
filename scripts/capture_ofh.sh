@@ -51,7 +51,7 @@ else
   sudo timeout "$SECS" tcpdump -i "$BR" -w "$OUT" || true
 fi
 
-${COMPOSE} --profile fh logs --no-color du 2>&1 | tee "${ROOT}/docs/reports/raw/capture-${PROFILE}-du.log" >/dev/null || true
+${COMPOSE} --profile fh logs --no-color du 2>&1 | "${ROOT}/scripts/redact_secrets.sh" | tee "${ROOT}/docs/reports/raw/capture-${PROFILE}-du.log" >/dev/null || true
 ${COMPOSE} --profile fh down --remove-orphans >/dev/null 2>&1 || true
 test -s "$OUT"
 

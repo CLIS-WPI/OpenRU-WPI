@@ -41,7 +41,7 @@ fi
 echo "[smoke-core] running make smoke-core (timeout ${TIMEOUT_SECS:-900}s)" | tee -a "$LOG"
 RC=0
 timeout "${TIMEOUT_SECS:-900}" make -C "$ROOT" smoke-core OPENRU_TAG="${OPENRU_TAG}" >>"$LOG" 2>&1 || RC=$?
-cp -f "${EV_FILES[@]/#/$RAW/}" "$EVDIR/" 2>/dev/null || true
+for f in "${EV_FILES[@]}"; do test_copy_evidence "$RAW/$f" "$EVDIR/$f"; done
 
 if [[ "$RC" -eq 0 ]]; then
   TEST_STATUS=PASS; TEST_RC=0

@@ -155,8 +155,8 @@ docker exec openru-protoru-1 tar -C /dev/shm/openru_iq -cf - . | tar -C "$OUT" -
 test -s "$OUT/port0.cf32" && test -s "$OUT/iq_meta.json"
 ls -lah "$OUT"
 
-docker exec openru-protoru-1 cat /tmp/proto-ru.log > "${OUT}/ru.log" 2>&1 || \
-  docker logs openru-protoru-1 > "${OUT}/ru.log" 2>&1 || true
+docker exec openru-protoru-1 cat /tmp/proto-ru.log 2>&1 | "${ROOT}/scripts/redact_secrets.sh" > "${OUT}/ru.log" || \
+  docker logs openru-protoru-1 2>&1 | "${ROOT}/scripts/redact_secrets.sh" > "${OUT}/ru.log" || true
 docker rm -f openru-fh-replay >/dev/null 2>&1 || true
 "${COMPOSE[@]}" --profile fh down --remove-orphans >/dev/null 2>&1 || true
 rm -f "$TMP_YML"

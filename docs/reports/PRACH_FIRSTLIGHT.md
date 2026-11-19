@@ -1,5 +1,10 @@
 # PRACH U-plane lateness at first light (bench, 2026-11-18) — analysis and proposal
 
+> **Startup gate (2026-11-19):** the DU can take ~2.5 minutes to construct its O-DU before CU-CP sends
+> `NGSetupRequest` (measured: `Built` 16:48:59.668 -> `NGSetupResponse` 16:51:30.722). Do **not** judge OFH,
+> PRACH or OFH-zero from the first 90–180 s. Wait for `make up STACK=e2e` (or the AMF log's
+> `gNB-N2 accepted`) first; see `docs/BENCH_BUNDLE.md` "Startup timeline and the NG Setup gate".
+
 Evidence: `~/openru-artifacts/firstlight-20261118/firstlight-gnb.log` (copied from `ran`), plus the DU and
 ProtO-RU container logs in the same directory.
 
