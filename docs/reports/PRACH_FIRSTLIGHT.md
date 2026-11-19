@@ -21,13 +21,14 @@ ProtO-RU container logs in the same directory.
   empty. This is a **fixed next-slot boundary**; it does not use `t1a_min_up`/`t1a_max_up` (those bound the
   ordinary UL U-plane window).
 - Late packets are then rejected by the sequence-identifier check
-  (`lib/ofh/receiver/ofh_message_receiver_impl.cpp:83-90`, *"from the past"*) and by the PRACH data flow when the
-  context is gone (`lib/ofh/receiver/ofh_data_flow_uplane_uplink_prach_impl.cpp:20-80`).
+  (`lib/ofh/receiver/ofh_message_receiver_impl.cpp:83-90`, *"from the past"*) and, when the context is gone, by the
+  PRACH data-flow writer (`lib/ofh/receiver/ofh_uplane_prach_symbol_data_flow_writer.cpp:17` — the *"no uplink PRACH
+  context was found"* message).
 
-**`ta4` is not the PRACH receive window**
-- `apps/units/flexible_o_du/split_7_2/helpers/ru_ofh_config_cli11_schema.cpp:79-82` documents `ta4_min/ta4_max` as
-  the **Ta4 value for User-Plane**, i.e. the lead the DU uses when *transmitting* the UL C-plane request so the RU
-  can process in time. The DU's *receive* deadline for PRACH is the next-slot boundary above.
+**`ta4` is the ordinary UL RX window, not the PRACH deadline**
+- `ta4_min/ta4_max` (`apps/units/flexible_o_du/split_7_2/helpers/ru_ofh_config_cli11_schema.cpp:79-82`) bound the
+  ordinary UL U-plane reception window. The PRACH is handed over separately and its deadline is the fixed next-slot
+  boundary above, so `ta4` cannot relax the PRACH window.
 
 **ProtO-RU side (where the ~10 ms is added)**
 - `lib/ru/sdr/ru_lower_phy_uplink_request_handler_impl.cpp:13-18` — the PRACH occasion is forwarded to the OFH

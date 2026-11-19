@@ -71,8 +71,12 @@ Make it persistent on the bench host (root):
 printf '%s\n' '# OpenRU bench real-time profile: the NMI watchdog adds ~40 us hwlatdetect' \
   '# events (it is not an SMI; the SMI counter does not move).' \
   'kernel.nmi_watchdog = 0
-# UHD socket buffers for 30.72 Msps at MTU 9000 (never lower a higher existing
-# value; check with sysctl -n first).
+# UHD socket buffers for 30.72 Msps at MTU 9000. RAISE-ONLY: never lower an
+# existing higher value (the bench host already runs rmem_max=50000000). Check
+# with `sysctl -n` first; write max(current, 33554432), e.g.
+#   for k in net.core.wmem_max net.core.rmem_max; do
+#     cur=$(sysctl -n $k); [ "$cur" -lt 33554432 ] && echo "$k = 33554432"; done \
+#     >> /etc/sysctl.d/90-openru-rt.conf
 net.core.wmem_max = 33554432
 net.core.rmem_max = 33554432' > /etc/sysctl.d/90-openru-rt.conf
 sysctl --system
@@ -80,8 +84,8 @@ sysctl --system
 
 `make bench-preflight` fails if `/proc/sys/kernel/nmi_watchdog` is not `0` and records the kernel version
 (`uname -r`) in its log, because the hwlatdetect figures are only comparable per kernel. It also **fails when
-`net.core.wmem_max` or `net.core.rmem_max` is below 33554432** (UHD UDP socket buffers) and never lowers an
-existing higher value.
+`net.core.wmem_max` or `net.core.rmem_max` is below 33554432** (UHD UDP socket buffers); it only checks, it never
+writes sysctl values, and it never asks for a lower value than the host already has.
 
 `scripts/bench_preflight.sh` (via `make bench-preflight`) fails closed when:
 
