@@ -31,13 +31,13 @@ printf '  DU real-time       : %s\n' "${DU_CPUSET:-?}"
 printf '  housekeeping/IRQs  : 0-1,12-19 (bench); core containers: %s\n' "${CORE_CPUSET:-n/a}"
 echo
 echo "== antenna map (divider cabling; docs/BENCH_BUNDLE.md) =="
-printf '  Four 4-way dividers; each N310 port through 30 dB into its own divider.\n'
-printf '  Out1 -> modem A +20 dB; Out2 -> modem B +20 dB; Out3/Out4 -> 50 ohm.\n'
-printf '  RF0 TX/RX -> ANT0   (DL layer 0)\n'
-printf '  RF1 TX/RX -> ANT1   (DL layer 1)\n'
-printf '  RF0 RX2   <- ANT2   (modem main TX / UL)\n'
-printf '  RF1 RX2   <- ANT3\n'
-printf '  ~57 dB per path. UHD names: tx_antenna=TX/RX, rx_antenna=RX2.\n'
+printf '  30 dB into each divider; Out1/Out2 through 20 dB; Out3/Out4 = 50 ohm.\n'
+printf '  Div1 RF0 TX/RX : Out1 modem A ANT0, Out2 modem B ANT0\n'
+printf '  Div2 RF1 TX/RX : Out1 modem A ANT1, Out2 modem B ANT1\n'
+printf '  Div3 RF0 RX2   : Out1 modem A ANT2, Out2 modem B ANT2  (UL)\n'
+printf '  Div4 RF1 RX2   : Out1 modem A ANT3, Out2 modem B ANT3  (UL)\n'
+printf '  First test: modem A; modem B airplane (AT+CFUN=4).\n'
+printf '  ~57 dB/path. UHD: tx_antenna=TX/RX, rx_antenna=RX2.\n'
 echo
 
 case "$WHAT" in

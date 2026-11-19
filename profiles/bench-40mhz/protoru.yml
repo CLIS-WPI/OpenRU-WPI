@@ -1,6 +1,7 @@
 # bench-40mhz ProtO-RU — UHD radio (N310-10), 40 MHz 2x2, stage 2 of the bench
-# campaign (docs/BENCH_BUNDLE.md). Divider cabling: RF0 TX/RX -> ANT0,
-# RF1 TX/RX -> ANT1, RF0 RX2 <- ANT2, RF1 RX2 <- ANT3. DL 2 layers; UL from RX2.
+# campaign (docs/BENCH_BUNDLE.md). Four dividers: RF0 TX/RX / RF1 TX/RX /
+# RF0 RX2 / RF1 RX2; Out1=modem A, Out2=modem B. First test: modem A,
+# modem B AT+CFUN=4. DL 2 layers on TX/RX; UL from RX2.
 #
 # Sample rate 61.44 Msps = MCR 122.88 MHz / 2 (integer, even decimation), FFT
 # 2048 = 61.44e6 / 30 kHz. The null-radio b40 golden runs 46.08 Msps; the DU
@@ -60,9 +61,11 @@ ru_emu:
         tx_antenna: "TX/RX"
         rx_antenna: "RX2"
         transmission_mode: continuous
-        # First-TX gain: ~0 dBm at the N310 TX/RX port [ASSUMPTION]; see bench-20mhz.
-        tx_gain: 15
-        rx_gain: 10
+        # Same first-TX procedure as bench-20mhz: no UHD-gain→dBm mapping;
+        # start TX at probe minimum, raise 5 dB to RSRP −80…−90 dBm; RX at
+        # mid-range, trim from DU UL SNR. docs/BENCH_BUNDLE.md.
+        tx_gain: -30
+        rx_gain: -5
         clock_source: internal
         sync_source: internal
         max_proc_delay: 2
