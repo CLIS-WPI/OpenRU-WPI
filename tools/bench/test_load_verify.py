@@ -7,7 +7,9 @@ containerd (OCI-style blobs; the engine-generated image ID differs on load).
 """
 import io
 import json
+import os
 import pathlib
+import subprocess
 import sys
 import tarfile
 import tempfile
@@ -125,6 +127,46 @@ class LoadVerifyTest(unittest.TestCase):
     def test_not_loaded_fails(self):
         errors, _, _ = check(release(), {}, {})
         self.assertTrue(any("not loaded" in e for e in errors))
+
+
+class ObserveTest(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.dir = pathlib.Path(self.tmp.name)
+        bindir = self.dir / "bin"
+        bindir.mkdir()
+        fake = bindir / "docker"
+        fake.write_text(
+            "#!/bin/sh\n"
+            "echo 'sha256:1111\\t{\"org.openru.git.commit\": \"c843ff77\"}'\n")
+        fake.chmod(0o755)
+        self.env = dict(os.environ, PATH=f"{bindir}:{os.environ['PATH']}")
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def _release(self):
+        rel = self.dir / "RELEASE.json"
+        rel.write_text(json.dumps({"images": [{"repo_tag": "openru/protoru:bench-x"}]}))
+        return rel
+
+    def test_observe_writes_non_empty_valid_json(self):
+        out = self.dir / "observed.json"
+        res = subprocess.run([sys.executable, str(pathlib.Path(__file__).with_name("load_verify.py")),
+                              "observe", "--release", str(self._release()), "--out", str(out)],
+                             capture_output=True, text=True, env=self.env)
+        self.assertEqual(res.returncode, 0, res.stderr)
+        self.assertGreater(out.stat().st_size, 0, "observed file must not be empty")
+        self.assertIn("openru/protoru:bench-x", json.loads(out.read_text()))
+
+    def test_check_rejects_empty_observed(self):
+        out = self.dir / "observed.json"
+        out.write_text("")
+        res = subprocess.run([sys.executable, str(pathlib.Path(__file__).with_name("load_verify.py")),
+                              "check", "--release", str(self._release()), "--observed", str(out)],
+                             capture_output=True, text=True, env=self.env)
+        self.assertEqual(res.returncode, 2)
+        self.assertIn("missing or empty", res.stderr)
 
 
 if __name__ == "__main__":

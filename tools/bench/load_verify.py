@@ -14,13 +14,17 @@ Docker 29 with the containerd image store assigns different image IDs on
 
 Usage:
   load_verify.py config-digest TAR [TAR ...]        # JSON {repo_tag: "sha256:..."}
+  load_verify.py observe --release RELEASE.json --out OBSERVED.json
+                                                    # docker inspect -> observed set
   load_verify.py check --release RELEASE.json --observed OBSERVED.json
                        [--release-dir DIR] [--report LOAD-REPORT.json]
 """
 import argparse
 import hashlib
 import json
+import os
 import pathlib
+import subprocess
 import sys
 import tarfile
 from datetime import datetime, timezone
@@ -80,6 +84,35 @@ def _tar_digests(release_dir: pathlib.Path, release: dict) -> dict:
     return digests
 
 
+def observe(release: dict, out_path: str) -> int:
+    """Write the loaded image set (id + labels) for the release images.
+
+    The file is written with an explicit flush + fsync: the caller reads it back
+    immediately (a plain ``open(...).write(...)`` without close/flush left an
+    empty file on the bench host).
+    """
+    observed = {}
+    for img in release.get("images", []):
+        tag = img["repo_tag"]
+        res = subprocess.run(["docker", "image", "inspect", tag, "--format",
+                              "{{.Id}}\t{{json .Config.Labels}}"],
+                             capture_output=True, text=True)
+        if res.returncode != 0:
+            print(f"FAIL {tag}: not loaded")
+            continue
+        image_id, labels = res.stdout.strip().split("\t", 1)
+        observed[tag] = {"id": image_id, "labels": json.loads(labels) if labels else {}}
+    with open(out_path, "w") as fh:
+        json.dump(observed, fh, indent=2)
+        fh.write("\n")
+        fh.flush()
+        os.fsync(fh.fileno())
+    if not observed:
+        print("FAIL: no release image is loaded (empty observed set)", file=sys.stderr)
+        return 1
+    return 0
+
+
 def check(release: dict, observed: dict, tar_digests: dict):
     errors: list[str] = []
     notes: list[str] = []
@@ -128,6 +161,9 @@ def main() -> int:
     sub = ap.add_subparsers(dest="cmd", required=True)
     p_cfg = sub.add_parser("config-digest")
     p_cfg.add_argument("tars", nargs="+")
+    p_obs = sub.add_parser("observe")
+    p_obs.add_argument("--release", required=True)
+    p_obs.add_argument("--out", required=True)
     p_chk = sub.add_parser("check")
     p_chk.add_argument("--release", required=True)
     p_chk.add_argument("--observed", required=True)
@@ -143,8 +179,18 @@ def main() -> int:
             print(json.dumps(out, indent=2))
             return 0
 
+        if args.cmd == "observe":
+            return observe(json.loads(pathlib.Path(args.release).read_text()), args.out)
+
         release = json.loads(pathlib.Path(args.release).read_text())
-        observed = json.loads(pathlib.Path(args.observed).read_text())
+        observed_path = pathlib.Path(args.observed)
+        if not observed_path.is_file() or observed_path.stat().st_size == 0:
+            print(f"load_verify: observed set is missing or empty: {observed_path}", file=sys.stderr)
+            return 2
+        observed = json.loads(observed_path.read_text())
+        if not observed:
+            print(f"load_verify: observed set contains no images: {observed_path}", file=sys.stderr)
+            return 2
         release_dir = pathlib.Path(args.release_dir or pathlib.Path(args.release).parent)
         tar_digests = _tar_digests(release_dir, release)
         errors, notes, rows = check(release, observed, tar_digests)

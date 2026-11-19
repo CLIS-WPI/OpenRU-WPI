@@ -29,23 +29,11 @@ done
 echo "[load] verifying images by content (config digest + labels)"
 OBSERVED="$(mktemp)"
 trap 'rm -f "$OBSERVED"' EXIT
-python3 - "$DIR" "$OBSERVED" <<'PY'
-import json, subprocess, sys
-
-release = json.load(open(f"{sys.argv[1]}/RELEASE.json"))
-observed = {}
-for img in release["images"]:
-    tag = img["repo_tag"]
-    out = subprocess.run(["docker", "image", "inspect", tag, "--format",
-                          "{{.Id}}\t{{json .Config.Labels}}"],
-                         capture_output=True, text=True)
-    if out.returncode != 0:
-        print(f"FAIL {tag}: not loaded")
-        continue
-    image_id, labels = out.stdout.strip().split("\t", 1)
-    observed[tag] = {"id": image_id, "labels": json.loads(labels) if labels else {}}
-open(sys.argv[2], "w").write(json.dumps(observed, indent=2) + "\n")
-PY
+# The observed set is written by load_verify.py `observe` with an explicit
+# flush+fsync; the inline writer used to leave an empty file on the bench host.
+python3 "$ROOT/tools/bench/load_verify.py" observe \
+  --release "$DIR/RELEASE.json" --out "$OBSERVED" || exit 1
+[[ -s "$OBSERVED" ]] || { echo "FAIL: observed image set is empty ($OBSERVED)" >&2; exit 1; }
 python3 "$ROOT/tools/bench/load_verify.py" check \
   --release "$DIR/RELEASE.json" --observed "$OBSERVED" \
   --release-dir "$DIR" --report "$DIR/LOAD-REPORT.json"

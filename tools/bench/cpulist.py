@@ -9,6 +9,7 @@ The parser returns sorted unique CPU numbers and rejects malformed tokens so a
 crash like int('0 1 10 11 2 3 ...') cannot happen again.
 """
 import argparse
+import pathlib
 import sys
 
 
@@ -46,8 +47,11 @@ def _normalize(text: str) -> str:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("command", choices=["expand", "normalize", "check", "contains"])
-    ap.add_argument("lists", nargs="+")
+    ap.add_argument("command", choices=["expand", "normalize", "check", "contains", "hybrid"])
+    ap.add_argument("lists", nargs="*")
+    ap.add_argument("--core-file", default="/sys/devices/cpu_core/cpus")
+    ap.add_argument("--atom-file", default="/sys/devices/cpu_atom/cpus")
+    ap.add_argument("--which", choices=["p", "e"], default="p")
     args = ap.parse_args()
     try:
         if args.command == "expand":
@@ -62,6 +66,9 @@ def main() -> int:
                 return 1
         elif args.command == "contains":  # CPU is in list
             sys.exit(0 if int(args.lists[0]) in set(parse(args.lists[1])) else 1)
+        elif args.command == "hybrid":  # P/E from the hybrid-capable sysfs lists
+            path = pathlib.Path(args.core_file if args.which == "p" else args.atom_file)
+            print(" ".join(str(c) for c in parse(path.read_text())) if path.is_file() else "")
     except ValueError as exc:
         print(f"cpulist: {exc}", file=sys.stderr)
         return 2
