@@ -294,6 +294,63 @@ provisions them (IMSI, K, OPc, optional AMF/SST/DNN) into the running core and
 never prints the keys; IMSIs, DNN/SST checks and the SQN/AUTS notes are in
 [`docs/BENCH_SUBSCRIBERS.md`](BENCH_SUBSCRIBERS.md).
 
+## End-to-end stack (core + DU + RU)
+
+```bash
+make BENCH=1 up STACK=e2e PROFILE=bench-20mhz     # bench, UHD radio
+make BENCH=1 up STACK=e2e PROFILE=bench-40mhz
+make up STACK=e2e PROFILE=bench-20mhz RADIO=null  # dry run / no radio
+make down
+```
+
+Profiles used: `profiles/<profile>/du-core.yml` (NG/N2 to Open5GS **and** OFH),
+`protoru.yml` (UHD) or `protoru-null.yml` (dry run). The DU and RU carriers,
+PLMN 00101, TAC 7, SST 1, `ul_common.p_max: 10` and n78 628032 come from the
+profiles; DNN `internet` comes from the subscriber (see
+[`BENCH_SUBSCRIBERS.md`](BENCH_SUBSCRIBERS.md)).
+
+### Networking (explicit)
+
+| Network | Driver | Members | Why |
+|---|---|---|---|
+| `openru_core` 10.53.1.0/24 | bridge | core 10.53.1.2, DU 10.53.1.6 | N2 (SCTP) to the AMF and N3 to the UPF; plain MTU |
+| `openru_fh` 10.54.1.0/24, MTU 9000 | bridge | DU 10.54.1.10, ProtO-RU 10.54.1.20 (fixed MACs from the profiles) | Open Fronthaul eCPRI/U-plane needs jumbo frames; the fixed MACs in `du-core.yml`/`protoru.yml` live on this bridge |
+| `openru_radio` 192.168.10.0/24, MTU 9000 | **macvlan** on `enp5s0f1np1` | ProtO-RU 192.168.10.3 | UHD reaches the N310 (`192.168.10.2`) at L2 with no NAT, while the RU keeps its `fh` interface; host networking would remove the `fh` bridge, and a routed bridge would add NAT/latency |
+
+No container uses host networking. The DU has `eth0` = `fh` and `eth1` = `core`
+(`docker/compose.e2e.yml` lists `fh` first; `ru_ofh.cells[].network_interface` is
+`eth0`). CPU pinning comes from `docker/bench.env`: ProtO-RU `2-5`, DU `6-11`,
+core on `CORE_CPUSET` `12-19`, housekeeping/IRQs on `0-1,12-19`.
+
+### Dry run (GPU server, null radio in place of UHD) — 2026-11-19
+
+`core + DU(bench-20mhz/du-core.yml) + ProtO-RU(bench-20mhz/protoru-null.yml)`:
+NG Setup Response and `Connected to AMF` (PLMN 00101), cell `pci=1, 20 MHz,
+2T2R, dl_arfcn=628032 (n78)`, 60 s window with **zero late/drop** and slot
+indication advancing; rates DL U 6774.7/s, DL C 512.5/s, UL C 1800.2/s
+(−0.15 / −0.18 / +0.01 % vs the golden-derived expected rates); clean
+`make down`. Result JSON:
+`docs/reports/runs/bench-e2e/20261119T021918Z-bench-20mhz-null.json`.
+
+Also verified in the same dry run: an **O-RU-only restart** keeps the DU up, the
+cell active and the NG connection established, and OFH KPIs resume (no DU
+restart needed).
+
+### TX gain step-up (YAML only, RU restart)
+
+`tx_gain` is read from the YAML at ProtO-RU start — changing it requires a
+ProtO-RU restart. Use:
+
+```bash
+make BENCH=1 restart-ru PROFILE=bench-20mhz TX_GAIN=5
+# optional, if the DU must restart too: RESTART_DU=1
+```
+
+The target copies the profile to gitignored `build/local-profiles/<profile>/`,
+edits `tx_gain` **there** (the committed profile is never modified), recreates
+only `protoru` (plus `du` with `RESTART_DU=1`) and keeps the rest of the stack.
+Raise in 5 dB steps to RSRP −80…−90 dBm as described above.
+
 ## Release → ship → load → preflight
 
 Bench image artifacts live **only on this server** (never in git).

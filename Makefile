@@ -35,7 +35,7 @@ endif
 
 .PHONY: help preflight gpu-check build build-core build-protoru down logs \
         smoke smoke-fh smoke-core fetch-golden replay-golden compare-plmn capture \
-        bench-preflight up bench-release bench-ship check-no-secrets
+        bench-preflight up bench-release bench-ship check-no-secrets restart-ru
 
 help:
 	@echo "OpenRU targets (GPU: $$(test -f $(ROOT)/docker/lab.env && echo set || echo 'lab.env MISSING'))"
@@ -90,9 +90,19 @@ bench-ship:
 	  HOST="$(HOST)" RELEASE="$(RELEASE)" \
 	  $(ROOT)/scripts/bench_ship.sh
 
-UP_PROFILE ?= fh
+# Stack/profile/radio: make BENCH=1 up STACK=e2e PROFILE=bench-20mhz [RADIO=null]
+STACK ?= fh
+UP_RADIO ?= $(if $(filter 1,$(BENCH)),uhd,null)
 up:
-	@BENCH=$(BENCH) $(ROOT)/scripts/up.sh $(UP_PROFILE)
+	@BENCH=$(BENCH) STACK=$(STACK) PROFILE=$(PROFILE) RADIO=$(UP_RADIO) $(ROOT)/scripts/up.sh
+
+# TX gain step-up: edit a LOCAL copy of the profile (never the committed file)
+# and restart ProtO-RU only. Example:
+#   make BENCH=1 restart-ru PROFILE=bench-20mhz TX_GAIN=5
+restart-ru:
+	@test -n "$(TX_GAIN)" || { echo "usage: make BENCH=1 restart-ru PROFILE=<p> TX_GAIN=<0..65, 0.5 step>"; exit 2; }
+	@BENCH=$(BENCH) PROFILE=$(PROFILE) TX_GAIN=$(TX_GAIN) RADIO=$(UP_RADIO) \
+	  RESTART_DU=$(RESTART_DU) $(ROOT)/scripts/restart_ru.sh
 
 down:
 	-$(COMPOSE) --profile fh --profile core --profile full down --remove-orphans
@@ -115,7 +125,10 @@ smoke-fh: preflight
 	@mkdir -p $(REPORTS)
 	@rm -f $(REPORTS)/caps-protoru.md $(REPORTS)/caps-du.md
 	@echo "[smoke-fh] DU(no_core)+ProtO-RU $(PROTORU_PROFILE), $(SMOKE_SECS)s, GPU $(OPENRU_GPU_UUID)"
-	@$(COMPOSE) --profile fh --profile core --profile full down --remove-orphans >/dev/null 2>&1 || true
+	@pre=$$($(COMPOSE) --profile fh ps -q du protoru 2>/dev/null | grep -c . || true); \
+	  if [ "$$pre" -eq 0 ]; then echo 1 > $(REPORTS)/smoke-fh-started-by-us; \
+	  else echo 0 > $(REPORTS)/smoke-fh-started-by-us; \
+	       echo "[smoke-fh] reusing the running stack (it will not be torn down)"; fi
 	@DU_CONFIG_PATH=$(ROOT)/profiles/$(PROFILE)/du-fh.yml \
 	  PROTORU_CONFIG_PATH=$(PROTORU_YML) \
 	  $(COMPOSE) --profile fh up -d du protoru
@@ -123,10 +136,14 @@ smoke-fh: preflight
 	@cid_ru=$$($(COMPOSE) --profile fh ps -q protoru); \
 	  cid_du=$$($(COMPOSE) --profile fh ps -q du); \
 	  test -n "$$cid_ru" && test -n "$$cid_du" || { echo "FAIL: containers not up"; $(COMPOSE) --profile fh ps; exit 1; }; \
-	  docker exec $$cid_ru nvidia-smi -L | tee $(REPORTS)/smoke-gpu.txt; \
-	  grep -q "$(OPENRU_GPU_UUID)" $(REPORTS)/smoke-gpu.txt; \
-	  ! grep -q "$(OPENRU_FORBIDDEN_GPU_UUID)" $(REPORTS)/smoke-gpu.txt; \
-	  test "$$(grep -c '^GPU ' $(REPORTS)/smoke-gpu.txt)" = "1"; \
+	  if [ "$(OPENRU_GPU_UUID)" != "cpu-only" ]; then \
+	    docker exec $$cid_ru nvidia-smi -L | tee $(REPORTS)/smoke-gpu.txt; \
+	    grep -q "$(OPENRU_GPU_UUID)" $(REPORTS)/smoke-gpu.txt; \
+	    ! grep -q "$(OPENRU_FORBIDDEN_GPU_UUID)" $(REPORTS)/smoke-gpu.txt; \
+	    test "$$(grep -c '^GPU ' $(REPORTS)/smoke-gpu.txt)" = "1"; \
+	  else \
+	    echo "[smoke-fh] CPU-only host: skipping the GPU check"; \
+	  fi; \
 	  $(ROOT)/scripts/verify_caps.sh $$cid_ru eth0 $(REPORTS)/caps-protoru.md; \
 	  $(ROOT)/scripts/verify_caps.sh $$cid_du eth0 $(REPORTS)/caps-du.md
 	@echo "[smoke-fh] waiting for first ProtO-RU KPI with RX_TOTAL>0..."
@@ -147,7 +164,8 @@ smoke-fh: preflight
 	   --containers openru-protoru-1,openru-du-1 \
 	   --out $(REPORTS)/smoke-fh-hostcheck-pre.json || \
 	   { echo "[smoke-fh] INVALID: busy host before measurement (see $(REPORTS)/smoke-fh-hostcheck-pre.json)"; \
-	     $(COMPOSE) --profile fh down --remove-orphans >/dev/null 2>&1; exit 3; }
+	     if [ "$$(cat $(REPORTS)/smoke-fh-started-by-us 2>/dev/null || echo 0)" = 1 ]; then \
+	       $(COMPOSE) --profile fh down --remove-orphans >/dev/null 2>&1; fi; exit 3; }
 	@echo "[smoke-fh] measuring $(SMOKE_SECS)s with quiet-host monitor..."
 	@nohup python3 $(ROOT)/scripts/quiet_host.py --monitor --interval 30 \
 	   --reserved "$(PROTORU_CPUSET),$(DU_CPUSET)" \
@@ -165,7 +183,8 @@ smoke-fh: preflight
 	  } > $(REPORTS)/smoke-fh-ru.log
 	@python3 -c "import json,sys; d=json.load(open('$(REPORTS)/smoke-fh-hostcheck.json')); sys.exit(0 if d.get('valid') else 3)" || \
 	   { echo "[smoke-fh] INVALID: busy host during measurement (see $(REPORTS)/smoke-fh-hostcheck.json)"; \
-	     $(COMPOSE) --profile fh down --remove-orphans >/dev/null 2>&1; exit 3; }
+	     if [ "$$(cat $(REPORTS)/smoke-fh-started-by-us 2>/dev/null || echo 0)" = 1 ]; then \
+	       $(COMPOSE) --profile fh down --remove-orphans >/dev/null 2>&1; fi; exit 3; }
 	@set +e; \
 	  python3 $(ROOT)/scripts/parse_smoke_fh.py \
 	    --du-log $(REPORTS)/smoke-fh-du.log \
@@ -175,7 +194,9 @@ smoke-fh: preflight
 	    --hist-out $(REPORTS)/smoke-fh-late-hist.csv \
 	    --hostcheck $(REPORTS)/smoke-fh-hostcheck.json; \
 	  rc=$$?; \
-	  $(COMPOSE) --profile fh down --remove-orphans >/dev/null 2>&1; \
+	  if [ "$$(cat $(REPORTS)/smoke-fh-started-by-us 2>/dev/null || echo 0)" = 1 ]; then \
+	    $(COMPOSE) --profile fh down --remove-orphans >/dev/null 2>&1; \
+	  else echo "[smoke-fh] keeping the stack we did not start"; fi; \
 	  if [ $$rc -ne 0 ]; then echo "[smoke-fh] FAIL rc=$$rc"; exit $$rc; fi; \
 	  echo "[smoke-fh] PASS"
 
@@ -186,7 +207,10 @@ smoke-core: preflight
 	  $(ROOT)/profiles/baseline/du-core.yml \
 	  $(ROOT)/external/proto-ru/docker/open5gs/open5gs-5gc.yml \
 	  $(REPORTS)/plmn-compare.md
-	@$(COMPOSE_CORE) --profile fh --profile core --profile full down --remove-orphans >/dev/null 2>&1 || true
+	@pre=$$($(COMPOSE_CORE) --profile core ps -q core du 2>/dev/null | grep -c . || true); \
+	  if [ "$$pre" -eq 0 ]; then echo 1 > $(REPORTS)/smoke-core-started-by-us; \
+	  else echo 0 > $(REPORTS)/smoke-core-started-by-us; \
+	       echo "[smoke-core] reusing the running stack (it will not be torn down)"; fi
 	@DU_CONFIG_PATH=$(ROOT)/profiles/baseline/du-core.yml \
 	  $(COMPOSE_CORE) --profile core up -d core
 	@echo "[smoke-core] waiting for core healthy..."
@@ -208,7 +232,9 @@ smoke-core: preflight
 	  done; \
 	  echo "--- subscriber (IMSI prefix 00101) ---" | tee -a $(REPORTS)/smoke-core-du.log; \
 	  grep SUBSCRIBER $(ROOT)/external/proto-ru/docker/open5gs/open5gs.env | tee -a $(REPORTS)/smoke-core-du.log; \
-	  $(COMPOSE_CORE) --profile core down --remove-orphans >/dev/null 2>&1; \
+	  if [ "$$(cat $(REPORTS)/smoke-core-started-by-us 2>/dev/null || echo 0)" = 1 ]; then \
+	    $(COMPOSE_CORE) --profile core down --remove-orphans >/dev/null 2>&1; \
+	  else echo "[smoke-core] keeping the stack we did not start"; fi; \
 	  if [ $$ok -ne 1 ]; then echo "[smoke-core] FAIL: no NG Setup Response"; tail -40 $(REPORTS)/smoke-core-du.log; exit 1; fi; \
 	  echo "[smoke-core] PASS"
 

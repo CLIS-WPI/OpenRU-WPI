@@ -1,0 +1,21 @@
+# Bench / dry-run end-to-end stack: Open5GS core + OCUDU DU + ProtO-RU.
+#
+# Networking (explicit):
+#   * `core` bridge (10.53.1.0/24): DU <-> AMF/UPF (N2/N3). No MTU override.
+#   * `fh`   bridge (10.54.1.0/24, MTU 9000): DU <-> ProtO-RU Open Fronthaul
+#     (eCPRI/U-plane needs jumbo frames; the DU and RU keep their fixed
+#     MACs/IPs on this bridge).
+#   * `radio` macvlan (docker/compose.radio.yml, bench UHD only): ProtO-RU's
+#     second interface on the N310 subnet, parent ${BENCH_FH_IFACE}.
+# The DU is on both bridges; ProtO-RU is on the fh bridge (and the radio
+# macvlan when UHD is used). Containers never use host networking: the DU must
+# stay on the fh bridge for OFH, and the RU needs the radio L2 network without
+# giving up the fh bridge.
+services:
+  du:
+    networks: !override
+      fh:
+        ipv4_address: 10.54.1.10
+        mac_address: "02:00:00:00:00:10"
+      core:
+        ipv4_address: 10.53.1.6
