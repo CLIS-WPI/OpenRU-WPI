@@ -13,9 +13,10 @@
 
 log:
   filename: /tmp/proto-ru.log
-  # Debug collects the PRACH request/window/send timestamps for the UHD
-  # latency measurement. Verbose: use for the PRACH timing run, not a soak.
-  level: debug
+  # Keep the normal bench at info. The bounded PRACH-delay measurement mode
+  # generates a debug overlay in build/local-profiles/; see
+  # `make BENCH=1 PROFILE=bench-20mhz prach-timing`.
+  level: info
 
 ru_emu:
   timing_cpus: [2]
