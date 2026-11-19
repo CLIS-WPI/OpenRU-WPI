@@ -88,11 +88,17 @@ echo
 # attachment order; the compose files now pin ofh0/n2/radio0 and this fails
 # loudly (before the radio is used) if a container came up differently.
 check_iface() { # <container> <iface> <subnet-prefix> <what>
-  local cid="$1" iface="$2" prefix="$3" what="$4" out
-  out="$(docker exec "$cid" sh -c "ip -4 -o addr show dev '$iface' 2>/dev/null" || true)"
+  local cid="$1" iface="$2" prefix="$3" what="$4" out img
+  # Never `docker exec` into the DU: the exec'd process is scheduled inside the
+  # container's isolated cpuset (6-11), which the gnb fully occupies — that hung
+  # for ~7 minutes on first light. A throw-away container sharing the target's
+  # network namespace runs on the host CPUs and needs no extra privileges.
+  img="$(docker inspect -f '{{.Config.Image}}' "$cid" 2>/dev/null)"
+  out="$(timeout 15 docker run --rm --network "container:$cid" --entrypoint /bin/sh "$img" \
+           -c "ip -4 -o addr show dev '$iface' 2>/dev/null" 2>/dev/null || true)"
   if [[ -z "$out" ]]; then
     echo "[up] FAIL: $what: interface '$iface' missing in $cid" >&2
-    echo "      interfaces: $(docker exec "$cid" ip -4 -o addr 2>/dev/null | awk '{print $2}' | paste -sd' ' -)" >&2
+    echo "      interfaces: $(timeout 15 docker run --rm --network "container:$cid" --entrypoint /bin/sh "$img" -c 'ip -4 -o addr' 2>/dev/null | awk '{print $2}' | paste -sd' ' -)" >&2
     return 1
   fi
   if ! grep -q "inet ${prefix}" <<<"$out"; then

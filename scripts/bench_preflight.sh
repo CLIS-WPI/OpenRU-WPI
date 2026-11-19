@@ -135,6 +135,20 @@ else
   fail "interface $IFACE not found (X710 fronthaul port)"
 fi
 
+# --------------------------------------------------------- UHD UDP buffers --
+# UHD needs large socket buffers for 30.72 Msps at MTU 9000; the 32 MiB
+# default is the documented floor. Never lower an existing higher value.
+for key in net.core.wmem_max net.core.rmem_max; do
+  val="$(sysctl -n "$key" 2>/dev/null || true)"
+  if [[ -z "$val" ]]; then
+    fail "cannot read $key (set net.core.wmem_max/rmem_max >= 33554432 in /etc/sysctl.d/90-openru-rt.conf)"
+  elif (( val < 33554432 )); then
+    fail "$key=$val < 33554432 (UHD socket buffers; add '$key = 33554432' to /etc/sysctl.d/90-openru-rt.conf and sysctl --system — do not lower a higher existing value)"
+  else
+    ok "$key=$val >= 33554432"
+  fi
+done
+
 # ------------------------------------------------------------ NMI watchdog --
 # The kernel NMI watchdog fires hwlatdetect events of ~40 us on the bench host
 # (the SMI counter does not move). It must be off for a meaningful measurement.

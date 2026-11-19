@@ -70,12 +70,18 @@ Make it persistent on the bench host (root):
 ```bash
 printf '%s\n' '# OpenRU bench real-time profile: the NMI watchdog adds ~40 us hwlatdetect' \
   '# events (it is not an SMI; the SMI counter does not move).' \
-  'kernel.nmi_watchdog = 0' > /etc/sysctl.d/90-openru-rt.conf
+  'kernel.nmi_watchdog = 0
+# UHD socket buffers for 30.72 Msps at MTU 9000 (never lower a higher existing
+# value; check with sysctl -n first).
+net.core.wmem_max = 33554432
+net.core.rmem_max = 33554432' > /etc/sysctl.d/90-openru-rt.conf
 sysctl --system
 ```
 
 `make bench-preflight` fails if `/proc/sys/kernel/nmi_watchdog` is not `0` and records the kernel version
-(`uname -r`) in its log, because the hwlatdetect figures are only comparable per kernel.
+(`uname -r`) in its log, because the hwlatdetect figures are only comparable per kernel. It also **fails when
+`net.core.wmem_max` or `net.core.rmem_max` is below 33554432** (UHD UDP socket buffers) and never lowers an
+existing higher value.
 
 `scripts/bench_preflight.sh` (via `make bench-preflight`) fails closed when:
 
@@ -322,11 +328,22 @@ No container uses host networking. **Interface names are pinned** with compose
 profiles reference `ofh0` in `ru_ofh.cells[].network_interface`; nothing depends
 on Docker's network-attachment order (Docker 29 does not guarantee `eth0`/`eth1`
 ordering for multi-network containers). `scripts/up.sh` verifies inside each
-container that `ofh0` carries the fh subnet and `n2` the core subnet (and
+container (via a **throw-away container sharing the target's network namespace**,
+never `docker exec` — on first light an exec into the DU hung ~7 min because the
+gnb fully occupies the isolated cpuset 6-11 and the exec is scheduled there)
+that `ofh0` carries the fh subnet and `n2` the core subnet (and
 `radio0` the radio subnet when UHD is used) and **fails before starting the
 radio** if a name is missing or on the wrong subnet, tearing the stack down.
 CPU pinning comes from `docker/bench.env`: ProtO-RU `2-5`, DU `6-11`, core on
 `CORE_CPUSET` `12-19`, housekeeping/IRQs on `0-1,12-19`.
+
+The Open5GS database is on a **named volume** (`openru_core-db`, mounted at
+`/data/db` — the path the entrypoint's `mongod` actually uses, not
+`/var/lib/mongodb` from `mongod.conf`), so bench subscribers survive
+`make down`/`make up`; reset with `docker volume rm openru_core-db`. Provisioning
+stays explicit (`scripts/add_subscriber.sh`, idempotent upsert) rather than
+re-running it from `up.sh`: no key material is needed to start the stack, and a
+volume is the normal Docker persistence mechanism.
 
 ### Dry run (GPU server, null radio in place of UHD) — 2026-11-19
 

@@ -23,6 +23,10 @@ services:
     env_file:
       - ../external/proto-ru/docker/open5gs/open5gs.env
     privileged: true
+    volumes:
+      # Open5GS subscriber database (MongoDB): persists across `make down`/`up`.
+      # Removing the volume (docker volume rm openru_core-db) resets subscribers.
+      - core-db:/data/db
     command: 5gc -c open5gs-5gc.yml
     healthcheck:
       test: ["CMD-SHELL", "nc -z 127.0.0.20 7777"]
@@ -129,6 +133,8 @@ configs:
 volumes:
   du-logs:
   protoru-logs:
+  core-db:
+    name: openru_core-db
 
 networks:
   fh:
