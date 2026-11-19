@@ -66,16 +66,14 @@ ru_emu:
         tx_antenna: "TX/RX"
         rx_antenna: "RX2"
         transmission_mode: continuous
-        # UHD path gain does not correlate with output dBm (Ettus N310
-        # datasheet footnote 3). Record TX/RX ranges from uhd_usrp_probe;
-        # start TX at the probe minimum (datasheet −30…+20 dB [DATASHEET]).
-        # Raise 5 dB at a time until modem RSRP is −80…−90 dBm. Full TX
-        # range is safe at ~57 dB path loss (+18 dBm max [DATASHEET] →
-        # about −39 dBm at the modem). rx_gain starts at mid-range
-        # (datasheet −40…+30 → −5); trim from DU uplink SNR. See
-        # docs/BENCH_BUNDLE.md.
-        tx_gain: -30
-        rx_gain: -5
+        # UHD gain values measured on n310-10 (channels 0/1) with the
+        # in-container uhd_usrp_probe, 2026-11-19: TX 0.0–65.0 dB,
+        # RX 0.0–75.0 dB, step 0.5 dB. These are UHD gains, not dBm.
+        # tx_gain starts at the minimum of that range; raise 5 dB at a time
+        # until the modem RSRP is −80…−90 dBm. rx_gain starts mid-range.
+        # See docs/BENCH_BUNDLE.md.
+        tx_gain: 0
+        rx_gain: 37.5
         clock_source: internal
         sync_source: internal
         max_proc_delay: 2

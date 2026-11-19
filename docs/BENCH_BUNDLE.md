@@ -225,26 +225,48 @@ selected TX antenna onto RX. The UHD wrappers are
 `lib/radio/uhd/radio_uhd_device.h` lines 199–217 (`get_rx_antennas`,
 `set_rx_antenna`, `get_selected_tx_antenna`, `set_tx_antenna`).
 
-### First-TX gains (no UHD-gain → dBm conversion)
+### First-TX gains (UHD gain values, not dBm)
 
-Ettus N310 datasheet v3 footnote 3: **RX and TX path gain does not correlate
-with UHD gain settings** ([datasheet](https://www.ettus.com/wp-content/uploads/2019/01/USRP_N310_Datasheet_v3.pdf);
-[N300/N310 KB](https://kb.ettus.com/N300/N310)). Do not infer port dBm from the
-gain number. Datasheet ranges (confirm on this unit): TX **−30…+20 dB**, RX
-**−40…+30 dB**; max TX **+18 dBm** (1–4 GHz); max RX input **−15 dBm**.
+**Measured on the bench host** — in-container `uhd_usrp_probe` on n310-10,
+channels 0 and 1, 2026-11-19 (Cursor): **TX gain range 0.0–65.0 dB**, **RX gain
+range 0.0–75.0 dB**, **step 0.5 dB**. These are UHD gain settings; do not convert
+them to dBm (Ettus N310 datasheet v3 footnote 3: RX/TX path gain does not
+correlate with UHD gain settings —
+[datasheet](https://www.ettus.com/wp-content/uploads/2019/01/USRP_N310_Datasheet_v3.pdf),
+[N300/N310 KB](https://kb.ettus.com/N300/N310)). The datasheet ranges
+(−30…+20 dB TX, −40…+30 dB RX) are *generic*; the probe values above are what
+this unit reports and take precedence. They are recorded in `docker/bench.env`
+(`BENCH_TX_GAIN_MIN/MAX`, `BENCH_RX_GAIN_MIN/MAX`, `BENCH_GAIN_STEP`).
 
-1. From the bench image, run `uhd_usrp_probe` and **record** the TX and RX gain
-   ranges printed for this N310. If they differ from the datasheet, use the probe.
-2. Set `tx_gain` to the **minimum** of that TX range (profiles start at **−30**,
-   the datasheet minimum).
-3. Raise TX gain in **5 dB** steps while watching the modem's **RSRP**. Stop
-   when RSRP is **−80 to −90 dBm**.
-4. The **full TX range is safe** at ~57 dB path loss: datasheet max **+18 dBm**
-   at the N310 port → about **−39 dBm** at the modem.
-5. Set `rx_gain` to the **middle** of the reported RX range (profiles start at
-   **−5**, midpoint of −40…+30). Trim from the DU's uplink SNR.
-6. UE `cell_cfg.ul_common.p_max: 10` dBm → about **−47 dBm at RX2**, **32 dB
-   below** the −15 dBm RX limit.
+1. Profiles start at the **minimum of the measured TX range**: `tx_gain: 0`.
+2. Raise TX gain in **5 dB steps** while watching the modem's **RSRP**. Stop
+   when RSRP is **−80 to −90 dBm** (at 0 dB the modem will not see the cell yet —
+   raise until the SSB appears, then continue to the target). Record the final
+   value in the profile and the run log.
+3. The full TX range is safe at ~57 dB path loss (datasheet max **+18 dBm** at
+   the port → about **−39 dBm** at the modem).
+4. `rx_gain` starts at the **middle** of the measured RX range: **37.5 dB**;
+   trim from the DU's uplink SNR. UE `cell_cfg.ul_common.p_max: 10` dBm → about
+   **−47 dBm at RX2**, **32 dB below** the −15 dBm RX limit.
+5. `make bench-preflight` parses the probe's `Gain range:` lines (falling back
+   to the values above when the probe reports none) and **fails** if any
+   `profiles/bench-*/protoru.yml` gain lies outside the range or off the 0.5 dB
+   step.
+
+## ModemManager
+
+ModemManager grabs the modems and rewrites their AT configuration, so it must be
+**stopped before AT configuration** (`AT+CFUN=4`, band/DNN settings) and must
+**not manage the modems during tests**. On the bench it is stopped but still
+*enabled*, so it returns after a reboot:
+
+```bash
+sudo systemctl disable --now ModemManager    # persistent; survives reboot
+systemctl is-active ModemManager             # must print "inactive"
+```
+
+`make bench-preflight` warns when ModemManager is active and warns when it is
+still enabled.
 
 `scripts/up.sh` prints the divider map on every bring-up.
 

@@ -21,6 +21,8 @@ IFACE="${BENCH_FH_IFACE:-}"
 USRP_SERIAL="${BENCH_USRP_SERIAL:-}"
 
 FAIL=0
+PROBE_OUT_FILE="$(mktemp)"
+trap 'rm -f "$PROBE_OUT_FILE"' EXIT
 fail() { echo "FAIL  $*"; FAIL=$((FAIL + 1)); }
 ok()   { echo "ok    $*"; }
 warn() { echo "WARN  $*"; }
@@ -261,6 +263,7 @@ if docker image inspect "$IMG" >/dev/null 2>&1; then
       fail "probe returned no USRP with serial ${BENCH_USRP_SERIAL} (${PROBE_ARGS})"
     else
       ok "in-container uhd_usrp_probe OK: ${PROBE_ARGS}, serial ${BENCH_USRP_SERIAL:-?}"
+      printf '%s' "$OUT" > "$PROBE_OUT_FILE"
       printf '%s\n' "$OUT" | grep -iE "MPM|FPGA|filesystem" | head -2 | sed 's/^/      /'
     fi
   fi
@@ -278,6 +281,41 @@ else
   ok "image commit matches repo HEAD (${REPO_COMMIT:0:12})"
 fi
 docker image inspect openru/core:${OPENRU_TAG} >/dev/null 2>&1 || warn "openru/core:${OPENRU_TAG} not found (load the release: scripts/bench_load.sh <dir>)"
+
+# ------------------------------------------------------------ ModemManager --
+# ModemManager resets the modems' AT configuration; it must be stopped and must
+# not manage them during tests. On the bench it is stopped but still enabled and
+# comes back after a reboot.
+if command -v systemctl >/dev/null 2>&1; then
+  if systemctl is-active --quiet ModemManager 2>/dev/null; then
+    warn "ModemManager is active: sudo systemctl disable --now ModemManager before AT configuration (it returns after a reboot while enabled)"
+  else
+    ok "ModemManager is not active"
+    if [[ "$(systemctl is-enabled ModemManager 2>/dev/null || true)" == "enabled" ]]; then
+      warn "ModemManager is still enabled: it will start after a reboot (sudo systemctl disable ModemManager)"
+    fi
+  fi
+else
+  warn "systemctl unavailable: cannot check ModemManager"
+fi
+
+# ------------------------------------------------------- profile gain ranges --
+# Profile gains must sit inside the UHD gain ranges reported by the in-container
+# probe (fallback: the ranges measured on n310-10, docker/bench.env).
+if [[ -z "${BENCH_TX_GAIN_MIN:-}" || -z "${BENCH_RX_GAIN_MAX:-}" ]]; then
+  fail "docker/bench.env must set BENCH_TX_GAIN_MIN/MAX, BENCH_RX_GAIN_MIN/MAX (and BENCH_GAIN_STEP)"
+else
+  GAIN_ARGS=(--profiles "$ROOT/profiles"
+             --fallback-tx "$BENCH_TX_GAIN_MIN" "$BENCH_TX_GAIN_MAX"
+             --fallback-rx "$BENCH_RX_GAIN_MIN" "$BENCH_RX_GAIN_MAX"
+             --step "${BENCH_GAIN_STEP:-0.5}")
+  [[ -s "$PROBE_OUT_FILE" ]] && GAIN_ARGS+=(--probe "$PROBE_OUT_FILE")
+  if GAIN_OUT="$(python3 "$ROOT/tools/bench/probe_gains.py" "${GAIN_ARGS[@]}" 2>&1)"; then
+    printf '%s\n' "$GAIN_OUT" | sed 's/^/ok    /'
+  else
+    fail "profile gains vs UHD gain ranges:\n$GAIN_OUT"
+  fi
+fi
 
 echo
 if [[ "$FAIL" -eq 0 ]]; then
