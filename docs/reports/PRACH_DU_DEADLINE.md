@@ -24,9 +24,9 @@ Evidence tags follow `docs/BRIEF_PHASE1.md`; every number below is `[MEASURED]`,
 
 | # | Item | Status |
 |---|------|--------|
-| 1 | Config path `ru_ofh.prach_rx_extra_slots` -> sector -> receiver -> closed window | implemented in fork |
-| 2 | Ring validation (`1 + extra <= repo_size - 2`) with `report_error` | implemented in fork |
-| 3 | 600 s null-radio gate on this server; record value + RU reply delay | pending |
+| 1 | Config path `ru_ofh.prach_rx_extra_slots` -> sector -> receiver -> closed window | implemented in fork (`774837ebc4`) |
+| 2 | Ring validation (`1 + extra <= repo_size - 2`) with `report_error` | implemented in fork (`774837ebc4`) |
+| 3 | 600 s null-radio gate on this server; record value + RU reply delay | in progress (screening) |
 | 4 | Bench profiles: server value + margin, `[UNVERIFIED]` on UHD, RU traces on | pending |
 | 5 | OpenRU-WPI PR with submodule bump, profiles and gate evidence | pending |
 | 6 | Tag `v0.1.6-bench` + `make bench-release` (after human merge) | pending |
@@ -47,7 +47,17 @@ Evidence tags follow `docs/BRIEF_PHASE1.md`; every number below is `[MEASURED]`,
   `1 + extra <= repository_size - 2`, i.e. up to **37** extra slots, and a larger value fails with
   `report_error` naming the value, the limit and the ring size. The ring is not grown.
 
-## Item 3 gate (pending)
+## Gate prerequisite found: RU emulator wire-SFN wrap (fork `de42c330f2`)
+
+Screening at 30 s exposed a second, unrelated miss: exactly one PRACH occasion every 2.56 s, always at wire slot
+`<sfn>.19`, and with no PRACH U-plane reply sent by the RU for it. The cause is the RU emulator's PRACH lookback:
+the O-DU wire slots wrap at 256 frames, but `slot_point` subtraction wraps at the 1024-frame hyperframe, so
+`ofh_slot - lookback` turns wire slot `0.1` into `1023.19` at every 256-frame wrap and the request recorded for wire
+slot `255.19` is never matched. No value of `prach_rx_extra_slots` can fix that (the DU context for `255.19` never
+receives data), so the fork now subtracts the lookback modulo the wire period
+(`ru_emulator_tti_orchestrator.cpp`, test added). This is a gate prerequisite, not part of the DU deadline change.
+
+## Item 3 gate (in progress)
 
 Planned: null-radio e2e stack, 600 s, quiet host, `/tmp/openru-measure.lock` held. Start from
 `prach_rx_extra_slots=0` and increase until 600 s shows 0 missed PRACH contexts and 0
