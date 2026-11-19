@@ -43,6 +43,14 @@ in_set() { $CPULIST contains "$1" "$2"; }
 subset() { $CPULIST check "$1" "$2" 2>/dev/null; }
 
 
+# Root filesystem headroom: a full / breaks sysfs/lscpu reads and docker load
+# (the bench images need ~7 GB loaded plus tarball temp space).
+DISK_AVAIL_KB="$(df -Pk / 2>/dev/null | awk 'NR==2 {print $4}')"
+if [[ -n "$DISK_AVAIL_KB" ]] && (( DISK_AVAIL_KB < 5 * 1024 * 1024 )); then
+  fail "root filesystem full: only $(df -Ph / | awk 'NR==2 {print $4}') free on / (need >= 5 GiB; the bench images need ~7 GB loaded — see docs/BENCH_BUNDLE.md 'Disk space')"
+fi
+[[ -n "$DISK_AVAIL_KB" ]] && ok "root filesystem free: $(df -Ph / | awk 'NR==2 {print $4}')"
+
 echo "== bench preflight ($BENCH_ENV) =="
 echo "    host=$(hostname -s 2>/dev/null || echo '?') kernel=$(uname -r) arch=$(uname -m) date=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 echo "    protoru=${PROTORU_CPUSET} du=${DU_CPUSET} tag=${OPENRU_TAG} iface=${IFACE}"
@@ -67,9 +75,20 @@ if [[ -z "$P_LIST" ]]; then
     if (( m >= 4000 )); then P_LIST="$P_LIST $c"; else E_LIST="$E_LIST $c"; fi
   done
 fi
+if [[ -z "$P_LIST" ]]; then
+  # Hybrid Intel sysfs (intel_pstate hybrid / HWP): the P/E split is exported
+  # directly. This also works when cpufreq/lscpu read fail (e.g. a full /).
+  CORE_CPUS_FILE="${BENCH_CPU_CORE_SYSFS:-/sys/devices/cpu_core/cpus}"
+  ATOM_CPUS_FILE="${BENCH_CPU_ATOM_SYSFS:-/sys/devices/cpu_atom/cpus}"
+  if [[ -r "$CORE_CPUS_FILE" ]]; then
+    P_LIST=" $(python3 "$ROOT/tools/bench/cpulist.py" hybrid --core-file "$CORE_CPUS_FILE" --atom-file "$ATOM_CPUS_FILE" --which p)"
+    E_LIST=" $(python3 "$ROOT/tools/bench/cpulist.py" hybrid --core-file "$CORE_CPUS_FILE" --atom-file "$ATOM_CPUS_FILE" --which e)"
+    ok "P/E classification from hybrid sysfs ($CORE_CPUS_FILE, $ATOM_CPUS_FILE)"
+  fi
+fi
 P_COUNT=$(echo $P_LIST | wc -w); E_COUNT=$(echo $E_LIST | wc -w)
 if [[ "$P_COUNT" -eq 0 ]]; then
-  fail "cannot classify P/E cores (no cpufreq/lscpu max frequency)"
+  fail "cannot classify P/E cores (no cpufreq/lscpu max frequency and no /sys/devices/cpu_core/cpus)"
 else
   ok "P cores (logical):$(echo $P_LIST | tr ' ' ',')  E cores (logical):$(echo $E_LIST | tr ' ' ',')"
   ok "counts: P=$P_COUNT (expect 12), E=$E_COUNT (expect 8)"

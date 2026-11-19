@@ -363,6 +363,45 @@ edits `tx_gain` **there** (the committed profile is never modified), recreates
 only `protoru` (plus `du` with `RESTART_DU=1`) and keeps the rest of the stack.
 Raise in 5 dB steps to RSRP −80…−90 dBm as described above.
 
+## Disk space (bench host)
+
+Per release, on the bench host:
+
+| Item | Size |
+|---|---|
+| Release tarballs (`openru_protoru_bench-<sha>.tar.gz` + `openru_core_…`) | **≈ 2.9 GB** (artifacts location, e.g. `~/openru-artifacts`) |
+| Loaded images in Docker's data-root (protoru 4.97 GB + core 2.29 GB) | **≈ 7.3 GB** |
+| Peak during `docker load` (extraction temp alongside the images) | **≈ 8 GB free** |
+
+So keep **≥ 20 GB free in Docker's data-root** (two releases' worth of headroom)
+and **≥ 5 GB** on the artifacts filesystem. `make bench-preflight` fails early
+with a *"root filesystem full"* message when `/` has less than **5 GiB** free —
+a full root filesystem also breaks `lscpu`/cpufreq reads (this happened on the
+bench: P/E classification returned "no cpufreq/lscpu max frequency").
+
+### Proposal: move Docker's data-root to `/home` (not applied)
+
+The bench root filesystem is small; `/home` has the space. On the bench host
+(root), **only after draining containers**:
+
+```bash
+sudo systemctl stop docker docker.socket
+sudo mkdir -p /home/docker
+sudo rsync -aHAX --numeric-ids /var/lib/docker/ /home/docker/
+printf '%s\n' '{"data-root": "/home/docker"}' | sudo tee /etc/docker/daemon.json
+sudo systemctl start docker
+docker info --format '{{.DockerRootDir}}'          # expect /home/docker
+docker image ls | grep openru || true             # images are preserved by the rsync
+```
+
+If the images are not rsynced, they must be re-loaded
+(`scripts/bench_load.sh <release-dir>`). Verify with `df -h /home` before and
+after; keep the artifacts directory on the same filesystem if possible so the
+`docker load` peak does not cross filesystems.
+
+`bench_load.sh` writes its observed image set with `flush()`+`fsync()` before
+`load_verify` reads it (a plain write left an empty file on the bench).
+
 ## Release → ship → load → preflight
 
 Bench image artifacts live **only on this server** (never in git).

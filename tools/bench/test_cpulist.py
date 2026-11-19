@@ -3,6 +3,7 @@
 import pathlib
 import subprocess
 import sys
+import tempfile
 import unittest
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
@@ -42,6 +43,34 @@ class CpuListTest(unittest.TestCase):
         self.assertEqual(run("contains", "5", "0-7").returncode, 0)
         self.assertEqual(run("contains", "9", "0-7").returncode, 1)
         self.assertEqual(run("expand", "0 1 x").returncode, 2)
+
+
+class HybridTest(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.dir = pathlib.Path(self.tmp.name)
+        (self.dir / "core").write_text("0-11\n")
+        (self.dir / "atom").write_text("12-19\n")
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def _run(self, *args):
+        script = str(pathlib.Path(__file__).resolve().parent / "cpulist.py")
+        return subprocess.run([sys.executable, script, "hybrid", *args],
+                              capture_output=True, text=True)
+
+    def test_hybrid_lists(self):
+        core, atom = self.dir / "core", self.dir / "atom"
+        self.assertEqual(self._run("--core-file", str(core), "--atom-file", str(atom), "--which", "p").stdout.strip(),
+                         " ".join(str(c) for c in range(12)))
+        self.assertEqual(self._run("--core-file", str(core), "--atom-file", str(atom), "--which", "e").stdout.strip(),
+                         " ".join(str(c) for c in range(12, 20)))
+
+    def test_missing_atom_file_is_empty(self):
+        res = self._run("--core-file", str(self.dir / "core"), "--atom-file", str(self.dir / "nope"), "--which", "e")
+        self.assertEqual(res.returncode, 0)
+        self.assertEqual(res.stdout.strip(), "")
 
 
 if __name__ == "__main__":
