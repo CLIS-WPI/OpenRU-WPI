@@ -322,6 +322,30 @@ PLMN 00101, TAC 7, SST 1, `ul_common.p_max: 10` and n78 628032 come from the
 profiles; DNN `internet` comes from the subscriber (see
 [`BENCH_SUBSCRIBERS.md`](BENCH_SUBSCRIBERS.md)).
 
+### Bounded PRACH-delay measurement mode
+
+The normal bench `protoru.yml` stays at `log.level: info`. The PRACH delay is
+measured only in an explicitly named, bounded mode:
+
+```bash
+make BENCH=1 PROFILE=bench-20mhz prach-timing SECS=120
+```
+
+The target generates `build/local-profiles/bench-20mhz/protoru-prach-timing.yml`
+(gitignored), raises only that overlay to `log.level: debug`, runs `smoke-fh` for
+`SECS` (10–120 s, default 120) and collects the RU log in
+`docs/reports/raw/smoke-fh-ru.log`. It is a measurement mode, **not a soak**.
+
+The debug overlay is expensive because `RU_EMU` logs every OFH packing step:
+**~29 GB/h** measured on the null-radio gate (~0.97 GB for 120 s) `[MEASURED,
+null-radio; UHD expected similar per-slot, UNVERIFIED]`. The PRACH-only PHY
+`window complete` lines are a small fraction (~0.09 GB/h); the volume is dominated
+by RU_EMU debug. Keep the run bounded and do not enable this overlay in
+`protoru.yml`.
+
+`OCUDU_RU_TRACE` is compile-time in this tree and the RU emulator does not open a
+trace file, so it is not used by this mode.
+
 ### Networking (explicit)
 
 | Network | Driver | Members | Why |

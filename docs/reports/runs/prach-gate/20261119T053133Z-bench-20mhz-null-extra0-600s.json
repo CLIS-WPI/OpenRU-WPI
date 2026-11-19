@@ -1,0 +1,34 @@
+{
+  "schema": "openru-prach-gate/1",
+  "profile": "bench-20mhz",
+  "radio": "null",
+  "ru_log_level": "info",
+  "prach_rx_extra_slots": 0,
+  "duration_s": 600,
+  "window_start_utc": "2026-11-19T05:31:33Z",
+  "window_end_utc": "2026-11-19T05:41:33Z",
+  "prach_activity_seen": true,
+  "hostcheck_valid": true,
+  "missed_prach_contexts": 11,
+  "seq_id_from_the_past_total": 678,
+  "seq_id_from_the_past_eaxc_4_5": 80,
+  "ru_prach_window_complete": 59996,
+  "ru_building_reply": 0,
+  "ru_uplane_send": 0,
+  "ru_reply_delay_window_complete_to_send_ms": {},
+  "evidence": "openru/protoru:prach-extra, submodule 774837e, e2e core+DU+null-RU on this server",
+  "status": "INVALID_HOST_STALLS",
+  "image": "openru/protoru:prach-extra",
+  "submodule": "de42c330f2",
+  "note": "600 s run produced 11 missed PRACH contexts and 80 past-seq drops for eAxC 4/5, all inside two host-stall bursts (05:32:11 ~592 drops; 05:36:38 ~82 drops) that also dropped eAxC 0/1. The 37-slot ring limit (18.5 ms) cannot cover a ~120 ms burst; this is not a PRACH-deadline failure. In clean windows the same image gives 0/0 at extra=0.",
+  "bursts": [
+    {
+      "utc": "2026-11-19T05:32:11",
+      "drops": 592
+    },
+    {
+      "utc": "2026-11-19T05:36:38",
+      "drops": 82
+    }
+  ]
+}

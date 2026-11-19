@@ -1,0 +1,38 @@
+{
+  "schema": "openru-prach-gate-summary/1",
+  "date_utc": "2026-11-19",
+  "image": "openru/protoru:prach-extra",
+  "submodule": "de42c330f2",
+  "radio": "null",
+  "profile": "bench-20mhz",
+  "server": "OpenRU GPU server",
+  "server_value_extra_slots": 0,
+  "server_value_basis": "Smallest value needed in clean windows: 0. Null-radio RU reply is ~0.04 ms after the PRACH window completes, well inside the default next-slot deadline.",
+  "clean_window": {
+    "extra": 0,
+    "missed": 0,
+    "past_eaxc_4_5": 0,
+    "duration_s": 10,
+    "reply_delay_window_complete_to_send_ms": {
+      "median": 0.04,
+      "p95": 0.056,
+      "max": 0.152
+    }
+  },
+  "long_gate": {
+    "status": "INVALID_HOST_STALLS",
+    "reason": "600 s runs on this shared GPU server show host-stall bursts that drop eAxC 0/1 as well as 4/5; no value <= 37 slots (18.5 ms) can cover a ~120 ms burst.",
+    "runs": [
+      "20261119T053133Z-bench-20mhz-null-extra0-600s.json",
+      "20261119T055333Z-bench-20mhz-null-extra8-600s.json"
+    ]
+  },
+  "bench_value_extra_slots": 20,
+  "bench_value_basis": "First-light UHD reply delay 8.8 ms = ~17.6 slots at 30 kHz [DERIVED]; 20 leaves ~2 slots of margin and is <= the 37-slot ring limit. [UNVERIFIED] on UHD until the bench run.",
+  "evidence_tags": {
+    "null_reply_delay": "MEASURED",
+    "uhd_delay": "UNVERIFIED",
+    "uhd_slots": "DERIVED",
+    "ring_size": "DERIVED"
+  }
+}

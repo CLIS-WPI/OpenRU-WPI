@@ -35,7 +35,8 @@ endif
 
 .PHONY: help preflight gpu-check build build-core build-protoru down logs \
         smoke smoke-fh smoke-core fetch-golden replay-golden compare-plmn capture \
-        bench-preflight up bench-release bench-ship check-no-secrets restart-ru
+        bench-preflight up bench-release bench-ship check-no-secrets restart-ru \
+        prach-timing
 
 help:
 	@echo "OpenRU targets (GPU: $$(test -f $(ROOT)/docker/lab.env && echo set || echo 'lab.env MISSING'))"
@@ -98,6 +99,13 @@ up:
 	@BENCH=$(BENCH) STACK=$(STACK) PROFILE=$(PROFILE) RADIO=$(UP_RADIO) TX_GAIN=$(TX_GAIN) \
 	  $(ROOT)/scripts/up.sh
 
+# Bounded PRACH-delay measurement mode (bench UHD only; never a soak).
+# Generates a debug overlay in build/local-profiles/ and runs smoke-fh for
+# SECS=10..120; the normal bench profile stays at log.level info.
+#   make BENCH=1 PROFILE=bench-20mhz prach-timing SECS=120
+prach-timing:
+	@BENCH=$(BENCH) PROFILE=$(PROFILE) SECS=$(SECS) DRY_RUN=$(DRY_RUN) $(ROOT)/scripts/prach_timing_run.sh
+
 # TX gain step-up: edit a LOCAL copy of the profile (never the committed file)
 # and restart ProtO-RU only. Example:
 #   make BENCH=1 restart-ru PROFILE=bench-20mhz TX_GAIN=5
@@ -121,7 +129,7 @@ smoke: smoke-fh
 
 # PROTORU_PROFILE=emulator (M0) | null (M1+). Default emulator for backward compat.
 PROTORU_PROFILE ?= emulator
-PROTORU_YML := $(if $(filter null,$(PROTORU_PROFILE)),$(ROOT)/profiles/$(PROFILE)/protoru-null.yml,$(ROOT)/profiles/$(PROFILE)/protoru.yml)
+PROTORU_YML := $(if $(PROTORU_YML_OVERRIDE),$(PROTORU_YML_OVERRIDE),$(if $(filter null,$(PROTORU_PROFILE)),$(ROOT)/profiles/$(PROFILE)/protoru-null.yml,$(ROOT)/profiles/$(PROFILE)/protoru.yml))
 
 smoke-fh: preflight
 	@mkdir -p $(REPORTS)
