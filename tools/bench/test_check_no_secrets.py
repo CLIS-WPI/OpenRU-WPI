@@ -22,6 +22,7 @@ opc=<32 hex digits>
 CASES = {
     "tailscale_ip": "BENCH_HINT=100.101.102.103\n",
     "tailnet_name": "remote is on the tailnet now\n",
+    "tailnet_fqdn": "host GPU-server.tail076b56.ts.net\n",
     "tailnet_id": "host ece107\n",
     "ssh_key": "-----BEGIN OPENSSH PRIVATE KEY-----\n",
     "ssh_key_type": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI\n",
