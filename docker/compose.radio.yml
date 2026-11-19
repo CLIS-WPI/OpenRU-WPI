@@ -21,4 +21,5 @@ services:
   protoru:
     networks:
       radio:
+        interface_name: radio0
         ipv4_address: ${BENCH_RU_IP:-192.168.10.3}

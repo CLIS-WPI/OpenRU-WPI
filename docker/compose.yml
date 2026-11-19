@@ -69,9 +69,10 @@ services:
     configs:
       - source: du_config
         target: /opt/du.yml
-    # Only attach networks needed for the active profile (OFH binds eth0).
+    # Only attach networks needed for the active profile (OFH binds ofh0).
     networks:
       fh:
+        interface_name: ofh0
         ipv4_address: 10.54.1.10
         mac_address: "02:00:00:00:00:10"
     command: ["-c", "/opt/du.yml"]
@@ -112,6 +113,7 @@ services:
       - du
     networks:
       fh:
+        interface_name: ofh0
         ipv4_address: 10.54.1.20
         mac_address: "02:00:00:00:00:20"
     command:

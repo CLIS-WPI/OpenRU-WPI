@@ -38,11 +38,11 @@ cid_du=$(${COMPOSE} --profile fh ps -q du)
 docker exec "$cid" bash -lc 'grep -E "bandwidth:|srate:" /opt/protoru.yml | head -5' | tee "${ROOT}/docs/reports/raw/capture-${PROFILE}-cfg.txt"
 docker exec "$cid_du" bash -lc 'grep -E "bandwidth_MHz|channel_bandwidth" /opt/du.yml | head -5' | tee -a "${ROOT}/docs/reports/raw/capture-${PROFILE}-cfg.txt"
 
-# tcpdump on the docker bridge attached to protoru eth0
+# tcpdump on the docker bridge attached to protoru ofh0
 BR=$(docker network inspect openru_fh -f '{{(index .Options "com.docker.network.bridge.name")}}' 2>/dev/null || true)
 if [[ -z "${BR}" || "${BR}" == "<no value>" ]]; then
-  echo "[capture] using in-container tcpdump on protoru eth0"
-  docker exec "$cid" bash -lc 'rm -f /tmp/capture.pcapng /tmp/tcpdump.log; tcpdump -i eth0 -w /tmp/capture.pcapng -U >/tmp/tcpdump.log 2>&1 & echo $! > /tmp/tcpdump.pid'
+  echo "[capture] using in-container tcpdump on protoru ofh0"
+  docker exec "$cid" bash -lc 'rm -f /tmp/capture.pcapng /tmp/tcpdump.log; tcpdump -i ofh0 -w /tmp/capture.pcapng -U >/tmp/tcpdump.log 2>&1 & echo $! > /tmp/tcpdump.pid'
   sleep "$SECS"
   docker exec "$cid" bash -lc 'kill $(cat /tmp/tcpdump.pid) 2>/dev/null; sleep 1; ls -la /tmp/capture.pcapng; tail -5 /tmp/tcpdump.log'
   docker cp "$cid:/tmp/capture.pcapng" "$OUT"

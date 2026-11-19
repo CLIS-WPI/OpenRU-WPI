@@ -5,4 +5,5 @@ services:
     profiles: ["core"]
     networks: !override
       core:
+        interface_name: n2
         ipv4_address: 10.53.1.6

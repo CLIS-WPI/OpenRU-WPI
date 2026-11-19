@@ -83,6 +83,25 @@ printf '  First test: modem A; modem B airplane (AT+CFUN=4).\n'
 printf '  ~57 dB/path. UHD: tx_antenna=TX/RX, rx_antenna=RX2.\n'
 echo
 
+# Check a pinned interface name inside a container: it must exist and carry an
+# address of the expected subnet. Docker used to hand out eth0/eth1 by
+# attachment order; the compose files now pin ofh0/n2/radio0 and this fails
+# loudly (before the radio is used) if a container came up differently.
+check_iface() { # <container> <iface> <subnet-prefix> <what>
+  local cid="$1" iface="$2" prefix="$3" what="$4" out
+  out="$(docker exec "$cid" sh -c "ip -4 -o addr show dev '$iface' 2>/dev/null" || true)"
+  if [[ -z "$out" ]]; then
+    echo "[up] FAIL: $what: interface '$iface' missing in $cid" >&2
+    echo "      interfaces: $(docker exec "$cid" ip -4 -o addr 2>/dev/null | awk '{print $2}' | paste -sd' ' -)" >&2
+    return 1
+  fi
+  if ! grep -q "inet ${prefix}" <<<"$out"; then
+    echo "[up] FAIL: $what: interface '$iface' has $(awk '{print $4}' <<<"$out"), expected ${prefix}/…" >&2
+    return 1
+  fi
+  echo "[up] ok: $what $iface $(awk '{print $4}' <<<"$out")"
+}
+
 wait_healthy() { # <service> <seconds>
   local svc="$1" secs="${2:-120}" cid status i
   for i in $(seq 1 "$secs"); do
@@ -104,7 +123,16 @@ case "$STACK" in
   core) "${COMPOSE[@]}" --profile core up -d core; wait_healthy core || exit 1
         "${COMPOSE[@]}" --profile core up -d du ;;
   e2e)  "${COMPOSE[@]}" --profile core --profile fh up -d core; wait_healthy core || exit 1
-        "${COMPOSE[@]}" --profile core --profile fh up -d du protoru ;;
+        "${COMPOSE[@]}" --profile core --profile fh up -d du; sleep 2
+        du_cid="$("${COMPOSE[@]}" ps -q du | head -1)"
+        check_iface "$du_cid" ofh0 10.54.1. "DU" || { "${COMPOSE[@]}" --profile core --profile fh down --remove-orphans >/dev/null 2>&1; exit 1; }
+        check_iface "$du_cid" n2 10.53.1. "DU" || { "${COMPOSE[@]}" --profile core --profile fh down --remove-orphans >/dev/null 2>&1; exit 1; }
+        "${COMPOSE[@]}" --profile core --profile fh up -d protoru; sleep 2
+        ru_cid="$("${COMPOSE[@]}" ps -q protoru | head -1)"
+        check_iface "$ru_cid" ofh0 10.54.1. "ProtO-RU" || { "${COMPOSE[@]}" --profile core --profile fh down --remove-orphans >/dev/null 2>&1; exit 1; }
+        if [[ "$RADIO" == "uhd" ]]; then
+          check_iface "$ru_cid" radio0 192.168.10. "ProtO-RU radio" || { "${COMPOSE[@]}" --profile core --profile fh down --remove-orphans >/dev/null 2>&1; exit 1; }
+        fi ;;
 esac
 echo
 "${COMPOSE[@]}" ps

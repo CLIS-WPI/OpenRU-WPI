@@ -14,7 +14,7 @@ log:
 ru_emu:
   timing_cpus: [2]
   cells:
-    - network_interface: eth0
+    - network_interface: ofh0
       ru_mac_addr: 02:00:00:00:00:20
       du_mac_addr: 02:00:00:00:00:10
       enable_promiscuous: true

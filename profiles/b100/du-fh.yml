@@ -33,7 +33,7 @@ ru_ofh:
   enable_dl_static_compr_hdr: true
   iq_scaling: 16
   cells:
-    - network_interface: eth0
+    - network_interface: ofh0
       ru_mac_addr: 02:00:00:00:00:20
       du_mac_addr: 02:00:00:00:00:10
       # Untagged on docker bridge; must match ProtO-RU.
