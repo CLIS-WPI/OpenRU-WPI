@@ -103,6 +103,10 @@ writes sysctl values, and it never asks for a lower value than the host already 
   UHD 3.x). Preflight reads the container UHD version (must be `4.11.0.0`) and then runs `uhd_usrp_probe`
   inside the image; an incompatible N310 must be updated with `uhd_images_downloader` +
   `usrp_n3xx_fs_updater --type filesystem` (or the image rebuilt) before any run;
+- `REF=external` (the bench default) and the in-container probe does not report
+  `ref_locked=true` (false, missing sensor, or `BENCH_SKIP_USRP=1`). The probe is
+  opened with `clock_source=external,time_source=external`; `REF=internal`
+  skips the lock requirement;
 - the USRP is not visible to host UHD once `BENCH_USRP_REQUIRED=1` (until the N310 address is known this is a
   warning).
 
@@ -168,9 +172,14 @@ records `image: v1-candidate-v3`. Never present a v4 golden as validation of the
 | n310-30 | `192.168.30.2` | `enp5s0f3np3` | later stage |
 
 - **N310 software:** MPM 4.11.0.0-g0d7ed3b1 (MPM version 7.0), FPGA 8.2, filesystem 20260908111319.
-- **Clock:** sources available are `internal`, `external`, `gpsdo`. Day 1 uses
-  `clock_source=internal,time_source=internal`; the OctoClock on the LAN (`192.168.60.2`) provides the
-  10 MHz/PPS reference for a later external-clock stage.
+- **Clock / PPS:** N310-10 **REF IN** and **PPS IN** are cabled to the GPS-disciplined
+  OctoClock: `10 MHz OUT -> REF IN` and `1 PPS OUT -> PPS IN` (50 Ω coax). The
+  OctoClock is on the lab LAN (`192.168.60.2`); its GPS antenna needs sky view and
+  a GPS lock before a run. The default bench reference is **external**
+  (`clock_source=external,time_source=external` in `device_args` and
+  `clock_source: external` / `sync_source: external` in the YAML). Use
+  `REF=internal` on `make up`/`restart-ru` for the N310 onboard oscillator; the
+  external default requires the in-container probe to report `ref_locked=true`.
 - **Host UHD must not be used by the container.** The host has both a 4.10.0 distro package and a 4.11.0
   source build installed; the image ships its own UHD and the preflight probes **inside the container**.
 - **Image:** `openru/protoru:v1-candidate-v3-uhd411` — UHD **4.11.0.0** (matching the N310 MPM), FFTW +
@@ -182,14 +191,17 @@ records `image: v1-candidate-v3`. Never present a v4 golden as validation of the
 - **Preflight** (`make bench-preflight`) verifies the container UHD version equals `4.11.0.0`, then runs
   `uhd_usrp_probe --args addr=192.168.10.2[,mgmt_addr=192.168.10.2]` **inside the container**
   (`--network host`) and **fails** on any MPM/filesystem incompatibility, on a missing serial `33A6E56`, or on
-  a probe error. `BENCH_SKIP_USRP=1` is a dev-only escape hatch.
+  a probe error. When `REF=external` (default) the probe also opens with
+  `clock_source=external,time_source=external` and requires `ref_locked: true`;
+  `scripts/ref_check.sh` is the single parser used by `make up` and `restart-ru`.
+  `BENCH_SKIP_USRP=1` is a dev-only escape hatch and is rejected for external.
 
 ### ProtO-RU device args (bench profile)
 
 `profiles/bench-20mhz/protoru.yml` (20 MHz 2×2, stage 1):
 
 ```text
-type=n3xx,addr=192.168.10.2,mgmt_addr=192.168.10.2,clock_source=internal,time_source=internal,master_clock_rate=122.88e6
+type=n3xx,addr=192.168.10.2,mgmt_addr=192.168.10.2,clock_source=external,time_source=external,master_clock_rate=122.88e6
 ```
 
 **Master clock rate 122.88 MHz** — the N310 supports only **122.88, 125.0 and 153.6 MHz**
@@ -310,11 +322,17 @@ never prints the keys; IMSIs, DNN/SST checks and the SQN/AUTS notes are in
 ## End-to-end stack (core + DU + RU)
 
 ```bash
-make BENCH=1 up STACK=e2e PROFILE=bench-20mhz     # bench, UHD radio
+make BENCH=1 up STACK=e2e PROFILE=bench-20mhz     # bench, UHD, REF=external (default)
+make BENCH=1 up STACK=e2e PROFILE=bench-20mhz REF=internal
 make BENCH=1 up STACK=e2e PROFILE=bench-40mhz
 make up STACK=e2e PROFILE=bench-20mhz RADIO=null  # dry run / no radio
 make down
 ```
+
+`REF` is UHD-only: `external` (default) uses the OctoClock 10 MHz/PPS and is
+refused unless `ref_locked=true`; `internal` uses the N310 onboard oscillator.
+`make up` checks the lock before starting containers; `restart-ru` checks it
+after stopping the old RU and before recreating ProtO-RU.
 
 Profiles used: `profiles/<profile>/du-core.yml` (NG/N2 to Open5GS **and** OFH),
 `protoru.yml` (UHD) or `protoru-null.yml` (dry run). The DU and RU carriers,
@@ -353,6 +371,10 @@ trace file, so it is not used by this mode.
 | `openru_core` 10.53.1.0/24 | bridge | core 10.53.1.2, DU 10.53.1.6 | N2 (SCTP) to the AMF and N3 to the UPF; plain MTU |
 | `openru_fh` 10.54.1.0/24, MTU 9000 | bridge | DU 10.54.1.10, ProtO-RU 10.54.1.20 (fixed MACs from the profiles) | Open Fronthaul eCPRI/U-plane needs jumbo frames; the fixed MACs in `du-core.yml`/`protoru.yml` live on this bridge |
 | `openru_radio` 192.168.10.0/24, MTU 9000 | **macvlan** on `enp5s0f1np1` | ProtO-RU 192.168.10.3 | UHD reaches the N310 (`192.168.10.2`) at L2 with no NAT, while the RU keeps its `fh` interface; host networking would remove the `fh` bridge, and a routed bridge would add NAT/latency |
+
+The `restart-ru` claimed-device probe uses the dedicated `BENCH_PROBE_IP`
+(`192.168.10.4`) while the RU is stopped, so Docker never auto-assigns `.2`
+(the N310) on the macvlan.
 
 No container uses host networking. **Interface names are pinned** with compose
 `interface_name` — `ofh0` (fh), `n2` (core), `radio0` (macvlan) — and the
@@ -409,7 +431,10 @@ make BENCH=1 restart-ru PROFILE=bench-20mhz TX_GAIN=5
 The target copies the profile to gitignored `build/local-profiles/<profile>/`,
 edits `tx_gain` **there** (the committed profile is never modified), recreates
 only `protoru` (plus `du` with `RESTART_DU=1`) and keeps the rest of the stack.
-Raise in 5 dB steps to RSRP −80…−90 dBm as described above.
+The overlay path printed by `scripts/local_profile.sh` is **absolute**, so
+compose does not resolve it relative to the compose file. Add `REF=internal`
+to the same command to switch the reference in that overlay; the default is
+external. Raise in 5 dB steps to RSRP −80…−90 dBm as described above.
 
 ## Disk space (bench host)
 

@@ -93,10 +93,11 @@ bench-ship:
 
 # Stack/profile/radio: make BENCH=1 up STACK=e2e PROFILE=bench-20mhz [RADIO=null]
 # [TX_GAIN=<0..65, 0.5 step>] (starts at that TX gain via a local profile copy)
+# [REF=external|internal] (UHD reference; bench profiles default external)
 STACK ?= fh
 UP_RADIO ?= $(if $(filter 1,$(BENCH)),uhd,null)
 up:
-	@BENCH=$(BENCH) STACK=$(STACK) PROFILE=$(PROFILE) RADIO=$(UP_RADIO) TX_GAIN=$(TX_GAIN) \
+	@BENCH=$(BENCH) STACK=$(STACK) PROFILE=$(PROFILE) RADIO=$(UP_RADIO) TX_GAIN=$(TX_GAIN) REF=$(REF) \
 	  $(ROOT)/scripts/up.sh
 
 # Bounded PRACH-delay measurement mode (bench UHD only; never a soak).
@@ -108,10 +109,10 @@ prach-timing:
 
 # TX gain step-up: edit a LOCAL copy of the profile (never the committed file)
 # and restart ProtO-RU only. Example:
-#   make BENCH=1 restart-ru PROFILE=bench-20mhz TX_GAIN=5
+#   make BENCH=1 restart-ru PROFILE=bench-20mhz TX_GAIN=5 [REF=internal]
 restart-ru:
 	@test -n "$(TX_GAIN)" || { echo "usage: make BENCH=1 restart-ru PROFILE=<p> TX_GAIN=<0..65, 0.5 step>"; exit 2; }
-	@BENCH=$(BENCH) PROFILE=$(PROFILE) TX_GAIN=$(TX_GAIN) RADIO=$(UP_RADIO) \
+	@BENCH=$(BENCH) PROFILE=$(PROFILE) TX_GAIN=$(TX_GAIN) RADIO=$(UP_RADIO) REF=$(REF) \
 	  RESTART_DU=$(RESTART_DU) $(ROOT)/scripts/restart_ru.sh
 
 down:

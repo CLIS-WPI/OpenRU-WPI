@@ -58,9 +58,10 @@ ru_emu:
       ofh_cpus: [3, 4]
       sdr:
         device_driver: "uhd"
-        # N310-10 (serial 33A6E56), IQ over SFP1 10 GbE. 122.88 MHz is the
-        # N310's lowest supported master clock rate and 30.72 Msps is /4.
-        device_args: "type=n3xx,addr=192.168.10.2,mgmt_addr=192.168.10.2,clock_source=internal,time_source=internal,master_clock_rate=122.88e6"
+        # N310-10 (serial 33A6E56), IQ over SFP1 10 GbE. REF IN/PPS IN are
+        # cabled to the GPS-disciplined OctoClock; default external. 122.88 MHz
+        # is the N310's lowest supported master clock rate and 30.72 Msps is /4.
+        device_args: "type=n3xx,addr=192.168.10.2,mgmt_addr=192.168.10.2,clock_source=external,time_source=external,master_clock_rate=122.88e6"
         srate: 30.72
         # N310 antennas: UHD names are set here and applied in ProtO-RU
         # lib/radio/uhd/radio_uhd_impl.cpp (set_tx_antenna ~351, set_rx_antenna
@@ -77,8 +78,8 @@ ru_emu:
         # See docs/BENCH_BUNDLE.md.
         tx_gain: 0
         rx_gain: 37.5
-        clock_source: internal
-        sync_source: internal
+        clock_source: external
+        sync_source: external
         max_proc_delay: 2
         execution_profile: auto
         ru_cpus: [5]

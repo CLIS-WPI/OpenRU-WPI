@@ -2,7 +2,11 @@
 # TX gain step-up / RU restart for the bench stack.
 #
 #   make BENCH=1 restart-ru PROFILE=bench-20mhz TX_GAIN=5
+#   make BENCH=1 restart-ru PROFILE=bench-20mhz TX_GAIN=5 REF=internal
 #   make BENCH=1 restart-ru PROFILE=bench-20mhz TX_GAIN=10 RESTART_DU=1
+#
+# REF=external|internal (default external). external uses clock_source=external,
+# time_source=external; internal uses the N310 onboard oscillator.
 #
 # The committed profile is never modified: the copy lives in build/local-profiles/
 # (gitignored) and is passed to compose as PROTORU_CONFIG_PATH.
@@ -18,12 +22,18 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 PROFILE="${PROFILE:?set PROFILE=<profiles/…>}"
 TX_GAIN="${TX_GAIN:?set TX_GAIN=<value>}"
+REF="${REF:-external}"
+case "$REF" in
+  external|internal) ;;
+  *) echo "restart-ru: FAIL: REF must be external or internal (got $REF)" >&2; exit 1 ;;
+esac
 RADIO="${RADIO:-uhd}"
 RESTART_DU="${RESTART_DU:-0}"
 RELEASE_TIMEOUT="${RU_RELEASE_TIMEOUT:-60}"
 
-OUT="$("$ROOT/scripts/local_profile.sh" "$PROFILE" "$TX_GAIN" | tail -1)"
-export PROTORU_CONFIG_PATH="$ROOT/$OUT"
+OUT="$("$ROOT/scripts/local_profile.sh" "$PROFILE" "$TX_GAIN" "$REF" | tail -1)"
+export PROTORU_CONFIG_PATH="$OUT"
+export REF
 
 if [[ "${BENCH:-0}" == "1" ]]; then
   ENV_FILE="docker/bench.env"
@@ -55,12 +65,15 @@ if [[ -n "$OLD_CID" ]]; then
 fi
 
 # 2. Wait until the N310 is released (UHD only): uhd_find_devices must report
-#    claimed=False. A throw-away container on the radio macvlan network probes it.
+#    claimed=False. A throw-away container on the radio macvlan network probes it
+#    from BENCH_PROBE_IP (default .4), so Docker never auto-assigns .2 (the N310).
 if [[ "$RADIO" == "uhd" ]]; then
   [[ -n "${BENCH_USRP_ADDR:-}" ]] || { echo "restart-ru: FAIL: BENCH_USRP_ADDR missing" >&2; exit 1; }
+  PROBE_IP="${BENCH_PROBE_IP:-192.168.10.4}"
   released=0
   for _ in $(seq 1 "$RELEASE_TIMEOUT"); do
-    probe="$(timeout 15 docker run --rm --network openru_radio --entrypoint /bin/bash "$RU_IMAGE" \
+    probe="$(timeout 15 docker run --rm --network openru_radio --ip "$PROBE_IP" \
+               --entrypoint /bin/bash "$RU_IMAGE" \
                -lc "uhd_find_devices --args addr=${BENCH_USRP_ADDR} 2>&1" 2>&1 || true)"
     if printf '%s' "$probe" | grep -qiE 'claimed: *false'; then released=1; break; fi
     if printf '%s' "$probe" | grep -qiE 'claimed: *true'; then sleep 1; continue; fi
@@ -71,7 +84,11 @@ if [[ "$RADIO" == "uhd" ]]; then
     printf '%s\n' "$probe" | tail -5 | sed 's/^/      | /' >&2
     exit 1
   fi
-  echo "restart-ru: N310 ${BENCH_USRP_ADDR} released (claimed=False)"
+  echo "restart-ru: N310 ${BENCH_USRP_ADDR} released (claimed=False; probe ${PROBE_IP})"
+  if [[ "$REF" == "external" ]]; then
+    echo "restart-ru: checking N310 ref_locked (REF=external)"
+    "$ROOT/scripts/ref_check.sh"
+  fi
 fi
 
 # 3. Start ProtO-RU (and optionally the DU) with the local profile.
@@ -80,4 +97,4 @@ if [[ "$RESTART_DU" == "1" ]]; then
   "${COMPOSE[@]}" --profile fh --profile core up -d --no-deps --force-recreate du
   echo "restart-ru: DU recreated too"
 fi
-echo "restart-ru: done (tx_gain=${TX_GAIN}); watch: docker compose logs -f protoru du; then modem RSRP (target -80..-90 dBm)."
+echo "restart-ru: done (tx_gain=${TX_GAIN}, ref=${REF}); watch: docker compose logs -f protoru du; then modem RSRP (target -80..-90 dBm)."

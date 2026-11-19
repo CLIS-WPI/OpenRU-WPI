@@ -34,6 +34,11 @@ USRP_SERIAL="${USRP_SERIAL:-${BENCH_USRP_SERIAL:-}}"
 : "${PROTORU_CPUSET:?bench.env must set PROTORU_CPUSET}"
 : "${DU_CPUSET:?bench.env must set DU_CPUSET}"
 : "${OPENRU_TAG:?bench.env must set OPENRU_TAG}"
+REF="${REF:-external}"
+case "$REF" in
+  external|internal) ;;
+  *) echo "FAIL: REF must be external or internal (got $REF)" >&2; exit 1 ;;
+esac
 
 # CPU lists are parsed by tools/bench/cpulist.py (ranges, commas, spaces, mixed;
 # sysfs/lscpu output is space-separated, cmdline is comma-separated).
@@ -53,7 +58,7 @@ fi
 
 echo "== bench preflight ($BENCH_ENV) =="
 echo "    host=$(hostname -s 2>/dev/null || echo '?') kernel=$(uname -r) arch=$(uname -m) date=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-echo "    protoru=${PROTORU_CPUSET} du=${DU_CPUSET} tag=${OPENRU_TAG} iface=${IFACE}"
+echo "    protoru=${PROTORU_CPUSET} du=${DU_CPUSET} tag=${OPENRU_TAG} iface=${IFACE} ref=${REF}"
 
 # ---------------------------------------------------------------- topology --
 P_LIST=""
@@ -280,9 +285,16 @@ if docker image inspect "$IMG" >/dev/null 2>&1; then
   if [[ -z "${BENCH_USRP_ADDR:-}" ]]; then
     fail "BENCH_USRP_ADDR missing (N310 IQ address)"
   elif [[ "${BENCH_SKIP_USRP:-0}" == "1" ]]; then
-    warn "in-container USRP probe skipped (BENCH_SKIP_USRP=1)"
+    if [[ "$REF" == "external" ]]; then
+      fail "REF=external requires the in-container ref_locked probe; BENCH_SKIP_USRP=1 is not allowed"
+    else
+      warn "in-container USRP probe skipped (BENCH_SKIP_USRP=1)"
+    fi
   else
     PROBE_ARGS="addr=${BENCH_USRP_ADDR}${BENCH_MGMT_ADDR:+,mgmt_addr=${BENCH_MGMT_ADDR}}"
+    if [[ "$REF" == "external" ]]; then
+      PROBE_ARGS+=",clock_source=external,time_source=external"
+    fi
     PROBE_RC=0
     OUT="$(timeout 180 docker run --rm --network host --entrypoint /bin/bash "$IMG" -lc \
       "uhd_usrp_probe --args '${PROBE_ARGS}'" 2>&1)" || PROBE_RC=$?
@@ -298,6 +310,15 @@ if docker image inspect "$IMG" >/dev/null 2>&1; then
       ok "in-container uhd_usrp_probe OK: ${PROBE_ARGS}, serial ${BENCH_USRP_SERIAL:-?}"
       printf '%s' "$OUT" > "$PROBE_OUT_FILE"
       printf '%s\n' "$OUT" | grep -iE "MPM|FPGA|filesystem" | head -2 | sed 's/^/      /'
+      if [[ "$REF" == "external" ]]; then
+        if RADIO_PROBE_FILE="$PROBE_OUT_FILE" "$ROOT/scripts/ref_check.sh"; then
+          ok "N310 ref_locked=true (REF=external)"
+        else
+          fail "N310 ref_locked is not true (REF=external; see ref_check output above)"
+        fi
+      else
+        ok "REF=internal (N310 onboard oscillator; ref_locked not required)"
+      fi
     fi
   fi
 else
