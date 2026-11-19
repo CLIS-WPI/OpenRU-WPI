@@ -35,7 +35,8 @@ endif
 
 .PHONY: help preflight gpu-check build build-core build-protoru down logs \
         smoke smoke-fh smoke-core fetch-golden replay-golden compare-plmn capture \
-        bench-preflight up bench-release bench-ship check-no-secrets restart-ru
+        bench-preflight up bench-release bench-ship check-no-secrets restart-ru \
+        dashboard dashboard-test
 
 help:
 	@echo "OpenRU targets (GPU: $$(test -f $(ROOT)/docker/lab.env && echo set || echo 'lab.env MISSING'))"
@@ -45,6 +46,7 @@ help:
 	@echo "  make capture      M1: OFH pcap capture ($(CAPTURE_SECS)s, PROFILE=$(PROFILE))"
 	@echo "  make fetch-golden Fetch golden .cf32 via OPENRU_GOLDEN_URL + verify SHA256"
 	@echo "  make replay-golden CI gate: fh_replay vs golden, 0 differing samples"
+	@echo "  make BENCH=1 dashboard  Live read-only bench dashboard on 127.0.0.1:8787"
 
 preflight:
 	@$(ROOT)/scripts/gpu1_preflight.sh
@@ -106,6 +108,25 @@ restart-ru:
 
 down:
 	-$(COMPOSE) --profile fh --profile core --profile full down --remove-orphans
+
+# Read-only bench dashboard (v0: no controls). Requires fastapi/uvicorn/PyYAML;
+# pyserial is optional and only used for the read-only modem cards.
+DASHBOARD_PORT ?= 8787
+DASHBOARD_PROFILE ?= $(if $(filter 1,$(BENCH)),bench-20mhz,$(PROFILE))
+dashboard:
+	@python3 -c 'import fastapi, uvicorn, yaml' 2>/dev/null || { \
+	  echo "dashboard deps missing: python3 -m pip install -r $(ROOT)/tools/dashboard/requirements.txt" >&2; exit 2; }
+	@OPENRU_BENCH_ENV=$(ROOT)/docker/bench.env \
+	  OPENRU_PROFILE=$(DASHBOARD_PROFILE) \
+	  OPENRU_TAG=$(OPENRU_TAG) \
+	  OPENRU_GIT_COMMIT=$(OPENRU_GIT_COMMIT) \
+	  OPENRU_GIT_SUBMODULE=$(OPENRU_GIT_SUBMODULE) \
+	  OPENRU_COMPOSE_PROJECT=openru \
+	  OPENRU_DASH_PORT=$(DASHBOARD_PORT) \
+	  python3 $(ROOT)/tools/dashboard/serve.py
+
+dashboard-test:
+	@python3 -m unittest discover -s $(ROOT)/tools/dashboard/tests -v
 
 logs:
 	$(COMPOSE) --profile fh logs --tail=200 du protoru

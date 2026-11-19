@@ -1,0 +1,12 @@
+2026-11-19T04:16:41.887533112Z 11/19 05:16:41.887: [amf] INFO: gNB-N2 accepted[10.53.1.6]:54990 in ng-path module (../src/amf/ngap-sctp.c:113)
+2026-11-19T04:16:41.887592472Z 11/19 05:16:41.887: [amf] INFO: gNB-N2 accepted[10.53.1.6] in master_sm module (../src/amf/amf-sm.c:894)
+2026-11-19T04:16:41.902520160Z 11/19 05:16:41.902: [amf] INFO: gNB-N2[10.53.1.6] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+11/19 05:16:45.000: [amf] INFO: Registration request
+11/19 05:16:45.100: [amf] DEBUG: [imsi-001010000000001] Registration accept
+11/19 05:16:45.200: [amf] DEBUG: [imsi-001010000000001] Authentication request
+11/19 05:16:45.300: [amf] DEBUG: [imsi-001010000000001] Authentication response
+11/19 05:16:45.400: [amf] WARN: [imsi-001010000000001] Registration reject [7]
+11/19 05:16:45.500: [amf] WARN: [imsi-001010000000002] Authentication failure [20] (MAC failure)
+11/19 05:16:45.600: [smf] INFO: UE SUPI[imsi-001010000000001] DNN[internet] IPv4[10.45.0.2] IPv6[]
+11/19 05:16:45.700: [smf] INFO: PDU Session Establishment Reject [cause: 26]
+11/19 05:16:45.800: [amf] INFO: gNB-N2[10.53.1.99] connection refused

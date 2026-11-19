@@ -1,0 +1,7 @@
+# tracer: hwlat
+# latency: 23us
+Max Latency: 23us
+Below threshold
+# latency: 41us
+Max Latency: 41us
+Below threshold

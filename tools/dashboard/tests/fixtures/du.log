@@ -1,0 +1,15 @@
+  pci: 1
+  dl_arfcn: 628032
+  band: 78
+  common_scs: 30
+  channel_bandwidth_MHz: 20
+  ru_bandwidth_MHz: 20
+2026-11-19T04:16:41.886540 [GNB     ] [I] SSB derived parameters for cell: 1, band: 78, dl_arfcn:628032, nof_crbs: 51 scs:30kHz, ssb_scs:30kHz:
+2026-11-19T04:16:41.886600 [GNB     ] [I] SSB arfcn:627744
+2026-11-19T04:16:41.963097 [SCHED   ] [I] [  364.16] Processed slot events pci=1: Cell creation idx=0
+2026-11-19T04:16:43.322108 [METRICS ] MAC cell pci=1 metrics: slots=[400.0, 500.0) nof_slots=2000 slot_duration=500usec nof_voluntary_context_switches=1 nof_involuntary_context_switches=0 wall_clock_latency=[avg=10usec max=76usec max_slot=401.11] sched_latency=[avg=3usec max=68usec max_slot=401.11] dl_tti_req_latency=[avg=8usec max=42usec max_slot=496.1] tx_data_req_latency=[avg=6usec max=7usec max_slot=496.1] ul_tti_req_latency=[avg=2usec max=5usec max_slot=417.8] slot_ind_dequeue_latency=[avg=20usec max=55usec max_slot=477.18] slot_ind_msg_time_diff=[avg=500usec max=527usec max_slot=482.11]
+2026-11-13T22:35:28.642101 [METRICS ] OFH sector#0 metrics: pci=1 received messages stats: rx_total=14354 rx_early=64 rx_on_time=14264 rx_late=26 earliest_msg_us=-2607.12 latest_msg_us=51713.87, nof_missed_uplink_symbols=32 nof_missed_prach_occasions=0 ether_rx: cpu_usage=2.6% max_latency=17.45us avg_latency=1.84us throughput=148.14Mbps rx_bytes=18499536; ether_tx: cpu_usage=3.6% max_latency=23.44us avg_latency=4.27us throughput=75.10Mbps tx_bytes=9377536; ecpri: nof_past_seqid_msg=6 nof_future_seqid_msg=6; rcv_prach: nof_dropped_msg=0 cpu_usage=0.2% max_latency=20.26us avg_latency=0.68us; rcv_ul: nof_dropped_msg=58 cpu_usage=1.1% max_latency=7.26us avg_latency=0.91us; tx_dl_up: cpu_usage=0.4% dl_up_max_latency=13.48us dl_up_avg_latency=8.33us; tx_dl_cp: cpu_usage=0.0% dl_cp_max_latency=1.09us dl_cp_avg_latency=0.46us; tx_ul_cp: cpu_usage=0.1% ul_cp_max_latency=1.24us ul_cp_avg_latency=0.38us; message_tx: cpu_usage=4.5% max_latency=27.58us avg_latency=1.60us; tx_kpis: nof_late_dl_rgs=0 nof_late_ul_req=1 nof_late_cp_dl=0 nof_late_up_dl=0 nof_late_cp_ul=0
+2026-11-19T04:16:45.480383 [OFH     ] [I] Sector#0: dropped received Open Fronthaul User-Plane packet for eAxC value '4' as sequence identifier field is from the past
+2026-11-19T04:16:45.401549 [OFH     ] [W] Sector#0: missed incoming User-Plane PRACH messages for slot '707.19'
+2026-11-19T04:16:45.490000 [OFH     ] [I] Sector#0: received User-Plane message for eAxC '1' with sequence identifier '55' from the past; processing it
+2026-11-19T04:16:43.322121 [METRICS ] Scheduler cell pci=1 metrics: total_dl_brate= 0.0bps total_ul_brate= 0.0bps nof_prbs=51 nof_dl_slots=540 nof_ul_slots=271 nof_prach_preambles=0 error_indications=0 pdsch_rbs_per_slot=0 pusch_rbs_per_slot=0 pdschs_per_slot=0 puschs_per_slot=0 failed_pdcch=0 failed_uci=0 nof_ues=0 mean_latency=0usec max_latency=30usec max_latency_slot=54.4 latency_hist=[676, 0, 0, 0, 0, 0, 0, 0, 0, 0] msg3_ok=0 msg3_nok=0 late_dl_harqs=0 late_ul_harqs=0 pucch_tot_rb_usage_avg=0 pusch_rbs_per_tdd_slot_idx=[0, 0, 0, 0, 0] pdsch_rbs_per_tdd_slot_idx=[0, 0, 0, 0, 0] avg_prach_delay=n/a
