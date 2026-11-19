@@ -25,6 +25,11 @@ ru_ofh:
   ta4_max: 1480
   ta4_min: 800
   is_prach_cp_enabled: true
+  # PRACH receive deadline: wait 20 extra slots (10 ms at 30 kHz) before the
+  # fallback pop. Covers the first-light UHD reply delay of 8.8 ms (~18 slots)
+  # with ~2 slots margin [UNVERIFIED on UHD; null-radio gate value was 0].
+  # Ring limit: 1 + 20 <= 40 - 2 = 38.
+  prach_rx_extra_slots: 20
   ignore_ecpri_payload_size: true
   compr_method_ul: bfp
   compr_bitwidth_ul: 9

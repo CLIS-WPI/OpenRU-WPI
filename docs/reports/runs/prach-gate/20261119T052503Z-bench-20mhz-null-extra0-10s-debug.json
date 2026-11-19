@@ -1,0 +1,30 @@
+{
+  "schema": "openru-prach-gate/1",
+  "profile": "bench-20mhz",
+  "radio": "null",
+  "ru_log_level": "debug",
+  "prach_rx_extra_slots": 0,
+  "duration_s": 10,
+  "window_start_utc": "2026-11-19T05:25:03Z",
+  "window_end_utc": "2026-11-19T05:25:13Z",
+  "prach_activity_seen": true,
+  "hostcheck_valid": false,
+  "missed_prach_contexts": 0,
+  "seq_id_from_the_past_total": 0,
+  "seq_id_from_the_past_eaxc_4_5": 0,
+  "ru_prach_window_complete": 1000,
+  "ru_building_reply": 2000,
+  "ru_uplane_send": 2000,
+  "ru_reply_delay_window_complete_to_send_ms": {
+    "n": 2000,
+    "min_ms": 0.023,
+    "median_ms": 0.04,
+    "p95_ms": 0.056,
+    "max_ms": 0.152
+  },
+  "evidence": "openru/protoru:prach-extra, submodule 774837e, e2e core+DU+null-RU on this server",
+  "status": "PASS_CLEAN_WINDOW",
+  "note": "10 s clean window at extra=0: 0 missed PRACH contexts and 0 past-seq drops. RU window-complete -> U-plane send delay is the measured null-radio reply delay. The 600 s gate is reported separately because this GPU server has host-stall bursts.",
+  "image": "openru/protoru:prach-extra",
+  "submodule": "de42c330f2"
+}
