@@ -7,7 +7,7 @@
 #   make up STACK=e2e PROFILE=bench-20mhz RADIO=null   # dry run / null radio
 #
 # Env: STACK=fh|core|e2e, PROFILE=<profiles/…>, RADIO=uhd|null,
-#      REF=external|internal (UHD; default external on the bench profiles),
+#      REF=external|internal (UHD; default internal until the external-clock gate passes),
 #      BENCH=1 (docker/bench.env + docker/compose.cpu.yml).
 # Prints the core map, the antenna/divider map and the image tags on every
 # bring-up, so a cabling mistake is visible before the first run.
@@ -19,7 +19,7 @@ RADIO="${RADIO:-${BENCH:+uhd}}"
 RADIO="${RADIO:-null}"
 REF="${REF:-}"
 if [[ "$RADIO" == "uhd" ]]; then
-  REF="${REF:-external}"
+  REF="${REF:-internal}"
   case "$REF" in
     external|internal) ;;
     *) echo "[up] FAIL: REF must be external or internal (got $REF)" >&2; exit 2 ;;
@@ -42,7 +42,7 @@ PROFILE_DIR="$ROOT/profiles/$PROFILE"
 case "$RADIO" in
   uhd)  RU_YML="$PROFILE_DIR/protoru.yml"; [[ "${BENCH:-0}" == "1" ]] || {
           echo "[up] FAIL: RADIO=uhd is the bench path (BENCH=1); use RADIO=null here" >&2; exit 2; }
-        if [[ -n "${TX_GAIN:-}" || "$REF" == "internal" ]]; then
+        if [[ -n "${TX_GAIN:-}" || "$REF" == "external" ]]; then
           # Start at the chosen gain / reference without a restart: local copy,
           # never the committed profile (gitignored build/local-profiles/).
           RU_YML="$("$ROOT/scripts/local_profile.sh" "$PROFILE" "${TX_GAIN:--}" "$REF" | tail -1)"
@@ -75,7 +75,11 @@ echo "== stack: $STACK / profile: $PROFILE / radio: $RADIO =="
 echo "  DU config      : ${DU_YML#$ROOT/}"
 echo "  ProtO-RU config: ${RU_YML#$ROOT/}"
 if [[ "$RADIO" == "uhd" ]]; then
-  echo "  reference      : ${REF} (clock_source=${REF},time_source=${REF}; N310 REF IN/PPS IN from OctoClock GPS)"
+  if [[ "$REF" == "external" ]]; then
+    echo "  reference      : external 10 MHz (clock_source=external,time_source=internal; N310 PPS not used)"
+  else
+    echo "  reference      : internal (clock_source=internal,time_source=internal; N310 oscillator)"
+  fi
 fi
 echo
 echo "== core map (${ENV_FILE##*/}) =="

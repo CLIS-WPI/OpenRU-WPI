@@ -2,8 +2,9 @@
 # Bench-bundle preflight for the bench host (docs/BENCH_BUNDLE.md).
 #
 # Fails closed on: P/E topology drift, kernel isolation of the DU/RU cores,
-# X710 fronthaul port, MTU 9000, hwlatdetect >= 20 us, and a container UHD
-# major that does not match the N310 MPM/filesystem generation.
+# X710 fronthaul port, MTU 9000, hwlatdetect >= 20 us, a container UHD
+# major that does not match the N310 MPM/filesystem generation, and (when
+# REF=external) an unlocked UHD ref_locked sensor.
 #
 # Usage: BENCH_ENV=docker/bench.env scripts/bench_preflight.sh
 #   BENCH_HWLAT_SECS=60     hwlatdetect window (default 60)
@@ -34,7 +35,7 @@ USRP_SERIAL="${USRP_SERIAL:-${BENCH_USRP_SERIAL:-}}"
 : "${PROTORU_CPUSET:?bench.env must set PROTORU_CPUSET}"
 : "${DU_CPUSET:?bench.env must set DU_CPUSET}"
 : "${OPENRU_TAG:?bench.env must set OPENRU_TAG}"
-REF="${REF:-external}"
+REF="${REF:-internal}"
 case "$REF" in
   external|internal) ;;
   *) echo "FAIL: REF must be external or internal (got $REF)" >&2; exit 1 ;;
@@ -292,9 +293,6 @@ if docker image inspect "$IMG" >/dev/null 2>&1; then
     fi
   else
     PROBE_ARGS="addr=${BENCH_USRP_ADDR}${BENCH_MGMT_ADDR:+,mgmt_addr=${BENCH_MGMT_ADDR}}"
-    if [[ "$REF" == "external" ]]; then
-      PROBE_ARGS+=",clock_source=external,time_source=external"
-    fi
     PROBE_RC=0
     OUT="$(timeout 180 docker run --rm --network host --entrypoint /bin/bash "$IMG" -lc \
       "uhd_usrp_probe --args '${PROBE_ARGS}'" 2>&1)" || PROBE_RC=$?
@@ -311,13 +309,13 @@ if docker image inspect "$IMG" >/dev/null 2>&1; then
       printf '%s' "$OUT" > "$PROBE_OUT_FILE"
       printf '%s\n' "$OUT" | grep -iE "MPM|FPGA|filesystem" | head -2 | sed 's/^/      /'
       if [[ "$REF" == "external" ]]; then
-        if RADIO_PROBE_FILE="$PROBE_OUT_FILE" "$ROOT/scripts/ref_check.sh"; then
-          ok "N310 ref_locked=true (REF=external)"
+        if "$ROOT/scripts/ref_check.sh"; then
+          ok "N310 ref_locked=locked (REF=external, 10 MHz only)"
         else
-          fail "N310 ref_locked is not true (REF=external; see ref_check output above)"
+          fail "N310 ref_locked is not locked (REF=external; see ref_check output above)"
         fi
       else
-        ok "REF=internal (N310 onboard oscillator; ref_locked not required)"
+        ok "REF=internal (N310 oscillator; ref_locked not required)"
       fi
     fi
   fi

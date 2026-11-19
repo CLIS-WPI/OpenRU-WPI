@@ -2,11 +2,12 @@
 # TX gain step-up / RU restart for the bench stack.
 #
 #   make BENCH=1 restart-ru PROFILE=bench-20mhz TX_GAIN=5
-#   make BENCH=1 restart-ru PROFILE=bench-20mhz TX_GAIN=5 REF=internal
+#   make BENCH=1 restart-ru PROFILE=bench-20mhz TX_GAIN=5 REF=external
 #   make BENCH=1 restart-ru PROFILE=bench-20mhz TX_GAIN=10 RESTART_DU=1
 #
-# REF=external|internal (default external). external uses clock_source=external,
-# time_source=external; internal uses the N310 onboard oscillator.
+# REF=external|internal (default internal). external selects only the 10 MHz
+# reference (clock_source=external, time_source=internal); internal uses the
+# N310 onboard oscillator for both clock and time.
 #
 # The committed profile is never modified: the copy lives in build/local-profiles/
 # (gitignored) and is passed to compose as PROTORU_CONFIG_PATH.
@@ -22,7 +23,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 PROFILE="${PROFILE:?set PROFILE=<profiles/…>}"
 TX_GAIN="${TX_GAIN:?set TX_GAIN=<value>}"
-REF="${REF:-external}"
+REF="${REF:-internal}"
 case "$REF" in
   external|internal) ;;
   *) echo "restart-ru: FAIL: REF must be external or internal (got $REF)" >&2; exit 1 ;;
@@ -97,4 +98,4 @@ if [[ "$RESTART_DU" == "1" ]]; then
   "${COMPOSE[@]}" --profile fh --profile core up -d --no-deps --force-recreate du
   echo "restart-ru: DU recreated too"
 fi
-echo "restart-ru: done (tx_gain=${TX_GAIN}, ref=${REF}); watch: docker compose logs -f protoru du; then modem RSRP (target -80..-90 dBm)."
+echo "restart-ru: done (tx_gain=${TX_GAIN}, ref=${REF}; external=10 MHz only); watch: docker compose logs -f protoru du; then modem RSRP (target -80..-90 dBm)."
