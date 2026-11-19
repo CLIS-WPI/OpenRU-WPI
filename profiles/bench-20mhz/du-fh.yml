@@ -51,6 +51,10 @@ cell_cfg:
   pci: 1
   nof_antennas_dl: 2
   nof_antennas_ul: 2
+  # UE p-Max in SIB (dBm). 10 dBm + ~57 dB path ≈ −47 dBm at N310 RX2,
+  # 32 dB below the −15 dBm RX max-input [DATASHEET].
+  ul_common:
+    p_max: 10
   prach:
     prach_config_index: 159
     prach_root_sequence_index: 1

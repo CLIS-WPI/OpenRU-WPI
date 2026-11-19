@@ -171,7 +171,7 @@ elif command -v hwlatdetect >/dev/null 2>&1 || command -v hwlatdetect.py >/dev/n
         printf '%s\n' "$OUT" | tail -5 | sed 's/^/      | /'
       fi
     else
-      fail "hwlatdetect output not parseable (no 'Max Latency: <n>us' line)"
+      fail "hwlatdetect output not parseable (no 'Max Latency: <n>us' or below-threshold result)"
       printf '%s\n' "$OUT" | tail -8 | sed 's/^/      | /'
     fi
   fi

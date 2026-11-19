@@ -38,6 +38,26 @@ hwlatdetect:  test duration 60 seconds
      Sample window:     1000000us
 """
 
+# Captured on the bench host after kernel.nmi_watchdog=0: every sample was
+# below the 20 us threshold, so rt-tests prints this instead of "<n>us".
+BELOW_THRESHOLD_OUTPUT = """\
+hwlatdetect:  test duration 60 seconds
+   detector: tracer
+   parameters:
+        Latency threshold: 20us
+        Sample window:     1000000us
+        Sample width:      500000us
+     Non-sampling period:  500000us
+        Output File:       None
+
+Starting test
+test finished
+Max Latency: Below threshold
+Samples recorded: 0
+Samples exceeding threshold: 0
+SMIs counted: 0
+"""
+
 
 class HwlatParseTest(unittest.TestCase):
     def test_pass_sample(self):
@@ -57,11 +77,19 @@ class HwlatParseTest(unittest.TestCase):
     def test_missing_result_is_none(self):
         self.assertIsNone(parse_max_latency_us(NO_RESULT_OUTPUT))
 
+    def test_below_threshold_zero_samples_is_zero(self):
+        self.assertEqual(parse_max_latency_us(BELOW_THRESHOLD_OUTPUT), 0.0)
+        # Parameter "Latency threshold: 20us" must not be taken as the result.
+        self.assertNotEqual(parse_max_latency_us(BELOW_THRESHOLD_OUTPUT), 20.0)
+
     def test_cli_exit_codes(self):
         script = str(pathlib.Path(__file__).resolve().parent / "hwlat_parse.py")
         ok = subprocess.run([sys.executable, script], input=PASS_OUTPUT,
                             text=True, capture_output=True)
         self.assertEqual((ok.returncode, ok.stdout.strip()), (0, "12"))
+        below = subprocess.run([sys.executable, script], input=BELOW_THRESHOLD_OUTPUT,
+                               text=True, capture_output=True)
+        self.assertEqual((below.returncode, below.stdout.strip()), (0, "0"))
         bad = subprocess.run([sys.executable, script], input=NO_RESULT_OUTPUT,
                              text=True, capture_output=True)
         self.assertEqual(bad.returncode, 1)

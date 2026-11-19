@@ -88,6 +88,7 @@ ARG DPDK_VERSION
 ARG MARCH
 ARG OPENRU_GIT_COMMIT=unknown
 ARG OPENRU_GIT_SUBMODULE=unknown
+ARG OPENRU_BUILD_DATE=unknown
 COPY --from=builder /opt/rohc                 /opt/rohc
 COPY --from=builder /opt/uhd/${UHD_VERSION}   /opt/uhd/${UHD_VERSION}
 COPY --from=builder /opt/dpdk/${DPDK_VERSION} /opt/dpdk/${DPDK_VERSION}
@@ -116,5 +117,6 @@ LABEL openru.gpu.lane="lab.env" \
       openru.build.cache="scripts-first+ccache" \
       org.openru.git.commit=${OPENRU_GIT_COMMIT} \
       org.openru.git.submodule=${OPENRU_GIT_SUBMODULE} \
+      org.openru.build.date=${OPENRU_BUILD_DATE} \
       org.openru.uhd=${UHD_VERSION} \
       org.openru.march=${MARCH}

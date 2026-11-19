@@ -93,7 +93,9 @@ sysctl --system
 - the USRP is not visible to host UHD once `BENCH_USRP_REQUIRED=1` (until the N310 address is known this is a
   warning).
 
-The hwlatdetect result parser has unit tests with captured pass/fail output:
+The hwlatdetect result parser has unit tests with captured pass/fail output,
+including `Max Latency: Below threshold` with 0 samples (treated as 0 us, a PASS
+under the 20 µs gate):
 `python3 -m unittest discover -s tools/bench -p 'test_*.py' -v`.
 
 Other required host settings: MTU 9000 on the fronthaul port, `PROTORU_SHM_SIZE` ≥ the profile dump size, and
@@ -103,8 +105,8 @@ Other required host settings: MTU 9000 on the fronthaul port, `PROTORU_SHM_SIZE`
 
 | Tag | Config | Provenance |
 |---|---|---|
-| `openru/protoru:bench-<short-sha>` / `bench-latest` | FFTW + ESTIMATE, `MARCH=x86-64-v3` (AVX2), **UHD 4.11.0.0** | **the bench image**, built by `make bench-release` from a pushed clean commit; provenance labels (`org.openru.git.commit`, `org.openru.git.submodule`, `org.openru.uhd`, `org.openru.march`) |
-| `openru/core:bench-<short-sha>` / `bench-latest` | Open5GS core image | retagged from `openru/core:m0` at release time (built from the recorded submodule) |
+| `openru/protoru:bench-<short-sha>` / `bench-latest` | FFTW + ESTIMATE, `MARCH=x86-64-v3` (AVX2), **UHD 4.11.0.0** | **the bench image**, built by `make bench-release` from a pushed clean commit; provenance labels (`org.openru.git.commit`, `org.openru.git.submodule`, `org.openru.build.date`, `org.openru.uhd`, `org.openru.march`) |
+| `openru/core:bench-<short-sha>` / `bench-latest` | Open5GS core image | rebuilt at release time (needs network for the Open5GS clone) with the same `org.openru.git.commit` / `git.submodule` / `build.date` labels as ProtO-RU |
 | `openru/protoru:v1-candidate` | FFTW + ESTIMATE, `MARCH=x86-64-v4` (AVX-512) | v1 reference for the GPU-server milestone runs, not for this host |
 
 The GPU-server-only v3 image (`openru/protoru:v1-candidate-v3`) is documented in
@@ -197,7 +199,58 @@ null radio at the golden rates, so the goldens remain valid for the same image.
 `make bench-preflight` checks every `profiles/bench-*/protoru.yml`: the MCR must be one of the three N310
 rates and the sample rate an integer divisor of it.
 
-## Antenna map (measured cabling)
+## Antenna map (divider cabling, on the bench now)
+
+Two RM520N modems (A and B), four 4-way dividers. Each N310 port goes through
+**30 dB** into its own divider. **Out1** to modem A through **20 dB**, **Out2**
+to modem B through **20 dB**, **Out3** and **Out4** terminated in 50 Ω.
+About **57 dB** per path (30 + ~6 dB of a 4-way resistive split plus excess ≈7 dB
++ 20). First test uses **modem A**; leave **modem B in airplane mode**
+(`AT+CFUN=4`) so it does not camp.
+
+| Divider | N310 port (UHD name) | Out1 | Out2 | Out3 / Out4 |
+|---|---|---|---|---|
+| 1 | RF0 TX/RX (`TX/RX`, DL layer 0) | modem A ANT0 | modem B ANT0 | 50 Ω |
+| 2 | RF1 TX/RX (`TX/RX`, DL layer 1) | modem A ANT1 | modem B ANT1 | 50 Ω |
+| 3 | RF0 RX2 (`RX2`, UL) | modem A ANT2 | modem B ANT2 | 50 Ω |
+| 4 | RF1 RX2 (`RX2`, UL) | modem A ANT3 | modem B ANT3 | 50 Ω |
+
+2×2 profiles (`bench-20mhz`, `bench-40mhz`) use **RF0 and RF1 only**. Do not set
+`transmission_mode: same-port` (that would copy TX/RX onto the RX chain).
+
+ProtO-RU applies the UHD names from the YAML `sdr.tx_antenna` / `sdr.rx_antenna`
+fields in `lib/radio/uhd/radio_uhd_impl.cpp` (`set_tx_antenna` at line 351,
+`set_rx_antenna` at line 414). `same_port` mode at lines 424–450 copies the
+selected TX antenna onto RX. The UHD wrappers are
+`lib/radio/uhd/radio_uhd_device.h` lines 199–217 (`get_rx_antennas`,
+`set_rx_antenna`, `get_selected_tx_antenna`, `set_tx_antenna`).
+
+### First-TX gains (no UHD-gain → dBm conversion)
+
+Ettus N310 datasheet v3 footnote 3: **RX and TX path gain does not correlate
+with UHD gain settings** ([datasheet](https://www.ettus.com/wp-content/uploads/2019/01/USRP_N310_Datasheet_v3.pdf);
+[N300/N310 KB](https://kb.ettus.com/N300/N310)). Do not infer port dBm from the
+gain number. Datasheet ranges (confirm on this unit): TX **−30…+20 dB**, RX
+**−40…+30 dB**; max TX **+18 dBm** (1–4 GHz); max RX input **−15 dBm**.
+
+1. From the bench image, run `uhd_usrp_probe` and **record** the TX and RX gain
+   ranges printed for this N310. If they differ from the datasheet, use the probe.
+2. Set `tx_gain` to the **minimum** of that TX range (profiles start at **−30**,
+   the datasheet minimum).
+3. Raise TX gain in **5 dB** steps while watching the modem's **RSRP**. Stop
+   when RSRP is **−80 to −90 dBm**.
+4. The **full TX range is safe** at ~57 dB path loss: datasheet max **+18 dBm**
+   at the N310 port → about **−39 dBm** at the modem.
+5. Set `rx_gain` to the **middle** of the reported RX range (profiles start at
+   **−5**, midpoint of −40…+30). Trim from the DU's uplink SNR.
+6. UE `cell_cfg.ul_common.p_max: 10` dBm → about **−47 dBm at RX2**, **32 dB
+   below** the −15 dBm RX limit.
+
+`scripts/up.sh` prints the divider map on every bring-up.
+
+### Direct cabling (superseded 2026-11-18)
+
+Kept for the record. This is **not** what is on the bench now.
 
 | | N310 side (all TX **and** RX) | Cabling | UE side (RM520N, n78) |
 |---|---|---|---|
@@ -206,11 +259,9 @@ rates and the sample rate an integer divisor of it.
 | Pair 3 | RF2 | → | ANT1 — **RX only** |
 | Pair 4 | RF3 | → | ANT3 — **RX only** |
 
-- N310 RF0–RF3 are all bidirectional (TX and RX); the 4×4 DL uses all four.
-- On the UE side only ANT2 and ANT0 transmit in n78; ANT1 and ANT3 receive only, so a
-  4×4 DL has two TX chains and four RX chains.
-- 2×2 profiles use **RF0–RF1** (→ ANT2, ANT0 — both bidirectional); 4×4 uses all four.
-- `scripts/up.sh` prints this table on every bring-up (with the core map and image tags).
+- N310 RF0–RF3 are all bidirectional; a 4×4 DL would use all four.
+- On a single UE, only ANT2 and ANT0 transmit in n78; ANT1 and ANT3 receive only.
+- 2×2 on that layout used RF0–RF1 (→ ANT2, ANT0).
 
 ## Release → ship → load → preflight
 

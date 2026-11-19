@@ -1,7 +1,8 @@
 # bench-20mhz ProtO-RU — UHD radio (N310-10), 20 MHz 2x2, stage 1 of the bench
-# campaign (docs/BENCH_BUNDLE.md). Cabling: N310 RF0 -> RM520N ANT2 (primary n78
-# TX/RX), RF1 -> ANT0 (second TX/RX); ANT1/ANT3 are RX-only on the UE side.
-# CPU lanes are the bench map (Protó-RU 2-5).
+# campaign (docs/BENCH_BUNDLE.md). Four dividers: RF0 TX/RX / RF1 TX/RX /
+# RF0 RX2 / RF1 RX2; Out1=modem A, Out2=modem B, Out3/Out4=50 ohm.
+# DL 2 layers on TX/RX; UL from RX2. First test: modem A, modem B AT+CFUN=4.
+# CPU lanes are the bench map (ProtO-RU 2-5).
 #
 # Sample rate 30.72 Msps = MCR 122.88 MHz / 4 (integer, even decimation), FFT
 # 1024 = 30.72e6 / 30 kHz. The N310 only supports MCR 122.88 / 125.0 / 153.6 MHz
@@ -58,10 +59,23 @@ ru_emu:
         # N310's lowest supported master clock rate and 30.72 Msps is /4.
         device_args: "type=n3xx,addr=192.168.10.2,mgmt_addr=192.168.10.2,clock_source=internal,time_source=internal,master_clock_rate=122.88e6"
         srate: 30.72
-        # Day-1 placeholder gains (N310 range 0-30 dB); lock after the first
-        # conducted RF check with the RM520N.
-        tx_gain: 10
-        rx_gain: 10
+        # N310 antennas: UHD names are set here and applied in ProtO-RU
+        # lib/radio/uhd/radio_uhd_impl.cpp (set_tx_antenna ~351, set_rx_antenna
+        # ~414). same-port mode (~424) would copy TX/RX onto RX — do not use it
+        # on this cabling. Wrappers: radio_uhd_device.h:199-217.
+        tx_antenna: "TX/RX"
+        rx_antenna: "RX2"
+        transmission_mode: continuous
+        # UHD path gain does not correlate with output dBm (Ettus N310
+        # datasheet footnote 3). Record TX/RX ranges from uhd_usrp_probe;
+        # start TX at the probe minimum (datasheet −30…+20 dB [DATASHEET]).
+        # Raise 5 dB at a time until modem RSRP is −80…−90 dBm. Full TX
+        # range is safe at ~57 dB path loss (+18 dBm max [DATASHEET] →
+        # about −39 dBm at the modem). rx_gain starts at mid-range
+        # (datasheet −40…+30 → −5); trim from DU uplink SNR. See
+        # docs/BENCH_BUNDLE.md.
+        tx_gain: -30
+        rx_gain: -5
         clock_source: internal
         sync_source: internal
         max_proc_delay: 2

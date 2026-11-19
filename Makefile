@@ -12,6 +12,10 @@ endif
 # lab.env is required for runtime GPU/cpuset; preflight enforces it.
 -include $(ROOT)/docker/lab.env
 export
+# Image provenance (bench-release overrides these; default to this tree).
+export OPENRU_GIT_COMMIT ?= $(shell git -C "$(ROOT)" rev-parse HEAD 2>/dev/null || echo unknown)
+export OPENRU_GIT_SUBMODULE ?= $(shell git -C "$(ROOT)/external/proto-ru" rev-parse HEAD 2>/dev/null || echo unknown)
+export OPENRU_BUILD_DATE ?= $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
 
 COMPOSE := docker compose --env-file $(ROOT)/docker/versions.env \
 	$(if $(COMPOSE_ENV_FILE),--env-file $(COMPOSE_ENV_FILE),$(if $(wildcard $(ROOT)/docker/lab.env),--env-file $(ROOT)/docker/lab.env,)) \
