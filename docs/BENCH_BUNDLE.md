@@ -103,6 +103,12 @@ writes sysctl values, and it never asks for a lower value than the host already 
   UHD 3.x). Preflight reads the container UHD version (must be `4.11.0.0`) and then runs `uhd_usrp_probe`
   inside the image; an incompatible N310 must be updated with `uhd_images_downloader` +
   `usrp_n3xx_fs_updater --type filesystem` (or the image rebuilt) before any run;
+- `REF=external` (opt-in; see the clock note below) and the in-container UHD-API
+  check does not report `ref_locked` true (`"unlocked"`, missing sensor, probe
+  error, or `BENCH_SKIP_USRP=1`). The helper reads
+  `get_mboard_sensor("ref_locked").to_bool()`, because the real value string is
+  `locked` / `unlocked` and `uhd_usrp_probe` may list names without values.
+  `REF=internal` is the current default and skips the lock requirement;
 - the USRP is not visible to host UHD once `BENCH_USRP_REQUIRED=1` (until the N310 address is known this is a
   warning).
 
@@ -168,9 +174,30 @@ records `image: v1-candidate-v3`. Never present a v4 golden as validation of the
 | n310-30 | `192.168.30.2` | `enp5s0f3np3` | later stage |
 
 - **N310 software:** MPM 4.11.0.0-g0d7ed3b1 (MPM version 7.0), FPGA 8.2, filesystem 20260908111319.
-- **Clock:** sources available are `internal`, `external`, `gpsdo`. Day 1 uses
-  `clock_source=internal,time_source=internal`; the OctoClock on the LAN (`192.168.60.2`) provides the
-  10 MHz/PPS reference for a later external-clock stage.
+- **Clock / PPS:** N310-10 **REF IN** and **PPS IN** are cabled to the GPS-disciplined
+  OctoClock: `10 MHz OUT -> REF IN` and `1 PPS OUT -> PPS IN` (50 Ω coax). The
+  OctoClock is on the lab LAN (`192.168.60.2`); its GPS antenna needs sky view and
+  a GPS lock before a run.
+
+  **"Internal" has two different meanings here.** The OctoClock runs its **own
+  internal oscillator, disciplined by GPS** (the GPS antenna is on the
+  OctoClock). `REF=internal` means the **N310** ignores the OctoClock and runs
+  from its own onboard oscillator.
+
+  The bench profiles currently default to `REF=internal`
+  (`clock_source=internal,time_source=internal`) until the bench confirms OFH
+  with the external frequency reference. `REF=external` is opt-in and selects
+  **only the 10 MHz frequency reference**:
+  `clock_source=external,time_source=internal` in `device_args`, with
+  `clock_source: external` / `sync_source: internal` in the YAML.
+
+  **Why not external time/PPS today:** with `time_source=external` UHD calls
+  `set_time_unknown_pps()` and resets radio time at the next PPS. ProtO-RU aligns
+  its slots to the host wall clock, so that reset broke the alignment and OFH
+  never came up (RX_TOTAL=0, TX_TOTAL=0 for 8 minutes on the bench). A correct
+  PPS mode would set radio time at the next PPS to the host's GPS-disciplined
+  second, with the host clock disciplined to the same GPS; that is **not
+  implemented now**. The PPS cable stays connected for that future mode.
 - **Host UHD must not be used by the container.** The host has both a 4.10.0 distro package and a 4.11.0
   source build installed; the image ships its own UHD and the preflight probes **inside the container**.
 - **Image:** `openru/protoru:v1-candidate-v3-uhd411` — UHD **4.11.0.0** (matching the N310 MPM), FFTW +
@@ -179,10 +206,17 @@ records `image: v1-candidate-v3`. Never present a v4 golden as validation of the
   Protobuf **and gRPC** (`libprotobuf-dev protobuf-compiler libgrpc++-dev protobuf-compiler-grpc`) in the
   builder base and `libprotobuf32 libgrpc++1.51 libabsl20220623t64` at runtime — added in
   `docker/Dockerfile.protoru`; without them `uhd_config_info`/`uhd_usrp_probe` die on a missing `.so`.
+  The image also ships `uhd_ref_check`, built from `docker/bench/uhd_ref_check.cpp`.
 - **Preflight** (`make bench-preflight`) verifies the container UHD version equals `4.11.0.0`, then runs
   `uhd_usrp_probe --args addr=192.168.10.2[,mgmt_addr=192.168.10.2]` **inside the container**
   (`--network host`) and **fails** on any MPM/filesystem incompatibility, on a missing serial `33A6E56`, or on
-  a probe error. `BENCH_SKIP_USRP=1` is a dev-only escape hatch.
+  a probe error. When `REF=external` the separate `scripts/ref_check.sh` check
+  requires `ref_locked` true through the UHD API helper `uhd_ref_check`
+  (`get_mboard_sensor("ref_locked").to_bool()`); the real sensor prints
+  `locked` / `unlocked`. The helper's `--self-test` uses those real formats and
+  runs during the image build; `tests/ref-select/test.sh` covers the overlay and
+  the locked/unlocked decision without a radio. `bench-preflight` rejects
+  `BENCH_SKIP_USRP=1` for external, because the lock cannot then be verified.
 
 ### ProtO-RU device args (bench profile)
 
@@ -310,11 +344,20 @@ never prints the keys; IMSIs, DNN/SST checks and the SQN/AUTS notes are in
 ## End-to-end stack (core + DU + RU)
 
 ```bash
-make BENCH=1 up STACK=e2e PROFILE=bench-20mhz     # bench, UHD radio
+make BENCH=1 up STACK=e2e PROFILE=bench-20mhz     # bench, UHD, REF=internal (default)
+make BENCH=1 up STACK=e2e PROFILE=bench-20mhz REF=external  # 10 MHz only
 make BENCH=1 up STACK=e2e PROFILE=bench-40mhz
 make up STACK=e2e PROFILE=bench-20mhz RADIO=null  # dry run / no radio
 make down
 ```
+
+`REF` is UHD-only. `internal` (current default) uses the N310 onboard
+oscillator for both clock and time. `external` is opt-in and uses the OctoClock
+10 MHz reference only (`clock_source=external,time_source=internal`); it is
+refused unless the UHD API reports `ref_locked`. Do not make external the
+default until the bench confirms OFH with clock external / time internal.
+`make up` checks the lock before starting containers; `restart-ru` checks it
+after stopping the old RU and before recreating ProtO-RU.
 
 Profiles used: `profiles/<profile>/du-core.yml` (NG/N2 to Open5GS **and** OFH),
 `protoru.yml` (UHD) or `protoru-null.yml` (dry run). The DU and RU carriers,
@@ -353,6 +396,10 @@ trace file, so it is not used by this mode.
 | `openru_core` 10.53.1.0/24 | bridge | core 10.53.1.2, DU 10.53.1.6 | N2 (SCTP) to the AMF and N3 to the UPF; plain MTU |
 | `openru_fh` 10.54.1.0/24, MTU 9000 | bridge | DU 10.54.1.10, ProtO-RU 10.54.1.20 (fixed MACs from the profiles) | Open Fronthaul eCPRI/U-plane needs jumbo frames; the fixed MACs in `du-core.yml`/`protoru.yml` live on this bridge |
 | `openru_radio` 192.168.10.0/24, MTU 9000 | **macvlan** on `enp5s0f1np1` | ProtO-RU 192.168.10.3 | UHD reaches the N310 (`192.168.10.2`) at L2 with no NAT, while the RU keeps its `fh` interface; host networking would remove the `fh` bridge, and a routed bridge would add NAT/latency |
+
+The `restart-ru` claimed-device probe uses the dedicated `BENCH_PROBE_IP`
+(`192.168.10.4`) while the RU is stopped, so Docker never auto-assigns `.2`
+(the N310) on the macvlan.
 
 No container uses host networking. **Interface names are pinned** with compose
 `interface_name` — `ofh0` (fh), `n2` (core), `radio0` (macvlan) — and the
@@ -403,13 +450,17 @@ ProtO-RU restart. Use:
 
 ```bash
 make BENCH=1 restart-ru PROFILE=bench-20mhz TX_GAIN=5
+make BENCH=1 restart-ru PROFILE=bench-20mhz TX_GAIN=5 REF=external  # 10 MHz only
 # optional, if the DU must restart too: RESTART_DU=1
 ```
 
 The target copies the profile to gitignored `build/local-profiles/<profile>/`,
 edits `tx_gain` **there** (the committed profile is never modified), recreates
 only `protoru` (plus `du` with `RESTART_DU=1`) and keeps the rest of the stack.
-Raise in 5 dB steps to RSRP −80…−90 dBm as described above.
+The overlay path printed by `scripts/local_profile.sh` is **absolute**, so
+compose does not resolve it relative to the compose file. Add `REF=external`
+to the same command for the 10 MHz-only external reference; the default is
+internal. Raise in 5 dB steps to RSRP −80…−90 dBm as described above.
 
 ## Disk space (bench host)
 

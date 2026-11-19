@@ -92,3 +92,22 @@ elif missing:
 else:
     print(f"OK: DU/RU cores isolated ({len(required)} cores) via isolcpus/nohz_full/rcu_nocbs")
 PY
+
+# Reference lock (bench UHD only). REF=external selects the OctoClock 10 MHz
+# reference (time stays internal); the probe runs inside the bench image. Skip when the stack is
+# already up (the device is claimed); restart-ru performs the same check after
+# it stops the old RU.
+if [[ "${RADIO:-}" == "uhd" && -n "${BENCH_USRP_ADDR:-}" ]]; then
+  REF="${REF:-internal}"
+  case "$REF" in
+    external|internal) ;;
+    *) echo "FAIL: REF must be external or internal (got $REF)" >&2; exit 1 ;;
+  esac
+  if [[ "$REF" == "internal" ]]; then
+    echo "OK: REF=internal (N310 oscillator; ref_locked not required)"
+  elif docker ps -q --filter label=com.docker.compose.service=protoru 2>/dev/null | grep -q .; then
+    echo "WARN: ProtO-RU is already running; skipping REF=external ref_locked probe (restart-ru checks it)"
+  else
+    "$ROOT/scripts/ref_check.sh"
+  fi
+fi
