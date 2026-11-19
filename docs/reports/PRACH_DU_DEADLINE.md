@@ -1,6 +1,6 @@
 # PRACH DU receive-window deadline — progress
 
-Work in progress. This file is the resume point if the session ends early.
+Status: implementation, bench profiles and the OpenRU-WPI PR are ready; tag/release waits for the human merge.
 
 ## Goal
 
@@ -15,20 +15,21 @@ Evidence tags follow `docs/BRIEF_PHASE1.md`; every number below is `[MEASURED]`,
 
 ## Where the work lives
 
-- ProtO-RU fork: `CLIS-WPI/ProtO-RU`, branch `feat/prach-rx-extra-slots`, based on `9da3456aed` (the head of PR #1,
-  which contains both PRACH tracing commits).
-- OpenRU-WPI: branch `feat/prach-rx-extra-slots` (based on `origin/main` after #25 and #26), submodule bump +
-  bench profiles + this report.
+- ProtO-RU PR **#1** (`feat(ru): timestamp the PRACH window completion and U-plane hand-off`) merged as
+  `2cd60991ec`; PR **#2** (`feat(ofh): add ru_ofh.prach_rx_extra_slots and fix the RU PRACH lookback wrap`) merged
+  as `a91c9917b5` into `feat/null-radio`.
+- OpenRU-WPI branch `feat/prach-rx-extra-slots`: submodule bumped to `a91c9917b5`, bench profiles, bounded timing
+  mode, gate evidence and this report. Base `main` includes merged #25/#26.
 
 ## Status
 
 | # | Item | Status |
 |---|------|--------|
-| 1 | Config path `ru_ofh.prach_rx_extra_slots` -> sector -> receiver -> closed window | implemented in fork (`774837ebc4`) |
-| 2 | Ring validation (`1 + extra <= repo_size - 2`) with `report_error` | implemented in fork (`774837ebc4`) |
+| 1 | Config path `ru_ofh.prach_rx_extra_slots` -> sector -> receiver -> closed window | done (`774837ebc4`, merged in `a91c9917b5`) |
+| 2 | Ring validation (`1 + extra <= repo_size - 2`) with `report_error` | done (`774837ebc4`, merged in `a91c9917b5`) |
 | 3 | 600 s null-radio gate on this server; record value + RU reply delay | recorded: clean windows 0/0 at extra=0; 600 s INVALID (host-stall bursts); server value 0 |
-| 4 | Bench profiles: server value + margin, `[UNVERIFIED]` on UHD, RU traces on | done: `prach_rx_extra_slots: 20`, UHD `log.level: debug` |
-| 5 | OpenRU-WPI PR with submodule bump, profiles and gate evidence | pending fork PR #2 merge; profiles/evidence committed on `feat/prach-rx-extra-slots` |
+| 4 | Bench profiles: server value + margin, `[UNVERIFIED]` on UHD, measurement mode | done: `prach_rx_extra_slots: 20`, normal `log.level: info`, bounded `prach-timing` mode |
+| 5 | OpenRU-WPI PR with submodule bump, profiles and gate evidence | open from `feat/prach-rx-extra-slots` (see PR body) |
 | 6 | Tag `v0.1.6-bench` + `make bench-release` (after human merge) | pending |
 
 ## Item 1-2 design (fork)
@@ -47,77 +48,61 @@ Evidence tags follow `docs/BRIEF_PHASE1.md`; every number below is `[MEASURED]`,
   `1 + extra <= repository_size - 2`, i.e. up to **37** extra slots, and a larger value fails with
   `report_error` naming the value, the limit and the ring size. The ring is not grown.
 
-## Gate prerequisite found: RU emulator wire-SFN wrap (fork `de42c330f2`)
+## Gate prerequisite: RU emulator wire-SFN wrap (`de42c330f2`)
 
 Screening at 30 s exposed a second, unrelated miss: exactly one PRACH occasion every 2.56 s, always at wire slot
-`<sfn>.19`, and with no PRACH U-plane reply sent by the RU for it. The cause is the RU emulator's PRACH lookback:
-the O-DU wire slots wrap at 256 frames, but `slot_point` subtraction wraps at the 1024-frame hyperframe, so
-`ofh_slot - lookback` turns wire slot `0.1` into `1023.19` at every 256-frame wrap and the request recorded for wire
-slot `255.19` is never matched. No value of `prach_rx_extra_slots` can fix that (the DU context for `255.19` never
-receives data), so the fork now subtracts the lookback modulo the wire period
+`<sfn>.19`, with no PRACH U-plane reply sent by the RU for it. The O-DU wire slots wrap at 256 frames, but
+`slot_point` subtraction wraps at the 1024-frame hyperframe, so `ofh_slot - lookback` turned wire slot `0.1` into
+`1023.19` at every 256-frame wrap and the request recorded for wire slot `255.19` was never matched. No value of
+`prach_rx_extra_slots` can fix that, so the fork subtracts the lookback modulo the wire period
 (`ru_emulator_tti_orchestrator.cpp`, test added). This is a gate prerequisite, not part of the DU deadline change.
-
-## Item 3 gate (in progress)
-
-Planned: null-radio e2e stack, 600 s, quiet host, `/tmp/openru-measure.lock` held. Start from
-`prach_rx_extra_slots=0` and increase until 600 s shows 0 missed PRACH contexts and 0
-`sequence identifier from the past` drops for eAxC 4/5. Expected 6-8 slots; the smallest passing value is the one
-that goes into the profiles. Record the RU reply delay from the PRACH traces.
-
-## Item 4 bench profiles (pending)
-
-Add the server value plus a documented margin to `profiles/bench-20mhz` and `profiles/bench-40mhz`
-(`du-core.yml` and `du-fh.yml`), set `log.level: debug` in the UHD `protoru.yml` so the PRACH timestamps are
-collected, and mark the UHD numbers `[UNVERIFIED]`. The first-light UHD delay of 8.8 ms (~18 slots at 30 kHz
-`[DERIVED]`) must fit inside the configured limit.
-
-## UHD ~6 ms (proposal only, not implemented)
-
-To be filled before the PR: where the extra ~6 ms between null radio and UHD could come from (RX buffer policy,
-UHD recv frame size, RU cpuset 2-5 shared with UHD threads) and how the bench run should measure it.
 
 ## Item 3 gate data (this server, null radio)
 
-Image `openru/protoru:prach-extra` (`de42c330f2`), `bench-20mhz/du-core.yml` + `protoru-null.yml`, e2e
-core+DU+RU, 600 s, `/tmp/openru-measure.lock` held, `quiet_host.py` valid. Gate window excludes the shutdown drain.
+Image `openru/protoru:prach-extra` (`de42c330f2`, merged into `a91c9917b5`), `bench-20mhz/du-core.yml` +
+`protoru-null.yml`, e2e core+DU+RU, 600 s, `/tmp/openru-measure.lock` held, `quiet_host.py` valid. Gate window
+excludes the shutdown drain.
 
 | extra | 600 s window | missed PRACH | seq-id-from-past (all / eAxC 4-5) | RU window complete |
 |---|---|---|---|---|
 | 0 | 05:31:33–05:41:33Z | 11 | 678 / 80 | 59,996 |
+| 8 | 05:53:33–06:03:33Z | 79 | 3376 / 444 | 59,964 |
 
-All 11 misses and 670 of the 678 past drops fall in **two host-stall bursts** (`05:32:11`, ~592 drops;
-`05:36:38`, ~82 drops). The drops cover eAxC 0/1 as well as 4/5, so they are DU OFH receive stalls, not PRACH
-lateness. The 11 missed PRACH contexts are 10 + 1 frames inside those two bursts; the ring limit (37 extra slots
-= 18.5 ms) cannot cover a ~120 ms burst. In clean 30 s and 60 s windows the same image gives **0 missed / 0 past**
-at `extra=0`. The periodic 2.56 s misses at wire SFN 255 are gone after `de42c330f2`.
+All misses and past drops fall in **host-stall bursts** (`05:32:11`, ~592 drops; `05:36:38`, ~82 drops in the
+`extra=0` run; more frequent bursts in the `extra=8` run). The drops cover eAxC 0/1 as well as 4/5, so they are DU
+OFH receive stalls, not PRACH lateness. The ring limit (37 extra slots = 18.5 ms) cannot cover a ~120 ms burst.
+In clean 10 s/30 s windows the same image gives **0 missed / 0 past** at `extra=0`; the periodic 2.56 s misses at
+wire SFN 255 are gone after `de42c330f2`.
 
 RU reply delay (10 s debug run, `extra=0`): `PRACH window complete` -> `PRACH U-plane send` median **0.040 ms**,
 p95 **0.056 ms**, max **0.152 ms** `[MEASURED]`. The null radio is already inside the default next-slot window, so the
 smallest extra value that is *needed* on the null path is **0**; the UHD path is why the bench profile carries a
-non-zero value. This is reported rather than forcing a non-zero server value.
+non-zero value. The 600 s result is reported as INVALID, not as a value failure.
 
-## Item 4 bench profiles
+## Item 4 bench profiles and measurement mode
 
 - `profiles/bench-20mhz` and `profiles/bench-40mhz`: `prach_rx_extra_slots: 20` in `du-core.yml` and `du-fh.yml`.
   The first-light UHD delay is 8.8 ms ≈ **17.6 slots** at 30 kHz `[DERIVED]`; 20 leaves ~2 slots of margin and is
   below the ring limit of 37. The UHD number is `[UNVERIFIED]` on this server.
-- UHD `protoru.yml`: `log.level: debug` so the PRACH request/window/send timestamps are collected during the bench
-  run. (The `ru_tracer` instant events are compile-time `OCUDU_RU_TRACE`; the runtime-configurable path is the
-  debug log. State this in the report.)
+- The normal UHD `protoru.yml` stays at **`log.level: info`**. `log.level` only reaches the `RU_EMU` logger; the
+  PHY/OFH `logger.debug` PRACH lines on the real-time path are not controlled by it, and `OCUDU_RU_TRACE` is a
+  compile-time switch.
+- A separate, explicitly named **bounded measurement mode** (`make BENCH=1 PROFILE=bench-20mhz prach-timing
+  SECS=120`) generates a debug overlay in `build/local-profiles/` (gitignored), runs `smoke-fh` for 10–120 s and
+  collects `docs/reports/raw/smoke-fh-ru.log`. It is not used by the normal bench profile and is not a soak.
+  At debug the RU emulator logs every OFH packing step: **~29 GB/h** measured on the null-radio gate, i.e.
+  **~0.97 GB for a 120 s run** `[MEASURED, null-radio; UHD expected similar per-slot, UNVERIFIED]`. The PHY
+  `PRACH window complete` lines alone are ~0.09 GB/h.
 
 ## Resume point
 
-- Fork branch `feat/prach-rx-extra-slots` @ `de42c330f2`; fork PR **#2**
-  (`feat(ofh): add ru_ofh.prach_rx_extra_slots and fix the RU PRACH lookback wrap`), base `feat/null-radio`.
-  Fork PR #1 is still open on GitHub even though the task said it was merged; PR #2 is stacked on it and its
-  description says to merge #1 first.
-- OpenRU-WPI branch `feat/prach-rx-extra-slots` contains this report, the bench profiles and
-  `docs/reports/runs/prach-gate/*.json`. The submodule pointer is **not** bumped yet.
-- Next: human merges fork PR #2, then bump `PROTORU_GIT_COMMIT` in `docker/versions.env` to that merge commit,
-  open the OpenRU-WPI PR (base `main`), and after that merge tag `v0.1.6-bench` and run `make bench-release`.
-- Gate caveat: this GPU server is not a quiet real-time host. Two 600 s null-radio runs show host-stall bursts
-  that drop eAxC 0/1 too; the 37-slot ring cannot cover a ~120 ms burst. Clean 10 s/30 s windows at `extra=0`
-  show 0 missed / 0 past. The UHD value 20 is `[UNVERIFIED]` until the bench run.
+- ProtO-RU `feat/null-radio` head is `a91c9917b5`; `docker/versions.env` pins `PROTORU_GIT_COMMIT=a91c9917b5` and
+  the submodule pointer is at the same merge commit.
+- The OpenRU-WPI PR (base `main`) carries the submodule bump, profiles, bounded mode, gate evidence and this
+  report. After the human merge: `git tag v0.1.6-bench` and `make bench-release`; report the release directory and
+  `SHA256SUMS`.
+- Gate caveat: this GPU server is not a quiet real-time host. The 600 s null-radio runs are `INVALID_HOST_STALLS`;
+  clean windows at `extra=0` show 0 missed / 0 past. The UHD value 20 is `[UNVERIFIED]` until the bench run.
 
 ## UHD ~6 ms — proposal only (not implemented)
 
@@ -141,6 +126,7 @@ path. The bench run should locate it before changing any buffer/cpuset parameter
    `uhd`/`ru_phy_*`/`ru_ofh_*` threads and their cores. A/B: (a) current `2-5`; (b) UHD RX/TX on 2-3, lower PHY
    on 4-5; (c) expand to `2-6` (still P-cores, DU keeps 6-11). Keep the measured `PROTORU_CPUSET` rule unless the
    600 s late ratio improves.
-5. **Acceptance for the bench run.** At the profile value, 600 s with `log.level: debug` must show 0 missed PRACH
-   contexts and 0 past-seq drops for eAxC 4/5, and the measured `window complete` -> `send` plus the UHD receive
-   lead must fit inside `prach_rx_extra_slots` (20 slots = 10 ms at 30 kHz).
+5. **Acceptance for the bench run.** At the profile value, 600 s on the normal `info` profile must show 0 missed
+   PRACH contexts and 0 past-seq drops for eAxC 4/5. Use the bounded `prach-timing` mode for the
+   `window complete` -> `send` delay, and check that delay plus the UHD receive lead fits inside
+   `prach_rx_extra_slots` (20 slots = 10 ms at 30 kHz).
