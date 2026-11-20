@@ -458,9 +458,13 @@ lost the cell and the UE contexts were released. With the cores plan the same te
   `proto-ru.log` and `gnb.log`; `tools/bench/rt_health.py` counts ProtO-RU
   `Downlink/Uplink data late`, `PUxCH request late`, RF `underflow/overflow/late` and the DU's
   `[OFH] [W]` real-time warnings (missed U-plane, dropped late grids/requests, timing worker
-  woke up late, lost messages). `make up` settles 30 s, counts 60 s and prints **WARN** for any
-  count, **FAIL** (and tears the stack down) at RU ≥ 6/min or DU ≥ 60/min
-  (`RT_FAIL_RU_PER_MIN`, `RT_FAIL_DU_PER_MIN`; `RT_CHECK_SECS=0` skips). During a run:
+  woke up late, lost messages). `make up` settles 120 s, then counts in 60 s windows until two
+  windows in a row are below RU 6/min and DU 60/min, at most 5 windows; it prints **WARN** if
+  either passing window had any count, and **FAIL** (and tears the stack down) if no two windows in
+  a row pass (`RT_SETTLE_SECS`, `RT_CHECK_SECS`, `RT_CHECK_MAX_WINDOWS`, `RT_FAIL_RU_PER_MIN`,
+  `RT_FAIL_DU_PER_MIN`; `RT_CHECK_SECS=0` skips). Why 120 s: the DU's start-up burst of missed
+  UL lasts about 80 s after ProtO-RU starts `[MEASURED 2026-11-20]`; one 60 s window after a 30 s
+  settle caught 145 DU warnings and failed a stack that was below threshold a minute later. During a run:
   `make BENCH=1 rt-watch [SECS=…]` prints the counts every 10 s.
 - Accepted baseline `[MEASURED, 1T1R bench-20mhz, n310-20]`: RU 0–2 per 30 min; DU 5.5–8
   warnings/min (bursty, up to ~30/min), 0 ping loss — so a normal stack reports **WARN**, not OK.
