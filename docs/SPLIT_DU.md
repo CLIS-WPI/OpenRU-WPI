@@ -61,7 +61,8 @@ NICs with hardware timestamps on both ends (later work).
 scripts/split.sh core up
 # bench host: ProtO-RU with the null radio, RU thread plan
 RADIO=null scripts/split.sh ran up
-# both hosts, after both are up: rt follower for the local side, settle 30 s, check 60 s
+# both hosts at the same time, after both are up: rt follower for the local side, settle 120 s,
+# then 60 s windows until two in a row pass (at most 5)
 scripts/split.sh ran check 60
 scripts/split.sh core check 60
 # down: bench host first, then core
@@ -96,9 +97,17 @@ over fibre instead of a bridge) [DERIVED].
 ## Phase D: real radio on the split (transmits; needs the human's go)
 
 Prerequisites:
-1. Open5GS on the core host has **no subscribers**. Provision them there with
-   `scripts/add_subscriber.sh` and the subscribers file. This is a human step: the subscribers file is
-   a secret, and agents do not copy it.
+1. Open5GS on the core host has **no subscribers**. Provision them there (human step: the
+   subscribers file is a secret, and agents do not copy it). The subscribers are kept in the
+   `openru_core-db` volume on the core host, so this is needed once; `split.sh core down` keeps it.
+   ```bash
+   # core host, in the deployed split checkout; the file is the same format as on the bench host
+   install -d -m 700 ~/OpenRU/secrets
+   install -m 600 /dev/null ~/OpenRU/secrets/subscribers.env   # then copy the content in; mode stays 600
+   scripts/split.sh core up                                     # Open5GS (+ DU); the core must be running
+   BENCH=1 scripts/add_subscriber.sh --dry-run ~/OpenRU/secrets/subscribers.env   # validates, prints IMSIs only
+   BENCH=1 scripts/add_subscriber.sh ~/OpenRU/secrets/subscribers.env
+   ```
 2. Cabling as in `docs/BENCH_BUNDLE.md` "Wiring by module pin" (n310-20, modem A, no antennas). Modem B
    at `AT+CFUN=4`.
 3. Both hosts down (`docker ps -a --filter name=openru` empty on both), PTP units active. On the core
@@ -112,8 +121,10 @@ Procedure (limits: TX gain 30, p_max 10, rx_gain 37.5; the script refuses TX gai
 PROFILE=bench-split-20mhz-2t2r scripts/split.sh core up        # expect NG Setup ~30 s, "pin: OK"
 # 2. bench host (starts transmitting once ProtO-RU prints "Running.")
 RF_SPLIT_OK=1 RADIO=uhd BENCH_RADIO=n310-20 TX_GAIN=30 PROFILE=bench-split-20mhz-2t2r scripts/split.sh ran up
-# 3. both hosts: real-time gate (RU must be 0/min, DU below 60/min)
-scripts/split.sh ran check 60 ; scripts/split.sh core check 60
+# 3. both hosts at the same time: real-time gate (settle 120 s, two passing 60 s windows in a row;
+#    RU below 6/min, DU below 60/min)
+scripts/split.sh ran check      # bench host
+scripts/split.sh core check     # core host
 # 4. core host: iperf3 server inside the Open5GS container (UPF is on the core host now)
 docker exec -d openru-core-1 iperf3 -s -B 10.45.0.1 -D
 # 5. bench host: attach modem A and bring up its host data path
