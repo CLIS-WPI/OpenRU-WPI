@@ -1,0 +1,55 @@
+{
+  "cores": [
+    19,
+    21,
+    31
+  ],
+  "bench_core": 19,
+  "threshold_pct": 5.0,
+  "samples": 4,
+  "max_busy_pct": {
+    "19": 100.0,
+    "21": 0.0,
+    "31": 0.0
+  },
+  "max_foreign_pct": {
+    "19": 1.71,
+    "21": 0.0,
+    "31": 0.0
+  },
+  "rejected": false,
+  "bench_cpu_pct": {
+    "max": 102.48,
+    "median": 99.14500000000001
+  },
+  "freq_khz_sysfs": {
+    "min": 3799949,
+    "median": 3799981.0,
+    "max": 3800012
+  },
+  "freq_khz_cpuinfo": {
+    "min": 3799952.0,
+    "median": 3799966.5,
+    "max": 3800012.0
+  },
+  "foreign_series": [
+    {
+      "t": 2438106.3,
+      "cpu": 19,
+      "busy_pct": 100.0,
+      "foreign_pct": 0.46
+    },
+    {
+      "t": 2438106.5,
+      "cpu": 19,
+      "busy_pct": 100.0,
+      "foreign_pct": 1.25
+    },
+    {
+      "t": 2438106.71,
+      "cpu": 19,
+      "busy_pct": 100.0,
+      "foreign_pct": 1.71
+    }
+  ]
+}

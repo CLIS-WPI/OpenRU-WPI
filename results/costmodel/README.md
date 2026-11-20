@@ -14,7 +14,11 @@ slots are 0.5 ms, so a kernel that takes 0.5 ms consumes the whole slot.
 
 - `../../src/cuda/standalone/tests/test_costmodel.cpp` — harness.
 - `../../scripts/costmodel/build_costmodel.sh` — configure/build both ISA trees.
-- `../../scripts/costmodel/run_costmodel.sh` — locked, core-pinned measurement run.
+- `../../scripts/costmodel/run_costmodel_clean.sh` — detached clean run: reserved cores,
+  per-core gate, GPU clock/power capture, Cat-B diagnostic, retries.
+- `../../scripts/costmodel/pick_cores.py`, `core_watch.py`, `gpu_apps_watch.py`,
+  `gpu_trace_summary.py` — clean-run helpers.
+- `../../scripts/costmodel/run_costmodel.sh` — earlier busy-host run (kept for comparison).
 - `../../scripts/costmodel/merge_costmodel.py` — merge raw CSVs into the table.
 - `raw/<UTC>/` — harness output (`load.txt`, `avx2.csv`, `avx512.csv`, `gpu.csv`, logs).
   Workspace paths in the committed logs are replaced with `<worktree>`.
@@ -58,43 +62,54 @@ cmake --build build/cm-avx2 -j"${NUM_JOBS:-16}" --target test_costmodel
 `scripts/costmodel/build_costmodel.sh` wraps the last two steps and accepts
 `FFTW3F_ROOT` / `YAML_CPP_LIBRARY` from the environment.
 
-## Method
+## Method (clean run)
 
-- CPU rows: single core, `taskset -c 0-15`, core 8 by default, `-O3 -march=native`
-  harness linked against `build/ocudu-avx2` (x86-64-v3) or `build/ocudu-avx512`
-  (x86-64-v4). Timed backends are the native ones (`avx2` / `avx512`); OFDM uses
-  the FFTW fast DFT factory in both builds.
-- GPU rows: H100 NVL `GPU-509d8ab3` (index 1; index 0 is reserved). Timings are
-  device-side kernel time after warmup; H2D/D2H are separate `cudaMemcpyAsync`
-  measurements and are reported, not included in compute time.
+- **Reserved cores, not a whole-server rule.** `pick_cores.py` samples every CPU
+  for 20 s and selects the least bursty physical cores on one NUMA node; the run
+  pins the benchmark to one of them and checks the reserved set before, during and
+  after. The clean run used cores `19,21,31` on NUMA 0, benchmark core `19`.
+  SMT is off on this host, so each physical core is one logical CPU and there are
+  no HT siblings to reserve.
+- **Rejection rule.** A backend is rejected only if another process used a
+  reserved core (peak foreign CPU > 5% of that core) or another process used the
+  GPU (`nvidia-smi --query-compute-apps`). Host-wide load is recorded for
+  information only. The runner retries with a new core selection if a run is
+  rejected.
+- CPU rows: single reserved core, `-O3 -march=native`, linked against
+  `build/ocudu-avx2` (x86-64-v3) or `build/ocudu-avx512` (x86-64-v4). Timed
+  backends are the native ones (`avx2` / `avx512`); OFDM uses the FFTW fast DFT
+  factory in both builds.
+- GPU rows: H100 NVL `GPU-509d8ab3` (index 1; index 0 is reserved), host process
+  on the GPU's NUMA node. Device-side kernel time after warmup; H2D/D2H are
+  separate `cudaMemcpyAsync` measurements and are not included in compute time.
 - Warm-up: CPU runs **5** untimed calls per configuration; GPU runs **3** untimed
-  H2D + kernel + D2H rounds followed by `cudaStreamSynchronize`. The timed loop
-  follows those warm-ups.
-- GPU clocks are **not locked** (no `nvidia-smi -lgc` / application clocks /
-  persistence). The numbers are at the GPU's default clocks. If they are cited in
-  the RFC, record `nvidia-smi -q -d CLOCK` with the run and do not compare across
-  clock states.
+  H2D + kernel + D2H rounds followed by `cudaStreamSynchronize`.
+- GPU clocks/power are recorded before, after and every 500 ms during the GPU run.
+  The clean run: SM 1785 MHz median (345–1785), memory 2619 MHz, 63–93 W, P0.
+  Clocks are **not locked**; do not compare across clock states.
 - Correctness gates run before timing and must pass for a row to be reported:
   - OFDM vs generic DFT: max LSB ≤ 1 and error ≤ −60 dB.
   - BFP vs generic compressor: byte-identical.
   - Precoding vs scalar golden: max error ≤ 1e-3.
-- A run holds `/tmp/openru-measure.lock`, refuses to start if it is held, and
-  records `uptime`, top CPU consumers, and `docker ps` in `raw/<UTC>/load.txt`.
-- 200 iterations per configuration; p50/p99 over those iterations.
+- 200 iterations per configuration; p50/p99 over those iterations. p50 is the
+  headline. p99 still contains isolated host-scheduler outliers because the
+  benchmark cannot take RT priority on this shared host.
+- A run holds `/tmp/openru-measure.lock` and records per-backend `load.*.txt`,
+  `*.cores.json`, `*.nvidia-smi.*` and `*.gpu_apps.json` under
+  `raw/<run-id>/final/`.
 
 ## Notes
 
+- The table is the clean run `clean-20261120T232220Z` (reserved cores, per-core
+  gate passed). The earlier busy-host run `raw/20261120T214744Z/` is kept only as
+  a labelled comparison in `COMPARISON.md`; its numbers are provisional and must
+  not be cited.
 - GPU is ISA-independent; it was measured once and appears in the `gpu` rows.
-- AVX-512 is not uniformly faster here: the AVX-512 Cat-B precoder is slower than
-  the AVX2 one on this EPYC 9354 for every tested size. The table reports the
-  measurement as-is; it is a property of the current OCUDU AVX-512 implementation,
-  not of the harness.
-- Raw numbers are tied to this host and to the `bench/costmodel-data` build of
-  `external/proto-ru` (`5e925626f0`).
-- The recorded run was **not on a quiet host**: `load.txt` shows load
-  1.21/1.81/1.48 with `opencode` at 70.7% and other containers active (see
-  `raw/20261120T214744Z/load.txt`). CPU p50 is usable for the harness comparison;
-  CPU p99 outliers must not be presented as isolated-core RFC numbers. Rerun on an
-  idle host before citing p99.
-- Headline numbers are the ones in `costmodel.md` / `costmodel.csv`, not any
-  earlier PR blurb.
+- Cat-B AVX-512 is slower than AVX2 because the harness calls `apply_precoding`
+  once per PRB (12 REs): AVX-512 vectorizes 8 REs and runs a 4-RE scalar tail,
+  while AVX2 vectorizes all 12. It also uses the non-BF16 conversion fallback
+  (`-mavx512f -mavx512bw`, no `-mavx512bf16`). The diagnostic in `costmodel.md`
+  swaps the implementation between builds and records ~3.80 GHz in all four
+  cases, so this is implementation/granularity, not frequency or measurement.
+- Raw numbers are tied to this host and to submodule `5e925626f0`.
+- Headline numbers are the ones in `costmodel.md` / `costmodel.csv`.

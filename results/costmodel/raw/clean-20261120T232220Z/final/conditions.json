@@ -1,0 +1,281 @@
+{
+  "run_id": "clean-20261120T232220Z",
+  "raw": "results/costmodel/raw/clean-20261120T232220Z/final",
+  "method": "detached clean run on reserved cores; no process pausing",
+  "cores": [
+    19,
+    21,
+    31
+  ],
+  "bench_core": 19,
+  "numa_node": 0,
+  "gpu_numa_node": 0,
+  "fallback_node": false,
+  "threads_per_core": 1,
+  "core_threshold_pct": 5.0,
+  "iters": 200,
+  "gpu_uuid": "GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058",
+  "core_before": {
+    "cores": [
+      19,
+      21,
+      31
+    ],
+    "bench_core": 19,
+    "threshold_pct": 5.0,
+    "samples": 50,
+    "max_busy_pct": {
+      "19": 0.0,
+      "21": 4.76,
+      "31": 4.76
+    },
+    "max_foreign_pct": {
+      "19": 0.0,
+      "21": 4.76,
+      "31": 4.76
+    },
+    "rejected": false,
+    "bench_cpu_pct": {
+      "max": 0.0,
+      "median": 0.0
+    },
+    "freq_khz_sysfs": {
+      "min": 1500000,
+      "median": 1500000.0,
+      "max": 1500000
+    },
+    "freq_khz_cpuinfo": {
+      "min": 1500000.0,
+      "median": 1500000.0,
+      "max": 1500000.0
+    },
+    "foreign_series": [
+      {
+        "t": 2438097.6,
+        "cpu": 21,
+        "busy_pct": 4.76,
+        "foreign_pct": 4.76
+      },
+      {
+        "t": 2438099.23,
+        "cpu": 21,
+        "busy_pct": 4.76,
+        "foreign_pct": 4.76
+      },
+      {
+        "t": 2438100.87,
+        "cpu": 31,
+        "busy_pct": 4.76,
+        "foreign_pct": 4.76
+      }
+    ]
+  },
+  "core_after": {
+    "cores": [
+      19,
+      21,
+      31
+    ],
+    "bench_core": 19,
+    "threshold_pct": 5.0,
+    "samples": 50,
+    "max_busy_pct": {
+      "19": 4.76,
+      "21": 10.0,
+      "31": 0.0
+    },
+    "max_foreign_pct": {
+      "19": 4.76,
+      "21": 10.0,
+      "31": 0.0
+    },
+    "rejected": true,
+    "bench_cpu_pct": {
+      "max": 0.0,
+      "median": 0.0
+    },
+    "freq_khz_sysfs": {
+      "min": 1499536,
+      "median": 1500000.0,
+      "max": 3804157
+    },
+    "freq_khz_cpuinfo": {
+      "min": 1499566.0,
+      "median": 1500000.0,
+      "max": 3804157.0
+    },
+    "foreign_series": [
+      {
+        "t": 2438113.18,
+        "cpu": 21,
+        "busy_pct": 10.0,
+        "foreign_pct": 10.0
+      },
+      {
+        "t": 2438113.39,
+        "cpu": 21,
+        "busy_pct": 5.0,
+        "foreign_pct": 5.0
+      },
+      {
+        "t": 2438117.28,
+        "cpu": 19,
+        "busy_pct": 4.76,
+        "foreign_pct": 4.76
+      },
+      {
+        "t": 2438119.33,
+        "cpu": 19,
+        "busy_pct": 4.76,
+        "foreign_pct": 4.76
+      },
+      {
+        "t": 2438119.94,
+        "cpu": 19,
+        "busy_pct": 4.55,
+        "foreign_pct": 4.55
+      }
+    ]
+  },
+  "core_runs": {
+    "avx2": {
+      "rejected": false,
+      "max_foreign_pct": {
+        "19": 1.71,
+        "21": 0.0,
+        "31": 0.0
+      },
+      "freq_khz_sysfs": {
+        "min": 3799949,
+        "median": 3799981.0,
+        "max": 3800012
+      },
+      "freq_khz_cpuinfo": {
+        "min": 3799952.0,
+        "median": 3799966.5,
+        "max": 3800012.0
+      }
+    },
+    "avx512": {
+      "rejected": false,
+      "max_foreign_pct": {
+        "19": 2.41,
+        "21": 0.0,
+        "31": 0.0
+      },
+      "freq_khz_sysfs": {
+        "min": 3799940,
+        "median": 3799973,
+        "max": 3799992
+      },
+      "freq_khz_cpuinfo": {
+        "min": 3799941.0,
+        "median": 3799973.0,
+        "max": 3800000.0
+      }
+    },
+    "gpu": {
+      "rejected": false,
+      "max_foreign_pct": {
+        "19": 4.3,
+        "21": 0.0,
+        "31": 0.0
+      },
+      "freq_khz_sysfs": {
+        "min": 3798588,
+        "median": 3799962.0,
+        "max": 3800015
+      },
+      "freq_khz_cpuinfo": {
+        "min": 3797092.0,
+        "median": 3799965.5,
+        "max": 3799977.0
+      }
+    }
+  },
+  "gpu_clock": {
+    "samples": 4,
+    "columns": [
+      "timestamp",
+      "pstate",
+      "clocks.current.sm [MHz]",
+      "clocks.current.memory [MHz]",
+      "power.draw [W]",
+      "power.limit [W]",
+      "clocks_event_reasons.active"
+    ],
+    "clocks.current.sm [MHz]": {
+      "min": 345.0,
+      "median": 1785.0,
+      "max": 1785.0
+    },
+    "clocks.current.memory [MHz]": {
+      "min": 2619.0,
+      "median": 2619.0,
+      "max": 2619.0
+    },
+    "power.draw [W]": {
+      "min": 63.42,
+      "median": 76.02000000000001,
+      "max": 93.3
+    },
+    "power.limit [W]": {
+      "min": 400.0,
+      "median": 400.0,
+      "max": 400.0
+    },
+    "pstate": [
+      "P0"
+    ],
+    "clocks_event_reasons.active": [
+      "0x0000000000000000",
+      "0x0000000000000001"
+    ]
+  },
+  "gpu_apps": {
+    "uuid": "GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058",
+    "samples": 3,
+    "seen_pids": [
+      3330113
+    ],
+    "foreign_pids": [],
+    "rejected": false,
+    "trace": [
+      {
+        "t": 0.1,
+        "allow_pid": 3330113,
+        "apps": []
+      },
+      {
+        "t": 1.23,
+        "allow_pid": 3330113,
+        "apps": [
+          {
+            "pid": 3330113,
+            "name": "<worktree>/build/cm-avx2/test_costmodel",
+            "used_memory": "530 MiB"
+          }
+        ]
+      },
+      {
+        "t": 2.31,
+        "allow_pid": 3330113,
+        "apps": []
+      }
+    ]
+  },
+  "load": {
+    "avx2": {
+      "before": "3.38 / 2.53 / 2.02",
+      "after": "3.38 / 2.53 / 2.02"
+    },
+    "avx512": {
+      "before": "3.38 / 2.53 / 2.02",
+      "after": "3.35 / 2.54 / 2.03"
+    },
+    "gpu": {
+      "before": "3.35 / 2.54 / 2.03",
+      "after": "3.35 / 2.54 / 2.03"
+    }
+  }
+}
