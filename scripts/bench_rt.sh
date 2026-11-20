@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+# Bench post-start step: apply/check the thread plan, then a real-time health check.
+#
+#   scripts/bench_rt.sh [both|ru|du|check]   (called by scripts/up.sh and scripts/restart_ru.sh;
+#                                            check = health check only, no pinning)
+#
+# Needs BENCH_RU_THREADS / BENCH_DU_THREADS from docker/bench.env in the environment.
+#   1. wait until ProtO-RU prints "Running." (UHD threads exist only after radio init)
+#   2. tools/bench/pin_threads.py --apply for DU and/or RU; FAIL if a planned thread is off-plan
+#   3. scripts/rt_watch.sh start, settle RT_SETTLE_SECS (120), then count in windows of
+#      RT_CHECK_SECS (60; 0 skips) until two windows in a row are below the FAIL thresholds,
+#      at most RT_CHECK_MAX_WINDOWS (5). The DU's start-up burst lasts ~80 s after ProtO-RU
+#      starts (2026-11-20: one 60 s window after a 30 s settle caught 145 DU warnings).
+# Exit: 0 OK or WARN (loud banner), 1 FAIL.
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+WHICH="${1:-both}"
+SETTLE="${RT_SETTLE_SECS:-120}"
+CHECK="${RT_CHECK_SECS:-60}"
+MAX_WINDOWS="${RT_CHECK_MAX_WINDOWS:-5}"
+RT_WATCH="${RT_WATCH:-$ROOT/scripts/rt_watch.sh}"  # overridable for tests/bench-rt-gate
+READY_TIMEOUT="${RT_RU_READY_TIMEOUT:-120}"
+
+cid_of() { docker ps -q --filter label=com.docker.compose.project=openru \
+             --filter "label=com.docker.compose.service=$1" --filter status=running | head -1; }
+pin() { # <service> <plan>
+  local cid; cid="$(cid_of "$1")"
+  [[ -n "$cid" ]] || { echo "[rt] FAIL: $1 is not running" >&2; return 1; }
+  [[ -n "$2" ]] || { echo "[rt] WARN: no thread plan for $1 (docker/bench.env)"; return 0; }
+  python3 "$ROOT/tools/bench/pin_threads.py" "$cid" "$2" --apply | sed 's/^/[rt] /'
+  return "${PIPESTATUS[0]}"
+}
+
+case "$WHICH" in both|ru|du|check) ;; *) echo "[rt] FAIL: usage: bench_rt.sh [both|ru|du|check]" >&2; exit 2 ;; esac
+if [[ "$WHICH" == both || "$WHICH" == ru ]]; then
+  ru="$(cid_of protoru)"
+  [[ -n "$ru" ]] || { echo "[rt] FAIL: protoru is not running" >&2; exit 1; }
+  echo "[rt] waiting for ProtO-RU radio init (\"Running.\", up to ${READY_TIMEOUT}s) ..."
+  ready=0
+  for _ in $(seq 1 "$READY_TIMEOUT"); do
+    docker logs "$ru" 2>&1 | grep -q '^Running\.' && { ready=1; break; }
+    sleep 1
+  done
+  (( ready )) || echo "[rt] WARN: ProtO-RU did not print \"Running.\" in ${READY_TIMEOUT}s; pinning anyway"
+fi
+if [[ "$WHICH" == both || "$WHICH" == du ]]; then pin du "${BENCH_DU_THREADS:-}" || exit 1; fi
+if [[ "$WHICH" == both || "$WHICH" == ru ]]; then pin protoru "${BENCH_RU_THREADS:-}" || exit 1; fi
+
+(( CHECK > 0 )) || { echo "[rt] real-time health check skipped (RT_CHECK_SECS=0)"; exit 0; }
+"$RT_WATCH" start | sed 's/^/[rt] /'
+echo "[rt] settling ${SETTLE}s, then ${CHECK}s windows until two in a row pass (at most ${MAX_WINDOWS}) ..."
+sleep "$SETTLE"
+clean=0; warned=0
+for w in $(seq 1 "$MAX_WINDOWS"); do
+  rc=0
+  out="$("$RT_WATCH" check "$CHECK" 2>&1)" || rc=$?
+  printf '%s\n' "$out" | sed "s/^/[rt] window $w: /"
+  case "$rc" in
+    0) clean=$((clean + 1)) ;;
+    2) clean=$((clean + 1)); warned=1 ;;
+    *) clean=0; warned=0 ;;  # only the two passing windows decide OK vs WARN
+  esac
+  (( clean >= 2 )) && break
+done
+if (( clean < 2 )); then
+  echo "[rt] !!!!!!!! FAIL: no two windows in a row below threshold in ${MAX_WINDOWS} x ${CHECK}s after a ${SETTLE}s settle: do not measure on this stack" >&2
+  exit 1
+fi
+if (( warned )); then
+  echo "[rt] !!!!!!!! WARN: real-time failures after startup (see counts above); keep watching: make rt-watch"
+else
+  echo "[rt] OK: no lower-PHY / RF / DU fronthaul real-time failures"
+fi
