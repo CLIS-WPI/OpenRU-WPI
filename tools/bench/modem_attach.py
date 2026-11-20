@@ -55,14 +55,20 @@ def registered(reply):
 
 
 def usb_device(path):
-    """USB device name ('1-4') of a sysfs interface path ('.../1-4/1-4:1.2')."""
-    return os.path.basename(os.path.realpath(path)).split(":")[0]
+    """USB device name ('2-1.4') of a sysfs path at or below a USB interface: '.../2-1.4/2-1.4:1.4' (cdc-wdm)
+    or '.../2-1.4/2-1.4:1.2/ttyUSB4' (a ttyUSB port: the usb-serial driver adds a port level)."""
+    for part in reversed(os.path.realpath(path).split(os.sep)):
+        if ":" in part:
+            return part.split(":")[0]
+    return None
 
 
 def qmi_for(at_dev, sysfs=SYSFS):
     """(/dev/cdc-wdmN, net iface) on the same USB device as the AT tty, or None."""
     tty = os.path.basename(os.path.realpath(at_dev))
     usb = usb_device(os.path.join(sysfs, "class/tty", tty, "device"))
+    if usb is None:
+        return None
     for d in sorted(glob.glob(os.path.join(sysfs, "class/usbmisc/cdc-wdm*"))):
         if usb_device(os.path.join(d, "device")) == usb:
             nets = sorted(os.listdir(os.path.join(d, "device/net")))
