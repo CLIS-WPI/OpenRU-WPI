@@ -59,3 +59,35 @@ print("ok: core-only config services", sorted(svcs), "networks", sorted(nets))
 PY
 rm -f /tmp/split-core-only.$$.yml
 echo "PASS: --core-only compose config has no fh/macvlan"
+
+# Bench-host RU plan (docker/split-ran.env + bench-split profiles' ru_cpus): every planned CPU inside the RU container
+# cpuset, the FIFO workers on isolated CPUs, and ru_phy_ul (5th in round-robin order radio, hp, tx, rx, ul) not
+# wrapped onto ru_radio's CPU.
+python3 - "$ROOT" <<'PY'
+import re, sys, yaml, pathlib
+root = pathlib.Path(sys.argv[1])
+env = {}
+for f in ("docker/bench.env", "docker/split-ran.env"):
+    for l in (root / f).read_text().splitlines():
+        m = re.match(r'^([A-Z_][A-Z0-9_]*)=(.*)$', l)
+        if m: env[m.group(1)] = m.group(2).strip().strip('"')
+def cpus(s):
+    out = set()
+    for p in s.split(","):
+        a, _, b = p.partition("-"); out |= set(range(int(a), int(b or a) + 1))
+    return out
+cset, isolated = cpus(env["PROTORU_CONTAINER_CPUSET"]), set(range(2, 12))
+plan = dict(e.split("=") for e in env["BENCH_RU_THREADS"].split())
+assert all(int(c) in cset for c in plan.values()), (plan, cset)
+for t in ("ru_timing", "ru_emu_#0", "ru_rx_#0", "ru_ofh_tx_#0", "ru_phy_hp_#0", "ru_phy_tx_#0", "ru_phy_rx_#0", "ru_phy_ul_#0"):
+    assert int(plan[t]) in isolated, (t, plan[t])
+for prof in ("bench-split-20mhz", "bench-split-20mhz-2t2r"):
+    sdr = yaml.safe_load((root / "profiles" / prof / "protoru.yml").read_text())["ru_emu"]["cells"][0]["sdr"]
+    rc = sdr["ru_cpus"]; order = ["radio", "hp", "tx", "rx", "ul"]
+    got = {w: rc[i % len(rc)] for i, w in enumerate(order)}
+    assert set(rc) <= cset, (prof, rc, cset)
+    assert got["ul"] != got["radio"], (prof, "ru_phy_ul wraps onto ru_radio's CPU", rc)
+    assert got["radio"] == int(plan["ru_radio_#0"]) and got["ul"] == int(plan["ru_phy_ul_#0"]), (prof, got, plan)
+print("PASS: split RU plan inside cpuset", sorted(cset), "| FIFO workers isolated | ru_cpus radio/ul",
+      got["radio"], got["ul"])
+PY
