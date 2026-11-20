@@ -130,3 +130,21 @@ target_link_libraries(test_scaling PRIVATE
   pthread
   dl
   m)
+
+add_executable(test_costmodel
+  tests/test_costmodel.cpp)
+target_include_directories(test_costmodel PRIVATE include ${OCUDU_INCLUDE_DIRS} "${FFTW3F_ROOT}/include")
+target_compile_definitions(test_costmodel PRIVATE BUILD_TYPE_RELEASE NDEBUG)
+target_compile_options(test_costmodel PRIVATE -O3 -march=native)
+
+target_link_libraries(test_costmodel PRIVATE
+  lowphy_cuda
+  "-Wl,--start-group"
+  ${OCUDU_LIBRARIES}
+  "${OCUDU_BUILD}/lib/phy/generic_functions/precoding/libocudu_channel_precoder.a"
+  "-Wl,--end-group"
+  "${FFTW3F_ROOT}/lib/libfftw3f.so"
+  "/home/tanglab/miniconda3/lib/libyaml-cpp.so"
+  pthread
+  dl
+  m)
