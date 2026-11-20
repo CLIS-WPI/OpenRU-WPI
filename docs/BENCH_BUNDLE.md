@@ -313,7 +313,88 @@ replay, batch copies); the Open5GS entrypoint also prints `SUBSCRIBER_DB=<redact
 credential. Dashboard and replay redaction masks the same value before rendering. Do not copy raw
 `SUBSCRIBER_DB` lines into `docs/reports/**`.
 
-## Antenna map (divider cabling, on the bench now)
+## Wiring by module pin (2x2 stage, n310-20, current since 2026-11-20)
+
+**Label every cable by the RM520N module's own antenna pin** (printed on the module, visible with the
+enclosure open), not by the enclosure's connector labels. On modem A the enclosure's "ANT0" was the
+module's **ANT2** [DERIVED from the `AT+QRSRP` readings below]; modem B's enclosure labels are
+[UNVERIFIED] until it is opened.
+
+One modem (A), no antennas, all cabled. Modem B stays at `AT+CFUN=4`.
+
+| Module pin (modem A) | Path | N310 port | Role |
+|---|---|---|---|
+| ANT2 (TX0 / PRX) | 4-way divider input; Out1 → 30 dB | RF0 TX/RX | DL port 0 (SSB, PDCCH, PDSCH layer 0) |
+| ANT2 (same divider) | Out2 → 20 dB + 20 dB | RF0 RX2 | UL (the RU receives on RF0 RX2) |
+| ANT1 (PRX MIMO) | 30 dB | RF1 TX/RX | DL port 1 (PDSCH layer 1, CSI-RS port 1) |
+| ANT0, ANT3 | unconnected | – | – |
+
+Divider Out3/Out4 capped. Expected: DL port 0 about 7 dB weaker than port 1 at the modem (divider loss).
+UE at full power (p_max 10 dBm) reaches RF0 RX2 at about 10 − 7 − 40 = **−37 dBm** [DERIVED], below the
+−15 dBm RX maximum [DATASHEET]. With this cabling PUSCH SNR was ~30 dB and UL MCS 27 [MEASURED 2026-11-20];
+before it (TX0 cabled to RF0 TX/RX only) the RU got the uplink by leakage: SNR −1…−4 dB, UL MCS 0 [MEASURED].
+
+### Finding which N310 port reaches which receiver (port finder, transmits)
+
+`scripts/bench_portfind.sh` sends a bounded CW tone on one UHD channel at a time and captures it on
+receive-only HackRFs. It **transmits**: run it only with the human's go, cabled, no antennas, stack down.
+
+```bash
+RF_TONE_OK=1 HACKRF_SERIALS="<serial> <serial>" BENCH_RADIO=n310-20 scripts/bench_portfind.sh "0 1 2 3"
+```
+
+Safety limits:
+- `uhd_one_tone` (built into the bench image from `docker/bench/uhd_one_tone.cpp`) refuses channel > 3,
+  gain > 30 dB or > 10 s (exit 2) **before** opening the radio, and checks the gain read back from UHD
+  (exit 3). It sends one burst of fixed length (3421.48 MHz, TX/RX port, amplitude 0.3) and exits.
+  The image build checks the refusal (`uhd_one_tone x 0 31 5` must exit 2).
+- The script refuses without `RF_TONE_OK=1`, with any `openru` container present, or with
+  `ru_emulator` / another tone tool running.
+- HackRFs only receive (`hackrf_transfer -r`, RF amp off `-a 0`, LNA 32, VGA 30).
+- Analysis `tools/bench/portfind.py` (tone dB over a fresh per-HackRF baseline); captures are deleted only
+  after it succeeds.
+
+`docker/bench/uhd_read_sensors.cpp` (`uhd_read_sensors <args>`) dumps the motherboard and per-channel
+sensors without tuning, gain or streaming.
+
+The tone tool's logic ran on n310-20 on 2026-11-20 (channels 0–3, gain 30, 5 s) [MEASURED]; the
+port-finder run that day used stock UHD `tx_waveforms`. [UNVERIFIED] this script and the image build
+of both tools have not been run.
+
+### RM520N-GL antenna roles (n77/n78/n79)
+
+From the Quectel RM520N-GL Hardware Design V1.0, Table 29 (pp. 52–53) [DATASHEET]:
+
+| Module pin | n78 role |
+|---|---|
+| **ANT2** | **TX0 / PRX** — primary transmit and primary receive |
+| ANT0 | TX1 / DRX — second transmit (UL MIMO), diversity receive |
+| ANT1 | PRX MIMO — third receive chain |
+| ANT3 | DRX MIMO — fourth receive chain |
+
+So the uplink (one layer) leaves on **ANT2**; for 2-layer DL, cable DL port 0 to ANT2 and DL port 1 to
+ANT1 (or ANT0).
+
+### Per-antenna readings: `AT+QRSRP` / `AT+QRSRQ` / `AT+QSINR` order
+
+These commands report four values in **receive-chain order PRX, DRX, RX2, RX3**, not ANT0..ANT3. On the
+RM520N-GL in n78 that is **module ANT2, ANT0, ANT1, ANT3**:
+
+| Position in reply | Chain | Module pin |
+|---|---|---|
+| 1 | PRX | ANT2 |
+| 2 | DRX | ANT0 |
+| 3 | RX2 (MIMO) | ANT1 |
+| 4 | RX3 (MIMO) | ANT3 |
+
+Report per-antenna values by module pin. The values are measured on the SSB, which goes out on DL port 0
+only, so a chain cabled only to DL port 1 can show only leakage (e.g. −140 dBm seen on 2026-11-20) even
+when port 1 works; judge port 1 from the DU's `dl_ri` and throughput instead. At idle the modem may report
+only the first two chains.
+
+## Antenna map (divider cabling, superseded 2026-11-20)
+
+Kept for the record; it used **enclosure** labels, which on modem A did not match the module pins (above).
 
 Two RM520N modems (A and B), four 4-way dividers. Each N310 port goes through
 **30 dB** into its own divider. **Out1** to modem A through **20 dB**, **Out2**
