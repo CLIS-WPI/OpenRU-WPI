@@ -41,9 +41,12 @@ case "$RADIO" in
 esac
 COMPOSE=(docker compose --env-file "$ROOT/docker/versions.env" --env-file "$ROOT/docker/bench.env"
          --env-file "$ROOT/docker/split-$ROLE.env" -f "$ROOT/docker/compose.yml" -f "$ROOT/docker/compose.cpu.yml")
-[[ "$ROLE" == core ]] && COMPOSE+=(-f "$ROOT/docker/compose.e2e.yml")
-[[ "$ROLE" == ran && "$RADIO" == uhd ]] && COMPOSE+=(-f "$ROOT/docker/compose.radio.yml")
-COMPOSE+=(-f "$ROOT/docker/compose.split.yml")
+# --core-only: Open5GS only. Do not load e2e (DU nets) or split.yml (fh macvlan on the fibre).
+if (( ! CORE_ONLY )); then
+  [[ "$ROLE" == core ]] && COMPOSE+=(-f "$ROOT/docker/compose.e2e.yml")
+  [[ "$ROLE" == ran && "$RADIO" == uhd ]] && COMPOSE+=(-f "$ROOT/docker/compose.radio.yml")
+  COMPOSE+=(-f "$ROOT/docker/compose.split.yml")
+fi
 
 preflight() {
   local mtu; mtu="$(cat "/sys/class/net/$SPLIT_FH_IFACE/mtu" 2>/dev/null || echo 0)"
@@ -62,7 +65,7 @@ case "$ACT" in
     (( CORE_ONLY )) || preflight
     if [[ "$ROLE" == core ]]; then
       # Open5GS first: a DU started before the AMF listens exits on "Connection refused" (as in up.sh).
-      # --core-only: profile core only, so neither the DU nor the fh macvlan is created.
+      # --core-only: compose files above omit split.yml/e2e, so fh/macvlan cannot be created.
       if (( CORE_ONLY )); then "${COMPOSE[@]}" --profile core up -d core
       else "${COMPOSE[@]}" --profile core --profile fh up -d core; fi
       for i in $(seq 1 120); do

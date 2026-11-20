@@ -40,3 +40,22 @@ for args in "ran up --core-only" "core up --bogus" "core check --core-only"; do
   grep -qE "only 'split.sh core up --core-only' takes a flag|window length in seconds" <<<"$out" || { echo "FAIL: split.sh $args: $out" >&2; exit 1; }
 done
 echo "PASS: split.sh --core-only argument checks"
+
+# --core-only compose config: Open5GS files only — no fh network, no macvlan.
+# Must match scripts/split.sh CORE_ONLY compose files (compose.yml + compose.cpu.yml).
+( set -a; . docker/bench.env; . docker/split-core.env; set +a
+  docker compose --env-file docker/versions.env --env-file docker/bench.env --env-file docker/split-core.env \
+    -f docker/compose.yml -f docker/compose.cpu.yml --profile core config ) > "/tmp/split-core-only.$$.yml"
+python3 - "/tmp/split-core-only.$$.yml" <<'PY'
+import sys, yaml
+cfg = yaml.safe_load(open(sys.argv[1]))
+nets = cfg.get("networks") or {}
+assert "fh" not in nets, nets
+for name, n in nets.items():
+    assert (n or {}).get("driver") != "macvlan", (name, n)
+svcs = cfg.get("services") or {}
+assert "core" in svcs and "du" not in svcs and "protoru" not in svcs, list(svcs)
+print("ok: core-only config services", sorted(svcs), "networks", sorted(nets))
+PY
+rm -f /tmp/split-core-only.$$.yml
+echo "PASS: --core-only compose config has no fh/macvlan"
