@@ -54,7 +54,7 @@ preflight:
 # hwlatdetect, UHD/N310 MPM match). See docs/BENCH_BUNDLE.md.
 BENCH_ENV ?= docker/bench.env
 bench-preflight:
-	@BENCH_ENV=$(BENCH_ENV) $(ROOT)/scripts/bench_preflight.sh
+	@BENCH_ENV=$(BENCH_ENV) BENCH_RADIO=$(BENCH_RADIO) $(ROOT)/scripts/bench_preflight.sh
 
 gpu-check: preflight
 	@docker run --rm \
@@ -97,7 +97,7 @@ bench-ship:
 STACK ?= fh
 UP_RADIO ?= $(if $(filter 1,$(BENCH)),uhd,null)
 up:
-	@BENCH=$(BENCH) STACK=$(STACK) PROFILE=$(PROFILE) RADIO=$(UP_RADIO) TX_GAIN=$(TX_GAIN) REF=$(REF) \
+	@BENCH=$(BENCH) BENCH_RADIO=$(BENCH_RADIO) STACK=$(STACK) PROFILE=$(PROFILE) RADIO=$(UP_RADIO) TX_GAIN=$(TX_GAIN) REF=$(REF) \
 	  $(ROOT)/scripts/up.sh
 
 # Bounded PRACH-delay measurement mode (bench UHD only; never a soak).
@@ -112,7 +112,7 @@ prach-timing:
 #   make BENCH=1 restart-ru PROFILE=bench-20mhz TX_GAIN=5 [REF=external]
 restart-ru:
 	@test -n "$(TX_GAIN)" || { echo "usage: make BENCH=1 restart-ru PROFILE=<p> TX_GAIN=<0..65, 0.5 step>"; exit 2; }
-	@BENCH=$(BENCH) PROFILE=$(PROFILE) TX_GAIN=$(TX_GAIN) RADIO=$(UP_RADIO) REF=$(REF) \
+	@BENCH=$(BENCH) BENCH_RADIO=$(BENCH_RADIO) PROFILE=$(PROFILE) TX_GAIN=$(TX_GAIN) RADIO=$(UP_RADIO) REF=$(REF) \
 	  RESTART_DU=$(RESTART_DU) $(ROOT)/scripts/restart_ru.sh
 
 # Real-time health of a running bench stack: ProtO-RU lower-PHY/RF failures and DU

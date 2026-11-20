@@ -184,9 +184,18 @@ records `image: v1-candidate-v3`. Never present a v4 golden as validation of the
 
 | Radio | Address | NIC (host) | Use |
 |---|---|---|---|
-| **n310-10** | `192.168.10.2` (mgmt same) | `enp5s0f1np1` `192.168.10.1/24`, MTU 9000 | **stage 1** |
-| n310-20 | `192.168.20.2` | `enp5s0f2np2` | later stage |
-| n310-30 | `192.168.30.2` | `enp5s0f3np3` | later stage |
+| **n310-10** | `192.168.10.2` (mgmt same) | `enp5s0f1np1` `192.168.10.1/24`, MTU 9000 | **stage 1** (default) |
+| n310-20 | `192.168.20.2`, serial `33CF5B2` | `enp5s0f2np2` `192.168.20.1/24` | 2x2 stage (used 2026-11-20) |
+| n310-30 | `192.168.30.2` | `enp5s0f3np3` | later stage [UNVERIFIED: never run, serial unknown] |
+
+**Selecting the radio:** `make BENCH=1 up BENCH_RADIO=n310-20 ...` (also `restart-ru`,
+`bench-preflight`). `scripts/radio_env.sh` loads `docker/radios/<radio>.env` after
+`docker/bench.env`; it sets the radio NIC, host address, serial, device address, macvlan
+subnet/gateway, RU address and probe address. The default stays `n310-10`.
+`up`/`restart-ru` always write the local ProtO-RU profile copy, with `addr`/`mgmt_addr`
+patched from the selected radio. (`RADIO` keeps its meaning `uhd|null`; the radio unit is
+`BENCH_RADIO`.) `tests/radio-select/test.sh` checks the overlay without a radio. Before
+using n310-30, set its serial in `docker/radios/n310-30.env`.
 
 - **N310 software:** MPM 4.11.0.0-g0d7ed3b1 (MPM version 7.0), FPGA 8.2, filesystem 20260908111319.
 - **Clock / PPS:** N310-10 **REF IN** and **PPS IN** are cabled to the GPS-disciplined

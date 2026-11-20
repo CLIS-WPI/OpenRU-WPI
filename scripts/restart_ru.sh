@@ -33,6 +33,10 @@ RADIO="${RADIO:-uhd}"
 RESTART_DU="${RESTART_DU:-0}"
 RELEASE_TIMEOUT="${RU_RELEASE_TIMEOUT:-60}"
 
+if [[ "${BENCH:-0}" == "1" ]]; then
+  set -a; . "$ROOT/docker/bench.env"; set +a
+  . "$ROOT/scripts/radio_env.sh"; radio_env_load "$ROOT" || exit 2
+fi
 OUT="$("$ROOT/scripts/local_profile.sh" "$PROFILE" "$TX_GAIN" "$REF" | tail -1)"
 export PROTORU_CONFIG_PATH="$OUT"
 export REF
@@ -49,6 +53,7 @@ fi
 [[ -f "$ENV_FILE" ]] || { echo "restart-ru: FAIL: $ENV_FILE missing" >&2; exit 1; }
 COMPOSE+=(-f docker/compose.e2e.yml)
 set -a; . "$ENV_FILE"; set +a
+[[ "${BENCH:-0}" == "1" ]] && { radio_env_load "$ROOT" || exit 2; }
 
 # 1. Stop the old ProtO-RU and wait until it is really down.
 OLD_CID="$("${COMPOSE[@]}" ps -q protoru 2>/dev/null | head -1 || true)"

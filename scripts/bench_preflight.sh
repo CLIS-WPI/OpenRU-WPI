@@ -30,6 +30,7 @@ warn() { echo "WARN  $*"; }
 
 [[ -f "$BENCH_ENV" ]] || { echo "FAIL: $BENCH_ENV missing (bench host env file)" >&2; exit 1; }
 set -a; . "$BENCH_ENV"; set +a
+. "$ROOT/scripts/radio_env.sh"; radio_env_load "$ROOT" || exit 1
 IFACE="${IFACE:-${BENCH_FH_IFACE:-enp5s0f1np1}}"
 USRP_SERIAL="${USRP_SERIAL:-${BENCH_USRP_SERIAL:-}}"
 : "${PROTORU_CPUSET:?bench.env must set PROTORU_CPUSET}"
