@@ -33,3 +33,10 @@ print("ok: fh macvlan on both roles; DU RT CPUs", sorted(rt), "in", sorted(du_se
 PY
 rm -f /tmp/split-core.$$.yml /tmp/split-ran.$$.yml
 echo "PASS: split stack config"
+
+# --core-only: only on "core up"; refused for ran and for unknown flags before anything starts.
+for args in "ran up --core-only" "core up --bogus" "core check --core-only"; do
+  if out="$(scripts/split.sh $args 2>&1)"; then echo "FAIL: split.sh $args was accepted" >&2; exit 1; fi
+  grep -qE "only 'split.sh core up --core-only' takes a flag|window length in seconds" <<<"$out" || { echo "FAIL: split.sh $args: $out" >&2; exit 1; }
+done
+echo "PASS: split.sh --core-only argument checks"
