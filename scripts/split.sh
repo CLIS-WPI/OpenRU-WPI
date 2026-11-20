@@ -44,7 +44,9 @@ COMPOSE=(docker compose --env-file "$ROOT/docker/versions.env" --env-file "$ROOT
 # --core-only: Open5GS only. Do not load e2e (DU nets) or split.yml (fh macvlan on the fibre).
 if (( ! CORE_ONLY )); then
   [[ "$ROLE" == core ]] && COMPOSE+=(-f "$ROOT/docker/compose.e2e.yml")
-  [[ "$ROLE" == ran && "$RADIO" == uhd ]] && COMPOSE+=(-f "$ROOT/docker/compose.radio.yml")
+  # "ran down" always includes the radio file: the UHD path's openru_radio macvlan is only known to compose through
+  # it, and down normally runs without RADIO=uhd (2026-11-20 Phase D STOP left openru_radio behind).
+  [[ "$ROLE" == ran && ( "$RADIO" == uhd || "$ACT" == down ) ]] && COMPOSE+=(-f "$ROOT/docker/compose.radio.yml")
   COMPOSE+=(-f "$ROOT/docker/compose.split.yml")
 fi
 

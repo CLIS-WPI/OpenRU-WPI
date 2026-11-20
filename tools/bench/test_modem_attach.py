@@ -29,10 +29,12 @@ class QmiDiscovery(unittest.TestCase):
     def test_same_usb_device(self):
         with tempfile.TemporaryDirectory() as d:
             mk = lambda p: os.makedirs(os.path.join(d, p), exist_ok=True)
-            for usb, tty, wdm, net in (("1-4", "ttyUSB2", "cdc-wdm3", "wwan1"), ("1-5", "ttyUSB6", "cdc-wdm0", "wwan0")):
-                mk(f"devices/{usb}/{usb}:1.2"); mk(f"devices/{usb}/{usb}:1.4/net/{net}")
+            # Real RM520N layout on the bench (2026-11-20): class/tty/ttyUSBn/device -> .../2-1.4:1.2/ttyUSBn
+            # (usb-serial port level), class/usbmisc/cdc-wdmN/device -> .../2-1.4:1.4 with net/wwanN.
+            for usb, tty, wdm, net in (("2-1.4", "ttyUSB2", "cdc-wdm3", "wwan1"), ("1-5", "ttyUSB6", "cdc-wdm0", "wwan0")):
+                mk(f"devices/{usb}/{usb}:1.2/{tty}"); mk(f"devices/{usb}/{usb}:1.4/net/{net}")
                 mk("class/tty/" + tty); mk("class/usbmisc/" + wdm)
-                os.symlink(os.path.join(d, f"devices/{usb}/{usb}:1.2"), os.path.join(d, "class/tty", tty, "device"))
+                os.symlink(os.path.join(d, f"devices/{usb}/{usb}:1.2/{tty}"), os.path.join(d, "class/tty", tty, "device"))
                 os.symlink(os.path.join(d, f"devices/{usb}/{usb}:1.4"), os.path.join(d, "class/usbmisc", wdm, "device"))
             os.makedirs(os.path.join(d, "dev"))
             link = os.path.join(d, "dev/by-id-A")
@@ -41,6 +43,11 @@ class QmiDiscovery(unittest.TestCase):
             link_b = os.path.join(d, "dev/by-id-B")
             os.symlink("/dev/ttyUSB6", link_b)
             self.assertEqual(m.qmi_for(link_b, sysfs=d), ("/dev/cdc-wdm0", "wwan0"))
+
+    def test_usb_device_levels(self):
+        self.assertEqual(m.usb_device("/sys/devices/x/usb2/2-1/2-1.4/2-1.4:1.2/ttyUSB4"), "2-1.4")
+        self.assertEqual(m.usb_device("/sys/devices/x/usb2/2-1/2-1.4/2-1.4:1.4"), "2-1.4")
+        self.assertIsNone(m.usb_device("/sys/devices/virtual/tty/tty0"))
 
     def test_bad_serial(self):
         with self.assertRaises(SystemExit):
