@@ -86,8 +86,9 @@ ru_emu:
         sync_source: internal
         max_proc_delay: 2
         execution_profile: auto
-        # Round-robin in creation order radio, hp, tx, rx: ru_radio (non-real-time) -> E-core 12,
-        # ru_phy_hp + ru_phy_tx -> 6, ru_phy_rx -> 7. One busy thread per logical CPU removed
-        # the lower-PHY "Downlink data late" ramp of 2026-11-19 (see docs/BENCH_BUNDLE.md).
-        ru_cpus: [12, 6, 6, 7]
+        # Round-robin in creation order radio, hp, tx, rx, ul: ru_radio (non-real-time UHD async-message loop)
+        # -> P-core 8, ru_phy_hp + ru_phy_tx -> 6, ru_phy_rx -> 7, ru_phy_ul -> 9. With four entries ru_phy_ul
+        # wrapped around onto ru_radio's CPU. Split plan in docker/split-ran.env (DU on the core host, so 8-11
+        # are free here); measured in Phase D 2026-11-20, docs/SPLIT_DU.md.
+        ru_cpus: [8, 6, 6, 7, 9]
         pinning_policy: round-robin

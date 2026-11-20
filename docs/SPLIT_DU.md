@@ -30,6 +30,27 @@ i9-10900X, 10 cores / 20 threads (HT siblings `n` and `n+10`), `isolcpus=6-9,16-
 | 5 | DU non-real-time threads (`*=5`) |
 | 0–4, 10–15 | Open5GS (`CORE_CPUSET`), host, IRQs; rt follower on 0–1 |
 
+## Bench host CPU plan (split)
+
+i5-13600KF: P-cores 0-11 (HT pairs n/n+1), E-cores 12-19, `isolcpus=2-11`. The DU is on the core host, so P-cores
+8-11 are free on the bench host. `docker/split-ran.env` overrides bench.env's single-host RU plan:
+
+| CPU | Thread(s) | Policy |
+|---|---|---|
+| 2 | `ru_timing` | FIFO |
+| 3 | `ru_emu_#0` (busy-polls) | FIFO |
+| 4 / 5 | `ru_rx_#0` / `ru_ofh_tx_#0` | FIFO |
+| 6 | `ru_phy_hp_#0`, `ru_phy_tx_#0` (feeds DL samples to UHD) | FIFO |
+| 7 | `ru_phy_rx_#0` | FIFO |
+| 8 | `ru_radio_#0` (UHD async-message loop; non-real-time by design in ProtO-RU) | OTHER |
+| 9 | `ru_phy_ul_#0` (HT sibling of 8) | FIFO |
+| 12 | `uhd_ctrl_ep0001` alone (UHD control endpoint, busy-polls 100 %) | RR/89 |
+| 13 | everything else: gRPC `event_engine` x20, loggers, main threads | RR/89, OTHER |
+
+`ru_radio` and `ru_phy_ul` come from the profile's `ru_cpus: [8, 6, 6, 7, 9]` (round-robin in creation order radio,
+hp, tx, rx, ul); `scripts/bench_rt.sh ru` applies and checks the whole plan after start. `tests/split/test.sh` checks
+the plan against the container cpuset and the round-robin order.
+
 ## Time
 
 Each side aligns its slots to its own system clock, so the core host's clock follows the bench host's
@@ -152,3 +173,19 @@ docker ps -a --filter name=openru ; docker network ls --filter name=openru   # e
 ```
 
 Nothing persistent changes on either host besides Docker volumes (logs, Open5GS DB on the core host).
+
+### Phase D result (2026-11-20, America/New_York; release v0.1.9-bench, n310-20, TX gain 30, p_max 10, modem A)
+
+`bench-split-20mhz-2t2r`, human at the bench. [MEASURED] unless tagged.
+
+| Run | Result |
+|---|---|
+| Thread plan with `ru_radio` and ~30 RR/89 threads incl. `uhd_ctrl_ep0001` (100 % busy) on E-core 12 | STOP 16:04, 19 min into the 60-min run: lower-PHY "Downlink data late" 11/min while the RU's OFH receive counters showed every DL packet on time; UE radio-link failure (MAC max KOs) [MEASURED]; starvation on E-core 12 as cause [UNVERIFIED] |
+| Plan above (`ru_radio` on 8, `ru_phy_ul` then also on 8, `uhd_ctrl_ep0001` alone on 12, rest on 13) | step 2: TCP DL 108.8 / UL 16.1 Mbit/s, dl_ri 2, CQI 14-15, DL MCS 26, PUSCH SNR 32.7 dB (single host: 109.1 / 16.3) |
+| 60-min run 16:24:16-17:24:29, 10 x (5 min TCP DL + 1 min TCP UL) | DL 107.0-107.7, UL 16.1-16.3 Mbit/s each cycle; dl_ri 2, CQI 15, MCS 25 (cycle medians); pings 3611/3611, longest gap 1.2 s; RU lower-PHY failures 0; RU OFH 141 M packets, late 385 (2.7e-6), corrupt 0, drop 0; DU warnings 2.6/min (worst minute 9); core PTP ptp4l median rms 3.6 us (max 17.4 us) |
+| End of run | one RF TX underflow at 17:24:29.65, 0.6 s after the last UL test ended -> automatic STOP; cause open [UNVERIFIED] |
+| 3 cold starts (split down, up + gate, attach with AT+QIACT=1, 4 pings, 30 s TCP DL) | all passed: up + gate 298-300 s, registered after 15 s, 4/4 pings, DL 107.0 / 103.2 / 104.2 Mbit/s |
+| QRSRP medians by module pin | ANT2 -98, ANT0 -113, ANT1 -133, ANT3 -115 dBm |
+
+Preflight note: `hwlatdetect` read 41 us twice while the bench host's local desktop was in use and 0 us when idle
+(SMI counter unchanged) [MEASURED]; keep the desktop idle during preflight.
