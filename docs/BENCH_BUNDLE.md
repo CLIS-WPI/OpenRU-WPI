@@ -334,6 +334,33 @@ UE at full power (p_max 10 dBm) reaches RF0 RX2 at about 10 − 7 − 40 = **−
 −15 dBm RX maximum [DATASHEET]. With this cabling PUSCH SNR was ~30 dB and UL MCS 27 [MEASURED 2026-11-20];
 before it (TX0 cabled to RF0 TX/RX only) the RU got the uplink by leakage: SNR −1…−4 dB, UL MCS 0 [MEASURED].
 
+### Finding which N310 port reaches which receiver (port finder, transmits)
+
+`scripts/bench_portfind.sh` sends a bounded CW tone on one UHD channel at a time and captures it on
+receive-only HackRFs. It **transmits**: run it only with the human's go, cabled, no antennas, stack down.
+
+```bash
+RF_TONE_OK=1 HACKRF_SERIALS="<serial> <serial>" BENCH_RADIO=n310-20 scripts/bench_portfind.sh "0 1 2 3"
+```
+
+Safety limits:
+- `uhd_one_tone` (built into the bench image from `docker/bench/uhd_one_tone.cpp`) refuses channel > 3,
+  gain > 30 dB or > 10 s (exit 2) **before** opening the radio, and checks the gain read back from UHD
+  (exit 3). It sends one burst of fixed length (3421.48 MHz, TX/RX port, amplitude 0.3) and exits.
+  The image build checks the refusal (`uhd_one_tone x 0 31 5` must exit 2).
+- The script refuses without `RF_TONE_OK=1`, with any `openru` container present, or with
+  `ru_emulator` / another tone tool running.
+- HackRFs only receive (`hackrf_transfer -r`, RF amp off `-a 0`, LNA 32, VGA 30).
+- Analysis `tools/bench/portfind.py` (tone dB over a fresh per-HackRF baseline); captures are deleted only
+  after it succeeds.
+
+`docker/bench/uhd_read_sensors.cpp` (`uhd_read_sensors <args>`) dumps the motherboard and per-channel
+sensors without tuning, gain or streaming.
+
+The tone tool's logic ran on n310-20 on 2026-11-20 (channels 0–3, gain 30, 5 s) [MEASURED]; the
+port-finder run that day used stock UHD `tx_waveforms`. [UNVERIFIED] this script and the image build
+of both tools have not been run.
+
 ### RM520N-GL antenna roles (n77/n78/n79)
 
 From the Quectel RM520N-GL Hardware Design V1.0, Table 29 (pp. 52–53) [DATASHEET]:
