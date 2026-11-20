@@ -31,4 +31,8 @@ assert s["device_args"].count("addr=") == 2, s["device_args"]
 assert "clock_source=internal,time_source=internal" in s["device_args"], s["device_args"]
 PY
 done
+# bench_preflight must read the radio NIC/serial only after the overlay: `make BENCH=1` exports
+# docker/bench.env (n310-10) into the environment, so an earlier capture overrode n310-20 (2026-11-20).
+awk '/radio_env_load/ {loaded=1} /^(IFACE|USRP_SERIAL)=/ && !loaded {bad=1; print "  " NR ": " $0} END {exit bad}' \
+  "$ROOT/scripts/bench_preflight.sh" || fail "bench_preflight.sh reads IFACE/USRP_SERIAL before radio_env_load"
 echo "PASS: BENCH_RADIO selects n310-10 (default) / n310-20 / n310-30; unknown radio rejected"

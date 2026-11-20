@@ -18,8 +18,6 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 BENCH_ENV="${BENCH_ENV:-$ROOT/docker/bench.env}"
 HWLAT_SECS="${BENCH_HWLAT_SECS:-60}"
 HWLAT_LIMIT_US=20
-IFACE="${BENCH_FH_IFACE:-}"
-USRP_SERIAL="${BENCH_USRP_SERIAL:-}"
 
 FAIL=0
 PROBE_OUT_FILE="$(mktemp)"
@@ -31,8 +29,10 @@ warn() { echo "WARN  $*"; }
 [[ -f "$BENCH_ENV" ]] || { echo "FAIL: $BENCH_ENV missing (bench host env file)" >&2; exit 1; }
 set -a; . "$BENCH_ENV"; set +a
 . "$ROOT/scripts/radio_env.sh"; radio_env_load "$ROOT" || exit 1
-IFACE="${IFACE:-${BENCH_FH_IFACE:-enp5s0f1np1}}"
-USRP_SERIAL="${USRP_SERIAL:-${BENCH_USRP_SERIAL:-}}"
+# Read after the radio overlay: `make BENCH=1` exports docker/bench.env (n310-10) into the environment,
+# so a value captured before radio_env_load would override BENCH_RADIO=n310-20/-30.
+IFACE="${BENCH_FH_IFACE:-enp5s0f1np1}"
+USRP_SERIAL="${BENCH_USRP_SERIAL:-}"
 : "${PROTORU_CPUSET:?bench.env must set PROTORU_CPUSET}"
 : "${DU_CPUSET:?bench.env must set DU_CPUSET}"
 : "${OPENRU_TAG:?bench.env must set OPENRU_TAG}"
