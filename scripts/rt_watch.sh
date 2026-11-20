@@ -11,11 +11,13 @@
 # the check that does not. Thresholds: RT_FAIL_RU_PER_MIN (default 6),
 # RT_FAIL_DU_PER_MIN (default 60).
 #
-# Why one long-lived follower: creating a container on the bench host (namespaces,
-# cgroups, mounts) coincided with a burst of RF "late" / DL-late failures
-# (2026-11-19, 23:59:15 UTC). The follower is created once, runs on the
-# housekeeping CPUs at low priority, and every check only reads its output through
-# the Docker API. Never `docker exec` into the real-time containers.
+# Why one long-lived follower with --network none: starting a container on a Docker
+# bridge network while the stack runs disrupted the DU's uplink (2026-11-20, three
+# `docker run alpine`: all PRACH missed for ~55 s, then every UL symbol for ~30 s;
+# ProtO-RU itself saw nothing). --network none helpers (this follower, pin_threads.py)
+# showed no effect. The follower is created once, on the housekeeping CPUs, and
+# every check only reads its output through the Docker API. Never `docker exec`
+# into the real-time containers.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 NAME="${RT_WATCH_NAME:-openru-rtwatch}"

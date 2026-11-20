@@ -134,6 +134,7 @@ pin-check:
 
 down:
 	-$(COMPOSE) --profile fh --profile core --profile full down --remove-orphans
+	-@$(ROOT)/scripts/rt_watch.sh stop  # hand-started follower: not a compose orphan
 
 logs:
 	$(COMPOSE) --profile fh logs --tail=200 du protoru

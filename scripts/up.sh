@@ -188,6 +188,7 @@ if [[ "${BENCH:-0}" == "1" && "$STACK" != "core" ]]; then
   "$ROOT/scripts/bench_rt.sh" both || {
     echo "[up] FAIL: thread plan or real-time health check failed (see [rt] lines)" >&2
     "${COMPOSE[@]}" --profile core --profile fh down --remove-orphans >/dev/null 2>&1
+    "$ROOT/scripts/rt_watch.sh" stop >/dev/null 2>&1 || true
     exit 1
   }
 fi

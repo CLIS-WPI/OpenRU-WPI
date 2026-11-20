@@ -464,9 +464,16 @@ lost the cell and the UE contexts were released. With the cores plan the same te
   `make BENCH=1 rt-watch [SECS=…]` prints the counts every 10 s.
 - Accepted baseline `[MEASURED, 1T1R bench-20mhz, n310-20]`: RU 0–2 per 30 min; DU 5.5–8
   warnings/min (bursty, up to ~30/min), 0 ping loss — so a normal stack reports **WARN**, not OK.
-- One observation `[UNVERIFIED]`: a burst of 217 RF `late` + 17 DL-late coincided with
-  throw-away `docker run` containers started while the stack ran. The follower is therefore
-  created once; checks only read its output. Avoid starting containers during measurements.
+- **Do not start containers on a Docker bridge network while the stack runs** `[MEASURED]`.
+  2026-11-20, stack idle (no UE), three `docker run --rm alpine true` (default bridge) 25 s
+  apart: #1 → 38 missed UL symbols in one second; #2 → the DU missed **every PRACH occasion
+  for ~55 s**; #3 → **every UL symbol and PRACH for ~30 s**, then recovery. ProtO-RU logged no
+  lower-PHY failures and the RU OFH counters stayed clean, so only the DU-side counters show
+  it. A 2026-11-19 burst (217 RF `late`, 41 DU warnings) coincided with bridge-network log
+  readers. The mechanism is open. The helpers here (`pin_threads.py`, the `rt_watch.sh`
+  follower) use `--network none` and showed no effect; `check_iface` joins the target's
+  namespace. `restart_ru.sh`'s N310 release probe still creates a container on the
+  `openru_radio` macvlan while the DU runs `[UNVERIFIED impact]`.
 
 The DU real-time warnings did not disappear when the DU's normal threads moved off `ru_timing`'s
 HT sibling (5.5/min vs 8.1/min); their cause is open.
