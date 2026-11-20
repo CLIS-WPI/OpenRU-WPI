@@ -50,14 +50,15 @@ def parse_plan(text: str) -> tuple[dict[str, int], int | None]:
 def decide(threads: list[dict], named: dict[str, int], star: int | None, full: set[int]) -> list[dict]:
     """Annotate each thread with 'want' (target CPU or None) and 'state'.
 
-    state: 'ok'        planned and already on its CPU
+    state: 'ok'        planned and already on its CPU (an unnamed thread already on the
+                       '*' CPU counts as planned: that is where the step put it)
            'move'      planned, currently elsewhere
            'app-pinned' not in the plan, pinned by the application (left alone)
     """
     out = []
     for t in threads:
         want = named.get(t["comm"])
-        if want is None and star is not None and t["aff"] == full:
+        if want is None and star is not None and (t["aff"] == full or t["aff"] == {star}):
             want = star
         if want is None:
             state = "app-pinned"

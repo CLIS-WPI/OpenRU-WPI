@@ -43,6 +43,10 @@ class DecideTest(unittest.TestCase):
     def test_unpinned_thread_goes_to_star(self):
         self.assertEqual(self.state([t("uhd_ctrl_ep0001", FULL)]), {"uhd_ctrl_ep0001": ("move", 12)})
 
+    def test_unnamed_thread_already_on_star_is_ok(self):
+        # re-reading the map after --apply: the '*' threads must show as on plan
+        self.assertEqual(self.state([t("event_engine", {12})]), {"event_engine": ("ok", 12)})
+
     def test_app_pinned_unnamed_thread_is_left_alone(self):
         self.assertEqual(self.state([t("ru_phy_tx_#0", {6})]), {"ru_phy_tx_#0": ("app-pinned", None)})
 

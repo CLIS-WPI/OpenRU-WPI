@@ -44,8 +44,8 @@ if [[ "$WHICH" == both || "$WHICH" == ru ]]; then pin protoru "${BENCH_RU_THREAD
 echo "[rt] settling ${SETTLE}s, then counting real-time failures for ${CHECK}s ..."
 sleep "$SETTLE"
 rc=0
-"$ROOT/scripts/rt_watch.sh" check "$CHECK" | sed 's/^/[rt] /' || true
-rc="${PIPESTATUS[0]}"
+out="$("$ROOT/scripts/rt_watch.sh" check "$CHECK" 2>&1)" || rc=$?
+printf '%s\n' "$out" | sed 's/^/[rt] /'
 case "$rc" in
   0) echo "[rt] OK: no lower-PHY / RF / DU fronthaul real-time failures" ;;
   2) echo "[rt] !!!!!!!! WARN: real-time failures after startup (see counts above); keep watching: make rt-watch" ;;
