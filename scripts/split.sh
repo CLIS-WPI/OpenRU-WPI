@@ -48,8 +48,16 @@ case "$ACT" in
   up)
     preflight
     if [[ "$ROLE" == core ]]; then
+      # Open5GS first: a DU started before the AMF listens exits on "Connection refused" (as in up.sh).
+      "${COMPOSE[@]}" --profile core --profile fh up -d core
+      for i in $(seq 1 120); do
+        h="$(docker inspect -f '{{.State.Health.Status}}' "$("${COMPOSE[@]}" ps -q core | head -1)" 2>/dev/null || true)"
+        [[ "$h" == healthy ]] && break
+        [[ "$h" == unhealthy || "$i" == 120 ]] && { echo "split: FAIL: core not healthy ($h)" >&2; exit 1; }
+        sleep 1
+      done
       since="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-      "${COMPOSE[@]}" --profile core --profile fh up -d core du
+      "${COMPOSE[@]}" --profile core --profile fh up -d du
       BENCH=1 SINCE="$since" "$ROOT/scripts/wait_ng_setup.sh"
       RT_CHECK_SECS=0 "$ROOT/scripts/bench_rt.sh" du
     else
