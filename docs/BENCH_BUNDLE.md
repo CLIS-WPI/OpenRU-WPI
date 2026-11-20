@@ -521,6 +521,23 @@ Only after `make up` has printed the NG Setup and `[rt]` lines; both modems stay
    `UE SUPI[imsi-…] DNN[internet] IPv4[10.45.0.x]`), then `AT+QPING=1,"10.45.0.1",4,4`.
 4. STOP: `AT+CFUN=4` on both modems, then `make down`.
 
+Helper (same steps plus the host data path; one modem, by its USB serial, the `<id>` in
+`/dev/serial/by-id/usb-Quectel_RM520N-GL_<id>-if02-port0`):
+
+```bash
+python3 tools/bench/modem_attach.py up <id>     # CFUN=1, wait registered, QIACT=1, CGPADDR, 4 pings, QMI path
+iperf3 -c 10.45.0.1 -B <UE> -R -t 30            # iperf3 server in the core container (docker exec, non-RT)
+python3 tools/bench/modem_attach.py down <id>   # host path down, CFUN=4
+```
+
+It sends only allowlisted AT commands (`ALLOWED` in the script; nothing that writes the SIM or firmware),
+finds the QMI device (`/dev/cdc-wdmN`) and net interface on the **same USB device as the AT port** (names
+change on USB re-enumeration, so never hard-code them), starts the session with
+`qmicli --device-open-proxy --wds-start-network="apn=internet,ip-type=4" --client-no-release-cid`
+(retried: the first call after qmi-proxy starts can time out), sets raw-IP, the UE address /32 and a /32
+route to `10.45.0.1`, and prints `IF=… UE=…`. Root steps use `sudo -n`. [UNVERIFIED] the script itself has
+not run on the bench; the same steps ran from bench scripts on 2026-11-20 [MEASURED].
+
 ## End-to-end stack (core + DU + RU)
 
 ```bash
