@@ -5,12 +5,14 @@
 #   RADIO=null scripts/split.sh ran up # then on the bench host: ProtO-RU (null radio), RU thread plan
 #   scripts/split.sh <role> check [s]  # on each host after both are up: rt follower + check (default 60 s)
 #   scripts/split.sh <role> down       # ran first, then core
+#   Phase D (transmits; human go only):
+#   RF_SPLIT_OK=1 RADIO=uhd BENCH_RADIO=n310-20 TX_GAIN=30 PROFILE=bench-split-20mhz-2t2r scripts/split.sh ran up
 #
 # Fronthaul: docker/compose.split.yml (macvlan on SPLIT_FH_IFACE, MTU 9000, never a bridge).
 # Env: docker/bench.env, then docker/split-<role>.env. Profile: PROFILE (default bench-split-20mhz).
 # Both hosts' slot timing follows their system clock: the core's is PTP-disciplined from the bench
 # host (openru-ptp4l / openru-phc2sys); "up" refuses on core when phc2sys is not active.
-# RADIO=uhd on ran is Phase D (transmits): needs the human's go; not the default.
+# RADIO=uhd on ran is Phase D (transmits): RF_SPLIT_OK=1 and TX_GAIN <= 30 required; not the default.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 ROLE="${1:?usage: split.sh <core|ran> <up|check|down>}"; ACT="${2:?usage: split.sh <core|ran> <up|check|down>}"
@@ -22,8 +24,13 @@ P="$ROOT/profiles/$PROFILE"
 export DU_CONFIG_PATH="$P/du-core.yml"
 case "$RADIO" in
   null) export PROTORU_CONFIG_PATH="$P/protoru-null.yml" ;;
-  uhd)  [[ "${RF_SPLIT_OK:-0}" == 1 ]] || { echo "split: FAIL: RADIO=uhd transmits; set RF_SPLIT_OK=1 only with the human's go" >&2; exit 2; }
-        export PROTORU_CONFIG_PATH="$P/protoru.yml" ;;
+  uhd)  [[ "$ROLE" == ran ]] || { echo "split: FAIL: RADIO applies to the ran role" >&2; exit 2; }
+        [[ "${RF_SPLIT_OK:-0}" == 1 ]] || { echo "split: FAIL: RADIO=uhd transmits; set RF_SPLIT_OK=1 only with the human's go" >&2; exit 2; }
+        # Phase D limits: explicit TX gain, never above 30 (cabled bench, p_max 10 in the DU profile).
+        [[ "${TX_GAIN:-}" =~ ^[0-9]+(\.[05])?$ ]] && awk -v g="$TX_GAIN" 'BEGIN{exit !(g <= 30)}' \
+          || { echo "split: FAIL: RADIO=uhd needs TX_GAIN <= 30 (got '${TX_GAIN:-}')" >&2; exit 2; }
+        . "$ROOT/scripts/radio_env.sh"; radio_env_load "$ROOT" || exit 2   # BENCH_RADIO (default n310-10)
+        export PROTORU_CONFIG_PATH="$("$ROOT/scripts/local_profile.sh" "$PROFILE" "$TX_GAIN" internal | tail -1)" ;;
   *) echo "split: FAIL: RADIO must be null or uhd" >&2; exit 2 ;;
 esac
 COMPOSE=(docker compose --env-file "$ROOT/docker/versions.env" --env-file "$ROOT/docker/bench.env"
