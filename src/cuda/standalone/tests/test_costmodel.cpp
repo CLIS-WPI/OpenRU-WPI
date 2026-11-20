@@ -53,6 +53,7 @@
 #include <random>
 #include <sched.h>
 #include <string>
+#include <unistd.h>
 #include <vector>
 
 namespace {
@@ -344,8 +345,12 @@ int main(int argc, char** argv)
     }
   }
 
-  if (cpu_core > 15) {
-    std::fprintf(stderr, "CPU core must be in 0-15 (got %u).\n", cpu_core);
+  long nof_online_cpus = sysconf(_SC_NPROCESSORS_ONLN);
+  if (nof_online_cpus < 1 || cpu_core >= static_cast<unsigned>(nof_online_cpus)) {
+    std::fprintf(stderr,
+                 "CPU core must be in 0-%ld (got %u).\n",
+                 nof_online_cpus > 0 ? nof_online_cpus - 1 : 0,
+                 cpu_core);
     return 1;
   }
   if (!pin_cpu(cpu_core)) {

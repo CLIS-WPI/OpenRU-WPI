@@ -1,0 +1,1 @@
+{"cores": [19, 21, 31], "bench_core": 19, "max_foreign_pct": {"19": 5.41, "21": 13.64, "31": 0.0}, "rejected": true, "freq_khz_sysfs": {"min": 3799970, "median": 3799974.0, "max": 3799993}, "freq_khz_cpuinfo": {"min": 3799951.0, "median": 3799970.5, "max": 3799997.0}}

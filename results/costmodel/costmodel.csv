@@ -1,109 +1,109 @@
-isa,backend,profile,bw_mhz,dft_size,ports,layers,kernel,h2d_p50_ms,h2d_p99_ms,compute_p50_ms,compute_p99_ms,compute_max_ms,d2h_p50_ms,d2h_p99_ms,transfer_p50_ms,pass,note
-avx2,CPU,20 MHz,20,768,1,1,bfp_compress,0,0,0.00536,0.011219,0.01485,0,0,0,PASS,backend=avx2; byte-identical to generic
-avx2,CPU,20 MHz,20,768,1,1,ofdm_mod,0,0,0.0116,0.02255,0.02743,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-102.581839
-avx2,CPU,20 MHz,20,768,1,1,precoding,0,0,0.019169,0.02819,0.02853,0,0,0,PASS,backend=avx2; layers=1; max_err=0.000000
-avx512,CPU,20 MHz,20,768,1,1,bfp_compress,0,0,0.00417,0.00992,0.01006,0,0,0,PASS,backend=avx512; byte-identical to generic
-avx512,CPU,20 MHz,20,768,1,1,ofdm_mod,0,0,0.011,0.02474,0.030449,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-103.425048
-avx512,CPU,20 MHz,20,768,1,1,precoding,0,0,0.02229,0.03289,0.03322,0,0,0,PASS,backend=avx512; layers=1; max_err=0.000000
-gpu,GPU,20 MHz,20,768,1,1,bfp_compress,0.00656,0.012192,0.005856,0.00608,0.008064,0.01248,0.019328,0.01904,PASS,byte-identical to generic CPU compressor
-gpu,GPU,20 MHz,20,768,1,1,ofdm_mod,0.007232,0.01328,0.012896,0.016576,0.018944,0.01936,0.027136,0.026592,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-101.664135
-gpu,GPU,20 MHz,20,768,1,1,precoding,0.00672,0.01296,0.005408,0.005664,0.006112,0.013536,0.019264,0.020256,PASS,CUDA Cat-B; layers=1; weights pre-stored on device; max_err=0.000000
-avx2,CPU,20 MHz,20,768,2,2,bfp_compress,0,0,0.01074,0.02062,0.02153,0,0,0,PASS,backend=avx2; byte-identical to generic
-avx2,CPU,20 MHz,20,768,2,2,ofdm_mod,0,0,0.023309,0.0329,0.03357,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-102.969744
-avx2,CPU,20 MHz,20,768,2,2,precoding,0,0,0.039699,0.05033,0.050479,0,0,0,PASS,backend=avx2; layers=2; max_err=0.000001
-avx512,CPU,20 MHz,20,768,2,2,bfp_compress,0,0,0.008339,0.01422,0.02038,0,0,0,PASS,backend=avx512; byte-identical to generic
-avx512,CPU,20 MHz,20,768,2,2,ofdm_mod,0,0,0.02225,0.033249,0.03506,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-102.442680
-avx512,CPU,20 MHz,20,768,2,2,precoding,0,0,0.060799,0.07126,0.08706,0,0,0,PASS,backend=avx512; layers=2; max_err=0.000001
-gpu,GPU,20 MHz,20,768,2,2,bfp_compress,0.00976,0.017056,0.01072,0.011808,0.012896,0.01664,0.023488,0.0264,PASS,byte-identical to generic CPU compressor
-gpu,GPU,20 MHz,20,768,2,2,ofdm_mod,0.010176,0.01648,0.017696,0.021152,0.021344,0.021376,0.030624,0.031552,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-102.442680
-gpu,GPU,20 MHz,20,768,2,2,precoding,0.009664,0.01728,0.010432,0.012192,0.012896,0.01872,0.025696,0.028384,PASS,CUDA Cat-B; layers=2; weights pre-stored on device; max_err=0.000000
-avx2,CPU,20 MHz,20,768,4,4,bfp_compress,0,0,0.02174,0.031529,0.03159,0,0,0,PASS,backend=avx2; byte-identical to generic
-avx2,CPU,20 MHz,20,768,4,4,ofdm_mod,0,0,0.045609,0.05672,0.066619,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-101.871838
-avx2,CPU,20 MHz,20,768,4,4,precoding,0,0,0.096459,0.102279,0.103209,0,0,0,PASS,backend=avx2; layers=4; max_err=0.000000
-avx512,CPU,20 MHz,20,768,4,4,bfp_compress,0,0,0.01671,0.022999,0.02529,0,0,0,PASS,backend=avx512; byte-identical to generic
-avx512,CPU,20 MHz,20,768,4,4,ofdm_mod,0,0,0.04189,0.05418,0.06055,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-101.457911
-avx512,CPU,20 MHz,20,768,4,4,precoding,0,0,0.144189,0.150699,0.150919,0,0,0,PASS,backend=avx512; layers=4; max_err=0.000000
-gpu,GPU,20 MHz,20,768,4,4,bfp_compress,0.013696,0.024256,0.01056,0.01168,0.011712,0.01824,0.025696,0.031936,PASS,byte-identical to generic CPU compressor
-gpu,GPU,20 MHz,20,768,4,4,ofdm_mod,0.013376,0.014592,0.01888,0.0208,0.021568,0.027456,0.03632,0.040832,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-101.981792
-gpu,GPU,20 MHz,20,768,4,4,precoding,0.013824,0.020416,0.010016,0.011296,0.011456,0.02208,0.027744,0.035904,PASS,CUDA Cat-B; layers=4; weights pre-stored on device; max_err=0.000000
-avx2,CPU,20 MHz,20,768,8,4,bfp_compress,0,0,0.04316,0.05531,0.055859,0,0,0,PASS,backend=avx2; byte-identical to generic
-avx2,CPU,20 MHz,20,768,8,4,ofdm_mod,0,0,0.098219,0.104189,0.10574,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-102.272201
-avx2,CPU,20 MHz,20,768,8,4,precoding,0,0,0.176619,0.191749,0.195348,0,0,0,PASS,backend=avx2; layers=4; max_err=0.000000
-avx512,CPU,20 MHz,20,768,8,4,bfp_compress,0,0,0.0333,0.04265,0.04288,0,0,0,PASS,backend=avx512; byte-identical to generic
-avx512,CPU,20 MHz,20,768,8,4,ofdm_mod,0,0,0.08978,0.102889,0.105199,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-102.125960
-avx512,CPU,20 MHz,20,768,8,4,precoding,0,0,0.276028,0.287499,0.289968,0,0,0,PASS,backend=avx512; layers=4; max_err=0.000000
-gpu,GPU,20 MHz,20,768,8,4,bfp_compress,0.020672,0.029984,0.009568,0.014016,0.014176,0.022784,0.0312,0.043456,PASS,byte-identical to generic CPU compressor
-gpu,GPU,20 MHz,20,768,8,4,ofdm_mod,0.020736,0.028416,0.017184,0.019296,0.019424,0.038176,0.049408,0.058912,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-101.956733
-gpu,GPU,20 MHz,20,768,8,4,precoding,0.013696,0.022944,0.01024,0.011264,0.017568,0.02992,0.040736,0.043616,PASS,CUDA Cat-B; layers=4; weights pre-stored on device; max_err=0.000000
-avx2,CPU,40 MHz,40,1536,1,1,bfp_compress,0,0,0.00782,0.01353,0.01762,0,0,0,PASS,backend=avx2; byte-identical to generic
-avx2,CPU,40 MHz,40,1536,1,1,ofdm_mod,0,0,0.027539,0.039759,0.046,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-104.545288
-avx2,CPU,40 MHz,40,1536,1,1,precoding,0,0,0.04045,0.04881,0.05039,0,0,0,PASS,backend=avx2; layers=1; max_err=0.000000
-avx512,CPU,40 MHz,40,1536,1,1,bfp_compress,0,0,0.00842,0.01472,0.02708,0,0,0,PASS,backend=avx512; byte-identical to generic
-avx512,CPU,40 MHz,40,1536,1,1,ofdm_mod,0,0,0.0276,0.038119,0.04819,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-103.595533
-avx512,CPU,40 MHz,40,1536,1,1,precoding,0,0,0.04649,0.05753,0.06012,0,0,0,PASS,backend=avx512; layers=1; max_err=0.000000
-gpu,GPU,40 MHz,40,1536,1,1,bfp_compress,0.009664,0.019968,0.01088,0.011552,0.011552,0.016608,0.02368,0.026272,PASS,byte-identical to generic CPU compressor
-gpu,GPU,40 MHz,40,1536,1,1,ofdm_mod,0.010272,0.017568,0.019552,0.023296,0.023328,0.019936,0.028864,0.030208,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-103.015614
-gpu,GPU,40 MHz,40,1536,1,1,precoding,0.009728,0.01664,0.010336,0.011232,0.012224,0.018816,0.028704,0.028544,PASS,CUDA Cat-B; layers=1; weights pre-stored on device; max_err=0.000000
-avx2,CPU,40 MHz,40,1536,2,2,bfp_compress,0,0,0.01557,0.0249,0.026169,0,0,0,PASS,backend=avx2; byte-identical to generic
-avx2,CPU,40 MHz,40,1536,2,2,ofdm_mod,0,0,0.05682,0.06644,0.067809,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-103.541873
-avx2,CPU,40 MHz,40,1536,2,2,precoding,0,0,0.078899,0.089789,0.09033,0,0,0,PASS,backend=avx2; layers=2; max_err=0.000015
-avx512,CPU,40 MHz,40,1536,2,2,bfp_compress,0,0,0.01681,0.02658,0.027959,0,0,0,PASS,backend=avx512; byte-identical to generic
-avx512,CPU,40 MHz,40,1536,2,2,ofdm_mod,0,0,0.05206,0.06455,0.06763,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-102.866918
-avx512,CPU,40 MHz,40,1536,2,2,precoding,0,0,0.130779,0.138989,0.14259,0,0,0,PASS,backend=avx512; layers=2; max_err=0.000015
-gpu,GPU,40 MHz,40,1536,2,2,bfp_compress,0.013952,0.0216,0.010464,0.011456,0.011488,0.018368,0.027616,0.03232,PASS,byte-identical to generic CPU compressor
-gpu,GPU,40 MHz,40,1536,2,2,ofdm_mod,0.0136,0.018176,0.021312,0.022592,0.022784,0.026112,0.034208,0.039712,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-102.866918
-gpu,GPU,40 MHz,40,1536,2,2,precoding,0.014016,0.02144,0.009984,0.011072,0.011136,0.022592,0.032928,0.036608,PASS,CUDA Cat-B; layers=2; weights pre-stored on device; max_err=0.000000
-avx2,CPU,40 MHz,40,1536,4,4,bfp_compress,0,0,0.03148,0.04167,0.04379,0,0,0,PASS,backend=avx2; byte-identical to generic
-avx2,CPU,40 MHz,40,1536,4,4,ofdm_mod,0,0,0.11725,0.128069,0.128269,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-103.523048
-avx2,CPU,40 MHz,40,1536,4,4,precoding,0,0,0.197219,0.210469,0.212549,0,0,0,PASS,backend=avx2; layers=4; max_err=0.000000
-avx512,CPU,40 MHz,40,1536,4,4,bfp_compress,0,0,0.034069,0.04306,0.04377,0,0,0,PASS,backend=avx512; byte-identical to generic
-avx512,CPU,40 MHz,40,1536,4,4,ofdm_mod,0,0,0.11011,0.120049,0.120629,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-103.373277
-avx512,CPU,40 MHz,40,1536,4,4,precoding,0,0,0.299848,0.311238,0.311818,0,0,0,PASS,backend=avx512; layers=4; max_err=0.000000
-gpu,GPU,40 MHz,40,1536,4,4,bfp_compress,0.021216,0.031936,0.009408,0.014368,0.014464,0.023392,0.030976,0.044608,PASS,byte-identical to generic CPU compressor
-gpu,GPU,40 MHz,40,1536,4,4,ofdm_mod,0.021248,0.030976,0.0184,0.020352,0.023968,0.037312,0.046624,0.05856,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-102.952663
-gpu,GPU,40 MHz,40,1536,4,4,precoding,0.021216,0.021952,0.008416,0.009088,0.009664,0.03216,0.042912,0.053376,PASS,CUDA Cat-B; layers=4; weights pre-stored on device; max_err=0.000000
-avx2,CPU,40 MHz,40,1536,8,4,bfp_compress,0,0,0.06335,0.078349,0.079959,0,0,0,PASS,backend=avx2; byte-identical to generic
-avx2,CPU,40 MHz,40,1536,8,4,ofdm_mod,0,0,0.241328,0.254049,0.255428,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-103.142792
-avx2,CPU,40 MHz,40,1536,8,4,precoding,0,0,0.396857,0.409467,0.415737,0,0,0,PASS,backend=avx2; layers=4; max_err=0.000000
-avx512,CPU,40 MHz,40,1536,8,4,bfp_compress,0,0,0.067429,0.078969,0.080439,0,0,0,PASS,backend=avx512; byte-identical to generic
-avx512,CPU,40 MHz,40,1536,8,4,ofdm_mod,0,0,0.223869,0.236178,0.237438,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-103.204520
-avx512,CPU,40 MHz,40,1536,8,4,precoding,0,0,0.600706,0.613946,0.615777,0,0,0,PASS,backend=avx512; layers=4; max_err=0.000000
-gpu,GPU,40 MHz,40,1536,8,4,bfp_compress,0.036256,0.043968,0.014592,0.01552,0.015936,0.031904,0.047232,0.06816,PASS,byte-identical to generic CPU compressor
-gpu,GPU,40 MHz,40,1536,8,4,ofdm_mod,0.036352,0.047744,0.021952,0.023936,0.02464,0.059648,0.071296,0.096,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-102.725683
-gpu,GPU,40 MHz,40,1536,8,4,precoding,0.021344,0.028704,0.008896,0.014304,0.014528,0.047488,0.058528,0.068832,PASS,CUDA Cat-B; layers=4; weights pre-stored on device; max_err=0.000000
-avx2,CPU,100 MHz,100,4096,1,1,bfp_compress,0,0,0.02186,0.03119,0.032749,0,0,0,PASS,backend=avx2; byte-identical to generic
-avx2,CPU,100 MHz,100,4096,1,1,ofdm_mod,0,0,0.07505,0.09292,0.096299,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-104.776907
-avx2,CPU,100 MHz,100,4096,1,1,precoding,0,0,0.108869,0.118129,0.121699,0,0,0,PASS,backend=avx2; layers=1; max_err=0.000000
-avx512,CPU,100 MHz,100,4096,1,1,bfp_compress,0,0,0.02117,0.033579,0.03484,0,0,0,PASS,backend=avx512; byte-identical to generic
-avx512,CPU,100 MHz,100,4096,1,1,ofdm_mod,0,0,0.077159,0.08654,0.094339,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-104.851917
-avx512,CPU,100 MHz,100,4096,1,1,precoding,0,0,0.125569,0.133709,0.134019,0,0,0,PASS,backend=avx512; layers=1; max_err=0.000000
-gpu,GPU,100 MHz,100,4096,1,1,bfp_compress,0.015712,0.027744,0.010528,0.011968,0.013536,0.019488,0.02624,0.0352,PASS,byte-identical to generic CPU compressor
-gpu,GPU,100 MHz,100,4096,1,1,ofdm_mod,0.015808,0.025472,0.025088,0.027264,0.027296,0.030656,0.041984,0.046464,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-104.762060
-gpu,GPU,100 MHz,100,4096,1,1,precoding,0.015712,0.022976,0.009664,0.01056,0.010816,0.024832,0.035584,0.040544,PASS,CUDA Cat-B; layers=1; weights pre-stored on device; max_err=0.000000
-avx2,CPU,100 MHz,100,4096,2,2,bfp_compress,0,0,0.04368,0.0555,0.05593,0,0,0,PASS,backend=avx2; byte-identical to generic
-avx2,CPU,100 MHz,100,4096,2,2,ofdm_mod,0,0,0.153239,0.167119,0.182999,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-104.713400
-avx2,CPU,100 MHz,100,4096,2,2,precoding,0,0,0.208079,0.221979,0.228429,0,0,0,PASS,backend=avx2; layers=2; max_err=0.000008
-avx512,CPU,100 MHz,100,4096,2,2,bfp_compress,0,0,0.04238,0.054489,0.05743,0,0,0,PASS,backend=avx512; byte-identical to generic
-avx512,CPU,100 MHz,100,4096,2,2,ofdm_mod,0,0,0.158899,0.173479,0.181229,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-104.779593
-avx512,CPU,100 MHz,100,4096,2,2,precoding,0,0,0.326998,0.345818,0.347227,0,0,0,PASS,backend=avx512; layers=2; max_err=0.000008
-gpu,GPU,100 MHz,100,4096,2,2,bfp_compress,0.025472,0.027584,0.008608,0.009792,0.010144,0.026336,0.034368,0.051808,PASS,byte-identical to generic CPU compressor
-gpu,GPU,100 MHz,100,4096,2,2,ofdm_mod,0.025984,0.036448,0.023424,0.025344,0.025376,0.046016,0.055456,0.072,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-104.691557
-gpu,GPU,100 MHz,100,4096,2,2,precoding,0.025568,0.037024,0.007104,0.01296,0.012992,0.036384,0.05328,0.061952,PASS,CUDA Cat-B; layers=2; weights pre-stored on device; max_err=0.000000
-avx2,CPU,100 MHz,100,4096,4,4,bfp_compress,0,0,0.09465,0.10455,0.104859,0,0,0,PASS,backend=avx2; byte-identical to generic
-avx2,CPU,100 MHz,100,4096,4,4,ofdm_mod,0,0,0.306538,0.324108,0.327407,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-105.357868
-avx2,CPU,100 MHz,100,4096,4,4,precoding,0,0,0.512487,0.526007,0.528927,0,0,0,PASS,backend=avx2; layers=4; max_err=0.000015
-avx512,CPU,100 MHz,100,4096,4,4,bfp_compress,0,0,0.09128,0.099709,0.104209,0,0,0,PASS,backend=avx512; byte-identical to generic
-avx512,CPU,100 MHz,100,4096,4,4,ofdm_mod,0,0,0.319388,0.333848,0.334528,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-105.286291
-avx512,CPU,100 MHz,100,4096,4,4,precoding,0,0,0.774415,0.788385,0.789515,0,0,0,PASS,backend=avx512; layers=4; max_err=0.000008
-gpu,GPU,100 MHz,100,4096,4,4,bfp_compress,0.044928,0.058016,0.012704,0.014656,0.017856,0.036832,0.048384,0.08176,PASS,byte-identical to generic CPU compressor
-gpu,GPU,100 MHz,100,4096,4,4,ofdm_mod,0.045184,0.055808,0.025696,0.027392,0.027584,0.073152,0.086336,0.118336,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-105.098326
-gpu,GPU,100 MHz,100,4096,4,4,precoding,0.045184,0.055936,0.010016,0.011296,0.012896,0.0568,0.087168,0.101984,PASS,CUDA Cat-B; layers=4; weights pre-stored on device; max_err=0.000000
-avx2,CPU,100 MHz,100,4096,8,4,bfp_compress,0,0,0.185749,0.199249,0.200119,0,0,0,PASS,backend=avx2; byte-identical to generic
-avx2,CPU,100 MHz,100,4096,8,4,ofdm_mod,0,0,0.616226,0.638366,0.645447,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-105.019115
-avx2,CPU,100 MHz,100,4096,8,4,precoding,0,0,0.954644,1.1965,2.30564,0,0,0,PASS,backend=avx2; layers=4; max_err=0.000008
-avx512,CPU,100 MHz,100,4096,8,4,bfp_compress,0,0,0.177239,0.197888,0.197989,0,0,0,PASS,backend=avx512; byte-identical to generic
-avx512,CPU,100 MHz,100,4096,8,4,ofdm_mod,0,0,0.632956,0.650806,2.36049,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-104.895354
-avx512,CPU,100 MHz,100,4096,8,4,precoding,0,0,1.47758,1.49434,1.50036,0,0,0,PASS,backend=avx512; layers=4; max_err=0.000004
-gpu,GPU,100 MHz,100,4096,8,4,bfp_compress,0.072576,0.083392,0.017696,0.022464,0.026656,0.068064,0.080736,0.14064,PASS,byte-identical to generic CPU compressor
-gpu,GPU,100 MHz,100,4096,8,4,ofdm_mod,0.072832,0.082208,0.027712,0.029824,0.029952,0.130656,0.142816,0.203488,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-104.661547
-gpu,GPU,100 MHz,100,4096,8,4,precoding,0.045344,0.056096,0.011296,0.013024,0.01312,0.093984,0.1048,0.139328,PASS,CUDA Cat-B; layers=4; weights pre-stored on device; max_err=0.000000
+run_id,isa,backend,profile,bw_mhz,dft_size,ports,layers,kernel,h2d_p50_ms,h2d_p99_ms,compute_p50_ms,compute_p99_ms,compute_max_ms,d2h_p50_ms,d2h_p99_ms,transfer_p50_ms,pass,note
+clean-20261120T232220Z,avx2,CPU,20 MHz,20,768,1,1,bfp_compress,0,0,0.00537,0.012791,0.01436,0,0,0,PASS,backend=avx2; byte-identical to generic
+clean-20261120T232220Z,avx2,CPU,20 MHz,20,768,1,1,ofdm_mod,0,0,0.01144,0.01896,0.02537,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-102.581839
+clean-20261120T232220Z,avx2,CPU,20 MHz,20,768,1,1,precoding,0,0,0.02018,0.03005,0.03204,0,0,0,PASS,backend=avx2; layers=1; max_err=0.000000
+clean-20261120T232220Z,avx512,CPU,20 MHz,20,768,1,1,bfp_compress,0,0,0.0042,0.01077,0.01473,0,0,0,PASS,backend=avx512; byte-identical to generic
+clean-20261120T232220Z,avx512,CPU,20 MHz,20,768,1,1,ofdm_mod,0,0,0.01077,0.0188,0.02372,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-103.425048
+clean-20261120T232220Z,avx512,CPU,20 MHz,20,768,1,1,precoding,0,0,0.02212,0.03157,0.032379,0,0,0,PASS,backend=avx512; layers=1; max_err=0.000000
+clean-20261120T232220Z,gpu,GPU,20 MHz,20,768,1,1,bfp_compress,0.006688,0.012832,0.00592,0.006208,0.011776,0.012672,0.018848,0.01936,PASS,byte-identical to generic CPU compressor
+clean-20261120T232220Z,gpu,GPU,20 MHz,20,768,1,1,ofdm_mod,0.007392,0.013824,0.013408,0.01664,0.016864,0.018816,0.026048,0.026208,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-101.664135
+clean-20261120T232220Z,gpu,GPU,20 MHz,20,768,1,1,precoding,0.00672,0.0136,0.005632,0.005792,0.005792,0.013792,0.023872,0.020512,PASS,CUDA Cat-B; layers=1; weights pre-stored on device; max_err=0.000000
+clean-20261120T232220Z,avx2,CPU,20 MHz,20,768,2,2,bfp_compress,0,0,0.01078,0.01864,0.02095,0,0,0,PASS,backend=avx2; byte-identical to generic
+clean-20261120T232220Z,avx2,CPU,20 MHz,20,768,2,2,ofdm_mod,0,0,0.02326,0.03023,0.03688,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-102.969744
+clean-20261120T232220Z,avx2,CPU,20 MHz,20,768,2,2,precoding,0,0,0.03879,0.051049,0.05111,0,0,0,PASS,backend=avx2; layers=2; max_err=0.000001
+clean-20261120T232220Z,avx512,CPU,20 MHz,20,768,2,2,bfp_compress,0,0,0.00831,0.01505,0.01719,0,0,0,PASS,backend=avx512; byte-identical to generic
+clean-20261120T232220Z,avx512,CPU,20 MHz,20,768,2,2,ofdm_mod,0,0,0.02055,0.02843,0.02951,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-102.442680
+clean-20261120T232220Z,avx512,CPU,20 MHz,20,768,2,2,precoding,0,0,0.06067,0.074669,0.07574,0,0,0,PASS,backend=avx512; layers=2; max_err=0.000001
+clean-20261120T232220Z,gpu,GPU,20 MHz,20,768,2,2,bfp_compress,0.009824,0.019872,0.010848,0.011968,0.012,0.01728,0.023328,0.027104,PASS,byte-identical to generic CPU compressor
+clean-20261120T232220Z,gpu,GPU,20 MHz,20,768,2,2,ofdm_mod,0.009856,0.016736,0.017888,0.022176,0.0224,0.021024,0.029376,0.03088,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-102.442680
+clean-20261120T232220Z,gpu,GPU,20 MHz,20,768,2,2,precoding,0.009728,0.016448,0.010944,0.011616,0.011904,0.018496,0.026816,0.028224,PASS,CUDA Cat-B; layers=2; weights pre-stored on device; max_err=0.000000
+clean-20261120T232220Z,avx2,CPU,20 MHz,20,768,4,4,bfp_compress,0,0,0.02169,0.02861,0.02885,0,0,0,PASS,backend=avx2; byte-identical to generic
+clean-20261120T232220Z,avx2,CPU,20 MHz,20,768,4,4,ofdm_mod,0,0,0.047749,0.056599,0.0667,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-101.871838
+clean-20261120T232220Z,avx2,CPU,20 MHz,20,768,4,4,precoding,0,0,0.091939,0.09983,0.102879,0,0,0,PASS,backend=avx2; layers=4; max_err=0.000000
+clean-20261120T232220Z,avx512,CPU,20 MHz,20,768,4,4,bfp_compress,0,0,0.01663,0.02428,0.02779,0,0,0,PASS,backend=avx512; byte-identical to generic
+clean-20261120T232220Z,avx512,CPU,20 MHz,20,768,4,4,ofdm_mod,0,0,0.04499,0.05601,0.062579,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-101.457911
+clean-20261120T232220Z,avx512,CPU,20 MHz,20,768,4,4,precoding,0,0,0.144379,0.151419,0.155479,0,0,0,PASS,backend=avx512; layers=4; max_err=0.000000
+clean-20261120T232220Z,gpu,GPU,20 MHz,20,768,4,4,bfp_compress,0.013728,0.020608,0.010912,0.011936,0.011968,0.017952,0.023488,0.03168,PASS,byte-identical to generic CPU compressor
+clean-20261120T232220Z,gpu,GPU,20 MHz,20,768,4,4,ofdm_mod,0.013408,0.014432,0.020544,0.022016,0.022048,0.027264,0.038208,0.040672,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-101.981792
+clean-20261120T232220Z,gpu,GPU,20 MHz,20,768,4,4,precoding,0.013856,0.0208,0.010528,0.01184,0.011904,0.022112,0.033088,0.035968,PASS,CUDA Cat-B; layers=4; weights pre-stored on device; max_err=0.000000
+clean-20261120T232220Z,avx2,CPU,20 MHz,20,768,8,4,bfp_compress,0,0,0.043179,0.05211,0.060409,0,0,0,PASS,backend=avx2; byte-identical to generic
+clean-20261120T232220Z,avx2,CPU,20 MHz,20,768,8,4,ofdm_mod,0,0,0.100709,0.106769,0.106809,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-102.272201
+clean-20261120T232220Z,avx2,CPU,20 MHz,20,768,8,4,precoding,0,0,0.170029,0.180749,0.183549,0,0,0,PASS,backend=avx2; layers=4; max_err=0.000000
+clean-20261120T232220Z,avx512,CPU,20 MHz,20,768,8,4,bfp_compress,0,0,0.03315,0.04362,0.04411,0,0,0,PASS,backend=avx512; byte-identical to generic
+clean-20261120T232220Z,avx512,CPU,20 MHz,20,768,8,4,ofdm_mod,0,0,0.091809,0.105279,0.107149,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-102.125960
+clean-20261120T232220Z,avx512,CPU,20 MHz,20,768,8,4,precoding,0,0,0.276279,0.284908,0.285288,0,0,0,PASS,backend=avx512; layers=4; max_err=0.000000
+clean-20261120T232220Z,gpu,GPU,20 MHz,20,768,8,4,bfp_compress,0.02064,0.031936,0.010048,0.015136,0.01584,0.023008,0.030944,0.043648,PASS,byte-identical to generic CPU compressor
+clean-20261120T232220Z,gpu,GPU,20 MHz,20,768,8,4,ofdm_mod,0.020832,0.0304,0.018464,0.019968,0.02016,0.038176,0.049664,0.059008,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-101.956733
+clean-20261120T232220Z,gpu,GPU,20 MHz,20,768,8,4,precoding,0.013856,0.024192,0.010496,0.01456,0.01664,0.031584,0.042464,0.04544,PASS,CUDA Cat-B; layers=4; weights pre-stored on device; max_err=0.000000
+clean-20261120T232220Z,avx2,CPU,40 MHz,40,1536,1,1,bfp_compress,0,0,0.008,0.0145,0.014549,0,0,0,PASS,backend=avx2; byte-identical to generic
+clean-20261120T232220Z,avx2,CPU,40 MHz,40,1536,1,1,ofdm_mod,0,0,0.02839,0.037779,0.047859,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-104.545288
+clean-20261120T232220Z,avx2,CPU,40 MHz,40,1536,1,1,precoding,0,0,0.04087,0.051819,0.05214,0,0,0,PASS,backend=avx2; layers=1; max_err=0.000000
+clean-20261120T232220Z,avx512,CPU,40 MHz,40,1536,1,1,bfp_compress,0,0,0.00837,0.01498,0.017491,0,0,0,PASS,backend=avx512; byte-identical to generic
+clean-20261120T232220Z,avx512,CPU,40 MHz,40,1536,1,1,ofdm_mod,0,0,0.02714,0.03829,0.04269,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-103.595533
+clean-20261120T232220Z,avx512,CPU,40 MHz,40,1536,1,1,precoding,0,0,0.0462,0.05634,0.057149,0,0,0,PASS,backend=avx512; layers=1; max_err=0.000000
+clean-20261120T232220Z,gpu,GPU,40 MHz,40,1536,1,1,bfp_compress,0.00976,0.021504,0.011072,0.012032,0.012064,0.016736,0.025792,0.026496,PASS,byte-identical to generic CPU compressor
+clean-20261120T232220Z,gpu,GPU,40 MHz,40,1536,1,1,ofdm_mod,0.009856,0.016448,0.02064,0.023968,0.023968,0.019424,0.029504,0.02928,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-103.015614
+clean-20261120T232220Z,gpu,GPU,40 MHz,40,1536,1,1,precoding,0.00976,0.016768,0.010496,0.011776,0.01184,0.01888,0.02512,0.02864,PASS,CUDA Cat-B; layers=1; weights pre-stored on device; max_err=0.000000
+clean-20261120T232220Z,avx2,CPU,40 MHz,40,1536,2,2,bfp_compress,0,0,0.01558,0.02196,0.023739,0,0,0,PASS,backend=avx2; byte-identical to generic
+clean-20261120T232220Z,avx2,CPU,40 MHz,40,1536,2,2,ofdm_mod,0,0,0.05625,0.068429,0.06891,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-103.541873
+clean-20261120T232220Z,avx2,CPU,40 MHz,40,1536,2,2,precoding,0,0,0.07896,0.087399,0.08881,0,0,0,PASS,backend=avx2; layers=2; max_err=0.000015
+clean-20261120T232220Z,avx512,CPU,40 MHz,40,1536,2,2,bfp_compress,0,0,0.01663,0.0282,0.03663,0,0,0,PASS,backend=avx512; byte-identical to generic
+clean-20261120T232220Z,avx512,CPU,40 MHz,40,1536,2,2,ofdm_mod,0,0,0.05557,0.06795,0.06818,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-102.866918
+clean-20261120T232220Z,avx512,CPU,40 MHz,40,1536,2,2,precoding,0,0,0.125859,0.134219,0.138479,0,0,0,PASS,backend=avx512; layers=2; max_err=0.000015
+clean-20261120T232220Z,gpu,GPU,40 MHz,40,1536,2,2,bfp_compress,0.01392,0.021536,0.010656,0.011872,0.011904,0.018528,0.025472,0.032448,PASS,byte-identical to generic CPU compressor
+clean-20261120T232220Z,gpu,GPU,40 MHz,40,1536,2,2,ofdm_mod,0.013696,0.014944,0.022208,0.023424,0.024192,0.025536,0.034816,0.039232,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-102.866918
+clean-20261120T232220Z,gpu,GPU,40 MHz,40,1536,2,2,precoding,0.014112,0.022016,0.01024,0.011424,0.011648,0.022368,0.030048,0.03648,PASS,CUDA Cat-B; layers=2; weights pre-stored on device; max_err=0.000000
+clean-20261120T232220Z,avx2,CPU,40 MHz,40,1536,4,4,bfp_compress,0,0,0.03134,0.04093,0.04279,0,0,0,PASS,backend=avx2; byte-identical to generic
+clean-20261120T232220Z,avx2,CPU,40 MHz,40,1536,4,4,ofdm_mod,0,0,0.117819,0.126769,0.128759,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-103.523048
+clean-20261120T232220Z,avx2,CPU,40 MHz,40,1536,4,4,precoding,0,0,0.189678,0.200689,0.204929,0,0,0,PASS,backend=avx2; layers=4; max_err=0.000000
+clean-20261120T232220Z,avx512,CPU,40 MHz,40,1536,4,4,bfp_compress,0,0,0.03339,0.04353,0.04424,0,0,0,PASS,backend=avx512; byte-identical to generic
+clean-20261120T232220Z,avx512,CPU,40 MHz,40,1536,4,4,ofdm_mod,0,0,0.116109,0.124019,0.125049,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-103.373277
+clean-20261120T232220Z,avx512,CPU,40 MHz,40,1536,4,4,precoding,0,0,0.301109,0.314298,0.324818,0,0,0,PASS,backend=avx512; layers=4; max_err=0.000000
+clean-20261120T232220Z,gpu,GPU,40 MHz,40,1536,4,4,bfp_compress,0.021248,0.029472,0.009856,0.015072,0.01536,0.023648,0.03584,0.044896,PASS,byte-identical to generic CPU compressor
+clean-20261120T232220Z,gpu,GPU,40 MHz,40,1536,4,4,ofdm_mod,0.021344,0.029248,0.02016,0.020928,0.021088,0.03664,0.045888,0.057984,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-102.952663
+clean-20261120T232220Z,gpu,GPU,40 MHz,40,1536,4,4,precoding,0.021216,0.02736,0.008768,0.013536,0.014016,0.032192,0.037536,0.053408,PASS,CUDA Cat-B; layers=4; weights pre-stored on device; max_err=0.000000
+clean-20261120T232220Z,avx2,CPU,40 MHz,40,1536,8,4,bfp_compress,0,0,0.063969,0.076359,0.077729,0,0,0,PASS,backend=avx2; byte-identical to generic
+clean-20261120T232220Z,avx2,CPU,40 MHz,40,1536,8,4,ofdm_mod,0,0,0.241539,0.252829,0.255608,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-103.142792
+clean-20261120T232220Z,avx2,CPU,40 MHz,40,1536,8,4,precoding,0,0,0.388608,0.400608,0.401608,0,0,0,PASS,backend=avx2; layers=4; max_err=0.000000
+clean-20261120T232220Z,avx512,CPU,40 MHz,40,1536,8,4,bfp_compress,0,0,0.06781,0.078899,0.079679,0,0,0,PASS,backend=avx512; byte-identical to generic
+clean-20261120T232220Z,avx512,CPU,40 MHz,40,1536,8,4,ofdm_mod,0,0,0.233569,0.244329,0.247799,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-103.204520
+clean-20261120T232220Z,avx512,CPU,40 MHz,40,1536,8,4,precoding,0,0,0.603876,0.614556,0.614717,0,0,0,PASS,backend=avx512; layers=4; max_err=0.000000
+clean-20261120T232220Z,gpu,GPU,40 MHz,40,1536,8,4,bfp_compress,0.036288,0.044224,0.015072,0.016288,0.016544,0.031456,0.042592,0.067744,PASS,byte-identical to generic CPU compressor
+clean-20261120T232220Z,gpu,GPU,40 MHz,40,1536,8,4,ofdm_mod,0.03648,0.04752,0.022912,0.024608,0.024608,0.059296,0.068768,0.095776,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-102.725683
+clean-20261120T232220Z,gpu,GPU,40 MHz,40,1536,8,4,precoding,0.021312,0.028928,0.009248,0.015104,0.015168,0.048,0.059776,0.069312,PASS,CUDA Cat-B; layers=4; weights pre-stored on device; max_err=0.000000
+clean-20261120T232220Z,avx2,CPU,100 MHz,100,4096,1,1,bfp_compress,0,0,0.02181,0.031809,0.03339,0,0,0,PASS,backend=avx2; byte-identical to generic
+clean-20261120T232220Z,avx2,CPU,100 MHz,100,4096,1,1,ofdm_mod,0,0,0.079589,0.089239,0.089829,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-104.776907
+clean-20261120T232220Z,avx2,CPU,100 MHz,100,4096,1,1,precoding,0,0,0.109349,0.118239,0.118279,0,0,0,PASS,backend=avx2; layers=1; max_err=0.000000
+clean-20261120T232220Z,avx512,CPU,100 MHz,100,4096,1,1,bfp_compress,0,0,0.021239,0.029389,0.02994,0,0,0,PASS,backend=avx512; byte-identical to generic
+clean-20261120T232220Z,avx512,CPU,100 MHz,100,4096,1,1,ofdm_mod,0,0,0.07478,0.089849,0.0984,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-104.851917
+clean-20261120T232220Z,avx512,CPU,100 MHz,100,4096,1,1,precoding,0,0,0.126169,0.13521,0.135669,0,0,0,PASS,backend=avx512; layers=1; max_err=0.000000
+clean-20261120T232220Z,gpu,GPU,100 MHz,100,4096,1,1,bfp_compress,0.015744,0.026816,0.01088,0.011936,0.020608,0.019648,0.024768,0.035392,PASS,byte-identical to generic CPU compressor
+clean-20261120T232220Z,gpu,GPU,100 MHz,100,4096,1,1,ofdm_mod,0.015872,0.029088,0.02608,0.027904,0.028192,0.031776,0.03984,0.047648,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-104.762060
+clean-20261120T232220Z,gpu,GPU,100 MHz,100,4096,1,1,precoding,0.015904,0.02304,0.009984,0.010752,0.010848,0.02496,0.036736,0.040864,PASS,CUDA Cat-B; layers=1; weights pre-stored on device; max_err=0.000000
+clean-20261120T232220Z,avx2,CPU,100 MHz,100,4096,2,2,bfp_compress,0,0,0.043899,0.05488,0.058139,0,0,0,PASS,backend=avx2; byte-identical to generic
+clean-20261120T232220Z,avx2,CPU,100 MHz,100,4096,2,2,ofdm_mod,0,0,0.155669,0.166229,0.166299,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-104.713400
+clean-20261120T232220Z,avx2,CPU,100 MHz,100,4096,2,2,precoding,0,0,0.202009,0.218939,0.223819,0,0,0,PASS,backend=avx2; layers=2; max_err=0.000008
+clean-20261120T232220Z,avx512,CPU,100 MHz,100,4096,2,2,bfp_compress,0,0,0.042729,0.05656,0.06791,0,0,0,PASS,backend=avx512; byte-identical to generic
+clean-20261120T232220Z,avx512,CPU,100 MHz,100,4096,2,2,ofdm_mod,0,0,0.138699,0.148919,0.155809,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-104.779593
+clean-20261120T232220Z,avx512,CPU,100 MHz,100,4096,2,2,precoding,0,0,0.323218,0.334808,0.334808,0,0,0,PASS,backend=avx512; layers=2; max_err=0.000008
+clean-20261120T232220Z,gpu,GPU,100 MHz,100,4096,2,2,bfp_compress,0.02544,0.026944,0.008992,0.01024,0.0104,0.026304,0.033152,0.051744,PASS,byte-identical to generic CPU compressor
+clean-20261120T232220Z,gpu,GPU,100 MHz,100,4096,2,2,ofdm_mod,0.026112,0.036832,0.024064,0.028384,0.029504,0.046048,0.057856,0.07216,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-104.691557
+clean-20261120T232220Z,gpu,GPU,100 MHz,100,4096,2,2,precoding,0.0256,0.034304,0.007648,0.00896,0.009888,0.036224,0.055456,0.061824,PASS,CUDA Cat-B; layers=2; weights pre-stored on device; max_err=0.000000
+clean-20261120T232220Z,avx2,CPU,100 MHz,100,4096,4,4,bfp_compress,0,0,0.09501,0.10619,0.10712,0,0,0,PASS,backend=avx2; byte-identical to generic
+clean-20261120T232220Z,avx2,CPU,100 MHz,100,4096,4,4,ofdm_mod,0,0,0.316648,0.338738,0.339508,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-105.357868
+clean-20261120T232220Z,avx2,CPU,100 MHz,100,4096,4,4,precoding,0,0,0.490617,0.509397,0.509647,0,0,0,PASS,backend=avx2; layers=4; max_err=0.000015
+clean-20261120T232220Z,avx512,CPU,100 MHz,100,4096,4,4,bfp_compress,0,0,0.092089,0.098279,0.100389,0,0,0,PASS,backend=avx512; byte-identical to generic
+clean-20261120T232220Z,avx512,CPU,100 MHz,100,4096,4,4,ofdm_mod,0,0,0.278469,0.289938,0.290128,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-105.286291
+clean-20261120T232220Z,avx512,CPU,100 MHz,100,4096,4,4,precoding,0,0,0.776406,0.790515,0.793515,0,0,0,PASS,backend=avx512; layers=4; max_err=0.000008
+clean-20261120T232220Z,gpu,GPU,100 MHz,100,4096,4,4,bfp_compress,0.044992,0.05808,0.013184,0.014848,0.015712,0.0368,0.050976,0.081792,PASS,byte-identical to generic CPU compressor
+clean-20261120T232220Z,gpu,GPU,100 MHz,100,4096,4,4,ofdm_mod,0.04528,0.057696,0.026976,0.029344,0.029568,0.074592,0.084,0.119872,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-105.098326
+clean-20261120T232220Z,gpu,GPU,100 MHz,100,4096,4,4,precoding,0.045088,0.05744,0.0104,0.011872,0.012192,0.05952,0.070432,0.104608,PASS,CUDA Cat-B; layers=4; weights pre-stored on device; max_err=0.000000
+clean-20261120T232220Z,avx2,CPU,100 MHz,100,4096,8,4,bfp_compress,0,0,0.186328,0.202669,0.206519,0,0,0,PASS,backend=avx2; byte-identical to generic
+clean-20261120T232220Z,avx2,CPU,100 MHz,100,4096,8,4,ofdm_mod,0,0,0.686696,0.708266,0.711675,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-105.019115
+clean-20261120T232220Z,avx2,CPU,100 MHz,100,4096,8,4,precoding,0,0,0.921184,1.54904,1.92203,0,0,0,PASS,backend=avx2; layers=4; max_err=0.000008
+clean-20261120T232220Z,avx512,CPU,100 MHz,100,4096,8,4,bfp_compress,0,0,0.178219,0.192689,0.195289,0,0,0,PASS,backend=avx512; byte-identical to generic
+clean-20261120T232220Z,avx512,CPU,100 MHz,100,4096,8,4,ofdm_mod,0,0,0.555617,0.962714,1.89945,0,0,0,PASS,FFTW=fftw; golden=generic DFT; max_lsb=1; err_db=-104.895354
+clean-20261120T232220Z,avx512,CPU,100 MHz,100,4096,8,4,precoding,0,0,1.48148,1.49966,1.50483,0,0,0,PASS,backend=avx512; layers=4; max_err=0.000004
+clean-20261120T232220Z,gpu,GPU,100 MHz,100,4096,8,4,bfp_compress,0.072352,0.083552,0.01824,0.020704,0.021312,0.066688,0.082976,0.13904,PASS,byte-identical to generic CPU compressor
+clean-20261120T232220Z,gpu,GPU,100 MHz,100,4096,8,4,ofdm_mod,0.07264,0.086848,0.028224,0.030688,0.039584,0.122496,0.329536,0.195136,PASS,cuFFT; golden=generic CPU DFT; max_lsb=1; err_db=-104.661547
+clean-20261120T232220Z,gpu,GPU,100 MHz,100,4096,8,4,precoding,0.045248,0.056512,0.01168,0.014656,0.015968,0.096352,0.112,0.1416,PASS,CUDA Cat-B; layers=4; weights pre-stored on device; max_err=0.000000
