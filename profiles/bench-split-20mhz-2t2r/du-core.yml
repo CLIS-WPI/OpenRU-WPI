@@ -1,7 +1,7 @@
 # DU for the two-host split stack, 2T2R DL / 1 UL port (as bench-20mhz-2t2r, core-host DU pins).
 # DU for the bench end-to-end stack: NG/N2 to Open5GS (AMF 10.53.1.2, bind
 # 10.53.1.6 on the core bridge) AND Open Fronthaul to ProtO-RU (fh bridge,
-# MTU 9000). Bench core map: DU on 6-11 (docker/bench.env).
+# MTU 9000). Core map: DU on the core host, CPUs 6-8 (docker/split-core.env).
 
 cu_cp:
   amf:
@@ -99,10 +99,10 @@ log:
   filename: /tmp/gnb.log
   all_level: info
 
-# Cores plan (docker/bench.env, accepted 2026-11-20): DU_CPUSET=8-11 is isolcpus, so
-# every busy thread needs its own CPU. ru_timing alone on 9 (its HT sibling 8 stays idle),
-# ru_txrx on 10, main pool on 11. The DU's normal threads (main, logger, io_broker) start on
-# the container's E-core 13 (DU_CONTAINER_CPUSET) and scripts/up.sh checks the map.
+# Core-host plan (docker/split-core.env): DU_CPUSET=6-8 is isolcpus there, one physical core
+# per busy thread (HT siblings 16-18 idle): ru_timing on 6, ru_txrx on 7, main pool on 8. The DU's
+# normal threads (main, logger, io_broker) run on CPU 5 (DU_CONTAINER_CPUSET) and
+# scripts/split.sh core up checks the map.
 expert_execution:
   # Split stack: DU on the core host (docker/split-core.env), one physical core per busy thread.
   affinities:

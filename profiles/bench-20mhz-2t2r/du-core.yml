@@ -1,6 +1,6 @@
 # DU for the bench end-to-end stack: NG/N2 to Open5GS (AMF 10.53.1.2, bind
 # 10.53.1.6 on the core bridge) AND Open Fronthaul to ProtO-RU (fh bridge,
-# MTU 9000). Bench core map: DU on 6-11 (docker/bench.env).
+# MTU 9000). Bench core map: DU on 8-11 (DU_CPUSET, docker/bench.env).
 
 cu_cp:
   amf:
