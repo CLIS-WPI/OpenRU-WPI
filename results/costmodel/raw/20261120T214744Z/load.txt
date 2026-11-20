@@ -1,0 +1,13 @@
+== started 2026-11-20T21:47:44Z
+ 16:47:44 up 28 days,  3:36,  1 user,  load average: 1.21, 1.81, 1.48
+== top cpu
+%CPU COMMAND
+70.7 opencode
+ 5.6 MainThread
+ 5.4 MainThread
+ 2.1 claude
+ 0.8 MainThread
+== docker ps
+paperbanana-api
+ollama
+ngsi-dev-1
