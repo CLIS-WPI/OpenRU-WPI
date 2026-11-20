@@ -36,7 +36,7 @@ endif
 .PHONY: help preflight gpu-check build build-core build-protoru down logs \
         smoke smoke-fh smoke-core fetch-golden replay-golden compare-plmn capture \
         bench-preflight up bench-release bench-ship check-no-secrets restart-ru \
-        prach-timing
+        prach-timing rt-watch pin-check
 
 help:
 	@echo "OpenRU targets (GPU: $$(test -f $(ROOT)/docker/lab.env && echo set || echo 'lab.env MISSING'))"
@@ -114,6 +114,23 @@ restart-ru:
 	@test -n "$(TX_GAIN)" || { echo "usage: make BENCH=1 restart-ru PROFILE=<p> TX_GAIN=<0..65, 0.5 step>"; exit 2; }
 	@BENCH=$(BENCH) PROFILE=$(PROFILE) TX_GAIN=$(TX_GAIN) RADIO=$(UP_RADIO) REF=$(REF) \
 	  RESTART_DU=$(RESTART_DU) $(ROOT)/scripts/restart_ru.sh
+
+# Real-time health of a running bench stack: ProtO-RU lower-PHY/RF failures and DU
+# fronthaul real-time warnings every 10 s (SECS=0 runs until Ctrl-C). The follower
+# container is started by `make up`; this starts it if it is missing.
+rt-watch:
+	@docker inspect openru-rtwatch >/dev/null 2>&1 || $(ROOT)/scripts/rt_watch.sh start
+	@$(ROOT)/scripts/rt_watch.sh watch $(or $(SECS),0)
+
+# Print and check the measured thread maps against BENCH_RU_THREADS/BENCH_DU_THREADS
+# (read-only; `make up` / restart-ru apply the plan).
+pin-check:
+	@set -a; . $(COMPOSE_ENV_FILE); set +a; rc=0; \
+	  for s in du:"$$BENCH_DU_THREADS" protoru:"$$BENCH_RU_THREADS"; do \
+	    cid=$$(docker ps -q --filter label=com.docker.compose.project=openru --filter label=com.docker.compose.service=$${s%%:*} | head -1); \
+	    [ -n "$$cid" ] || { echo "pin-check: $${s%%:*} not running"; rc=1; continue; }; \
+	    python3 $(ROOT)/tools/bench/pin_threads.py "$$cid" "$${s#*:}" || rc=1; \
+	  done; exit $$rc
 
 down:
 	-$(COMPOSE) --profile fh --profile core --profile full down --remove-orphans

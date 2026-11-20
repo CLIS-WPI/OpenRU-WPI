@@ -27,8 +27,23 @@ the scheduler.
 | Role | CPUs |
 |---|---|
 | housekeeping, Open5GS, IRQs | `0-1` + `12-19` (`irqaffinity`; core containers `12-19` via `CORE_CPUSET`) |
-| ProtO-RU real-time threads | `2-5` (`PROTORU_CPUSET`) |
-| DU real-time threads | `6-11` (`DU_CPUSET`) |
+| ProtO-RU real-time threads | `2-7` (`PROTORU_CPUSET`; three physical cores) |
+| ProtO-RU non-real-time threads | E-core `12` (container cpuset `PROTORU_CONTAINER_CPUSET=2-7,12`) |
+| DU real-time threads | `8-11` (`DU_CPUSET`; two physical cores) |
+| DU non-real-time threads | E-core `13` (container cpuset `DU_CONTAINER_CPUSET=8-11,13`) |
+
+Cores plan accepted 2026-11-20 (previously RU `2-5`, DU `6-11`). Per-thread map, applied by the
+profiles plus a post-start step (see [Thread plan and real-time health](#thread-plan-and-real-time-health)):
+
+| CPU | Thread(s) |
+|---|---|
+| 2 / 3 | RU `ru_timing` / `ru_emu_#0` (busy poller) |
+| 4 / 5 | RU `ru_rx_#0` / `ru_ofh_tx_#0` |
+| 6 / 7 | RU `ru_phy_tx_#0` + `ru_phy_hp_#0` / `ru_phy_rx_#0` |
+| 8 / 9 | idle / DU `ru_timing` (its HT sibling stays idle) |
+| 10 / 11 | DU `ru_txrx_#0` / DU `main_pool#0` |
+| 12 | RU `uhd_ctrl_ep0001` (UHD control, polls a full core), `ru_radio_#0`, main, gRPC, loggers |
+| 13 | DU main thread, `io_broker_epoll`, loggers |
 
 `docker/bench.env` carries this map (plus `MARCH=x86-64-v3`, `OPENRU_TAG=v1-candidate-v3`, fronthaul iface and
 USRP serial). Nothing here is host-specific secret state; the GPU-UUID-style values stay in `docker/lab.env` on
@@ -384,6 +399,19 @@ provisions them (IMSI, K, OPc, optional AMF/SST/DNN) into the running core and
 never prints the keys; IMSIs, DNN/SST checks and the SQN/AUTS notes are in
 [`docs/BENCH_SUBSCRIBERS.md`](BENCH_SUBSCRIBERS.md).
 
+### Modem attach (RM520N, after `make up`)
+
+Only after `make up` has printed the NG Setup and `[rt]` lines; both modems stay at
+`AT+CFUN=4` until then.
+
+1. `AT+CFUN=1`; poll `AT+QENG="servingcell"`, `AT+QRSRP`, `AT+C5GREG?` every 30 s (up to 10 min).
+2. When `+C5GREG: 0,1` (registered): **`AT+QIACT=1`**. The modems register but do **not**
+   bring up the PDU session on their own (2026-11-19: no session after 3 min on either modem;
+   `AT+QIACT=1` gave `10.45.0.2` / `10.45.0.3` within seconds) `[MEASURED]`.
+3. `AT+QIACT?` / `AT+CGPADDR=1` for the UE address (the SMF log shows
+   `UE SUPI[imsi-…] DNN[internet] IPv4[10.45.0.x]`), then `AT+QPING=1,"10.45.0.1",4,4`.
+4. STOP: `AT+CFUN=4` on both modems, then `make down`.
+
 ## End-to-end stack (core + DU + RU)
 
 ```bash
@@ -407,6 +435,41 @@ Profiles used: `profiles/<profile>/du-core.yml` (NG/N2 to Open5GS **and** OFH),
 PLMN 00101, TAC 7, SST 1, `ul_common.p_max: 10` and n78 628032 come from the
 profiles; DNN `internet` comes from the subscriber (see
 [`BENCH_SUBSCRIBERS.md`](BENCH_SUBSCRIBERS.md)).
+
+### Thread plan and real-time health
+
+Clean fronthaul counters do **not** prove that the lower PHY meets its deadlines. On 2026-11-19
+(1T1R, n310-20, RU on `2-5`) ProtO-RU's `Real-time failure in lower PHY: Downlink data late`
+ramped from ~1/s to ~240/s over two minutes while RU and DU OFH late/drop stayed 0; both modems
+lost the cell and the UE contexts were released. With the cores plan the same test ran
+30 minutes with 0 ping loss and 2 lower-PHY failures `[MEASURED]`.
+
+- **Thread plan.** The profiles pin what the applications can pin (`timing_cpus`, `ru_cpus`
+  round-robin, DU `expert_execution`). ProtO-RU's three OFH threads share one `ofh_cpus` mask,
+  and UHD's `uhd_ctrl_ep` and other non-real-time threads inherit the container cpuset; on
+  isolated CPUs the kernel never spreads them. After start, `scripts/up.sh` and
+  `scripts/restart_ru.sh` run `scripts/bench_rt.sh`, which applies `BENCH_RU_THREADS` /
+  `BENCH_DU_THREADS` (`docker/bench.env`) with `tools/bench/pin_threads.py`: taskset in a
+  throw-away container sharing the target's PID namespace with `CAP_SYS_NICE` (no
+  `docker exec`, no sudo). It prints the measured map (thread, policy, CPU, affinity, plan)
+  and **fails** if a planned thread is off-plan. `make BENCH=1 pin-check` re-prints it read-only.
+- **Real-time health.** `scripts/rt_watch.sh` starts one long-lived follower container
+  (`openru-rtwatch`, CPUs `0-1`, `--volumes-from` the RT containers) that greps
+  `proto-ru.log` and `gnb.log`; `tools/bench/rt_health.py` counts ProtO-RU
+  `Downlink/Uplink data late`, `PUxCH request late`, RF `underflow/overflow/late` and the DU's
+  `[OFH] [W]` real-time warnings (missed U-plane, dropped late grids/requests, timing worker
+  woke up late, lost messages). `make up` settles 30 s, counts 60 s and prints **WARN** for any
+  count, **FAIL** (and tears the stack down) at RU ≥ 6/min or DU ≥ 60/min
+  (`RT_FAIL_RU_PER_MIN`, `RT_FAIL_DU_PER_MIN`; `RT_CHECK_SECS=0` skips). During a run:
+  `make BENCH=1 rt-watch [SECS=…]` prints the counts every 10 s.
+- Accepted baseline `[MEASURED, 1T1R bench-20mhz, n310-20]`: RU 0–2 per 30 min; DU 5.5–8
+  warnings/min (bursty, up to ~30/min), 0 ping loss — so a normal stack reports **WARN**, not OK.
+- One observation `[UNVERIFIED]`: a burst of 217 RF `late` + 17 DL-late coincided with
+  throw-away `docker run` containers started while the stack ran. The follower is therefore
+  created once; checks only read its output. Avoid starting containers during measurements.
+
+The DU real-time warnings did not disappear when the DU's normal threads moved off `ru_timing`'s
+HT sibling (5.5/min vs 8.1/min); their cause is open.
 
 ### Bounded PRACH-delay measurement mode
 
@@ -455,8 +518,9 @@ gnb fully occupies the isolated cpuset 6-11 and the exec is scheduled there)
 that `ofh0` carries the fh subnet and `n2` the core subnet (and
 `radio0` the radio subnet when UHD is used) and **fails before starting the
 radio** if a name is missing or on the wrong subnet, tearing the stack down.
-CPU pinning comes from `docker/bench.env`: ProtO-RU `2-5`, DU `6-11`, core on
-`CORE_CPUSET` `12-19`, housekeeping/IRQs on `0-1,12-19`.
+CPU pinning comes from `docker/bench.env` (cores plan, see [Core map](#core-map-bench-map-locked)):
+ProtO-RU `2-7` + E-core `12`, DU `8-11` + E-core `13`, core on `CORE_CPUSET` `12-19`,
+housekeeping/IRQs on `0-1,12-19`.
 
 The Open5GS database is on a **named volume** (`openru_core-db`, mounted at
 `/data/db` — the path the entrypoint's `mongod` actually uses, not

@@ -92,15 +92,15 @@ log:
   filename: /tmp/gnb.log
   all_level: info
 
-# DU_CPUSET=6-11 is isolcpus on the bench host: the kernel never migrates
-# threads there, so unpinned RT threads (ru_timing, ru_txrx) stayed on CPU 6
-# with the SCHED_OTHER main thread and starved O-DU construction (no NG Setup).
-# CPU 6 is left to the non-RT threads (main, logger); RT threads get their own.
-# [UNVERIFIED] Pins measured on hardware only with bench-20mhz/du-core.yml;
+# Cores plan (docker/bench.env, accepted 2026-11-20): DU_CPUSET=8-11 is isolcpus, so
+# every busy thread needs its own CPU. ru_timing alone on 9 (its HT sibling 8 stays idle),
+# ru_txrx on 10, main pool on 11. The DU's normal threads (main, logger, io_broker) start on
+# the container's E-core 13 (DU_CONTAINER_CPUSET) and scripts/up.sh checks the map.
+# [UNVERIFIED] Pins measured on hardware only with bench-20mhz/du-core.yml (1T1R);
 # not yet tested with this file.
 expert_execution:
   affinities:
-    main_pool_cpus: 9-11
+    main_pool_cpus: 11
     ofh:
-      timing_cpu: 7
-      txrx_cpus: [8]
+      timing_cpu: 9
+      txrx_cpus: [10]

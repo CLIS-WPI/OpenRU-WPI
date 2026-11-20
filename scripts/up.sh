@@ -83,9 +83,13 @@ if [[ "$RADIO" == "uhd" ]]; then
 fi
 echo
 echo "== core map (${ENV_FILE##*/}) =="
-printf '  ProtO-RU real-time : %s\n' "${PROTORU_CPUSET:-?}"
-printf '  DU real-time       : %s\n' "${DU_CPUSET:-?}"
+printf '  ProtO-RU real-time : %s (container %s)\n' "${PROTORU_CPUSET:-?}" "${PROTORU_CONTAINER_CPUSET:-${PROTORU_CPUSET:-?}}"
+printf '  DU real-time       : %s (container %s)\n' "${DU_CPUSET:-?}" "${DU_CONTAINER_CPUSET:-${DU_CPUSET:-?}}"
 printf '  housekeeping/IRQs  : 0-1,12-19 (bench); core containers: %s\n' "${CORE_CPUSET:-n/a}"
+if [[ -n "${BENCH_RU_THREADS:-}${BENCH_DU_THREADS:-}" ]]; then
+  printf '  RU thread plan     : %s\n' "${BENCH_RU_THREADS:-none}"
+  printf '  DU thread plan     : %s\n' "${BENCH_DU_THREADS:-none}"
+fi
 echo
 echo "== networking =="
 echo "  core bridge 10.53.1.0/24 : DU 10.53.1.6 <-> AMF/UPF 10.53.1.2"
@@ -103,6 +107,8 @@ printf '  Div2 RF1 TX/RX : Out1 modem A ANT1, Out2 modem B ANT1\n'
 printf '  Div3 RF0 RX2   : Out1 modem A ANT2, Out2 modem B ANT2  (UL)\n'
 printf '  Div4 RF1 RX2   : Out1 modem A ANT3, Out2 modem B ANT3  (UL)\n'
 printf '  First test: modem A; modem B airplane (AT+CFUN=4).\n'
+printf '  Attach: AT+CFUN=1, wait for +C5GREG: 0,1, then AT+QIACT=1 (the modems do not\n'
+printf '  bring up the PDU session on their own), AT+CGPADDR=1, AT+QPING=1,"10.45.0.1".\n'
 printf '  ~57 dB/path. UHD: tx_antenna=TX/RX, rx_antenna=RX2.\n'
 echo
 
@@ -113,7 +119,7 @@ echo
 check_iface() { # <container> <iface> <subnet-prefix> <what>
   local cid="$1" iface="$2" prefix="$3" what="$4" out img
   # Never `docker exec` into the DU: the exec'd process is scheduled inside the
-  # container's isolated cpuset (6-11), which the gnb fully occupies — that hung
+  # container's isolated cpuset (then 6-11), which the gnb fully occupied — that hung
   # for ~7 minutes on first light. A throw-away container sharing the target's
   # network namespace runs on the host CPUs and needs no extra privileges.
   img="$(docker inspect -f '{{.Config.Image}}' "$cid" 2>/dev/null)"
@@ -175,5 +181,15 @@ case "$STACK" in
           check_iface "$ru_cid" radio0 192.168.10. "ProtO-RU radio" || { "${COMPOSE[@]}" --profile core --profile fh down --remove-orphans >/dev/null 2>&1; exit 1; }
         fi ;;
 esac
+
+# Bench: apply/check the thread plan and count real-time failures after startup
+# (clean OFH counters do not prove the lower PHY meets its deadlines).
+if [[ "${BENCH:-0}" == "1" && "$STACK" != "core" ]]; then
+  "$ROOT/scripts/bench_rt.sh" both || {
+    echo "[up] FAIL: thread plan or real-time health check failed (see [rt] lines)" >&2
+    "${COMPOSE[@]}" --profile core --profile fh down --remove-orphans >/dev/null 2>&1
+    exit 1
+  }
+fi
 echo
 "${COMPOSE[@]}" ps

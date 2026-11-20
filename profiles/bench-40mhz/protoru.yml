@@ -51,7 +51,9 @@ ru_emu:
       ta3_max_up: 1200
       ta3_min_up: 800
 
-      ofh_cpus: [3, 4]
+      # Cores plan (docker/bench.env): OFH threads share this mask; scripts/up.sh then gives
+      # ru_emu 3, ru_rx 4, ru_ofh_tx 5 (BENCH_RU_THREADS). [UNVERIFIED] for 40 MHz.
+      ofh_cpus: [3, 4, 5]
       sdr:
         device_driver: "uhd"
         # N310-10 (serial 33A6E56), IQ over SFP1 10 GbE. REF IN/PPS IN are
@@ -76,5 +78,9 @@ ru_emu:
         sync_source: internal
         max_proc_delay: 2
         execution_profile: auto
-        ru_cpus: [5]
-        pinning_policy: mask
+        # Round-robin in creation order radio, hp, tx, rx: ru_radio (non-real-time) -> E-core 12,
+        # ru_phy_hp + ru_phy_tx -> 6, ru_phy_rx -> 7. One busy thread per logical CPU removed
+        # the lower-PHY "Downlink data late" ramp of 2026-11-19 (see docs/BENCH_BUNDLE.md).
+        # [UNVERIFIED] for 40 MHz: measured on bench-20mhz (1T1R) only.
+        ru_cpus: [12, 6, 6, 7]
+        pinning_policy: round-robin

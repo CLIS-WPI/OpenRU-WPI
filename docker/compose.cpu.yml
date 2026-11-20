@@ -6,7 +6,8 @@
 #
 # protoru runs the v1-candidate-v3 CPU image; the GPU pin, the nvidia-smi
 # precheck and the NVIDIA env vars are removed. Open5GS/core containers are
-# pinned to the E-cores via CORE_CPUSET from docker/bench.env.
+# pinned to the E-cores via CORE_CPUSET; protoru and du get their container
+# cpusets (real-time lanes + one E-core) from docker/bench.env.
 services:
   protoru:
     gpus: !reset []
@@ -16,6 +17,11 @@ services:
       NVIDIA_DRIVER_CAPABILITIES: ""
     command: !override
       - "exec ru_emulator -c /opt/protoru.yml"
+    # Real-time lanes + one E-core for non-real-time threads (docker/bench.env).
+    cpuset: ${PROTORU_CONTAINER_CPUSET:?Set PROTORU_CONTAINER_CPUSET in docker/bench.env}
+
+  du:
+    cpuset: ${DU_CONTAINER_CPUSET:?Set DU_CONTAINER_CPUSET in docker/bench.env}
 
   core:
     cpuset: ${CORE_CPUSET:?Set CORE_CPUSET in docker/bench.env}

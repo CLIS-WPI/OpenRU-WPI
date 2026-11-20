@@ -101,4 +101,11 @@ if [[ "$RESTART_DU" == "1" ]]; then
   echo "restart-ru: DU recreated too; waiting for AMF NG Setup"
   BENCH="${BENCH:-0}" SINCE="$NG_SINCE" "$ROOT/scripts/wait_ng_setup.sh"
 fi
+# 4. Bench: thread plan for the new container(s) + real-time health check.
+if [[ "${BENCH:-0}" == "1" ]]; then
+  "$ROOT/scripts/bench_rt.sh" "$([[ "$RESTART_DU" == "1" ]] && echo both || echo ru)" || {
+    echo "restart-ru: FAIL: thread plan or real-time health check failed (see [rt] lines); stack left up" >&2
+    exit 1
+  }
+fi
 echo "restart-ru: done (tx_gain=${TX_GAIN}, ref=${REF}; external=10 MHz only); waiting for NG Setup before judging OFH; watch: docker compose logs -f protoru du; then modem RSRP (target -80..-90 dBm)."
