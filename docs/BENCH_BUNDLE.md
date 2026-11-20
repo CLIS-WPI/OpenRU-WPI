@@ -367,6 +367,25 @@ this unit reports and take precedence. They are recorded in `docker/bench.env`
    `profiles/bench-*/protoru.yml` gain lies outside the range or off the 0.5 dB
    step.
 
+### 2x2 stage profile (`bench-20mhz-2t2r`)
+
+Two DL ports (RF0, RF1), **one UL port** (eAxC 0) and one PRACH port (4); `nof_antennas_dl: 2`,
+`nof_antennas_ul: 1`, `pdsch.max_rank: 2`, 2-port CSI-RS every 20 ms (needed for the UE to report RI 2).
+SSB, PDCCH and pre-CSI PDSCH go out on port 0 only; PDSCH uses two layers once the UE reports RI 2.
+`bench-20mhz` itself stays 2 DL / 2 UL ports. `tests/profile-ports/test.sh` checks that DU and ProtO-RU
+port lists and antenna counts agree in every bench profile.
+
+```bash
+make BENCH=1 up STACK=e2e PROFILE=bench-20mhz-2t2r BENCH_RADIO=n310-20 TX_GAIN=30
+```
+
+Measured 2026-11-20 on n310-20 (module-pin cabling, TX gain 30, p_max 10, rx_gain 37.5, one RM520N),
+run through a gitignored overlay with the same content as this profile:
+- `dl_ri` 2.0 in 119/121 and 179/181 DU UE reports under TCP DL [MEASURED].
+- iperf3 TCP DL 109.1 Mbit/s (2T2R) vs 56.9 Mbit/s (1T1R, same cabling) [MEASURED].
+- UL `pusch_snr_db` ~30 dB, UL MCS 27, TCP UL ~17 Mbit/s (TDD DDDSU-limited) [MEASURED].
+- [UNVERIFIED] not yet run from this committed profile, nor for 60 min.
+
 ## ModemManager
 
 ModemManager grabs the modems and rewrites their AT configuration, so it must be
