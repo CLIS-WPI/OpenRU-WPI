@@ -1,0 +1,93 @@
+# bench-20mhz ProtO-RU — UHD radio (N310-10), 20 MHz 2x2, stage 1 of the bench
+# campaign (docs/BENCH_BUNDLE.md). Four dividers: RF0 TX/RX / RF1 TX/RX /
+# RF0 RX2 / RF1 RX2; Out1=modem A, Out2=modem B, Out3/Out4=50 ohm.
+# DL 2 layers on TX/RX; UL from RX2. First test: modem A, modem B AT+CFUN=4.
+# CPU lanes are the bench map (ProtO-RU 2-5).
+#
+# Sample rate 30.72 Msps = MCR 122.88 MHz / 4 (integer, even decimation), FFT
+# 1024 = 30.72e6 / 30 kHz. The N310 only supports MCR 122.88 / 125.0 / 153.6 MHz
+# (Ettus KB "N300/N310" and the N300/N310/N320/N321 Getting Started Guide); the
+# null-radio goldens run 23.04 Msps, which is not an integer divisor of any N310
+# MCR. The DU side of the 7.2 split is unaffected (OFH carries frequency-domain
+# symbols), so DU configs and KPI gates stay as they are.
+
+log:
+  filename: /tmp/proto-ru.log
+  # Keep the normal bench at info. The bounded PRACH-delay measurement mode
+  # generates a debug overlay in build/local-profiles/; see
+  # `make BENCH=1 PROFILE=bench-20mhz prach-timing`.
+  level: info
+
+ru_emu:
+  timing_cpus: [2]
+  cells:
+    - network_interface: ofh0
+      ru_mac_addr: 02:00:00:00:00:20
+      du_mac_addr: 02:00:00:00:00:10
+      enable_promiscuous: true
+
+      bandwidth: 20
+      common_scs: 30
+      dl_arfcn: 628032
+      band: 78
+
+      dl_port_id: [0, 1]
+      ul_port_id: [0, 1]
+      prach_port_id: [4, 5]
+      prach_format: short
+
+      compr_method_dl: bfp
+      compr_bitwidth_dl: 9
+      compr_method_ul: bfp
+      compr_bitwidth_ul: 9
+      compr_method_prach: bfp
+      compr_bitwidth_prach: 9
+      is_ul_static_compr_hdr: true
+      is_dl_static_compr_hdr: true
+      iq_scaling: 1.0
+
+      t2a_max_cp_dl: 2435
+      t2a_min_cp_dl: 2235
+      t2a_max_cp_ul: 2435
+      t2a_min_cp_ul: 2235
+      t2a_max_up: 2215
+      t2a_min_up: 2015
+      ta3_max_up: 1200
+      ta3_min_up: 800
+
+      # Cores plan (docker/bench.env): OFH threads share this mask; scripts/up.sh then gives
+      # ru_emu 3, ru_rx 4, ru_ofh_tx 5 (BENCH_RU_THREADS).
+      ofh_cpus: [3, 4, 5]
+      sdr:
+        device_driver: "uhd"
+        # N310-10 (serial 33A6E56), IQ over SFP1 10 GbE. REF IN/PPS IN are
+        # cabled to the GPS-disciplined OctoClock. Default internal for now:
+        # REF=external selects only the 10 MHz reference (time stays internal)
+        # until OFH is confirmed with the external clock. 122.88 MHz is the
+        # N310's lowest supported master clock rate and 30.72 Msps is /4.
+        device_args: "type=n3xx,addr=192.168.10.2,mgmt_addr=192.168.10.2,clock_source=internal,time_source=internal,master_clock_rate=122.88e6"
+        srate: 30.72
+        # N310 antennas: UHD names are set here and applied in ProtO-RU
+        # lib/radio/uhd/radio_uhd_impl.cpp (set_tx_antenna ~351, set_rx_antenna
+        # ~414). same-port mode (~424) would copy TX/RX onto RX — do not use it
+        # on this cabling. Wrappers: radio_uhd_device.h:199-217.
+        tx_antenna: "TX/RX"
+        rx_antenna: "RX2"
+        transmission_mode: continuous
+        # UHD gain values measured on n310-10 (channels 0/1) with the
+        # in-container uhd_usrp_probe, 2026-11-19: TX 0.0–65.0 dB,
+        # RX 0.0–75.0 dB, step 0.5 dB. These are UHD gains, not dBm.
+        # tx_gain starts at the minimum of that range; raise 5 dB at a time
+        # until the modem RSRP is −80…−90 dBm. rx_gain starts mid-range.
+        # See docs/BENCH_BUNDLE.md.
+        tx_gain: 0
+        rx_gain: 37.5
+        clock_source: internal
+        sync_source: internal
+        max_proc_delay: 2
+        execution_profile: auto
+        # Round-robin in creation order radio, hp, tx, rx: ru_radio (non-real-time) -> E-core 12,
+        # ru_phy_hp + ru_phy_tx -> 6, ru_phy_rx -> 7. One busy thread per logical CPU removed
+        # the lower-PHY "Downlink data late" ramp of 2026-11-19 (see docs/BENCH_BUNDLE.md).
+        ru_cpus: [12, 6, 6, 7]
+        pinning_policy: round-robin

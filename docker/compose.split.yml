@@ -1,0 +1,15 @@
+# Two-host split: OCUDU DU (+ Open5GS) on the "core" host, ProtO-RU on the bench ("ran") host.
+# The fronthaul network becomes a macvlan on the direct fibre between the hosts
+# (SPLIT_FH_IFACE, MTU 9000) — never a Docker bridge. Same subnet/MACs as the single-host
+# stack (DU 10.54.1.10 / 02:..:10, RU 10.54.1.20 / 02:..:20); eCPRI is L2, so only the
+# MACs matter on the wire. Load docker/split-<role>.env after docker/bench.env.
+networks:
+  fh: !override
+    name: openru_fh
+    driver: macvlan
+    driver_opts:
+      parent: ${SPLIT_FH_IFACE:?Set SPLIT_FH_IFACE in docker/split-<role>.env}
+      com.docker.network.driver.mtu: "9000"
+    ipam:
+      config:
+        - subnet: 10.54.1.0/24

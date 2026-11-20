@@ -34,18 +34,24 @@ utc() { date -u -d "${1:-now}" +%Y-%m-%dT%H:%M:%S; }
 
 start() {
   docker rm -f "$NAME" >/dev/null 2>&1 || true
-  local ru du img
+  local ru du img vols=() follows=""
   ru="$(cid_of protoru)"; du="$(cid_of du)"
-  [[ -n "$ru" && -n "$du" ]] || { echo "rt-watch: FAIL: protoru and du must be running" >&2; return 1; }
-  img="$(docker inspect -f '{{.Config.Image}}' "$ru")"
+  # Single host: both. Split stack (scripts/split.sh): only the side that runs on this host.
+  if [[ "${RT_WATCH_SIDE:-both}" == both ]]; then
+    [[ -n "$ru" && -n "$du" ]] || { echo "rt-watch: FAIL: protoru and du must be running" >&2; return 1; }
+  fi
+  [[ -n "$ru" ]] && { vols+=(--volumes-from "$ru:ro"); follows+="follow '$RU_LOG' RU & "; }
+  [[ -n "$du" ]] && { vols+=(--volumes-from "$du:ro"); follows+="follow '$DU_LOG' DU & "; }
+  [[ -n "$follows" ]] || { echo "rt-watch: FAIL: neither protoru nor du is running" >&2; return 1; }
+  img="$(docker inspect -f '{{.Config.Image}}' "${ru:-$du}")"
   # The project label makes `make down` (--remove-orphans) remove the follower too.
   docker run -d --name "$NAME" --label com.docker.compose.project=openru \
     --label com.docker.compose.service=rtwatch --network none --cpuset-cpus "$HK_CPUS" \
-    --volumes-from "$ru:ro" --volumes-from "$du:ro" --entrypoint /bin/sh "$img" \
+    "${vols[@]}" --entrypoint /bin/sh "$img" \
     -c "follow() { tail -n +1 -F \"\$1\" 2>/dev/null | grep --line-buffered -E '$PATTERN' | sed -u \"s/^/\$2|/\"; }
-        follow '$RU_LOG' RU & follow '$DU_LOG' DU & wait" >/dev/null
+        ${follows}wait" >/dev/null
   docker update --cpu-shares 2 "$NAME" >/dev/null 2>&1 || true
-  echo "rt-watch: follower $NAME started (cpus $HK_CPUS) on $RU_LOG and $DU_LOG"
+  echo "rt-watch: follower $NAME started (cpus $HK_CPUS) on${ru:+ $RU_LOG}${du:+ $DU_LOG}"
 }
 
 lines() { # split the follower's tagged lines into $1 (RU) and $2 (DU)
