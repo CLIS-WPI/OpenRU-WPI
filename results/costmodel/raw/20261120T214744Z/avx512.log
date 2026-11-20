@@ -42,4 +42,4 @@ GPU: disabled
 100 MHz avx512 CPU    p=8  PREC  p50=1.4776 p99=1.4943 ms  PASS
 
 Overall: PASS
-CSV: /home/tanglab/deepseek-wt/costmodel/results/costmodel/raw/20261120T214744Z/avx512.csv
+CSV: <worktree>/results/costmodel/raw/20261120T214744Z/avx512.csv

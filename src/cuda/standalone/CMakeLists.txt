@@ -14,9 +14,27 @@ set(CMAKE_CUDA_ARCHITECTURES "90;87" CACHE STRING "CUDA architectures" FORCE)
 set(PROTO_RU "${CMAKE_CURRENT_SOURCE_DIR}/../../../external/proto-ru" CACHE PATH "Path to the ProtO-RU submodule")
 set(OCUDU_BUILD "${CMAKE_CURRENT_SOURCE_DIR}/../../../build/ocudu" CACHE PATH "Path to the OCUDU build tree")
 set(OCUDU_FAIR_BUILD "${CMAKE_CURRENT_SOURCE_DIR}/../../../build/ocudu-fair" CACHE PATH "OCUDU build with ENABLE_FFTW=ON and MARCH=x86-64-v4")
-set(FFTW3F_ROOT "/home/tanglab/.local/fftw3" CACHE PATH "User-local FFTW3F prefix")
+set(FFTW3F_ROOT "" CACHE PATH "Optional FFTW3F prefix; empty uses find_path/find_library")
+set(YAML_CPP_LIBRARY "" CACHE FILEPATH "Optional yaml-cpp library; empty uses find_library")
 
 find_package(CUDAToolkit REQUIRED)
+
+if(FFTW3F_ROOT)
+  set(FFTW3F_INCLUDE_DIR "${FFTW3F_ROOT}/include")
+  set(FFTW3F_LIBRARY "${FFTW3F_ROOT}/lib/libfftw3f.so")
+else()
+  find_path(FFTW3F_INCLUDE_DIR fftw3.h)
+  find_library(FFTW3F_LIBRARY fftw3f)
+endif()
+if(NOT FFTW3F_INCLUDE_DIR OR NOT FFTW3F_LIBRARY)
+  message(FATAL_ERROR "FFTW3F not found; pass -DFFTW3F_ROOT=<prefix>")
+endif()
+if(NOT YAML_CPP_LIBRARY)
+  find_library(YAML_CPP_LIBRARY yaml-cpp)
+endif()
+if(NOT YAML_CPP_LIBRARY)
+  message(FATAL_ERROR "yaml-cpp not found; pass -DYAML_CPP_LIBRARY=<path>")
+endif()
 
 add_library(lowphy_cuda STATIC
   kernels/bfp_kernels.cu
@@ -61,7 +79,7 @@ target_link_libraries(test_lowphy PRIVATE
   "-Wl,--start-group"
   ${OCUDU_LIBRARIES}
   "-Wl,--end-group"
-  "/home/tanglab/miniconda3/lib/libyaml-cpp.so"
+  ${YAML_CPP_LIBRARY}
   pthread
   dl
   m)
@@ -77,7 +95,7 @@ target_link_libraries(test_pipeline PRIVATE
   "-Wl,--start-group"
   ${OCUDU_LIBRARIES}
   "-Wl,--end-group"
-  "/home/tanglab/miniconda3/lib/libyaml-cpp.so"
+  ${YAML_CPP_LIBRARY}
   pthread
   dl
   m)
@@ -97,7 +115,7 @@ set(OCUDU_FAIR_LIBRARIES
 
 add_executable(test_cpu_baseline
   tests/test_cpu_baseline.cpp)
-target_include_directories(test_cpu_baseline PRIVATE include ${OCUDU_INCLUDE_DIRS} "${FFTW3F_ROOT}/include")
+target_include_directories(test_cpu_baseline PRIVATE include ${OCUDU_INCLUDE_DIRS} ${FFTW3F_INCLUDE_DIR})
 target_compile_definitions(test_cpu_baseline PRIVATE BUILD_TYPE_RELEASE NDEBUG)
 target_compile_options(test_cpu_baseline PRIVATE -O3 -march=x86-64-v4)
 
@@ -105,8 +123,8 @@ target_link_libraries(test_cpu_baseline PRIVATE
   "-Wl,--start-group"
   ${OCUDU_FAIR_LIBRARIES}
   "-Wl,--end-group"
-  "${FFTW3F_ROOT}/lib/libfftw3f.so"
-  "/home/tanglab/miniconda3/lib/libyaml-cpp.so"
+  ${FFTW3F_LIBRARY}
+  ${YAML_CPP_LIBRARY}
   pthread
   dl
   m)
@@ -116,7 +134,7 @@ list(APPEND OCUDU_FAIR_LIBRARIES
 
 add_executable(test_scaling
   tests/test_scaling.cpp)
-target_include_directories(test_scaling PRIVATE include ${OCUDU_INCLUDE_DIRS} "${FFTW3F_ROOT}/include")
+target_include_directories(test_scaling PRIVATE include ${OCUDU_INCLUDE_DIRS} ${FFTW3F_INCLUDE_DIR})
 target_compile_definitions(test_scaling PRIVATE BUILD_TYPE_RELEASE NDEBUG)
 target_compile_options(test_scaling PRIVATE -O3 -march=x86-64-v4)
 
@@ -125,15 +143,15 @@ target_link_libraries(test_scaling PRIVATE
   "-Wl,--start-group"
   ${OCUDU_FAIR_LIBRARIES}
   "-Wl,--end-group"
-  "${FFTW3F_ROOT}/lib/libfftw3f.so"
-  "/home/tanglab/miniconda3/lib/libyaml-cpp.so"
+  ${FFTW3F_LIBRARY}
+  ${YAML_CPP_LIBRARY}
   pthread
   dl
   m)
 
 add_executable(test_costmodel
   tests/test_costmodel.cpp)
-target_include_directories(test_costmodel PRIVATE include ${OCUDU_INCLUDE_DIRS} "${FFTW3F_ROOT}/include")
+target_include_directories(test_costmodel PRIVATE include ${OCUDU_INCLUDE_DIRS} ${FFTW3F_INCLUDE_DIR})
 target_compile_definitions(test_costmodel PRIVATE BUILD_TYPE_RELEASE NDEBUG)
 target_compile_options(test_costmodel PRIVATE -O3 -march=native)
 
@@ -143,8 +161,8 @@ target_link_libraries(test_costmodel PRIVATE
   ${OCUDU_LIBRARIES}
   "${OCUDU_BUILD}/lib/phy/generic_functions/precoding/libocudu_channel_precoder.a"
   "-Wl,--end-group"
-  "${FFTW3F_ROOT}/lib/libfftw3f.so"
-  "/home/tanglab/miniconda3/lib/libyaml-cpp.so"
+  ${FFTW3F_LIBRARY}
+  ${YAML_CPP_LIBRARY}
   pthread
   dl
   m)

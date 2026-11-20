@@ -42,4 +42,4 @@ GPU: enabled (CUDA_VISIBLE_DEVICES)
 100 MHz gpu  GPU    p=8  PREC  p50=0.0113 p99=0.0130 ms  H2D=0.0453 D2H=0.0940  PASS
 
 Overall: PASS
-CSV: /home/tanglab/deepseek-wt/costmodel/results/costmodel/raw/20261120T214744Z/gpu.csv
+CSV: <worktree>/results/costmodel/raw/20261120T214744Z/gpu.csv
