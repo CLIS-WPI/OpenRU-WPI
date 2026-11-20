@@ -3,7 +3,7 @@
 #
 #   scripts/split.sh core up          # on the core host first: Open5GS + DU, NG Setup, DU thread plan
 #   RADIO=null scripts/split.sh ran up # then on the bench host: ProtO-RU (null radio), RU thread plan
-#   scripts/split.sh <role> check [s]  # on each host after both are up: rt follower + check (default 60 s)
+#   scripts/split.sh <role> check [s]  # on each host after both are up: rt follower + gate (settle 120 s, two passing windows of [s], default 60)
 #   scripts/split.sh <role> down       # ran first, then core
 #   Phase D (transmits; human go only):
 #   RF_SPLIT_OK=1 RADIO=uhd BENCH_RADIO=n310-20 TX_GAIN=30 PROFILE=bench-split-20mhz-2t2r scripts/split.sh ran up
@@ -72,9 +72,8 @@ case "$ACT" in
       RT_CHECK_SECS=0 "$ROOT/scripts/bench_rt.sh" ru
     fi ;;
   check)
-    "$ROOT/scripts/rt_watch.sh" start
-    sleep "${RT_SETTLE_SECS:-30}"
-    "$ROOT/scripts/rt_watch.sh" check "${3:-60}" ;;
+    # The bench gate: settle 120 s, then 60 s windows until two in a row pass (scripts/bench_rt.sh).
+    RT_CHECK_SECS="${3:-60}" "$ROOT/scripts/bench_rt.sh" check ;;
   down)
     "$ROOT/scripts/rt_watch.sh" stop || true
     "${COMPOSE[@]}" --profile core --profile fh down --remove-orphans ;;
