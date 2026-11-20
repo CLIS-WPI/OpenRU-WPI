@@ -28,6 +28,9 @@ fi
 
 if [[ "${BENCH:-0}" == "1" ]]; then
   ENV_FILE="$ROOT/docker/bench.env"
+  # Bench radio unit (BENCH_RADIO, default n310-10): its address, NIC and macvlan come from docker/radios/.
+  set -a; . "$ENV_FILE"; set +a
+  . "$ROOT/scripts/radio_env.sh"; radio_env_load "$ROOT" || exit 2
   COMPOSE=(docker compose --env-file "$ROOT/docker/versions.env" --env-file "$ENV_FILE"
            -f "$ROOT/docker/compose.yml" -f "$ROOT/docker/compose.cpu.yml")
 else
@@ -42,11 +45,9 @@ PROFILE_DIR="$ROOT/profiles/$PROFILE"
 case "$RADIO" in
   uhd)  RU_YML="$PROFILE_DIR/protoru.yml"; [[ "${BENCH:-0}" == "1" ]] || {
           echo "[up] FAIL: RADIO=uhd is the bench path (BENCH=1); use RADIO=null here" >&2; exit 2; }
-        if [[ -n "${TX_GAIN:-}" || "$REF" == "external" ]]; then
-          # Start at the chosen gain / reference without a restart: local copy,
-          # never the committed profile (gitignored build/local-profiles/).
-          RU_YML="$("$ROOT/scripts/local_profile.sh" "$PROFILE" "${TX_GAIN:--}" "$REF" | tail -1)"
-        fi ;;
+        # Always a local copy (gitignored build/local-profiles/), never the committed profile:
+        # gain / reference as requested, device address from the selected BENCH_RADIO.
+        RU_YML="$("$ROOT/scripts/local_profile.sh" "$PROFILE" "${TX_GAIN:--}" "$REF" | tail -1)" ;;
   null) RU_YML="$PROFILE_DIR/protoru-null.yml" ;;
   *) echo "[up] FAIL: RADIO must be uhd or null" >&2; exit 2 ;;
 esac
@@ -70,8 +71,9 @@ export RADIO
 OPENRU_PREFLIGHT_ENV="$ENV_FILE" "$ROOT/scripts/gpu1_preflight.sh"
 
 set -a; . "$ENV_FILE"; set +a
+[[ "${BENCH:-0}" == "1" ]] && { radio_env_load "$ROOT" || exit 2; }
 echo
-echo "== stack: $STACK / profile: $PROFILE / radio: $RADIO =="
+echo "== stack: $STACK / profile: $PROFILE / radio: $RADIO${BENCH_RADIO:+ ($BENCH_RADIO)} =="
 echo "  DU config      : ${DU_YML#$ROOT/}"
 echo "  ProtO-RU config: ${RU_YML#$ROOT/}"
 if [[ "$RADIO" == "uhd" ]]; then
@@ -178,7 +180,7 @@ case "$STACK" in
         ru_cid="$("${COMPOSE[@]}" ps -q protoru | head -1)"
         check_iface "$ru_cid" ofh0 10.54.1. "ProtO-RU" || { "${COMPOSE[@]}" --profile core --profile fh down --remove-orphans >/dev/null 2>&1; exit 1; }
         if [[ "$RADIO" == "uhd" ]]; then
-          check_iface "$ru_cid" radio0 192.168.10. "ProtO-RU radio" || { "${COMPOSE[@]}" --profile core --profile fh down --remove-orphans >/dev/null 2>&1; exit 1; }
+          check_iface "$ru_cid" radio0 "${BENCH_RADIO_SUBNET%.*}." "ProtO-RU radio" || { "${COMPOSE[@]}" --profile core --profile fh down --remove-orphans >/dev/null 2>&1; exit 1; }
         fi ;;
 esac
 
