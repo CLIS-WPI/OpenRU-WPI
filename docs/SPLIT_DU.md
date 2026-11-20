@@ -97,19 +97,22 @@ over fibre instead of a bridge) [DERIVED].
 ## Phase D: real radio on the split (transmits; needs the human's go)
 
 Prerequisites:
-1. Open5GS on the core host has **no subscribers**. Provision them there (human step: the
-   subscribers file is a secret, and agents do not copy it). The subscribers are kept in the
-   `openru_core-db` volume on the core host, so this is needed once; `split.sh core down` keeps it.
+1. Subscribers in Open5GS on the core host (provisioned 2026-11-20; the `openru_core-db` volume keeps
+   them and `split.sh core down` does not remove it). To provision again (human step: the subscribers
+   file is a secret, and agents do not copy it):
    ```bash
-   # core host, in the deployed split checkout; the file is the same format as on the bench host
+   # core host, in the deployed split checkout; same file format as on the bench host.
+   # A fresh clone needs the submodule first (open5gs.env lives in external/proto-ru):
+   git submodule update --init
    install -d -m 700 ~/OpenRU/secrets
    install -m 600 /dev/null ~/OpenRU/secrets/subscribers.env   # then copy the content in; mode stays 600
-   scripts/split.sh core up                                     # Open5GS (+ DU); the core must be running
+   scripts/split.sh core up --core-only                         # Open5GS only: no DU, no fronthaul macvlan
    BENCH=1 scripts/add_subscriber.sh --dry-run ~/OpenRU/secrets/subscribers.env   # validates, prints IMSIs only
    BENCH=1 scripts/add_subscriber.sh ~/OpenRU/secrets/subscribers.env
+   scripts/split.sh core down
    ```
 2. Cabling as in `docs/BENCH_BUNDLE.md` "Wiring by module pin" (n310-20, modem A, no antennas). Modem B
-   at `AT+CFUN=4`.
+   disconnected (one-modem stage) or at `AT+CFUN=4`.
 3. Both hosts down (`docker ps -a --filter name=openru` empty on both), PTP units active. On the core
    host, `journalctl -u openru-ptp4l --since -2min` shows rms below 1 µs.
 4. `make BENCH=1 bench-preflight BENCH_RADIO=n310-20` passes on the bench host (UHD 4.11, serial).

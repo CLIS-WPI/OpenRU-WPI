@@ -2,6 +2,7 @@
 # Two-host split stack: DU + Open5GS on the "core" host, ProtO-RU on the bench host.
 #
 #   scripts/split.sh core up          # on the core host first: Open5GS + DU, NG Setup, DU thread plan
+#   scripts/split.sh core up --core-only  # Open5GS only (e.g. provisioning): no DU, no fh macvlan, no PTP check
 #   RADIO=null scripts/split.sh ran up # then on the bench host: ProtO-RU (null radio), RU thread plan
 #   scripts/split.sh <role> check [s]  # on each host after both are up: rt follower + gate (settle 120 s, two passing windows of [s], default 60)
 #   scripts/split.sh <role> down       # ran first, then core
@@ -18,6 +19,11 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 ROLE="${1:?usage: split.sh <core|ran> <up|check|down>}"; ACT="${2:?usage: split.sh <core|ran> <up|check|down>}"
 PROFILE="${PROFILE:-bench-split-20mhz}"; RADIO="${RADIO:-null}"
 case "$ROLE" in core|ran) ;; *) echo "split: FAIL: role must be core or ran" >&2; exit 2 ;; esac
+CORE_ONLY=0
+if [[ "$ACT" == up && -n "${3:-}" ]]; then
+  [[ "$3" == --core-only && "$ROLE" == core ]] || { echo "split: FAIL: only 'split.sh core up --core-only' takes a flag" >&2; exit 2; }
+  CORE_ONLY=1
+fi
 set -a; . "$ROOT/docker/bench.env"; . "$ROOT/docker/split-$ROLE.env"; set +a
 export RT_WATCH_SIDE=one
 P="$ROOT/profiles/$PROFILE"
@@ -35,9 +41,12 @@ case "$RADIO" in
 esac
 COMPOSE=(docker compose --env-file "$ROOT/docker/versions.env" --env-file "$ROOT/docker/bench.env"
          --env-file "$ROOT/docker/split-$ROLE.env" -f "$ROOT/docker/compose.yml" -f "$ROOT/docker/compose.cpu.yml")
-[[ "$ROLE" == core ]] && COMPOSE+=(-f "$ROOT/docker/compose.e2e.yml")
-[[ "$ROLE" == ran && "$RADIO" == uhd ]] && COMPOSE+=(-f "$ROOT/docker/compose.radio.yml")
-COMPOSE+=(-f "$ROOT/docker/compose.split.yml")
+# --core-only: Open5GS only. Do not load e2e (DU nets) or split.yml (fh macvlan on the fibre).
+if (( ! CORE_ONLY )); then
+  [[ "$ROLE" == core ]] && COMPOSE+=(-f "$ROOT/docker/compose.e2e.yml")
+  [[ "$ROLE" == ran && "$RADIO" == uhd ]] && COMPOSE+=(-f "$ROOT/docker/compose.radio.yml")
+  COMPOSE+=(-f "$ROOT/docker/compose.split.yml")
+fi
 
 preflight() {
   local mtu; mtu="$(cat "/sys/class/net/$SPLIT_FH_IFACE/mtu" 2>/dev/null || echo 0)"
@@ -53,16 +62,19 @@ preflight() {
 
 case "$ACT" in
   up)
-    preflight
+    (( CORE_ONLY )) || preflight
     if [[ "$ROLE" == core ]]; then
       # Open5GS first: a DU started before the AMF listens exits on "Connection refused" (as in up.sh).
-      "${COMPOSE[@]}" --profile core --profile fh up -d core
+      # --core-only: compose files above omit split.yml/e2e, so fh/macvlan cannot be created.
+      if (( CORE_ONLY )); then "${COMPOSE[@]}" --profile core up -d core
+      else "${COMPOSE[@]}" --profile core --profile fh up -d core; fi
       for i in $(seq 1 120); do
         h="$(docker inspect -f '{{.State.Health.Status}}' "$("${COMPOSE[@]}" ps -q core | head -1)" 2>/dev/null || true)"
         [[ "$h" == healthy ]] && break
         [[ "$h" == unhealthy || "$i" == 120 ]] && { echo "split: FAIL: core not healthy ($h)" >&2; exit 1; }
         sleep 1
       done
+      (( CORE_ONLY )) && { echo "split: core: Open5GS healthy (--core-only: no DU, no fh)"; exit 0; }
       since="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
       "${COMPOSE[@]}" --profile core --profile fh up -d du
       BENCH=1 SINCE="$since" "$ROOT/scripts/wait_ng_setup.sh"
@@ -73,6 +85,7 @@ case "$ACT" in
     fi ;;
   check)
     # The bench gate: settle 120 s, then 60 s windows until two in a row pass (scripts/bench_rt.sh).
+    [[ "${3:-60}" =~ ^[0-9]+$ ]] || { echo "split: FAIL: check takes a window length in seconds (got $3)" >&2; exit 2; }
     RT_CHECK_SECS="${3:-60}" "$ROOT/scripts/bench_rt.sh" check ;;
   down)
     "$ROOT/scripts/rt_watch.sh" stop || true
