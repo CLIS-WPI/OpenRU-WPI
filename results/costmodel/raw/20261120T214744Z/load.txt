@@ -1,8 +1,8 @@
-== started 2026-11-20T21:46:08Z
- 16:46:08 up 28 days,  3:34,  1 user,  load average: 2.25, 2.13, 1.53
+== started 2026-11-20T21:47:44Z
+ 16:47:44 up 28 days,  3:36,  1 user,  load average: 1.21, 1.81, 1.48
 == top cpu
 %CPU COMMAND
-64.1 opencode
+70.7 opencode
  5.6 MainThread
  5.4 MainThread
  2.1 claude

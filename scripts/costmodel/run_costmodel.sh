@@ -43,7 +43,7 @@ run() {
     --csv "${RAW}/${isa}.csv" "$@" 2>&1 | tee "${RAW}/${isa}.log"
 }
 
-run avx2   "${ROOT}/build/cm-avx2/test_costmodel" --bfp avx2 --precoder avx2
+run avx2   "${ROOT}/build/cm-avx2/test_costmodel" --skip-gpu --bfp avx2 --precoder avx2
 run avx512 "${ROOT}/build/cm-avx512/test_costmodel" --skip-gpu --bfp avx512 --precoder avx512
 CUDA_VISIBLE_DEVICES="${GPU_UUID}" \
   run gpu "${ROOT}/build/cm-avx2/test_costmodel" --skip-cpu --bfp avx2 --precoder avx2
