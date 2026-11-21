@@ -65,6 +65,7 @@ preflight() {
 case "$ACT" in
   up)
     "$ROOT/scripts/bench_disk_check.sh" || exit 1
+    "$ROOT/scripts/bench_quiet.sh" hold   # snap refreshes + fwupd-refresh.timer off for the session; down restores
     (( CORE_ONLY )) || preflight
     "$ROOT/scripts/bench_tm.sh" watch   # D-state watchdog; timer_migration=0 only after "check" passes (BENCH_TM0)
     if [[ "$ROLE" == core ]]; then
@@ -95,6 +96,7 @@ case "$ACT" in
     "$ROOT/scripts/rt_watch.sh" stop || true
     "$ROOT/scripts/bench_tm.sh" restore || true   # timer_migration back before teardown
     "${COMPOSE[@]}" --profile core --profile fh down --remove-orphans
-    "$ROOT/scripts/bench_tm.sh" stop || true ;;
+    "$ROOT/scripts/bench_tm.sh" stop || true
+    "$ROOT/scripts/bench_quiet.sh" release || true ;;
   *) echo "split: FAIL: action must be up, check or down" >&2; exit 2 ;;
 esac
