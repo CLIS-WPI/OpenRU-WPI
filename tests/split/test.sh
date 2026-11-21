@@ -107,3 +107,24 @@ assert not any(core(c) == core(radio) for c in cset - {radio}), ("cpuset holds r
 print("PASS: split RU plan inside cpuset", sorted(cset), "| FIFO workers isolated | ru_cpus radio/ul (own cores)",
       got["radio"], got["ul"])
 PY
+
+# Reference on the split path (RADIO=uhd): REF, else the RU profile's clock_source; external needs ref_locked before
+# anything starts. Every case stops at or before the lock check (unlocked helper), and docker is a stub that fails, so
+# no container can start even on the bench host.
+T="$(mktemp -d)"; X="test-ref-ext-$$"
+trap 'rm -rf "$T" "$ROOT/profiles/$X" "$ROOT/build/local-profiles/$X"' EXIT
+mkdir -p "$T/bin"; printf '#!/bin/sh\necho "docker stub called: $*" >&2; exit 99\n' > "$T/bin/docker"
+printf '#!/bin/sh\necho "ref_locked: unlocked"; exit 1\n' > "$T/unlocked"; chmod +x "$T/bin/docker" "$T/unlocked"
+cp -r "$ROOT/profiles/bench-split-20mhz-2t2r" "$ROOT/profiles/$X"
+sed -i 's/clock_source=internal/clock_source=external/; s/^\([[:space:]]*clock_source:\).*/\1 external/' "$ROOT/profiles/$X/protoru.yml"
+ref() { env PATH="$T/bin:$PATH" UHD_REF_CHECK_HELPER="$T/unlocked" RF_SPLIT_OK=1 RADIO=uhd BENCH_RADIO=n310-20 TX_GAIN=30 "$@" "$ROOT/scripts/split.sh" ran up 2>&1 || true; }
+out=$(ref PROFILE=bench-split-20mhz-2t2r REF=bogus); grep -q "reference must be internal or external" <<< "$out" || { echo "FAIL: REF=bogus: $out" >&2; exit 1; }
+out=$(ref PROFILE="$X"); grep -q "split: ran: reference external" <<< "$out" && grep -q "N310 not locked to the external reference" <<< "$out" \
+  || { echo "FAIL: profile clock_source external not honoured or unlocked accepted: $out" >&2; exit 1; }
+grep -q "clock_source=external,time_source=internal" "$ROOT/build/local-profiles/$X/protoru.yml" \
+  || { echo "FAIL: local profile not external 10 MHz / time internal" >&2; exit 1; }
+out=$(ref PROFILE=bench-split-20mhz-2t2r REF=external); grep -q "N310 not locked to the external reference" <<< "$out" \
+  || { echo "FAIL: REF=external override not checked: $out" >&2; exit 1; }
+! grep -q "docker stub called" <<< "$out" || { echo "FAIL: docker was called before the lock check: $out" >&2; exit 1; }
+grep -q "^clock_source=internal\|clock_source: internal" "$ROOT/profiles/bench-split-20mhz-2t2r/protoru.yml" || { echo "FAIL: committed profile changed" >&2; exit 1; }
+echo "PASS: split.sh reference (profile clock_source or REF; external refused unless ref_locked, before any container)"
