@@ -40,8 +40,8 @@ i5-13600KF: P-cores 0-11 (HT pairs n/n+1), E-cores 12-19, `isolcpus=2-11`. The D
 | 2 | `ru_timing` | FIFO |
 | 3 | `ru_emu_#0` (busy-polls) | FIFO |
 | 4 / 5 | `ru_rx_#0` / `ru_ofh_tx_#0` | FIFO |
-| 6 | `ru_phy_hp_#0`, `ru_phy_tx_#0` | FIFO |
-| 7 | `ru_phy_rx_#0` | FIFO |
+| 6 | `ru_phy_hp_#0`, `ru_phy_tx_#0` (`ru_phy_tx` moves the TX samples: it calls UHD `send()` itself) | FIFO |
+| 7 | `ru_phy_rx_#0` (moves the RX samples: it calls UHD `recv()` itself) | FIFO |
 | 8 | `ru_radio_#0` alone: ProtO-RU's loop over UHD async messages (`recv_async_msg`), not a sample-streaming thread; non-real-time by design | OTHER |
 | 9 | idle (HT sibling of 8; left out of the cpuset) | |
 | 10 | `ru_phy_ul_#0` (own physical core) [UNVERIFIED with UHD; null radio only] | FIFO |
