@@ -43,7 +43,7 @@ DU_OFH_TX_KPI = re.compile(
     r"nof_late_cp_dl=(\d+)\s+nof_late_up_dl=(\d+)\s+nof_late_cp_ul=(\d+)",
     re.I,
 )
-# OFH info line: reads 0 when the DU profile sets log.ofh_level: warning (bench profiles do, to cap log size).
+# OFH info line in the DU log: needs log.ofh_level info (tests/bench-logs checks the bench profiles).
 DU_UL_DROP_PAST = re.compile(
     r"dropped received Open Fronthaul User-Plane packet.*sequence identifier field is from the past",
     re.I,

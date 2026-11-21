@@ -97,11 +97,11 @@ metrics:
 log:
   filename: /tmp/gnb.log
   all_level: info
-  # Per-packet RLC/PDCP/GTP-U/F1-U, per-allocation PHY and OFH packing info lines dominate the DU log (22 GB/hour
-  # in Phase D, 2026-11-20). rt_health needs only PHY/RF/OFH warnings; METRICS lines (parse_smoke_fh,
-  # measure_slot_delta) stay at info. With ofh at warning, parse_smoke_fh's ul_past_seq_drops (an OFH info line)
-  # reads 0 on these profiles. Warnings and errors from these layers still log.
-  ofh_level: warning
+  # The Phase D DU log (22 GB/hour, 2026-11-20) was RLC 44%, PDCP 21%, GTP-U 17%, PHY 8% info lines; OFH was ~0%.
+  # Those four (and F1-U) go to warning; no analyser reads their info lines (rt_health counts PHY/RF/OFH warnings).
+  # OFH and METRICS stay at info (all_level): parse_smoke_fh reads ul_past_seq_drops from an OFH info line and the
+  # METRICS lines feed parse_smoke_fh and measure_slot_delta. (The 29 GB/hour figure elsewhere is the RU's
+  # proto-ru.log under the prach-timing debug overlay, not this file.)
   phy_level: warning
   rlc_level: warning
   pdcp_level: warning
