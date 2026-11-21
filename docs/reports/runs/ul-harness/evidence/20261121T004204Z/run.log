@@ -1,0 +1,37 @@
+== ul-harness Stage 2b 2026-11-21T00:42:04Z
+== gate unit test
+null_rx_gate: PASS
+== synthetic UL plan + feed (20 slots)
+{"out": "<worktree>/build/ul-harness/gen", "target_du_slot": 2004, "ul_slots": 4, "feed_bytes": 1843200}
+== comparator self-test + corruption matrix
+{
+  "identity": {
+    "pass": true,
+    "why": "ok"
+  },
+  "re_bump": {
+    "pass": false,
+    "why": "IQ tolerance exceeded"
+  },
+  "slot_shift": {
+    "pass": false,
+    "why": "slot mismatch"
+  },
+  "port_swap": {
+    "pass": false,
+    "why": "IQ tolerance exceeded"
+  },
+  "drop_symbol": {
+    "pass": false,
+    "why": "IQ tolerance exceeded"
+  },
+  "drop_message": {
+    "pass": false,
+    "why": "IQ tolerance exceeded"
+  },
+  "rx_skew": {
+    "pass": false,
+    "why": "slot mismatch"
+  }
+}
+== e2e capture: SKIPPED (set UL_CAPTURE=<decoded-grid.npz>; OFH/BFP decoder + RU replay pending)

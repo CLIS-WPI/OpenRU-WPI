@@ -1,0 +1,9 @@
+{
+  "suite": "ul-harness",
+  "stage": "2b",
+  "gate": true,
+  "synthetic_plan": true,
+  "comparator_self_test": true,
+  "captured_grid": false,
+  "pass": true
+}
