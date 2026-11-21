@@ -34,12 +34,7 @@ case "$RADIO" in
   uhd)  [[ "$ROLE" == ran ]] || { echo "split: FAIL: RADIO applies to the ran role" >&2; exit 2; }
         [[ "${RF_SPLIT_OK:-0}" == 1 ]] || { echo "split: FAIL: RADIO=uhd transmits; set RF_SPLIT_OK=1 only with the human's go" >&2; exit 2; }
         # Phase D limits: explicit TX gain, 30 unless TX_GAIN_MAX raises it (cabled bench, p_max 10 in the DU profile).
-        # Default limit 30; TX_GAIN_MAX raises it for one run when the human approves (hard ceiling 40).
-        gmax="${TX_GAIN_MAX:-30}"
-        [[ "$gmax" =~ ^[0-9]+$ ]] && (( gmax <= 40 )) \
-          || { echo "split: FAIL: TX_GAIN_MAX must be an integer <= 40 (got '$gmax')" >&2; exit 2; }
-        [[ "${TX_GAIN:-}" =~ ^[0-9]+(\.[05])?$ ]] && awk -v g="$TX_GAIN" -v m="$gmax" 'BEGIN{exit !(g <= m)}' \
-          || { echo "split: FAIL: RADIO=uhd needs TX_GAIN <= $gmax (got '${TX_GAIN:-}'; TX_GAIN_MAX raises the limit, max 40)" >&2; exit 2; }
+        . "$ROOT/scripts/tx_gain_guard.sh"; tx_gain_check split   # <= 30, or TX_GAIN_MAX (max 40)
         . "$ROOT/scripts/radio_env.sh"; radio_env_load "$ROOT" || exit 2   # BENCH_RADIO (default n310-10)
         export PROTORU_CONFIG_PATH="$("$ROOT/scripts/local_profile.sh" "$PROFILE" "$TX_GAIN" internal | tail -1)" ;;
   *) echo "split: FAIL: RADIO must be null or uhd" >&2; exit 2 ;;

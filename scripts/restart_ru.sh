@@ -24,6 +24,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 PROFILE="${PROFILE:?set PROFILE=<profiles/…>}"
 TX_GAIN="${TX_GAIN:?set TX_GAIN=<value>}"
+. "$ROOT/scripts/tx_gain_guard.sh"; tx_gain_check restart-ru   # <= 30, or TX_GAIN_MAX (max 40)
 REF="${REF:-internal}"
 case "$REF" in
   external|internal) ;;

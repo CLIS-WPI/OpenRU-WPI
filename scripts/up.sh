@@ -47,6 +47,8 @@ case "$RADIO" in
           echo "[up] FAIL: RADIO=uhd is the bench path (BENCH=1); use RADIO=null here" >&2; exit 2; }
         # Always a local copy (gitignored build/local-profiles/), never the committed profile:
         # gain / reference as requested, device address from the selected BENCH_RADIO.
+        # TX_GAIN empty/unset keeps the profile's tx_gain (0 in the bench profiles); a given value goes through the guard.
+        [[ -z "${TX_GAIN:-}" ]] || { . "$ROOT/scripts/tx_gain_guard.sh"; tx_gain_check up; }
         RU_YML="$("$ROOT/scripts/local_profile.sh" "$PROFILE" "${TX_GAIN:--}" "$REF" | tail -1)" ;;
   null) RU_YML="$PROFILE_DIR/protoru-null.yml" ;;
   *) echo "[up] FAIL: RADIO must be uhd or null" >&2; exit 2 ;;
