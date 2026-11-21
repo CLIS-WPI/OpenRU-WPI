@@ -34,7 +34,7 @@ endif
 
 
 .PHONY: help preflight gpu-check build build-core build-protoru down logs \
-        smoke smoke-fh smoke-core fetch-golden replay-golden compare-plmn capture \
+        smoke smoke-fh smoke-core fetch-golden replay-golden ul-harness compare-plmn capture \
         bench-preflight up bench-release bench-ship check-no-secrets restart-ru \
         prach-timing rt-watch pin-check
 
@@ -337,11 +337,15 @@ replay-golden: preflight
 gen-golden: preflight
 	@OPENRU_TAG=$${OPENRU_TAG:-m1} $(ROOT)/scripts/gen_golden.sh
 
+# Stage 2a UL harness gate test (full UL/PRACH e2e is the remaining Stage 2 work).
+ul-harness:
+	@$(ROOT)/tests/ul-harness/run.sh
+
 # ---------------------------------------------------------------- tests/ ---
 # Modular test framework (see docs/TESTS.md). `make test` runs one suite/
 # profile through tests/<suite>/run.sh, which wraps the existing targets and
 # writes docs/reports/runs/<suite>/<date>-<profile>.json.
-SUITES := smoke-fh smoke-core replay-golden cuda-standalone cuda-pipeline cuda-scaling
+SUITES := smoke-fh smoke-core replay-golden cuda-standalone cuda-pipeline cuda-scaling ul-harness
 
 .PHONY: test test-list $(foreach s,$(SUITES),test-$(s))
 

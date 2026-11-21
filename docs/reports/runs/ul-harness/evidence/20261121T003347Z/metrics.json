@@ -1,0 +1,6 @@
+{
+  "suite": "ul-harness",
+  "stage": "2a-gate",
+  "pass": true,
+  "full_e2e": false
+}
