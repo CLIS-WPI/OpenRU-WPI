@@ -62,7 +62,8 @@ echo "PASS: --core-only compose config has no fh/macvlan"
 
 # Bench-host RU plan (docker/split-ran.env + bench-split profiles' ru_cpus): every planned CPU inside the RU container
 # cpuset, the FIFO workers on isolated CPUs, and ru_phy_ul (5th in round-robin order radio, hp, tx, rx, ul) not
-# wrapped onto ru_radio's CPU.
+# on ru_radio's physical core (bench host i5-13600KF: P-core HT pairs n/n+1 for 0-11, E-cores 12-19 single), and
+# no other planned thread on ru_radio's physical core.
 python3 - "$ROOT" <<'PY'
 import re, sys, yaml, pathlib
 root = pathlib.Path(sys.argv[1])
@@ -77,6 +78,7 @@ def cpus(s):
         a, _, b = p.partition("-"); out |= set(range(int(a), int(b or a) + 1))
     return out
 cset, isolated = cpus(env["PROTORU_CONTAINER_CPUSET"]), set(range(2, 12))
+core = lambda c: c // 2 if c < 12 else c  # physical core id on the bench host
 plan = dict(e.split("=") for e in env["BENCH_RU_THREADS"].split())
 assert all(int(c) in cset for c in plan.values()), (plan, cset)
 for t in ("ru_timing", "ru_emu_#0", "ru_rx_#0", "ru_ofh_tx_#0", "ru_phy_hp_#0", "ru_phy_tx_#0", "ru_phy_rx_#0", "ru_phy_ul_#0"):
@@ -86,8 +88,12 @@ for prof in ("bench-split-20mhz", "bench-split-20mhz-2t2r"):
     rc = sdr["ru_cpus"]; order = ["radio", "hp", "tx", "rx", "ul"]
     got = {w: rc[i % len(rc)] for i, w in enumerate(order)}
     assert set(rc) <= cset, (prof, rc, cset)
-    assert got["ul"] != got["radio"], (prof, "ru_phy_ul wraps onto ru_radio's CPU", rc)
+    assert core(got["ul"]) != core(got["radio"]), (prof, "ru_phy_ul shares ru_radio's physical core", rc)
     assert got["radio"] == int(plan["ru_radio_#0"]) and got["ul"] == int(plan["ru_phy_ul_#0"]), (prof, got, plan)
-print("PASS: split RU plan inside cpuset", sorted(cset), "| FIFO workers isolated | ru_cpus radio/ul",
+radio = int(plan["ru_radio_#0"])
+others = [t for t, c in plan.items() if t != "ru_radio_#0" and core(int(c)) == core(radio)]
+assert not others, ("threads share ru_radio's physical core", others)
+assert not any(core(c) == core(radio) for c in cset - {radio}), ("cpuset holds ru_radio's HT sibling", sorted(cset))
+print("PASS: split RU plan inside cpuset", sorted(cset), "| FIFO workers isolated | ru_cpus radio/ul (own cores)",
       got["radio"], got["ul"])
 PY
