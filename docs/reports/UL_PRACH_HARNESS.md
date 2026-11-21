@@ -205,7 +205,7 @@ but it must assert the result is B4/12 symbols/slot 19/start symbol 0.
 
 | signal | known answer | how the comparator gets it |
 |---|---|---|
-| PUSCH | deterministic QPSK RE grid `g(slot, symbol, port, re)` from a fixed PRBS seed | `gen_ul_feed.py` writes the grid and synthesizes the time-domain feed so the O-RU's output equals that grid up to one known global scalar (inverse closed-form scale/phase from `dft_window_offset`, DFT normalization, TS 38.211 phase ramp). The expected REs are **exactly `g(...)`**; no demodulator is run on the feed. |
+| PUSCH | deterministic QPSK RE grid `g(slot, symbol, port, re)` from a fixed PRBS seed | `gen_ul_feed.py` writes the grid and synthesizes the time-domain feed so the O-RU's output equals that grid up to one known global scalar (inverse closed-form scale/phase from `dft_window_offset`, DFT normalization, TS 38.211 phase ramp). The expected REs are **exactly `g(...)`**, scaled by the profile `iq_scaling` (16) before the 9-bit BFP reference; no demodulator is run on the feed. |
 | PRACH | ZC sequence from `ocudu::prach_generator` (root 1, zero-correlation zone 0, preamble index chosen by the test) | `gen_ul_feed.py` calls `prach_generator` and maps the 139-RE sequence with `prach_frequency_mapping_get`; the expected `prach_buffer` is the generated sequence, not a demodulated capture. |
 | determinism | two cold runs bit-identical | `determinism_check.sh` over the captured pcap payload bytes, as for DL |
 
@@ -374,7 +374,8 @@ corrupted" is not enough.
 
 - Whether the RU accepts a synthetic C-plane pcap without a live DU (expected:
   yes, the receiver only needs valid OFH sections) `[UNVERIFIED]`.
-- Whether UL BFP output is byte-identical to the reference with `iq_scaling=1.0`
+- Whether UL BFP output is byte-identical to the reference with the profile
+  `iq_scaling` (16 in `profiles/baseline/du-fh.yml` and `du-core.yml`, not 1.0)
   `[UNVERIFIED]`; measured in Stage 2.
 - Host-jitter sensitivity of the slot-anchored RX feed under the measurement lock
   `[UNVERIFIED]`; same class of risk as the DL dump gate.
