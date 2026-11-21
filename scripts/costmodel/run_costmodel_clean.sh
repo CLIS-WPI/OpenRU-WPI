@@ -171,20 +171,44 @@ for attempt in $(seq 1 "${ATTEMPTS}"); do
   # Let the selector see the whole machine, then choose the least busy cores on
   # the GPU's NUMA node (falls back to the other node if needed).
   taskset -pc 0-63 $$ >/dev/null
-  if ! python3 "${ROOT}/scripts/costmodel/pick_cores.py" \
-      --uuid "${GPU_UUID}" --count "${COUNT_CORES}" --sample-seconds 20 --max-busy 100 \
-      --out "${DIR}/cores.json" > "${DIR}/cores.stdout" 2>&1; then
-    write_status retry "core selection failed" "${attempt}" "${DIR}"
-    sleep "${RETRY_SLEEP}"
-    continue
+  if [[ -n "${RESERVED_CORES:-}" ]]; then
+    RESERVED="${RESERVED_CORES}"
+    BENCH_CORE="${FIXED_BENCH_CORE:-${RESERVED%%,*}}"
+    NUMA_NODE=$(python3 -c 'import sys,glob;print(glob.glob(f"/sys/devices/system/cpu/cpu{sys.argv[1]}/node*")[0].rsplit("node",1)[1])' "${BENCH_CORE}")
+    GPU_NUMA=$(python3 - "${GPU_UUID}" <<'PY'
+import subprocess, sys
+from pathlib import Path
+bus = subprocess.check_output(["nvidia-smi", "-i", sys.argv[1], "--query-gpu=pci.bus_id", "--format=csv,noheader"], text=True).strip()
+domain, rest = bus.split(":", 1)
+print(Path(f"/sys/bus/pci/devices/{domain[-4:]}:{rest}/numa_node").read_text().strip())
+PY
+)
+    FALLBACK=false
+    SMT=1
+    python3 - "${DIR}/cores.json" "${RESERVED}" "${BENCH_CORE}" "${NUMA_NODE}" "${GPU_NUMA}" <<'PY'
+import json, sys
+path, cores, bench, node, gpu_node = sys.argv[1:6]
+json.dump({"numa_node": int(node), "gpu_numa_node": int(gpu_node), "fallback_node": False,
+           "threads_per_core": 1, "cores": [int(x) for x in cores.split(",")], "bench_core": int(bench),
+           "mean_busy_pct": {}, "max_busy_pct": {}}, open(path, "w"), indent=2)
+PY
+  else
+    EXCL_ARGS=()
+    [[ -n "${EXCLUDE_CORES:-}" ]] && EXCL_ARGS+=(--exclude "${EXCLUDE_CORES}")
+    if ! python3 "${ROOT}/scripts/costmodel/pick_cores.py" \
+        --uuid "${GPU_UUID}" --count "${COUNT_CORES}" --sample-seconds 20 --max-busy 100 \
+        "${EXCL_ARGS[@]}" --out "${DIR}/cores.json" > "${DIR}/cores.stdout" 2>&1; then
+      write_status retry "core selection failed" "${attempt}" "${DIR}"
+      sleep "${RETRY_SLEEP}"
+      continue
+    fi
+    RESERVED=$(python3 -c 'import json,sys;print(",".join(str(x) for x in json.load(open(sys.argv[1]))["cores"]))' "${DIR}/cores.json")
+    BENCH_CORE=$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["bench_core"])' "${DIR}/cores.json")
+    NUMA_NODE=$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["numa_node"])' "${DIR}/cores.json")
+    GPU_NUMA=$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["gpu_numa_node"])' "${DIR}/cores.json")
+    FALLBACK=$(python3 -c 'import json,sys;print(str(json.load(open(sys.argv[1]))["fallback_node"]).lower())' "${DIR}/cores.json")
+    SMT=$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["threads_per_core"])' "${DIR}/cores.json")
   fi
-
-  RESERVED=$(python3 -c 'import json,sys;print(",".join(str(x) for x in json.load(open(sys.argv[1]))["cores"]))' "${DIR}/cores.json")
-  BENCH_CORE=$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["bench_core"])' "${DIR}/cores.json")
-  NUMA_NODE=$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["numa_node"])' "${DIR}/cores.json")
-  GPU_NUMA=$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["gpu_numa_node"])' "${DIR}/cores.json")
-  FALLBACK=$(python3 -c 'import json,sys;print(str(json.load(open(sys.argv[1]))["fallback_node"]).lower())' "${DIR}/cores.json")
-  SMT=$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["threads_per_core"])' "${DIR}/cores.json")
   echo "== attempt ${attempt}: cores=${RESERVED} bench=${BENCH_CORE} numa=${NUMA_NODE} gpu_numa=${GPU_NUMA} smt=${SMT}"
 
   ALLOWED=$(python3 - "${RESERVED}" <<'PY'
@@ -226,11 +250,13 @@ PY
     --cores "${RESERVED}" --bench-core "${BENCH_CORE}" --duration 10 \
     --threshold "${THRESHOLD}" --out "${DIR}/cores.after.json" > "${DIR}/cores.after.stdout" 2>&1 || true
 
-  write_status running "Cat-B diagnostic" "${attempt}" "${DIR}"
-  run_diag "${DIR}/diagnostics" avx2_prec_avx2     "${ROOT}/build/cm-avx2/test_costmodel"   avx2
-  run_diag "${DIR}/diagnostics" avx2_prec_avx512   "${ROOT}/build/cm-avx2/test_costmodel"   avx512
-  run_diag "${DIR}/diagnostics" avx512_prec_avx2   "${ROOT}/build/cm-avx512/test_costmodel" avx2
-  run_diag "${DIR}/diagnostics" avx512_prec_avx512 "${ROOT}/build/cm-avx512/test_costmodel" avx512
+  if [[ "${SKIP_DIAG:-0}" != "1" ]]; then
+    write_status running "Cat-B diagnostic" "${attempt}" "${DIR}"
+    run_diag "${DIR}/diagnostics" avx2_prec_avx2     "${ROOT}/build/cm-avx2/test_costmodel"   avx2
+    run_diag "${DIR}/diagnostics" avx2_prec_avx512   "${ROOT}/build/cm-avx2/test_costmodel"   avx512
+    run_diag "${DIR}/diagnostics" avx512_prec_avx2   "${ROOT}/build/cm-avx512/test_costmodel" avx2
+    run_diag "${DIR}/diagnostics" avx512_prec_avx512 "${ROOT}/build/cm-avx512/test_costmodel" avx512
+  fi
 
   # Conditions + diagnostic summary.
   python3 - "${DIR}" "${RUN_ID}" "${RESERVED}" "${BENCH_CORE}" "${NUMA_NODE}" "${GPU_NUMA}" "${FALLBACK}" "${SMT}" "${THRESHOLD}" "${ITERS}" "${GPU_UUID}" <<'PY'
@@ -255,6 +281,7 @@ conds = {
 (d / "conditions.json").write_text(json.dumps(conds, indent=2) + "\n")
 PY
 
+  if [[ "${SKIP_DIAG:-0}" != "1" ]]; then
   python3 - "${DIR}/diagnostics" <<'PY'
 import csv, json, sys
 from pathlib import Path
@@ -273,6 +300,7 @@ for name in names:
         out["freq_khz_sysfs"][name] = cd.get("freq_khz_sysfs")
 (d / "summary.json").write_text(json.dumps(out, indent=2) + "\n")
 PY
+  fi
 
   python3 "${ROOT}/scripts/costmodel/merge_costmodel.py" \
     --raw "${DIR}" --out "${ROOT}/results/costmodel" --run-id "${RUN_ID}" \

@@ -1,0 +1,5 @@
+timestamp,pstate,clocks.current.sm [MHz],clocks.current.memory [MHz],power.draw [W],power.limit [W],clocks_event_reasons.active
+2026/11/20 19:23:04.854, P0, 345 MHz, 2619 MHz, 63.38 W, 400.00 W, 0x0000000000000001
+2026/11/20 19:23:05.500, P0, 1785 MHz, 2619 MHz, 71.98 W, 400.00 W, 0x0000000000000000
+2026/11/20 19:23:06.056, P0, 1785 MHz, 2619 MHz, 88.18 W, 400.00 W, 0x0000000000000000
+2026/11/20 19:23:06.696, P0, 1785 MHz, 2619 MHz, 93.39 W, 400.00 W, 0x0000000000000000

@@ -1,0 +1,1 @@
+{"numa_node": 0, "gpu_numa_node": 0, "fallback_node": false, "cores": [6], "bench_core": 6, "threads_per_core": 1, "mean_busy_pct": {"6": 0.049}, "max_busy_pct": {"6": 1.961}}

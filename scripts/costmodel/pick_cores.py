@@ -67,7 +67,9 @@ def main() -> int:
     ap.add_argument("--sample-seconds", type=float, default=5.0)
     ap.add_argument("--max-busy", type=float, default=1.0)
     ap.add_argument("--out", required=True, type=Path)
+    ap.add_argument("--exclude", default="", help="comma-separated CPUs to avoid")
     args = ap.parse_args()
+    excluded = {int(x) for x in args.exclude.split(",") if x.strip()}
 
     gpu_node = gpu_numa_node(args.uuid)
     cpu_node, cpu_core, threads_per_core = topology()
@@ -98,7 +100,7 @@ def main() -> int:
     for node in nodes:
         rows = []
         for cpu, samples in stats.items():
-            if cpu_node.get(cpu) != node or not samples:
+            if cpu_node.get(cpu) != node or not samples or cpu in excluded:
                 continue
             rows.append({
                 "cpu": cpu,

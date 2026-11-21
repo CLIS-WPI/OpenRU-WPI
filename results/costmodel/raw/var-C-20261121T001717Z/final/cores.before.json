@@ -1,0 +1,30 @@
+{
+  "cores": [
+    12
+  ],
+  "bench_core": 12,
+  "threshold_pct": 5.0,
+  "samples": 50,
+  "max_busy_pct": {
+    "12": 0.0
+  },
+  "max_foreign_pct": {
+    "12": 0.0
+  },
+  "rejected": false,
+  "bench_cpu_pct": {
+    "max": 0.0,
+    "median": 0.0
+  },
+  "freq_khz_sysfs": {
+    "min": 1500000,
+    "median": 1500000.0,
+    "max": 3250000
+  },
+  "freq_khz_cpuinfo": {
+    "min": 1500000.0,
+    "median": 1500000.0,
+    "max": 3250000.0
+  },
+  "foreign_series": []
+}

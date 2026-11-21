@@ -1,0 +1,20 @@
+== 2026-11-20T23:57:43Z
+ 18:57:43 up 28 days,  5:46,  1 user,  load average: 1.56, 1.51, 1.49
+1.56 1.51 1.49 1/1890 3367013
+== top cpu (information only)
+%CPU     PID COMMAND
+68.5 3302270 opencode
+ 5.7 1689019 MainThread
+ 5.4 1415827 MainThread
+ 2.0 1689747 claude
+ 0.9 1415092 MainThread
+ 0.4 1416005 MainThread
+ 0.4 1761794 watch
+ 0.3 2295414 tailscaled
+ 0.2      17 rcu_preempt
+ 0.2    2437 dockerd
+ 0.1    1660 containerd
+== docker ps
+paperbanana-api
+ollama
+ngsi-dev-1
