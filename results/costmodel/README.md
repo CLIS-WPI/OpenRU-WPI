@@ -20,6 +20,8 @@ slots are 0.5 ms, so a kernel that takes 0.5 ms consumes the whole slot.
   `gpu_trace_summary.py` — clean-run helpers.
 - `../../scripts/costmodel/run_costmodel.sh` — earlier busy-host run (kept for comparison).
 - `../../scripts/costmodel/merge_costmodel.py` — merge raw CSVs into the table.
+- `../../scripts/costmodel/variance.py` — aggregate repeated runs into median/range
+  (`costmodel.md`, `costmodel.csv`, `costmodel-variance.csv`).
 - `raw/<UTC>/` — harness output (`load.txt`, `avx2.csv`, `avx512.csv`, `gpu.csv`, logs).
   Workspace paths in the committed logs are replaced with `<worktree>`.
 - `costmodel.csv` — merged rows; `costmodel.md` — summary table.
@@ -67,9 +69,10 @@ cmake --build build/cm-avx2 -j"${NUM_JOBS:-16}" --target test_costmodel
 - **Reserved cores, not a whole-server rule.** `pick_cores.py` samples every CPU
   for 20 s and selects the least bursty physical cores on one NUMA node; the run
   pins the benchmark to one of them and checks the reserved set before, during and
-  after. The clean run used cores `19,21,31` on NUMA 0, benchmark core `19`.
-  SMT is off on this host, so each physical core is one logical CPU and there are
-  no HT siblings to reserve.
+  after. The #47 single run used cores `19,21,31` on NUMA 0. During the variance
+  runs the shared host had no 3-core window free of other processes, so each
+  variance run reserved one physical core (SMT off, so no HT sibling): core `6`
+  (NUMA 0), `43` (NUMA 1), and `12` (NUMA 0). The same per-core/GPU gate applied.
 - **Rejection rule.** A backend is rejected only if another process used a
   reserved core (peak foreign CPU > 5% of that core) or another process used the
   GPU (`nvidia-smi --query-compute-apps`). Host-wide load is recorded for
@@ -91,20 +94,22 @@ cmake --build build/cm-avx2 -j"${NUM_JOBS:-16}" --target test_costmodel
   - OFDM vs generic DFT: max LSB ≤ 1 and error ≤ −60 dB.
   - BFP vs generic compressor: byte-identical.
   - Precoding vs scalar golden: max error ≤ 1e-3.
-- 200 iterations per configuration; p50/p99 over those iterations. p50 is the
-  headline. p99 still contains isolated host-scheduler outliers because the
-  benchmark cannot take RT priority on this shared host.
+- 200 iterations per configuration; p50/p99 over those iterations. The published
+  table is the median [min-max] of three runs. p50 is the headline; p99 still
+  contains isolated host-scheduler outliers because the benchmark cannot take RT
+  priority on this shared host, and the range makes that visible.
 - A run holds `/tmp/openru-measure.lock` and records per-backend `load.*.txt`,
   `*.cores.json`, `*.nvidia-smi.*` and `*.gpu_apps.json` under
   `raw/<run-id>/final/`.
 
 ## Notes
 
-- The table is the clean run `clean-20261120T232220Z` (reserved cores, per-core
-  gate passed). The earlier busy-host run `raw/20261120T214744Z/` is kept only as
-  a labelled comparison in `COMPARISON.md`; its numbers are provisional and must
-  not be cited.
-- GPU is ISA-independent; it was measured once and appears in the `gpu` rows.
+- The published table is the 3-run variance `var-A-20261120T235619Z`,
+  `var-B-20261121T000700Z`, `var-C-20261121T001717Z` (median [min-max] per row;
+  `costmodel.md`). It supersedes the #47 single-run table. The busy-host run
+  `raw/20261120T214744Z/` is kept only as a labelled comparison in
+  `COMPARISON.md`; its numbers are provisional and must not be cited.
+- GPU is ISA-independent; it was measured in each of the three runs.
 - Cat-B AVX-512 is slower than AVX2 because the harness calls `apply_precoding`
   once per PRB (12 REs): AVX-512 vectorizes 8 REs and runs a 4-RE scalar tail,
   while AVX2 vectorizes all 12. It also uses the non-BF16 conversion fallback

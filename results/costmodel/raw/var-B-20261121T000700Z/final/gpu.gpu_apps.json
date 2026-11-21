@@ -1,0 +1,38 @@
+{
+  "uuid": "GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058",
+  "samples": 3,
+  "seen_pids": [
+    3386735
+  ],
+  "foreign_pids": [],
+  "rejected": false,
+  "trace": [
+    {
+      "t": 0.12,
+      "allow_pid": 3386735,
+      "apps": []
+    },
+    {
+      "t": 1.25,
+      "allow_pid": 3386735,
+      "apps": [
+        {
+          "pid": 3386735,
+          "name": "<worktree>/build/cm-avx2/test_costmodel",
+          "used_memory": "530 MiB"
+        }
+      ]
+    },
+    {
+      "t": 2.31,
+      "allow_pid": 3386735,
+      "apps": [
+        {
+          "pid": 3386735,
+          "name": "<worktree>/build/cm-avx2/test_costmodel",
+          "used_memory": "530 MiB"
+        }
+      ]
+    }
+  ]
+}

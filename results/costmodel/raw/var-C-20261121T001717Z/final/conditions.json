@@ -1,0 +1,266 @@
+{
+  "run_id": "var-C-20261121T001717Z",
+  "raw": "results/costmodel/raw/var-C-20261121T001717Z/final",
+  "method": "detached clean run on reserved cores",
+  "cores": [
+    12
+  ],
+  "bench_core": 12,
+  "numa_node": 0,
+  "gpu_numa_node": 0,
+  "fallback_node": false,
+  "threads_per_core": 1,
+  "core_threshold_pct": 5.0,
+  "iters": 200,
+  "gpu_uuid": "GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058",
+  "core_before": {
+    "cores": [
+      12
+    ],
+    "bench_core": 12,
+    "threshold_pct": 5.0,
+    "samples": 50,
+    "max_busy_pct": {
+      "12": 0.0
+    },
+    "max_foreign_pct": {
+      "12": 0.0
+    },
+    "rejected": false,
+    "bench_cpu_pct": {
+      "max": 0.0,
+      "median": 0.0
+    },
+    "freq_khz_sysfs": {
+      "min": 1500000,
+      "median": 1500000.0,
+      "max": 3250000
+    },
+    "freq_khz_cpuinfo": {
+      "min": 1500000.0,
+      "median": 1500000.0,
+      "max": 3250000.0
+    },
+    "foreign_series": []
+  },
+  "core_after": {
+    "cores": [
+      12
+    ],
+    "bench_core": 12,
+    "threshold_pct": 5.0,
+    "samples": 50,
+    "max_busy_pct": {
+      "12": 30.0
+    },
+    "max_foreign_pct": {
+      "12": 30.0
+    },
+    "rejected": true,
+    "bench_cpu_pct": {
+      "max": 0.0,
+      "median": 0.0
+    },
+    "freq_khz_sysfs": {
+      "min": 1499370,
+      "median": 1500000.0,
+      "max": 3799983
+    },
+    "freq_khz_cpuinfo": {
+      "min": 1499370.0,
+      "median": 1500000.0,
+      "max": 3799983.0
+    },
+    "foreign_series": [
+      {
+        "t": 2441496.07,
+        "cpu": 12,
+        "busy_pct": 4.76,
+        "foreign_pct": 4.76
+      },
+      {
+        "t": 2441496.27,
+        "cpu": 12,
+        "busy_pct": 4.76,
+        "foreign_pct": 4.76
+      },
+      {
+        "t": 2441497.29,
+        "cpu": 12,
+        "busy_pct": 4.76,
+        "foreign_pct": 4.76
+      },
+      {
+        "t": 2441497.7,
+        "cpu": 12,
+        "busy_pct": 5.0,
+        "foreign_pct": 5.0
+      },
+      {
+        "t": 2441497.9,
+        "cpu": 12,
+        "busy_pct": 30.0,
+        "foreign_pct": 30.0
+      },
+      {
+        "t": 2441499.13,
+        "cpu": 12,
+        "busy_pct": 4.76,
+        "foreign_pct": 4.76
+      },
+      {
+        "t": 2441500.16,
+        "cpu": 12,
+        "busy_pct": 4.76,
+        "foreign_pct": 4.76
+      },
+      {
+        "t": 2441500.98,
+        "cpu": 12,
+        "busy_pct": 4.76,
+        "foreign_pct": 4.76
+      },
+      {
+        "t": 2441501.79,
+        "cpu": 12,
+        "busy_pct": 4.76,
+        "foreign_pct": 4.76
+      },
+      {
+        "t": 2441502.0,
+        "cpu": 12,
+        "busy_pct": 4.76,
+        "foreign_pct": 4.76
+      },
+      {
+        "t": 2441502.2,
+        "cpu": 12,
+        "busy_pct": 4.76,
+        "foreign_pct": 4.76
+      }
+    ]
+  },
+  "gpu_clock": {
+    "samples": 4,
+    "columns": [
+      "timestamp",
+      "pstate",
+      "clocks.current.sm [MHz]",
+      "clocks.current.memory [MHz]",
+      "power.draw [W]",
+      "power.limit [W]",
+      "clocks_event_reasons.active"
+    ],
+    "clocks.current.sm [MHz]": {
+      "min": 345.0,
+      "median": 1785.0,
+      "max": 1785.0
+    },
+    "clocks.current.memory [MHz]": {
+      "min": 2619.0,
+      "median": 2619.0,
+      "max": 2619.0
+    },
+    "power.draw [W]": {
+      "min": 63.38,
+      "median": 80.08000000000001,
+      "max": 93.39
+    },
+    "power.limit [W]": {
+      "min": 400.0,
+      "median": 400.0,
+      "max": 400.0
+    },
+    "pstate": [
+      "P0"
+    ],
+    "clocks_event_reasons.active": [
+      "0x0000000000000000",
+      "0x0000000000000001"
+    ]
+  },
+  "gpu_apps": {
+    "uuid": "GPU-509d8ab3-0c8e-8b98-fbf8-0c55f6ba9058",
+    "samples": 3,
+    "seen_pids": [
+      3398179
+    ],
+    "foreign_pids": [],
+    "rejected": false,
+    "trace": [
+      {
+        "t": 0.21,
+        "allow_pid": 3398179,
+        "apps": []
+      },
+      {
+        "t": 1.4,
+        "allow_pid": 3398179,
+        "apps": [
+          {
+            "pid": 3398179,
+            "name": "<worktree>/build/cm-avx2/test_costmodel",
+            "used_memory": "530 MiB"
+          }
+        ]
+      },
+      {
+        "t": 2.46,
+        "allow_pid": 3398179,
+        "apps": []
+      }
+    ]
+  },
+  "gpu_before_text": "== 2026-11-21T00:23:04Z\ntimestamp, name, pstate, clocks.current.sm [MHz], clocks.current.memory [MHz], power.draw [W], power.limit [W], clocks_event_reasons.active\n2026/11/20 19:23:04.514, NVIDIA H100 NVL, P0, 345 MHz, 2619 MHz, 63.41 W, 400.00 W, 0x0000000000000001\n== detail\n\n==============NVSMI LOG==============\n\nTimestamp                                              : Fri Nov 20 19:23:04 2026\nDriver Version                                         : 580.126.09\nCUDA Version                                           : 13.0\n\nAttached GPUs                                          : 2\nGPU 00000000:44:00.0\n    Performance State                                  : P0\n    Clocks Event Reasons\n        Idle                                           : Active\n        Applications Clocks Setting                    : Not Active\n        SW Power Cap                                   : Not Active\n        HW Slowdown                                    : Not Active\n            HW Thermal Slowdown                        : Not Active\n            HW Power Brake Slowdown                    : Not Active\n        Sync Boost                                     : Not Active\n        SW Thermal Slowdown                            : Not Active\n        Display Clock Setting                          : Not Active\n    Clocks Event Reasons Counters\n        SW Power Capping                               : 77014263832 us\n        Sync Boost                                     : 0 us\n        SW Thermal Slowdown                            : 0 us\n        HW Thermal Slowdown                            : 0 us\n        HW Power Braking                               : 0 us\n    Sparse Operation Mode                              : Disabled\n    GPU Power Readings\n        Average Power Draw                             : 63.40 W\n        Instantaneous Power Draw                       : 63.35 W\n        Current Power Limit                            : 400.00 W\n        Requested Power Limit                          : 400.00 W\n        Default Power Limit                            : 310.00 W\n        Min Power Limit                                : 200.00 W\n        Max Power Limit                                : 400.00 W\n    Power Samples\n        Duration                                       : 2.36 sec\n        Number of Samples                              : 119\n        Max                                            : 64.03 W\n        Min                                            : 62.76 W\n        Avg                                            : 63.40 W\n    GPU Memory Power Readings \n        Average Power Draw                             : N/A\n        Instantaneous Power Draw                       : N/A\n    Module Power Readings\n        Average Power Draw                             : N/A\n        Instantaneous Power Draw                       : N/A\n        Current Power Limit                            : N/A\n        Requested Power Limit                          : N/A\n        Default Power Limit                            : N/A\n        Min Power Limit                                : N/A\n        Max Power Limit                                : N/A\n    Clocks\n        Graphics                                       : 345 MHz\n        SM                                             : 345 MHz\n        Memory                                         : 2619 MHz\n        Video                                          : 765 MHz\n    Applications Clocks\n        Graphics                                       : 1785 MHz\n        Memory                                         : 2619 MHz\n    Default Applications Clocks\n        Graphics                                       : 1785 MHz\n        Memory                                         : 2619 MHz\n    Deferred Clocks\n        Memory                                         : N/A\n    Max Clocks\n        Graphics                                       : 1785 MHz\n        SM                                             : 1785 MHz\n        Memory                                         : 2619 MHz\n        Video                                          : 1410 MHz\n    Max Customer Boost Clocks\n        Graphics                                       : 1785 MHz\n    SM Clock Samples\n        Duration                                       : Not Found\n        Number of Samples                              : Not Found\n        Max                                            : Not Found\n        Min                                            : Not Found\n        Avg                                            : Not Found\n    Memory Clock Samples\n        Duration                                       : Not Found\n        Number of Samples                              : Not Found\n        Max                                            : Not Found\n        Min                                            : Not Found\n        Avg                                            : Not Found\n    Clock Policy\n        Auto Boost                                     : N/A\n        Auto Boost Default                             : N/A\n\n",
+  "gpu_after_text": "== 2026-11-21T00:23:07Z\ntimestamp, name, pstate, clocks.current.sm [MHz], clocks.current.memory [MHz], power.draw [W], power.limit [W], clocks_event_reasons.active\n2026/11/20 19:23:07.259, NVIDIA H100 NVL, P0, 1785 MHz, 2619 MHz, 94.52 W, 400.00 W, 0x0000000000000000\n== detail\n\n==============NVSMI LOG==============\n\nTimestamp                                              : Fri Nov 20 19:23:07 2026\nDriver Version                                         : 580.126.09\nCUDA Version                                           : 13.0\n\nAttached GPUs                                          : 2\nGPU 00000000:44:00.0\n    Performance State                                  : P0\n    Clocks Event Reasons\n        Idle                                           : Not Active\n        Applications Clocks Setting                    : Not Active\n        SW Power Cap                                   : Not Active\n        HW Slowdown                                    : Not Active\n            HW Thermal Slowdown                        : Not Active\n            HW Power Brake Slowdown                    : Not Active\n        Sync Boost                                     : Not Active\n        SW Thermal Slowdown                            : Not Active\n        Display Clock Setting                          : Not Active\n    Clocks Event Reasons Counters\n        SW Power Capping                               : 77014263832 us\n        Sync Boost                                     : 0 us\n        SW Thermal Slowdown                            : 0 us\n        HW Thermal Slowdown                            : 0 us\n        HW Power Braking                               : 0 us\n    Sparse Operation Mode                              : Disabled\n    GPU Power Readings\n        Average Power Draw                             : 94.87 W\n        Instantaneous Power Draw                       : 95.03 W\n        Current Power Limit                            : 400.00 W\n        Requested Power Limit                          : 400.00 W\n        Default Power Limit                            : 310.00 W\n        Min Power Limit                                : 200.00 W\n        Max Power Limit                                : 400.00 W\n    Power Samples\n        Duration                                       : 2.36 sec\n        Number of Samples                              : 119\n        Max                                            : 101.60 W\n        Min                                            : 63.74 W\n        Avg                                            : 92.43 W\n    GPU Memory Power Readings \n        Average Power Draw                             : N/A\n        Instantaneous Power Draw                       : N/A\n    Module Power Readings\n        Average Power Draw                             : N/A\n        Instantaneous Power Draw                       : N/A\n        Current Power Limit                            : N/A\n        Requested Power Limit                          : N/A\n        Default Power Limit                            : N/A\n        Min Power Limit                                : N/A\n        Max Power Limit                                : N/A\n    Clocks\n        Graphics                                       : 1785 MHz\n        SM                                             : 1785 MHz\n        Memory                                         : 2619 MHz\n        Video                                          : 1410 MHz\n    Applications Clocks\n        Graphics                                       : 1785 MHz\n        Memory                                         : 2619 MHz\n    Default Applications Clocks\n        Graphics                                       : 1785 MHz\n        Memory                                         : 2619 MHz\n    Deferred Clocks\n        Memory                                         : N/A\n    Max Clocks\n        Graphics                                       : 1785 MHz\n        SM                                             : 1785 MHz\n        Memory                                         : 2619 MHz\n        Video                                          : 1410 MHz\n    Max Customer Boost Clocks\n        Graphics                                       : 1785 MHz\n    SM Clock Samples\n        Duration                                       : Not Found\n        Number of Samples                              : Not Found\n        Max                                            : Not Found\n        Min                                            : Not Found\n        Avg                                            : Not Found\n    Memory Clock Samples\n        Duration                                       : Not Found\n        Number of Samples                              : Not Found\n        Max                                            : Not Found\n        Min                                            : Not Found\n        Avg                                            : Not Found\n    Clock Policy\n        Auto Boost                                     : N/A\n        Auto Boost Default                             : N/A\n\n",
+  "core_runs": {
+    "avx2": {
+      "rejected": false,
+      "max_foreign_pct": {
+        "12": 1.72
+      },
+      "freq_khz_sysfs": {
+        "min": 3799932,
+        "median": 3799956.5,
+        "max": 3799989
+      },
+      "freq_khz_cpuinfo": {
+        "min": 3799932.0,
+        "median": 3799977.0,
+        "max": 3799993.0
+      }
+    },
+    "avx512": {
+      "rejected": false,
+      "max_foreign_pct": {
+        "12": 2.42
+      },
+      "freq_khz_sysfs": {
+        "min": 3799956,
+        "median": 3799979,
+        "max": 3800017
+      },
+      "freq_khz_cpuinfo": {
+        "min": 3799956.0,
+        "median": 3799979.0,
+        "max": 3799983.0
+      }
+    },
+    "gpu": {
+      "rejected": false,
+      "max_foreign_pct": {
+        "12": 3.11
+      },
+      "freq_khz_sysfs": {
+        "min": 3781877,
+        "median": 3799337.0,
+        "max": 3800018
+      },
+      "freq_khz_cpuinfo": {
+        "min": 3781877.0,
+        "median": 3799099.0,
+        "max": 3800003.0
+      }
+    }
+  }
+}

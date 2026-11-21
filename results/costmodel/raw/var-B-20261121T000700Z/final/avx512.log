@@ -1,0 +1,45 @@
+# Low-PHY cost model
+ISA build: avx512
+CPU core: 43; iterations: 200
+OFDM backend: fftw; BFP backend: avx512; precoder backend: avx512
+GPU: disabled
+
+20 MHz  avx512 CPU    p=1  OFDM  p50=0.0109 p99=0.0188 ms  PASS
+20 MHz  avx512 CPU    p=1  BFP   p50=0.0042 p99=0.0105 ms  PASS
+20 MHz  avx512 CPU    p=1  PREC  p50=0.0222 p99=0.0302 ms  PASS
+20 MHz  avx512 CPU    p=2  OFDM  p50=0.0214 p99=0.0301 ms  PASS
+20 MHz  avx512 CPU    p=2  BFP   p50=0.0084 p99=0.0146 ms  PASS
+20 MHz  avx512 CPU    p=2  PREC  p50=0.0600 p99=0.0685 ms  PASS
+20 MHz  avx512 CPU    p=4  OFDM  p50=0.0431 p99=0.0530 ms  PASS
+20 MHz  avx512 CPU    p=4  BFP   p50=0.0167 p99=0.0243 ms  PASS
+20 MHz  avx512 CPU    p=4  PREC  p50=0.1454 p99=0.1512 ms  PASS
+20 MHz  avx512 CPU    p=8  OFDM  p50=0.0926 p99=0.1030 ms  PASS
+20 MHz  avx512 CPU    p=8  BFP   p50=0.0333 p99=0.0433 ms  PASS
+20 MHz  avx512 CPU    p=8  PREC  p50=0.2770 p99=0.2855 ms  PASS
+40 MHz  avx512 CPU    p=1  OFDM  p50=0.0271 p99=0.0369 ms  PASS
+40 MHz  avx512 CPU    p=1  BFP   p50=0.0084 p99=0.0151 ms  PASS
+40 MHz  avx512 CPU    p=1  PREC  p50=0.0466 p99=0.0558 ms  PASS
+40 MHz  avx512 CPU    p=2  OFDM  p50=0.0559 p99=0.0652 ms  PASS
+40 MHz  avx512 CPU    p=2  BFP   p50=0.0167 p99=0.0238 ms  PASS
+40 MHz  avx512 CPU    p=2  PREC  p50=0.1257 p99=0.1305 ms  PASS
+40 MHz  avx512 CPU    p=4  OFDM  p50=0.1157 p99=0.1226 ms  PASS
+40 MHz  avx512 CPU    p=4  BFP   p50=0.0333 p99=0.0423 ms  PASS
+40 MHz  avx512 CPU    p=4  PREC  p50=0.3028 p99=0.3154 ms  PASS
+40 MHz  avx512 CPU    p=8  OFDM  p50=0.2282 p99=0.2461 ms  PASS
+40 MHz  avx512 CPU    p=8  BFP   p50=0.0694 p99=0.0787 ms  PASS
+40 MHz  avx512 CPU    p=8  PREC  p50=0.6054 p99=0.6150 ms  PASS
+100 MHz avx512 CPU    p=1  OFDM  p50=0.0808 p99=0.0866 ms  PASS
+100 MHz avx512 CPU    p=1  BFP   p50=0.0214 p99=0.0297 ms  PASS
+100 MHz avx512 CPU    p=1  PREC  p50=0.1261 p99=0.1336 ms  PASS
+100 MHz avx512 CPU    p=2  OFDM  p50=0.1405 p99=0.1478 ms  PASS
+100 MHz avx512 CPU    p=2  BFP   p50=0.0424 p99=0.0546 ms  PASS
+100 MHz avx512 CPU    p=2  PREC  p50=0.3229 p99=0.3375 ms  PASS
+100 MHz avx512 CPU    p=4  OFDM  p50=0.2796 p99=0.2918 ms  PASS
+100 MHz avx512 CPU    p=4  BFP   p50=0.0910 p99=0.0986 ms  PASS
+100 MHz avx512 CPU    p=4  PREC  p50=0.7807 p99=0.7926 ms  PASS
+100 MHz avx512 CPU    p=8  OFDM  p50=0.5656 p99=1.0058 ms  PASS
+100 MHz avx512 CPU    p=8  BFP   p50=0.1786 p99=0.1945 ms  PASS
+100 MHz avx512 CPU    p=8  PREC  p50=1.4891 p99=1.5045 ms  PASS
+
+Overall: PASS
+CSV: <worktree>/results/costmodel/raw/var-B-20261121T000700Z/attempt-6/avx512.csv
