@@ -144,7 +144,7 @@ Prerequisites:
    host, `journalctl -u openru-ptp4l --since -2min` shows rms below 1 µs.
 4. `make BENCH=1 bench-preflight BENCH_RADIO=n310-20` passes on the bench host (UHD 4.11, serial).
 
-Procedure (limits: TX gain 30, p_max 10, rx_gain 37.5; the script refuses TX gain > 30):
+Procedure (limits: TX gain 30, p_max 10, rx_gain 37.5; the script refuses TX gain > 30 unless `TX_GAIN_MAX` (integer, at most 40) is set for that run with the human's approval):
 
 ```bash
 # 1. core host

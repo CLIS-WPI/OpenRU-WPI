@@ -13,7 +13,8 @@
 # Env: docker/bench.env, then docker/split-<role>.env. Profile: PROFILE (default bench-split-20mhz).
 # Both hosts' slot timing follows their system clock: the core's is PTP-disciplined from the bench
 # host (openru-ptp4l / openru-phc2sys); "up" refuses on core when phc2sys is not active.
-# RADIO=uhd on ran is Phase D (transmits): RF_SPLIT_OK=1 and TX_GAIN <= 30 required; not the default.
+# RADIO=uhd on ran is Phase D (transmits): RF_SPLIT_OK=1 and TX_GAIN <= 30 required (TX_GAIN_MAX, at most 40,
+# raises the limit for one run with the human's approval); not the default.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 ROLE="${1:?usage: split.sh <core|ran> <up|check|down>}"; ACT="${2:?usage: split.sh <core|ran> <up|check|down>}"
@@ -32,9 +33,8 @@ case "$RADIO" in
   null) export PROTORU_CONFIG_PATH="$P/protoru-null.yml" ;;
   uhd)  [[ "$ROLE" == ran ]] || { echo "split: FAIL: RADIO applies to the ran role" >&2; exit 2; }
         [[ "${RF_SPLIT_OK:-0}" == 1 ]] || { echo "split: FAIL: RADIO=uhd transmits; set RF_SPLIT_OK=1 only with the human's go" >&2; exit 2; }
-        # Phase D limits: explicit TX gain, never above 30 (cabled bench, p_max 10 in the DU profile).
-        [[ "${TX_GAIN:-}" =~ ^[0-9]+(\.[05])?$ ]] && awk -v g="$TX_GAIN" 'BEGIN{exit !(g <= 30)}' \
-          || { echo "split: FAIL: RADIO=uhd needs TX_GAIN <= 30 (got '${TX_GAIN:-}')" >&2; exit 2; }
+        # Phase D limits: explicit TX gain, 30 unless TX_GAIN_MAX raises it (cabled bench, p_max 10 in the DU profile).
+        . "$ROOT/scripts/tx_gain_guard.sh"; tx_gain_check split   # <= 30, or TX_GAIN_MAX (max 40)
         . "$ROOT/scripts/radio_env.sh"; radio_env_load "$ROOT" || exit 2   # BENCH_RADIO (default n310-10)
         export PROTORU_CONFIG_PATH="$("$ROOT/scripts/local_profile.sh" "$PROFILE" "$TX_GAIN" internal | tail -1)" ;;
   *) echo "split: FAIL: RADIO must be null or uhd" >&2; exit 2 ;;

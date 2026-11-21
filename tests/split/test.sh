@@ -41,6 +41,16 @@ for args in "ran up --core-only" "core up --bogus" "core check --core-only"; do
 done
 echo "PASS: split.sh --core-only argument checks"
 
+# TX gain guard on the split path (RADIO=uhd); the full matrix is in tests/tx-gain. Every case stops before any
+# docker/network action: refused cases at the guard; the allowed case at the next check (unknown BENCH_RADIO).
+gain() { env RF_SPLIT_OK=1 RADIO=uhd BENCH_RADIO=no-such-radio PROFILE=bench-split-20mhz-2t2r "$@" "$ROOT/scripts/split.sh" ran up 2>&1 || true; }
+gain TX_GAIN=35 | grep -q "TX_GAIN 35 > limit 30" || { echo "FAIL: TX_GAIN=35 accepted without TX_GAIN_MAX" >&2; exit 1; }
+gain TX_GAIN=35 TX_GAIN_MAX=41 | grep -q "TX_GAIN_MAX must be a plain integer <= 40" || { echo "FAIL: TX_GAIN_MAX=41 accepted" >&2; exit 1; }
+gain TX_GAIN=41 TX_GAIN_MAX=40 | grep -q "TX_GAIN 41 > limit 40" || { echo "FAIL: TX_GAIN=41 accepted" >&2; exit 1; }
+out=$(gain TX_GAIN=40 TX_GAIN_MAX=40); ! grep -q "TX_GAIN" <<< "$out" || { echo "FAIL: TX_GAIN=40 with TX_GAIN_MAX=40 refused: $out" >&2; exit 1; }
+grep -q "no-such-radio" <<< "$out" || { echo "FAIL: allowed gain did not stop at BENCH_RADIO: $out" >&2; exit 1; }
+echo "PASS: split.sh TX gain guard (30 default, TX_GAIN_MAX up to 40)"
+
 # --core-only compose config: Open5GS files only — no fh network, no macvlan.
 # Must match scripts/split.sh CORE_ONLY compose files (compose.yml + compose.cpu.yml).
 ( set -a; . docker/bench.env; . docker/split-core.env; set +a
