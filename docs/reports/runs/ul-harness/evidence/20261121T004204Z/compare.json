@@ -1,0 +1,75 @@
+{
+  "self_test": true,
+  "clean_pass": true,
+  "corruptions_failed": true,
+  "results": {
+    "identity": {
+      "pass": true,
+      "why": "ok",
+      "evm_db": -300.0,
+      "max_rel": 0.0,
+      "alpha": [
+        1.0,
+        0.0
+      ],
+      "max_rel_threshold": 0.001,
+      "evm_db_threshold": -35.0
+    },
+    "re_bump": {
+      "pass": false,
+      "why": "IQ tolerance exceeded",
+      "evm_db": -74.3803511804965,
+      "max_rel": 0.04999928331800629,
+      "alpha": [
+        0.9999994841948515,
+        5.158051484269695e-07
+      ],
+      "max_rel_threshold": 0.001,
+      "evm_db_threshold": -35.0
+    },
+    "slot_shift": {
+      "pass": false,
+      "why": "slot mismatch"
+    },
+    "port_swap": {
+      "pass": false,
+      "why": "IQ tolerance exceeded",
+      "evm_db": -7.041531177825669e-05,
+      "max_rel": 1.0040266106442577,
+      "alpha": [
+        0.004026610644257713,
+        -5.70142562506594e-19
+      ],
+      "max_rel_threshold": 0.001,
+      "evm_db_threshold": -35.0
+    },
+    "drop_symbol": {
+      "pass": false,
+      "why": "IQ tolerance exceeded",
+      "evm_db": -17.481880270062007,
+      "max_rel": 0.9821428571428573,
+      "alpha": [
+        0.9821428571428573,
+        0.0
+      ],
+      "max_rel_threshold": 0.001,
+      "evm_db_threshold": -35.0
+    },
+    "drop_message": {
+      "pass": false,
+      "why": "IQ tolerance exceeded",
+      "evm_db": -6.020599913279625,
+      "max_rel": 0.7499999999999999,
+      "alpha": [
+        0.7499999999999999,
+        0.0
+      ],
+      "max_rel_threshold": 0.001,
+      "evm_db_threshold": -35.0
+    },
+    "rx_skew": {
+      "pass": false,
+      "why": "slot mismatch"
+    }
+  }
+}
