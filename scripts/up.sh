@@ -68,6 +68,7 @@ export PROTORU_CONFIG_PATH="$RU_YML"
 export REF
 export RADIO
 
+[[ "${BENCH:-0}" == "1" ]] && { "$ROOT/scripts/bench_disk_check.sh" || exit 1; }
 OPENRU_PREFLIGHT_ENV="$ENV_FILE" "$ROOT/scripts/gpu1_preflight.sh"
 
 set -a; . "$ENV_FILE"; set +a

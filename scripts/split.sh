@@ -64,6 +64,7 @@ preflight() {
 
 case "$ACT" in
   up)
+    "$ROOT/scripts/bench_disk_check.sh" || exit 1
     (( CORE_ONLY )) || preflight
     if [[ "$ROLE" == core ]]; then
       # Open5GS first: a DU started before the AMF listens exits on "Connection refused" (as in up.sh).

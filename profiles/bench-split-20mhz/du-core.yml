@@ -93,6 +93,16 @@ metrics:
 log:
   filename: /tmp/gnb.log
   all_level: info
+  # The Phase D DU log (22 GB/hour, 2026-11-20) was RLC 44%, PDCP 21%, GTP-U 17%, PHY 8% info lines; OFH was ~0%.
+  # Those four (and F1-U) go to warning; no analyser reads their info lines (rt_health counts PHY/RF/OFH warnings).
+  # OFH and METRICS stay at info (all_level): parse_smoke_fh reads ul_past_seq_drops from an OFH info line and the
+  # METRICS lines feed parse_smoke_fh and measure_slot_delta. (The 29 GB/hour figure elsewhere is the RU's
+  # proto-ru.log under the prach-timing debug overlay, not this file.)
+  phy_level: warning
+  rlc_level: warning
+  pdcp_level: warning
+  gtpu_level: warning
+  f1u_level: warning
 
 # Core-host plan (docker/split-core.env): DU_CPUSET=6-8 is isolcpus there, one physical core
 # per busy thread (HT siblings 16-18 idle): ru_timing on 6, ru_txrx on 7, main pool on 8. The DU's

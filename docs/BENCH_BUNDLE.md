@@ -722,25 +722,11 @@ with a *"root filesystem full"* message when `/` has less than **5 GiB** free â€
 a full root filesystem also breaks `lscpu`/cpufreq reads (this happened on the
 bench: P/E classification returned "no cpufreq/lscpu max frequency").
 
-### Proposal: move Docker's data-root to `/home` (not applied)
+### Moving image storage to `/home` (prepared, not applied)
 
-The bench root filesystem is small; `/home` has the space. On the bench host
-(root), **only after draining containers**:
-
-```bash
-sudo systemctl stop docker docker.socket
-sudo mkdir -p /home/docker
-sudo rsync -aHAX --numeric-ids /var/lib/docker/ /home/docker/
-printf '%s\n' '{"data-root": "/home/docker"}' | sudo tee /etc/docker/daemon.json
-sudo systemctl start docker
-docker info --format '{{.DockerRootDir}}'          # expect /home/docker
-docker image ls | grep openru || true             # images are preserved by the rsync
-```
-
-If the images are not rsynced, they must be re-loaded
-(`scripts/bench_load.sh <release-dir>`). Verify with `df -h /home` before and
-after; keep the artifacts directory on the same filesystem if possible so the
-`docker load` peak does not cross filesystems.
+See [`docs/maint/BENCH_DISK_MOVE.md`](maint/BENCH_DISK_MOVE.md). With Docker 29's containerd image store the images
+live under containerd's root (`/var/lib/containerd`), so moving Docker's `data-root` alone does not free `/`; the
+procedure moves both, with checks and rollback.
 
 `bench_load.sh` writes its observed image set with `flush()`+`fsync()` before
 `load_verify` reads it (a plain write left an empty file on the bench).
