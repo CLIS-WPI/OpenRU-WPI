@@ -1,0 +1,21 @@
+# Fails while a PR carries the label "changes-requested"; passes otherwise. Reviewers set or clear the label
+# (with "review-approved" when done); labeling/unlabeling re-runs the check.
+name: review-gate
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, labeled, unlabeled]
+permissions: {}
+jobs:
+  review-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check review labels
+        env:
+          LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+        run: |
+          echo "labels: $LABELS"
+          if jq -e 'index("changes-requested") != null' <<< "$LABELS" > /dev/null; then
+            echo "::error::PR is labelled changes-requested; clear the label after the requested changes are done."
+            exit 1
+          fi
+          echo "review-gate: no changes-requested label"
