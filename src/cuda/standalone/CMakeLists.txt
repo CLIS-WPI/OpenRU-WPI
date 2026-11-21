@@ -166,3 +166,20 @@ target_link_libraries(test_costmodel PRIVATE
   pthread
   dl
   m)
+
+add_executable(test_chain
+  tests/test_chain.cpp)
+target_include_directories(test_chain PRIVATE include ${OCUDU_INCLUDE_DIRS} "${FFTW3F_INCLUDE_DIR}")
+target_compile_definitions(test_chain PRIVATE BUILD_TYPE_RELEASE NDEBUG)
+target_compile_options(test_chain PRIVATE -O3 -march=native)
+target_link_libraries(test_chain PRIVATE
+  lowphy_cuda
+  "-Wl,--start-group"
+  ${OCUDU_LIBRARIES}
+  "${OCUDU_BUILD}/lib/phy/generic_functions/precoding/libocudu_channel_precoder.a"
+  "-Wl,--end-group"
+  "${FFTW3F_LIBRARY}"
+  ${YAML_CPP_LIBRARY}
+  pthread
+  dl
+  m)
