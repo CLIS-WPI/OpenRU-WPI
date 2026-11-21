@@ -94,6 +94,16 @@ metrics:
 log:
   filename: /tmp/gnb.log
   all_level: info
+  # Per-packet RLC/PDCP/GTP-U/F1-U, per-allocation PHY and OFH packing info lines dominate the DU log (22 GB/hour
+  # in Phase D, 2026-11-20). rt_health needs only PHY/RF/OFH warnings; METRICS lines (parse_smoke_fh,
+  # measure_slot_delta) stay at info. With ofh at warning, parse_smoke_fh's ul_past_seq_drops (an OFH info line)
+  # reads 0 on these profiles. Warnings and errors from these layers still log.
+  ofh_level: warning
+  phy_level: warning
+  rlc_level: warning
+  pdcp_level: warning
+  gtpu_level: warning
+  f1u_level: warning
 
 # Cores plan (docker/bench.env, accepted 2026-11-20): DU_CPUSET=8-11 is isolcpus, so
 # every busy thread needs its own CPU. ru_timing alone on 9 (its HT sibling 8 stays idle),
