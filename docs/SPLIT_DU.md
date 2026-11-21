@@ -9,7 +9,7 @@ RU `10.54.1.20` / `02:00:00:00:00:20`).
 |---|---|
 | fh network as macvlan on `SPLIT_FH_IFACE`, MTU 9000 | `docker/compose.split.yml` |
 | core host: NIC, cpusets, DU thread plan | `docker/split-core.env` |
-| bench host: NIC (RU cpusets/thread plan from `docker/bench.env`) | `docker/split-ran.env` |
+| bench host: NIC, RU cpuset and thread plan (override `docker/bench.env`) | `docker/split-ran.env` |
 | DU with core-host pins (2 DL / 2 UL ports) | `profiles/bench-split-20mhz` |
 | DU with core-host pins, 2T2R DL / 1 UL port (Phase D) | `profiles/bench-split-20mhz-2t2r` |
 | bring-up per host | `scripts/split.sh <core|ran> <up|check|down>` |
@@ -40,16 +40,22 @@ i5-13600KF: P-cores 0-11 (HT pairs n/n+1), E-cores 12-19, `isolcpus=2-11`. The D
 | 2 | `ru_timing` | FIFO |
 | 3 | `ru_emu_#0` (busy-polls) | FIFO |
 | 4 / 5 | `ru_rx_#0` / `ru_ofh_tx_#0` | FIFO |
-| 6 | `ru_phy_hp_#0`, `ru_phy_tx_#0` (feeds DL samples to UHD) | FIFO |
+| 6 | `ru_phy_hp_#0`, `ru_phy_tx_#0` | FIFO |
 | 7 | `ru_phy_rx_#0` | FIFO |
-| 8 | `ru_radio_#0` (UHD async-message loop; non-real-time by design in ProtO-RU) | OTHER |
-| 9 | `ru_phy_ul_#0` (HT sibling of 8) | FIFO |
+| 8 | `ru_radio_#0` alone: ProtO-RU's loop over UHD async messages (`recv_async_msg`), not a sample-streaming thread; non-real-time by design | OTHER |
+| 9 | idle (HT sibling of 8; left out of the cpuset) | |
+| 10 | `ru_phy_ul_#0` (own physical core) [UNVERIFIED with UHD; null radio only] | FIFO |
 | 12 | `uhd_ctrl_ep0001` alone (UHD control endpoint, busy-polls 100 %) | RR/89 |
 | 13 | everything else: gRPC `event_engine` x20, loggers, main threads | RR/89, OTHER |
 
-`ru_radio` and `ru_phy_ul` come from the profile's `ru_cpus: [8, 6, 6, 7, 9]` (round-robin in creation order radio,
+`ru_radio` and `ru_phy_ul` come from the profile's `ru_cpus: [8, 6, 6, 7, 10]` (round-robin in creation order radio,
 hp, tx, rx, ul); `scripts/bench_rt.sh ru` applies and checks the whole plan after start. `tests/split/test.sh` checks
-the plan against the container cpuset and the round-robin order.
+the plan against the container cpuset and the round-robin order, and fails if any other planned thread or cpuset CPU
+shares `ru_radio`'s physical core. Which threads actually carry the TX/RX samples (UHD caller threads vs. UHD I/O
+threads, copies per sample): [`docs/reports/UHD_THREADS.md`](reports/UHD_THREADS.md).
+
+Phase D passed with `ru_phy_ul` on CPU 8 next to `ru_radio` (four-entry `ru_cpus` wrap). Moving it to its own core (10)
+is a new plan, checked on the null radio only; [UNVERIFIED] with UHD until a short RF run.
 
 ## Time
 
@@ -181,7 +187,7 @@ Nothing persistent changes on either host besides Docker volumes (logs, Open5GS 
 | Run | Result |
 |---|---|
 | Thread plan with `ru_radio` and ~30 RR/89 threads incl. `uhd_ctrl_ep0001` (100 % busy) on E-core 12 | STOP 16:04, 19 min into the 60-min run: lower-PHY "Downlink data late" 11/min while the RU's OFH receive counters showed every DL packet on time; UE radio-link failure (MAC max KOs) [MEASURED]; starvation on E-core 12 as cause [UNVERIFIED] |
-| Plan above (`ru_radio` on 8, `ru_phy_ul` then also on 8, `uhd_ctrl_ep0001` alone on 12, rest on 13) | step 2: TCP DL 108.8 / UL 16.1 Mbit/s, dl_ri 2, CQI 14-15, DL MCS 26, PUSCH SNR 32.7 dB (single host: 109.1 / 16.3) |
+| Phase D plan (`ru_radio` and `ru_phy_ul` both on CPU 8, `uhd_ctrl_ep0001` alone on 12, rest on 13; the plan above differs only in `ru_phy_ul` on 10) | step 2: TCP DL 108.8 / UL 16.1 Mbit/s, dl_ri 2, CQI 14-15, DL MCS 26, PUSCH SNR 32.7 dB (single host: 109.1 / 16.3) |
 | 60-min run 16:24:16-17:24:29, 10 x (5 min TCP DL + 1 min TCP UL) | DL 107.0-107.7, UL 16.1-16.3 Mbit/s each cycle; dl_ri 2, CQI 15, MCS 25 (cycle medians); pings 3611/3611, longest gap 1.2 s; RU lower-PHY failures 0; RU OFH 141 M packets, late 385 (2.7e-6), corrupt 0, drop 0; DU warnings 2.6/min (worst minute 9); core PTP ptp4l median rms 3.6 us (max 17.4 us) |
 | End of run | one RF TX underflow at 17:24:29.65, 0.6 s after the last UL test ended -> automatic STOP; cause open [UNVERIFIED] |
 | 3 cold starts (split down, up + gate, attach with AT+QIACT=1, 4 pings, 30 s TCP DL) | all passed: up + gate 298-300 s, registered after 15 s, 4/4 pings, DL 107.0 / 103.2 / 104.2 Mbit/s |
