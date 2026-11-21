@@ -81,6 +81,7 @@ case "$ACT" in
     fi
     "$ROOT/scripts/bench_quiet.sh" hold   # snap refreshes + fwupd-refresh.timer off for the session; down restores
     (( CORE_ONLY )) || preflight
+    "$ROOT/scripts/bench_tm.sh" watch   # D-state watchdog; timer_migration=0 only after "check" passes (BENCH_TM0)
     if [[ "$ROLE" == core ]]; then
       # Open5GS first: a DU started before the AMF listens exits on "Connection refused" (as in up.sh).
       # --core-only: compose files above omit split.yml/e2e, so fh/macvlan cannot be created.
@@ -107,7 +108,9 @@ case "$ACT" in
     RT_CHECK_SECS="${3:-60}" "$ROOT/scripts/bench_rt.sh" check ;;
   down)
     "$ROOT/scripts/rt_watch.sh" stop || true
+    "$ROOT/scripts/bench_tm.sh" restore || true   # timer_migration back before teardown
     "${COMPOSE[@]}" --profile core --profile fh down --remove-orphans
+    "$ROOT/scripts/bench_tm.sh" stop || true
     "$ROOT/scripts/bench_quiet.sh" release || true ;;
   *) echo "split: FAIL: action must be up, check or down" >&2; exit 2 ;;
 esac

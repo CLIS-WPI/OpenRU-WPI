@@ -74,6 +74,7 @@ export RADIO
 OPENRU_PREFLIGHT_ENV="$ENV_FILE" "$ROOT/scripts/gpu1_preflight.sh"
 
 set -a; . "$ENV_FILE"; set +a
+[[ "${BENCH:-0}" == "1" ]] && "$ROOT/scripts/bench_tm.sh" watch   # D-state watchdog; timer_migration=0 only after the gate
 [[ "${BENCH:-0}" == "1" ]] && { radio_env_load "$ROOT" || exit 2; }
 echo
 echo "== stack: $STACK / profile: $PROFILE / radio: $RADIO${BENCH_RADIO:+ ($BENCH_RADIO)} =="
@@ -194,6 +195,7 @@ if [[ "${BENCH:-0}" == "1" && "$STACK" != "core" ]]; then
     echo "[up] FAIL: thread plan or real-time health check failed (see [rt] lines)" >&2
     "${COMPOSE[@]}" --profile core --profile fh down --remove-orphans >/dev/null 2>&1
     "$ROOT/scripts/rt_watch.sh" stop >/dev/null 2>&1 || true
+    "$ROOT/scripts/bench_tm.sh" stop >/dev/null 2>&1 || true
     exit 1
   }
 fi

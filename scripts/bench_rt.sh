@@ -71,3 +71,5 @@ if (( warned )); then
 else
   echo "[rt] OK: no lower-PHY / RF / DU fronthaul real-time failures"
 fi
+# Gate passed: timer_migration=0 for the rest of the session where the host enables it (BENCH_TM0, scripts/bench_tm.sh).
+"$ROOT/scripts/bench_tm.sh" set0

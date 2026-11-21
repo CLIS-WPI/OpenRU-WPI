@@ -30,9 +30,14 @@ services:
     command: 5gc -c open5gs-5gc.yml
     healthcheck:
       test: ["CMD-SHELL", "nc -z 127.0.0.20 7777"]
-      interval: 3s
+      # Every check spawns a process (runc exec); during a run 30 s is enough. start_interval keeps bring-up fast:
+      # checks every 1 s for up to 120 s until healthy. The check runs in the container's cpuset (CORE_CPUSET),
+      # which stays off the isolated real-time CPUs (tests/bench-tm).
+      interval: 30s
       timeout: 1s
-      retries: 60
+      retries: 3
+      start_period: 120s
+      start_interval: 1s
     networks:
       core:
         ipv4_address: 10.53.1.2

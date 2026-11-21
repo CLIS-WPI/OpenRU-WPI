@@ -133,8 +133,10 @@ pin-check:
 	  done; exit $$rc
 
 down:
+	-@$(ROOT)/scripts/bench_tm.sh restore  # timer_migration back before teardown (scripts/bench_tm.sh)
 	-$(COMPOSE) --profile fh --profile core --profile full down --remove-orphans
 	-@$(ROOT)/scripts/rt_watch.sh stop  # hand-started follower: not a compose orphan
+	-@$(ROOT)/scripts/bench_tm.sh stop  # D-state watchdog
 	-@$(ROOT)/scripts/bench_quiet.sh release  # snap hold / fwupd-refresh.timer from a bench up
 
 logs:
