@@ -11,7 +11,7 @@
 # 3 x 10 min each). But 0 plus an ftrace buffer resize (kernel work queued on the isolated CPUs, where FIFO threads
 # spin) hung the host for 2 h; setting 1 cleared it in 20 s. Hence: 0 only after the gate, and a watchdog throughout.
 #
-# watch/set0 act only with BENCH_TM0=1 (docker/bench.env; split-core.env keeps 0 until the core A/B); set0 refuses
+# watch/set0 act only with BENCH_TM0=1 (docker/bench.env, docker/split-core.env); set0 refuses
 # without a live watchdog. restore/stop act on the recorded state, so `make down` always cleans up.
 # Watchdog (housekeeping CPUs BENCH_TM_CPUS, every BENCH_TM_INTERVAL s): a thread in D state for >= BENCH_TM_DMAX
 # (30) s -> record the blocked tasks (sysrq w to dmesg, /proc stacks with CPUs, timer_list, sched debug) in

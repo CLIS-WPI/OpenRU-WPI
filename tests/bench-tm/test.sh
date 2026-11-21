@@ -2,7 +2,7 @@
 # scripts/bench_tm.sh (no hardware, no root) against fake sudo/ps/docker: opt-in per host, set0 refuses without a
 # watchdog, set0/restore/stop round trip, a hang (thread in D >= DMAX) is recorded then timer_migration=1 and the
 # containers stopped, a short D episode does not trigger. Plus: core health check every >= 30 s, CORE_CPUSET off the
-# isolated CPUs in each bench host env, BENCH_TM0 on for ran and off for the split core.
+# isolated CPUs in each bench host env, BENCH_TM0 on for ran and the split core.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"; S="$ROOT/scripts/bench_tm.sh"
 T="$(mktemp -d)"; mkdir "$T/bin"
@@ -40,8 +40,9 @@ reset; "$S" watch >/dev/null; "$S" set0 >/dev/null; chk "watch + set0" "$(tm) $(
 p1="$(cat "$T/state/watchdog.pid")"; "$S" watch >/dev/null; chk "second watch keeps the same watchdog" "$(cat "$T/state/watchdog.pid") $(wd)" "$p1 up"
 "$S" restore >/dev/null; chk "restore" "$(tm) $(wd) $([[ -f $T/state/orig ]] && echo rec || echo norec)" "1 up norec"
 "$S" set0 >/dev/null; "$S" stop >/dev/null; chk "stop restores and ends watchdog" "$(tm) $(wd)" "1 down"
-reset; BENCH_TM_DMAX=1 "$S" watch >/dev/null; "$S" set0 >/dev/null; echo "100 S
-777 D" > "$T/ps"; sleep 0.5; echo "100 S" > "$T/ps"; sleep 1.5
+# DMAX=2: the watchdog counts whole seconds, so a 0.5 s episode can span one second boundary but never two
+reset; BENCH_TM_DMAX=2 "$S" watch >/dev/null; "$S" set0 >/dev/null; echo "100 S
+777 D" > "$T/ps"; sleep 0.5; echo "100 S" > "$T/ps"; sleep 2.5
 chk "short D episode: no trigger" "$(tm) $(wd)" "0 up"
 "$S" stop >/dev/null
 reset; BENCH_TM_DMAX=1 "$S" watch >/dev/null; "$S" set0 >/dev/null; echo "100 S
@@ -72,6 +73,6 @@ for f in ("bench.env", "split-core.env"):
     core = cpus(env(f)["CORE_CPUSET"]); assert not core & iso, (f, core & iso)
     print(f"PASS: {f}: CORE_CPUSET {env(f)['CORE_CPUSET']} (health checks) off isolated {sorted(iso)}")
 b, c = env("bench.env"), {**env("bench.env"), **env("split-core.env")}
-assert b["BENCH_TM0"] == "1" and c["BENCH_TM0"] == "0", (b.get("BENCH_TM0"), c.get("BENCH_TM0"))
-print("PASS: BENCH_TM0 on for ran (bench.env, split-ran inherits), off for the split core until its A/B")
+assert b["BENCH_TM0"] == "1" and c["BENCH_TM0"] == "1", (b.get("BENCH_TM0"), c.get("BENCH_TM0"))
+print("PASS: BENCH_TM0 on for ran (bench.env, split-ran inherits), and for the split core (split-core.env)")
 PY
