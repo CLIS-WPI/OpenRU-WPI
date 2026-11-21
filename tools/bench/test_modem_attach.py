@@ -25,6 +25,26 @@ class Allowlist(unittest.TestCase):
         self.assertFalse(m.registered("+C5GREG: 0,0 OK"))
 
 
+class PolicyRouting(unittest.TestCase):
+    def test_two_modems_get_separate_tables(self):
+        with tempfile.TemporaryDirectory() as d:
+            for name, idx in (("wwan0", 7), ("wwan1", 9)):
+                os.makedirs(f"{d}/class/net/{name}")
+                with open(f"{d}/class/net/{name}/ifindex", "w") as f:
+                    f.write(f"{idx}\n")
+            old, m.SYSFS = m.SYSFS, d
+            try:
+                ta, tb = m.route_table("wwan0"), m.route_table("wwan1")
+            finally:
+                m.SYSFS = old
+        self.assertEqual((ta, tb), (1007, 1009))
+        a = m.policy_cmds("wwan0", "10.45.0.2", "10.45.0.1", ta)
+        b = m.policy_cmds("wwan1", "10.45.0.3", "10.45.0.1", tb)
+        self.assertEqual(a[0], ["ip", "route", "replace", "10.45.0.1/32", "dev", "wwan0", "src", "10.45.0.2", "table", "1007"])
+        self.assertEqual(b[1], ["ip", "rule", "add", "from", "10.45.0.3/32", "lookup", "1009", "priority", "1009"])
+        self.assertNotEqual(a[0][-1], b[0][-1])
+
+
 class QmiDiscovery(unittest.TestCase):
     def test_same_usb_device(self):
         with tempfile.TemporaryDirectory() as d:

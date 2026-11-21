@@ -7,7 +7,10 @@
 `up`: AT+CFUN=1, wait for +C5GREG registered, AT+QIACT=1, AT+CGPADDR=1, AT+QPING x4; then the host data path:
 find the modem's QMI device and net interface by its USB serial (same USB device as the AT port), start the
 QMI data session (qmicli via qmi-proxy, retried), raw-IP, UE address /32 and a /32 route to the server.
-Prints `IF=<iface> UE=<ip>` on success. `down`: host path down, AT+CFUN=4.
+Two modems at once: each also gets its own route table (1000 + ifindex) and a rule `from <UE> lookup <table>`, so
+traffic bound to a modem's UE address (iperf3 -B <UE>) leaves through that modem; the main-table route to the server
+follows the modem attached last. Prints `IF=<iface> UE=<ip> TABLE=<n>` on success. `down`: host path and rule
+down, AT+CFUN=4.
 Only AT commands on ALLOWED are ever sent; nothing writes the SIM or modem firmware. Root steps use `sudo -n`.
 """
 import argparse
@@ -84,6 +87,24 @@ def sh(*a, check=True):
     return r.stdout
 
 
+def route_table(iface):
+    with open(f"{SYSFS}/class/net/{iface}/ifindex") as f:
+        return 1000 + int(f.read())
+
+
+def policy_cmds(iface, ue, server, table):
+    """ip commands giving one modem its own table: the server route and a source rule for its UE address."""
+    return [["ip", "route", "replace", f"{server}/32", "dev", iface, "src", ue, "table", str(table)],
+            ["ip", "rule", "add", "from", f"{ue}/32", "lookup", str(table), "priority", str(table)]]
+
+
+def policy_down(table):
+    for _ in range(8):  # drop every rule pointing at this table (a re-attach may have left one), then the table
+        if subprocess.run(["sudo", "-n", "ip", "rule", "del", "lookup", str(table)], capture_output=True).returncode:
+            break
+    subprocess.run(["sudo", "-n", "ip", "route", "flush", "table", str(table)], capture_output=True)
+
+
 def data_path_up(wdm, iface, server):
     for i in range(3):  # the first call after qmi-proxy starts can time out on the CTL service
         r = subprocess.run(["sudo", "-n", "qmicli", "-d", wdm, "--device-open-proxy",
@@ -103,7 +124,11 @@ def data_path_up(wdm, iface, server):
     sh("sudo", "-n", "ip", "addr", "add", f"{ue}/32", "dev", iface)
     sh("sudo", "-n", "ip", "link", "set", iface, "up")
     sh("sudo", "-n", "ip", "route", "replace", f"{server}/32", "dev", iface, "src", ue)
-    return ue
+    table = route_table(iface)
+    policy_down(table)
+    for c in policy_cmds(iface, ue, server, table):
+        sh("sudo", "-n", *c)
+    return ue, table
 
 
 def up(a):
@@ -127,14 +152,16 @@ def up(a):
     q = qmi_for(port)
     if not q:
         sys.exit("modem_attach: no QMI device on the modem's USB device")
-    ue = data_path_up(*q, a.server)
-    print(f"IF={q[1]} UE={ue} WDM={q[0]}")
+    ue, table = data_path_up(*q, a.server)
+    print(f"IF={q[1]} UE={ue} WDM={q[0]} TABLE={table}")
 
 
 def down(a):
     port = at_port(a.serial)
     q = qmi_for(port)
     if q:
+        if os.path.exists(f"{SYSFS}/class/net/{q[1]}/ifindex"):
+            policy_down(route_table(q[1]))
         for c in (["ip", "addr", "flush", "dev", q[1]], ["ip", "link", "set", q[1], "down"]):
             subprocess.run(["sudo", "-n", *c], capture_output=True)
     print(at(port, "AT+CFUN=4", 20))

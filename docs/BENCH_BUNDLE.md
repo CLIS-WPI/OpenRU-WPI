@@ -535,7 +535,9 @@ finds the QMI device (`/dev/cdc-wdmN`) and net interface on the **same USB devic
 change on USB re-enumeration, so never hard-code them), starts the session with
 `qmicli --device-open-proxy --wds-start-network="apn=internet,ip-type=4" --client-no-release-cid`
 (retried: the first call after qmi-proxy starts can time out), sets raw-IP, the UE address /32 and a /32
-route to `10.45.0.1`, and prints `IF=… UE=…`. Root steps use `sudo -n`. [UNVERIFIED] the script itself has
+route to `10.45.0.1`, and prints `IF=… UE=… TABLE=…`. With two modems attached, each also has its own route table
+(1000 + ifindex) and a rule `from <UE> lookup <table>`: bind traffic to a modem's UE address (e.g. `iperf3 -B <UE>`)
+to send it through that modem; unbound traffic follows the modem attached last. Root steps use `sudo -n`. [UNVERIFIED] the script itself has
 not run on the bench; the same steps ran from bench scripts on 2026-11-20 [MEASURED].
 
 ## End-to-end stack (core + DU + RU)
