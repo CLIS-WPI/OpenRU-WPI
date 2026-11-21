@@ -537,7 +537,9 @@ change on USB re-enumeration, so never hard-code them), starts the session with
 (retried: the first call after qmi-proxy starts can time out), sets raw-IP, the UE address /32 and a /32
 route to `10.45.0.1`, and prints `IF=… UE=… TABLE=…`. With two modems attached, each also has its own route table
 (1000 + ifindex) and a rule `from <UE> lookup <table>`: bind traffic to a modem's UE address (e.g. `iperf3 -B <UE>`)
-to send it through that modem; unbound traffic follows the modem attached last. Root steps use `sudo -n`. [UNVERIFIED] the script itself has
+to send it through that modem; unbound traffic follows the modem attached last. The table and rule are recorded per USB serial in
+`$MODEM_STATE_DIR/<serial>.json` (default `/var/tmp/openru-modem`), so `down` cleans them up even if the wwan
+interface is gone, and `up` removes what an earlier enumeration of the same modem left. Root steps use `sudo -n`. [UNVERIFIED] the script itself has
 not run on the bench; the same steps ran from bench scripts on 2026-11-20 [MEASURED].
 
 ## End-to-end stack (core + DU + RU)
