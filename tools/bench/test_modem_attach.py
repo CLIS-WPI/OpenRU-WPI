@@ -25,6 +25,26 @@ class Allowlist(unittest.TestCase):
         self.assertFalse(m.registered("+C5GREG: 0,0 OK"))
 
 
+class PolicyRouting(unittest.TestCase):
+    def test_two_modems_get_separate_tables(self):
+        with tempfile.TemporaryDirectory() as d:
+            for name, idx in (("wwan0", 7), ("wwan1", 9)):
+                os.makedirs(f"{d}/class/net/{name}")
+                with open(f"{d}/class/net/{name}/ifindex", "w") as f:
+                    f.write(f"{idx}\n")
+            old, m.SYSFS = m.SYSFS, d
+            try:
+                ta, tb = m.route_table("wwan0"), m.route_table("wwan1")
+            finally:
+                m.SYSFS = old
+        self.assertEqual((ta, tb), (1007, 1009))
+        a = m.policy_cmds("wwan0", "10.45.0.2", "10.45.0.1", ta)
+        b = m.policy_cmds("wwan1", "10.45.0.3", "10.45.0.1", tb)
+        self.assertEqual(a[0], ["ip", "route", "replace", "10.45.0.1/32", "dev", "wwan0", "src", "10.45.0.2", "table", "1007"])
+        self.assertEqual(b[1], ["ip", "rule", "add", "from", "10.45.0.3/32", "lookup", "1009", "priority", "1009"])
+        self.assertNotEqual(a[0][-1], b[0][-1])
+
+
 class QmiDiscovery(unittest.TestCase):
     def test_same_usb_device(self):
         with tempfile.TemporaryDirectory() as d:
@@ -52,6 +72,73 @@ class QmiDiscovery(unittest.TestCase):
     def test_bad_serial(self):
         with self.assertRaises(SystemExit):
             m.at_port("../../etc")
+
+
+class PolicyState(unittest.TestCase):
+    """Cleanup from the recorded state, independent of the wwan interface still existing."""
+
+    def setUp(self):
+        self.d = tempfile.TemporaryDirectory()
+        self.calls = []
+        self._run, self._state, self._sysfs = m.subprocess.run, m.STATE_DIR, m.SYSFS
+        m.STATE_DIR, m.SYSFS = f"{self.d.name}/state", f"{self.d.name}/sys"
+        fake = type("R", (), {"returncode": 1, "stdout": "", "stderr": ""})  # "no more rules"
+        m.subprocess.run = lambda cmd, **kw: (self.calls.append(cmd[2:] if cmd[:2] == ["sudo", "-n"] else cmd), fake)[1]
+
+    def tearDown(self):
+        m.subprocess.run, m.STATE_DIR, m.SYSFS = self._run, self._state, self._sysfs
+        self.d.cleanup()
+
+    def iface(self, name, idx):
+        os.makedirs(f"{m.SYSFS}/class/net/{name}", exist_ok=True)
+        with open(f"{m.SYSFS}/class/net/{name}/ifindex", "w") as f:
+            f.write(f"{idx}\n")
+
+    def test_down_with_interface_gone(self):
+        m.write_state("c24c59be", {"serial": "c24c59be", "iface": "wwan1", "table": 1009, "ue": "10.45.0.3",
+                                   "server": "10.45.0.1"})
+        self.assertFalse(os.path.exists(f"{m.SYSFS}/class/net/wwan1"))  # interface gone
+        st = m.drop_recorded("c24c59be")
+        self.assertEqual(st["table"], 1009)
+        self.assertIn(["ip", "rule", "del", "from", "10.45.0.3/32", "lookup", "1009"], self.calls)
+        self.assertIn(["ip", "rule", "del", "lookup", "1009"], self.calls)
+        self.assertIn(["ip", "route", "flush", "table", "1009"], self.calls)
+        self.assertIsNone(m.read_state("c24c59be"))
+        self.assertIsNone(m.drop_recorded("c24c59be"))  # idempotent
+
+    def test_reenumeration_clears_old_table(self):
+        # first attach as wwan1 (ifindex 9): recorded table 1009
+        m.write_state("c24c59be", {"serial": "c24c59be", "iface": "wwan1", "table": 1009, "ue": "10.45.0.3",
+                                   "server": "10.45.0.1"})
+        # modem re-enumerates as wwan2 (ifindex 12): up must drop 1009 before installing 1012
+        self.iface("wwan2", 12)
+        new = m.route_table("wwan2")
+        old = m.drop_recorded("c24c59be")
+        m.policy_down(new)
+        self.assertEqual((old["table"], new), (1009, 1012))
+        flushed = [c[-1] for c in self.calls if c[:3] == ["ip", "route", "flush"]]
+        self.assertEqual(flushed, ["1009", "1012"])
+        self.assertIn(["ip", "rule", "del", "from", "10.45.0.3/32", "lookup", "1009"], self.calls)
+        m.write_state("c24c59be", {"serial": "c24c59be", "iface": "wwan2", "table": new, "ue": "10.45.0.4",
+                                   "server": "10.45.0.1"})
+        self.assertEqual(m.read_state("c24c59be")["table"], 1012)
+
+    def test_down_modem_unplugged(self):
+        import argparse, contextlib, io
+        m.write_state("c24c59be", {"serial": "c24c59be", "iface": "wwan1", "table": 1009, "ue": "10.45.0.3"})
+        with contextlib.redirect_stdout(io.StringIO()), self.assertRaises(SystemExit) as e:
+            m.down(argparse.Namespace(serial="c24c59be"))
+        self.assertIn("AT+CFUN=4 NOT sent", str(e.exception))
+        self.assertIn(["ip", "route", "flush", "table", "1009"], self.calls)
+        self.assertIsNone(m.read_state("c24c59be"))
+
+    def test_two_modems_keep_separate_state(self):
+        m.write_state("aaaaaaaa", {"serial": "aaaaaaaa", "iface": "wwan0", "table": 1007, "ue": "10.45.0.2"})
+        m.write_state("c24c59be", {"serial": "c24c59be", "iface": "wwan1", "table": 1009, "ue": "10.45.0.3"})
+        m.drop_recorded("aaaaaaaa")
+        self.assertIsNone(m.read_state("aaaaaaaa"))
+        self.assertEqual(m.read_state("c24c59be")["table"], 1009)
+        self.assertNotIn(["ip", "route", "flush", "table", "1009"], self.calls)
 
 
 if __name__ == "__main__":
