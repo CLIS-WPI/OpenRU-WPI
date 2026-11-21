@@ -8,6 +8,8 @@
 #   scripts/split.sh <role> down       # ran first, then core
 #   Phase D (transmits; human go only):
 #   RF_SPLIT_OK=1 RADIO=uhd BENCH_RADIO=n310-20 TX_GAIN=30 PROFILE=bench-split-20mhz-2t2r scripts/split.sh ran up
+#   Reference: the RU profile's clock_source (internal, or external = OctoClock 10 MHz only; time stays internal);
+#   REF=internal|external overrides it. External: "ran up" refuses unless the N310 reports ref_locked (ref_check.sh).
 #
 # Fronthaul: docker/compose.split.yml (macvlan on SPLIT_FH_IFACE, MTU 9000, never a bridge).
 # Env: docker/bench.env, then docker/split-<role>.env. Profile: PROFILE (default bench-split-20mhz).
@@ -36,7 +38,13 @@ case "$RADIO" in
         # Phase D limits: explicit TX gain, 30 unless TX_GAIN_MAX raises it (cabled bench, p_max 10 in the DU profile).
         . "$ROOT/scripts/tx_gain_guard.sh"; tx_gain_check split   # <= 30, or TX_GAIN_MAX (max 40)
         . "$ROOT/scripts/radio_env.sh"; radio_env_load "$ROOT" || exit 2   # BENCH_RADIO (default n310-10)
-        export PROTORU_CONFIG_PATH="$("$ROOT/scripts/local_profile.sh" "$PROFILE" "$TX_GAIN" internal | tail -1)" ;;
+        # Reference as up.sh: REF, else the profile's YAML clock_source. Only the frequency reference follows it;
+        # local_profile.sh keeps time_source/sync_source internal (PPS time is not supported, see ref_check.sh).
+        REF="${REF:-$(sed -n 's/^[[:space:]]*clock_source:[[:space:]]*\([a-z]*\).*/\1/p' "$P/protoru.yml" | head -1)}"
+        [[ "$REF" == internal || "$REF" == external ]] \
+          || { echo "split: FAIL: reference must be internal or external (REF or $PROFILE/protoru.yml clock_source: '$REF')" >&2; exit 2; }
+        export REF
+        export PROTORU_CONFIG_PATH="$("$ROOT/scripts/local_profile.sh" "$PROFILE" "$TX_GAIN" "$REF" | tail -1)" ;;
   *) echo "split: FAIL: RADIO must be null or uhd" >&2; exit 2 ;;
 esac
 COMPOSE=(docker compose --env-file "$ROOT/docker/versions.env" --env-file "$ROOT/docker/bench.env"
@@ -65,6 +73,12 @@ preflight() {
 case "$ACT" in
   up)
     "$ROOT/scripts/bench_disk_check.sh" || exit 1
+    if [[ "$RADIO" == uhd ]]; then
+      echo "split: ran: reference $REF$([[ $REF == external ]] && echo ' (OctoClock 10 MHz; time internal)')"
+      # External: no transmission unless the N310 has locked to the 10 MHz reference (UHD ref_locked sensor).
+      # Before bench_quiet hold, so a refusal leaves no host state behind (only "down" releases the hold).
+      [[ "$REF" == external ]] && { "$ROOT/scripts/ref_check.sh" || { echo "split: FAIL: N310 not locked to the external reference" >&2; exit 1; }; }
+    fi
     "$ROOT/scripts/bench_quiet.sh" hold   # snap refreshes + fwupd-refresh.timer off for the session; down restores
     (( CORE_ONLY )) || preflight
     if [[ "$ROLE" == core ]]; then
